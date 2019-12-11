@@ -1137,14 +1137,15 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <height>61</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <onUploadStartS>var sn = es.getAppSetting("imageSn");
-sn = parseInt(sn);
-if (isNaN(sn)) {
-    sn = 1000;
+      <onUploadStartS>var sql,sqlResult;  
+sql = "select next value for dbo.SEQImageSn as Sn'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
 }
-sn++;
-es.setAppSetting("imageSn", sn);
-newFileName = "d:\\www\\incoming\\img" + sn + ".jpg";</onUploadStartS>
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = "d:\\www\\defaultRoot\\incoming\\img" + sn + ".jpg";</onUploadStartS>
       <sizeRatio>0.734939759036145</sizeRatio>
       <top>0</top>
       <width>83</width>
