@@ -103,6 +103,60 @@
       <widthRatio>0.908883826879271</widthRatio>
     </control>
   </controls>
-  <taskSet count="0" />
+  <taskSet count="1">
+    <taskSetItem name="loginToken">
+      <script1>g5.token = eb.getCookie("twitterGToken");
+if (eb.isEmpty(g5.token)) {
+    return;              
+}
+eio.appendString8(g5.token);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+eio.appendString8("T");
+//eio.appendString8(db.getString(sqlResult, "userType"));
+es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
+    ",nickName=" + db.getString(sqlResult, "nickName"));
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("登录失败："+eio.readString8());
+    //g5.show(1);
+    return;
+}
+
+window.location.href = ee.getUrl("/main");
+
+
+
+//window.location.href=ee.pageRoot + "/main";  
+
+//var userType = eio.readString8();
+//eb.setCookie("pjUserType", userType);
+//window.location.href="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/login"
+/*if (userType=="教练") {                   
+    window.location.href = ee.pageRoot + "/cMain"; 
+} else {
+    window.location.href = ee.pageRoot + "/student/sMain"; 
+} */
+
+
+</script3>
+    </taskSetItem>
+  </taskSet>
   <gridLines count="0" />
 </page>
