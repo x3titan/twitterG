@@ -1,5 +1,5 @@
 <page>
-  <controls count="95">
+  <controls count="97">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -53,12 +53,19 @@ g5.refreshUserInfo = function() {
         ee.setImage(ee.getControl("panel47"), "url:" + g5.imgUrl + g5.photo);
         ee.setImage(ee.getControl("panel59"), "url:" + g5.imgUrl + g5.photo);
     }
-    
+    if (g5.titleBg == "") {
+        ee.setImage(ee.getControl("panel58"));
+    } else {
+        ee.setImage(panel, imgUrl, imgMode, alt, title)
+        ee.setImage(ee.getControl("panel58"), "url:" + g5.imgUrl + g5.titleBg, "trim");
+    }
 }
 
 g5.changePage(0);
 eb.setTouchEnabled(true);
 eb.setAlpha(ee.getControl("fileupload1"), 1);
+eb.setAlpha(ee.getControl("fileupload2"), 1);
+eb.setAlpha(ee.getControl("fileupload3"), 1);
 getUserInfo();
 
 
@@ -537,6 +544,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>左侧菜单</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -1242,7 +1250,6 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>编辑个人信息</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -1296,8 +1303,8 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <heightRatio>0.258469259723965</heightRatio>
       <left>0</left>
       <sizeRatio>0.469248291571754</sizeRatio>
-      <top>70</top>
-      <topRatio>0.0878293601003764</topRatio>
+      <top>69</top>
+      <topRatio>0.0865746549560853</topRatio>
       <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -1311,10 +1318,61 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <left>178</left>
       <leftRatio>0.405466970387244</leftRatio>
       <sizeRatio>0.849315068493151</sizeRatio>
-      <top>69</top>
-      <topRatio>0.33495145631068</topRatio>
+      <top>68</top>
+      <topRatio>0.330097087378641</topRatio>
       <width>73</width>
       <widthRatio>0.16628701594533</widthRatio>
+    </control>
+    <control type="FileUpload" pathname="/divRoot/panel54/panel58/panel61/fileupload3">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onUploadCompleteC>if (eio.readString8() == "F") {
+    return;
+}
+g5.refreshUserInfo();
+
+
+
+
+
+</onUploadCompleteC>
+      <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
+var filename = newFileName.substring(pos+1);  
+var userName = session.get("userName");
+
+var sql,sqlResult;  
+sql = "update userInfo set titleBg = '" + db.encode(filename) + "' where userName = '" + db.encode(userName) + "'";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+} else {
+    eio.appendString8("T");
+}</onUploadCompleteS>
+      <onUploadStartC>fileExt = fileExt.toLowerCase();
+if ((fileExt != ".bmp") &amp;&amp;
+    (fileExt != ".jpg") &amp;&amp;
+    (fileExt != ".jpeg") &amp;&amp;
+    (fileExt != ".png") &amp;&amp;
+    (fileExt != ".tif") &amp;&amp;
+    (fileExt != ".tiff")) return;
+    </onUploadStartC>
+      <onUploadStartS>var sql,sqlResult;  
+sql = "select next value for dbo.SEQImageSn as Sn";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadStartS>
+      <sizeRatio>0.849315068493151</sizeRatio>
+      <top>0</top>
+      <width>73</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel55">
       <dockX>ratio</dockX>
@@ -1368,6 +1426,46 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <topRatio>0.211267605633803</topRatio>
       <width>44</width>
       <widthRatio>0.611111111111111</widthRatio>
+    </control>
+    <control type="FileUpload" pathname="/divRoot/panel54/panel55/fileupload2">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>71</height>
+      <heightRatio>0.859154929577465</heightRatio>
+      <left>0</left>
+      <onUploadCompleteC>ee.setImage(ee.getControl("panel52"), "url:/incoming/" + eio.readString16(), "trim", "", "");
+
+
+
+
+
+</onUploadCompleteC>
+      <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
+var filename = newFileName.substring(pos+1);  
+eio.appendString16(filename);</onUploadCompleteS>
+      <onUploadStartC>fileExt = fileExt.toLowerCase();
+if ((fileExt != ".bmp") &amp;&amp;
+    (fileExt != ".jpg") &amp;&amp;
+    (fileExt != ".jpeg") &amp;&amp;
+    (fileExt != ".png") &amp;&amp;
+    (fileExt != ".tif") &amp;&amp;
+    (fileExt != ".tiff")) return;
+    </onUploadStartC>
+      <onUploadStartS>var sql,sqlResult;  
+sql = "select next value for dbo.SEQImageSn as Sn";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadStartS>
+      <sizeRatio>0.734939759036145</sizeRatio>
+      <top>0</top>
+      <width>72</width>
+      <widthRatio>1.15277777777778</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel63">
       <backgroundImgMode>fill</backgroundImgMode>
@@ -1555,6 +1653,9 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     es.logCommon("用户token登录失败,token=" + token);
     return;
 } 
+
+session.set("userName", db.getString(sqlResult,"userName"));
+
 eio.appendString8("T");
 es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
     ",nickName=" + db.getString(sqlResult, "nickName"));
