@@ -35,11 +35,18 @@ g5.changePage = function(pageIndex) {
     return true;
 }
 
+g5.refreshUserInfo = function() {
+    var s;
+    if (eb.isEmpty(g5.userName)) return;
+    s = "<b>" + g5.nickName + "</b><br/>";
+    s += g5.userName;
+    ee.setText(ee.getControl("panel31"), s);
+}
+
 g5.changePage(0);
 eb.setTouchEnabled(true);
 eb.setAlpha(ee.getControl("fileupload1"), 1);
-
-
+getUserInfo();
 
 
 
@@ -152,7 +159,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <widthRatio>0.107061503416856</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem3/panel7/panel8">
-      <backgroundImg>CPY0000.jpg</backgroundImg>
+      <backgroundImg>user.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>48</height>
@@ -517,7 +524,6 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>左侧菜单</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -557,7 +563,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <widthRatio>0.198347107438017</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel28/panel29">
-      <backgroundImg>CPY0000.jpg</backgroundImg>
+      <backgroundImg>user.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>71</height>
@@ -990,6 +996,7 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>发推文</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -1065,7 +1072,7 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <widthRatio>0.164009111617312</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel46/panel47">
-      <backgroundImg>CPY0000.jpg</backgroundImg>
+      <backgroundImg>user.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>71</height>
@@ -1210,6 +1217,60 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="0" />
+  <taskSet count="1">
+    <taskSetItem name="getUserInfo">
+      <script1>g5.token = eb.getCookie("twitterGToken");
+if (g5.token == "") {
+    window.location.href = ee.getUrl("/new");
+    return;
+}
+eio.appendString16(g5.token);</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+eio.appendString8("T");
+es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
+    ",nickName=" + db.getString(sqlResult, "nickName"));
+eio.appendString8(db.getString(sqlResult,"userName"));
+eio.appendString16(db.getString(sqlResult,"nickName"));
+eio.appendString16(db.getString(sqlResult,"photo"));
+eio.appendString16(db.getString(sqlResult,"titleBg"));
+
+
+
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert(eio.readString8());
+    window.location.href = ee.getUrl("/new");
+    return;
+}
+
+g5.userName = eio.readString8();
+g5.nickName = eio.readString16();
+g5.photo = eio.readString16();
+g5.titleBg = eio.readString16();
+g5.refreshUserInfo();
+
+                               
+
+
+
+</script3>
+    </taskSetItem>
+  </taskSet>
   <gridLines count="0" />
 </page>
