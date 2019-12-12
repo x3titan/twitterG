@@ -42,6 +42,10 @@ g5.refreshUserInfo = function() {
     s = "<b>" + g5.nickName + "</b><br/>";
     s += "@" + g5.userName;
     ee.setText(ee.getControl("panel31"), s);
+    ee.setEditText(ee.getControl("edit2"), g5.nickName);
+    ee.setEditText(ee.getControl("edit3"), g5.userNote);
+    ee.setEditText(ee.getControl("edit4"), g5.userHomepage);
+    
     if (g5.photo == "") {
         ee.setImage(ee.getControl("panel8"), "/twitterG/main/user.png");
         ee.setImage(ee.getControl("panel29"), "/twitterG/main/user.png");
@@ -1252,6 +1256,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00125470514429109</topRatio>
       <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -1636,7 +1641,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="1">
+  <taskSet count="2">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 if (g5.token == "") {
@@ -1671,7 +1676,8 @@ eio.appendString8(db.getString(sqlResult,"userName"));
 eio.appendString16(db.getString(sqlResult,"nickName"));
 eio.appendString16(db.getString(sqlResult,"photo"));
 eio.appendString16(db.getString(sqlResult,"titleBg"));
-
+eio.appendString16(db.getString(sqlResult,"note"));
+eio.appendString16(db.getString(sqlResult,"homePage"));
 
 
 ]]></script2>
@@ -1685,6 +1691,9 @@ g5.userName = eio.readString8();
 g5.nickName = eio.readString16();
 g5.photo = eio.readString16();
 g5.titleBg = eio.readString16();
+g5.userNote = eio.readString16();
+g5.userHomepage = eio.readString16();
+
 g5.refreshUserInfo();
 
                                
@@ -1692,6 +1701,71 @@ g5.refreshUserInfo();
 
 
 </script3>
+    </taskSetItem>
+    <taskSetItem name="updateUserInfo">
+      <script1><![CDATA[var nickName = ee.getEditText(ee.getControl("edit2"));
+var note = ee.getEditText(ee.getControl("edit3"));
+var homepage = ee.getEditText(ee.getControl("edit4"));
+if (nickName.length<3) {
+    alert("昵称或者姓名不能少于3个英文字母或汉字");
+    return;
+}
+eio.appendString16(g5.token);
+eio.appendString16(nickName);
+eio.appendString16(note);
+eio.appendString16(homepage);
+]]></script1>
+      <script2><![CDATA[var token = eio.readString16();
+var nickName = eio.readString16();
+var note = eio.readString16();
+var homepage = eio.readString16();
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var username =db.getString(sqlResult,"userName");
+
+sql = "update userInfo set nickName = '" + db.encode(nickName) + "'" +
+    ", note= '" + db.encode(note) + "'" +
+    ", homePage= '" + db.encode(homepage) + "'" +
+    " where userName = '" + db.encode(userName) + "'";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}    
+
+
+
+
+
+
+
+
+
+
+
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+ee.showAni(ee.getControl("panel54"), 1);
+getUserInfo();</script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
