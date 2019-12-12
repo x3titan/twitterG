@@ -1434,16 +1434,25 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <height>71</height>
       <heightRatio>0.859154929577465</heightRatio>
       <left>0</left>
-      <onUploadCompleteC>ee.setImage(ee.getControl("panel52"), "url:/incoming/" + eio.readString16(), "trim", "", "");
-
-
+      <onUploadCompleteC>if (eio.readString8() == "F") {
+    return;
+}
+g5.refreshUserInfo();
 
 
 
 </onUploadCompleteC>
       <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
 var filename = newFileName.substring(pos+1);  
-eio.appendString16(filename);</onUploadCompleteS>
+var userName = session.get("userName");
+
+var sql,sqlResult;  
+sql = "update userInfo set photo = '" + db.encode(filename) + "' where userName = '" + db.encode(userName) + "'";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+} else {
+    eio.appendString8("T");
+}</onUploadCompleteS>
       <onUploadStartC>fileExt = fileExt.toLowerCase();
 if ((fileExt != ".bmp") &amp;&amp;
     (fileExt != ".jpg") &amp;&amp;
