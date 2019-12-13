@@ -133,6 +133,7 @@ ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <layerName>Page1</layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <leftRatio>0.00227790432801822</leftRatio>
       <sizeRatio>1.68109339407745</sizeRatio>
       <top>0</top>
       <width>439</width>
@@ -440,7 +441,11 @@ ee.showAni(ee.getControl("panel27"), 0);
       <heightRatio>0.113821138211382</heightRatio>
       <left>344</left>
       <leftRatio>0.783599088838269</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel42"), 0);</onClick>
+      <onClick>g5.newPhoto1 = "";
+ee.setEditText(ee.getControl("edit1"), "");
+ee.setImage(ee.getControl("panel52"), null);
+ee.showAni(ee.getControl("panel42"), 0);
+</onClick>
       <sizeRatio>0.91304347826087</sizeRatio>
       <top>652</top>
       <topRatio>0.883468834688347</topRatio>
@@ -1022,7 +1027,6 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>发推文</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -1075,7 +1079,7 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <heightRatio>0.0577164366373902</heightRatio>
       <left>323</left>
       <leftRatio>0.735763097949886</leftRatio>
-      <onClick>window.location.href = ee.getUrl("/new/reg");</onClick>
+      <onClick>newTwitter();</onClick>
       <sizeRatio>0.442307692307692</sizeRatio>
       <text>发推</text>
       <top>14</top>
@@ -1173,7 +1177,8 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <height>61</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <onUploadCompleteC>ee.setImage(ee.getControl("panel52"), "url:/incoming/" + eio.readString16(), "trim", "", "");
+      <onUploadCompleteC>g5.newPhoto1 = eio.readString16();
+ee.setImage(ee.getControl("panel52"), "url:" + g5.imgUrl + g5.newPhoto1, "trim", "", "");
 
 
 
@@ -1219,13 +1224,12 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <widthRatio>0.92255125284738</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel51/panel52">
-      <backgroundImg>CPY0002.jpg</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>259</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>0.633757961783439</sizeRatio>
+      <sizeRatio>0.639506172839506</sizeRatio>
       <top>0</top>
       <width>405</width>
       <widthRatio>1</widthRatio>
@@ -1253,6 +1257,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>编辑个人信息</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -1641,7 +1646,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="2">
+  <taskSet count="3">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 if (g5.token == "") {
@@ -1766,6 +1771,64 @@ if (!db.executeNoneQuery("DB", sql)) {
 }
 ee.showAni(ee.getControl("panel54"), 1);
 getUserInfo();</script3>
+    </taskSetItem>
+    <taskSetItem name="newTwitter">
+      <script1><![CDATA[var text = ee.getEditText(ee.getControl("edit1"));
+if (text.length<5) {
+    alert("推文不能少于5个英文字母或汉字");
+    return;
+}
+
+eio.appendString16(g5.token);
+eio.appendString16(text);
+eio.appendString16(g5.newPhoto1);
+
+
+
+
+
+
+
+]]></script1>
+      <script2><![CDATA[var token = eio.readString16();
+var text = eio.readString16();
+var photo1 = eio.readString16();
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName = db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+
+sql = "exec twitterNew " +
+    userId + 
+    ",'" + db.encode(text) + "'"
+    ",'" + db.encode(photo1) + "'"
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}                      
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+ee.showAni(ee.getControl("panel42"), 1);
+</script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
