@@ -65,7 +65,7 @@ g5.refreshUserInfo = function() {
     }
 }
 
-g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto, photo1, text) {
+g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3) {
     var hd = "e" + g5.itemsHome.length + "_";
     if (eb.isEmpty(userPhoto)) userPhoto = "";
     if (eb.isEmpty(photo1)) photo1 = "";
@@ -77,9 +77,11 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     y += 2; //v-space
     
     //root:v_userPhoto,v_titleText,v_text,v_btn1,v_btn2,v_btn3,v_btn4,v_label1,v_label2,v_label3
+    //v_contentId
     var c;
     c = createPanel(parent, hd+"panel12", "FFFFFF", 0, y, w, 100);
     var root = c;
+    root.v_contentId = contentId;
     eb.setDock(c,"disabled","disabled");
     g5.itemsHome.push(c);
     //avata image box
@@ -135,6 +137,15 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     root.v_btn1 = c;
     ee.setImage(c,"/twitterG/main/home/e1.png","fill","","")
     eb.setDock(c,"disabled","disabled");
+    ee.setOnClick(c,function(sender,event) {
+        g5.newPhoto1 = "";
+        ee.setEditText(ee.getControl("edit1"), "");
+        ee.setImage(ee.getControl("panel52"), null);
+        ee.setText(ee.getControl("panel45"), "回复");
+        g5.uplinkType = "R";
+        g5.uplinkId = sender.parent.v_contentId;
+        ee.showAni(ee.getControl("panel42"), 0);
+    });
     c = createPanel($g(hd+"panel12"), hd+"panel22", "", w*0.402277039848197, cy, w*0.0645161290322581, w*0.062);
     root.v_btn2 = c;
     ee.setImage(c,"/twitterG/main/home/e2.png","fill","","")
@@ -150,17 +161,17 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     //3 label
     c = createPanel($g(hd+"panel12"), hd+"panel3", "", w*0.25426944971537, cy, w*0.111954459203036, w*0.062);
     root.v_label1 = c;
-    addText(c, "2s", "left", "middle", "黑体", 9, "808080", "normal");
+    addText(c, label1, "left", "middle", "黑体", 9, "808080", "normal");
     eb.setFontSizeAuto(c, 30);
     eb.setDock(c,"disabled","disabled");
     c = createPanel($g(hd+"panel12"), hd+"panel4", "", w*0.472485768500949, cy, w*0.12523719165085, w*0.062);
     root.v_label2 = c;
-    addText(c, "3r", "left", "middle", "黑体", 9, "808080", "normal");
+    addText(c, label2, "left", "middle", "黑体", 9, "808080", "normal");
     eb.setFontSizeAuto(c, 30);
     eb.setDock(c,"disabled","disabled");
     c = createPanel($g(hd+"panel12"), hd+"panel5", "", w*0.685009487666034, cy, w*0.123339658444023, w*0.062);
     root.v_label3 = c;
-    addText(c, "4h", "left", "middle", "黑体", 9, "808080", "normal");
+    addText(c, label3, "left", "middle", "黑体", 9, "808080", "normal");
     eb.setFontSizeAuto(c, 30);
     eb.setDock(c,"disabled","disabled");
     //set total height
@@ -185,7 +196,9 @@ g5.refreshPage1 = function() {
             g5.datasetHome.getData(0,i),
             g5.photo,
             g5.datasetHome.getData(4,i),
-            g5.datasetHome.getData(3,i));
+            g5.datasetHome.getData(3,i),
+            "", "", ""
+            );
     }    
 }
 
@@ -569,6 +582,9 @@ ee.showAni(ee.getControl("panel27"), 0);
       <onClick>g5.newPhoto1 = "";
 ee.setEditText(ee.getControl("edit1"), "");
 ee.setImage(ee.getControl("panel52"), null);
+ee.setText(ee.getControl("panel45"), "发推");
+g5.uplinkType = "N";
+g5.uplinkId = 0;
 ee.showAni(ee.getControl("panel42"), 0);
 </onClick>
       <sizeRatio>0.91304347826087</sizeRatio>
@@ -1208,8 +1224,8 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <onClick>newTwitter();</onClick>
       <sizeRatio>0.442307692307692</sizeRatio>
       <text>发推</text>
-      <top>14</top>
-      <topRatio>0.0175658720200753</topRatio>
+      <top>13</top>
+      <topRatio>0.0163111668757842</topRatio>
       <width>104</width>
       <widthRatio>0.236902050113895</widthRatio>
     </control>
@@ -1910,6 +1926,8 @@ if (text.length<5) {
 eio.appendString16(g5.token);
 eio.appendString16(text);
 eio.appendString16(g5.newPhoto1);
+eio.appendString16(g5.uplinkType);
+eio.appendString16(g5.uplinkId);
 
 
 
@@ -1921,6 +1939,8 @@ eio.appendString16(g5.newPhoto1);
       <script2><![CDATA[var token = eio.readString16();
 var text = eio.readString16();
 var photo1 = eio.readString16();
+var uplinkType = eio.readString16();
+var uplinkId = eio.readString16();
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
