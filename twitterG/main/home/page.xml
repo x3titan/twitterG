@@ -7,32 +7,47 @@
       <dockY>fill</dockY>
       <height>797</height>
       <left>0</left>
-      <onControlLoad>g5.imgUrl = "/incoming/";
+      <onControlLoad><![CDATA[g5.imgUrl = "/incoming/";
 g5.items = new Array();
 
-g5.appendItem = function(username, contentId, userPhoto, photo1, text) {
+g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto, photo1, text) {
     var hd = "e" + g5.items.length + "_";
-    //root
+    if (eb.isEmpty(userPhoto)) userPhoto = "";
+    if (eb.isEmpty(photo1)) photo1 = "";
+    var w = eb.getDivRect(parent).w;
+    var y = 0;
+    if (g5.items.length > 0) {
+        y = eb.getDivRect(g5.items[g5.items.length-1]).y + eb.getDivRect(g5.items[g5.items.length-1]).h;
+    }
+    y += 2; //v-space
+    
+    //root:v_userPhoto,v_titleText
     var c;
-    c = createPanel($g("ee_divRoot"), hd+"panel12", "FFFFFF", 0, 0, 527, 493);
-    eb.setDock(c,"fill","ratio");
-    c.topRatio=0;
-    c.heightRatio=0.618569636135508;
+    c = createPanel(parent, hd+"panel12", "FFFFFF", 0, y, w, 100);
+    var root = c;
+    eb.setDock(c,"disabled","disabled");
     g5.items.push(c);
-    c = createPanel($g(hd+"panel12"), hd+"panel13", "", 11, 13, 79, 77);
-    eb.setDock(c,"ratio","ratio");
-    c.leftRatio=0.0208728652751423;
-    c.widthRatio=0.149905123339658;
-    c.topRatio=0.026369168356998;
-    c.heightRatio=0.156186612576065;
+    //avata image box
+    c = createPanel($g(hd+"panel12"), hd+"panel13", "", w*0.0208728652751423, w*0.026369168356998, w*0.149905123339658, w*0.149905123339658);
+    eb.setDock(c,"disabled","disabled");
+    
+    //v_userPhoto
     c = createPanel($g(hd+"panel13"), hd+"panel14", "", 0, 0, 79, 77);
-    ee.setImage(c,"/twitterG/main/home/CPY0000.jpg","trim","","")
+    root.v_userPhoto = c;
+    if (userPhoto == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + userPhoto,"trim","","")
+    }
     eb.setDock(c,"fill","fill");
     c = createPanel($g(hd+"panel13"), hd+"panel15", "", 0, 0, 79, 77);
     ee.setImage(c,"/twitterG/main/home/cirMask.png","trim","","")
     eb.setDock(c,"fill","fill");
+    
+    //v_titleText
     c = createPanel($g(hd+"panel12"), hd+"panel16", "", 98, 2, 422, 43);
-    addText(c, "Annie@annie257 - 1小时", "left", "middle", "Helvetica", 9, "000000", "normal");
+    root.v_titleText = c;
+    addText(c, "<b>" + nickname + "</b>@" + username + " - " + times, "left", "middle", "Helvetica", 9, "000000", "normal");
     eb.setFontSizeAuto(c, 20);
     eb.setDock(c,"ratio","ratio");
     c.leftRatio=0.18595825426945;
@@ -113,7 +128,7 @@ g5.appendItem = function(username, contentId, userPhoto, photo1, text) {
     c.heightRatio=0.0628803245436105;
     
 
-}</onControlLoad>
+}]]></onControlLoad>
       <top>0</top>
       <width>527</width>
     </control>
@@ -366,6 +381,10 @@ g5.appendItem = function(username, contentId, userPhoto, photo1, text) {
       <left>2</left>
       <leftRatio>0.00379506641366224</leftRatio>
       <onClick>g5.appendItem("username", "contentId", "userPhoto", "photo1", "text");
+g5.appendItem(
+    ee.getControl("divRoot"),
+    "鱼香肉丝", "davidKing", "3小时", 100, "", "",
+    "skj;saldkf asd flsadf sa df asd f sadf asd f dasf sda f sadf asdf asf  saf text");
 
 //var s = "You know how I always say you can get free stuff? Well now is the time to follow me if your're not already !! Jolly Hohn is here and he's ready to give away some serious prizes for 12Daysof Magenta!! So be sure to follow me and getting ready to win some amazing gear!";
 //ee.setText(ee.getControl("panel2"), s);
