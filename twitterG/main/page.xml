@@ -140,7 +140,7 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     ee.setOnClick(c,function(sender,event) {
         g5.newPhoto1 = "";
         ee.setEditText(ee.getControl("edit1"), "");
-        ee.setImage(ee.getControl("panel52"), null);
+        ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
         ee.setText(ee.getControl("panel45"), "回复");
         g5.uplinkType = "R";
         g5.uplinkId = sender.parentNode.v_contentId;
@@ -181,6 +181,17 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     eb.processDock();
 }
 
+g5.getMins = function(mins) {
+    mins = parseInt(mins);
+    if (mins<60) {
+        return mins+"分钟";
+    } else if (mins<60*24) {
+        return parseInt(mins/60) + "小时" + (mins%60) + "分钟";
+    } else {
+        return parseInt(mins/(60*24)) + "天" + parseInt((mins%(60*24))/60) + "小时";
+    }
+}
+
 g5.refreshPage1 = function() {
     if (eb.isEmpty(g5.datasetHome)) return;
     var i;
@@ -188,16 +199,19 @@ g5.refreshPage1 = function() {
     
     while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
     g5.itemsHome = new Array();
+    //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount"
     for (i=0; i< g5.datasetHome.rowCount; i++) {
         g5.appendItem(
             root,
             g5.userName, g5.nickName,
-            g5.datasetHome.getData(1,i),
+            g5.getMins(g5.datasetHome.getData(1,i)),
             g5.datasetHome.getData(0,i),
             g5.photo,
             g5.datasetHome.getData(4,i),
             g5.datasetHome.getData(3,i),
-            "", "", ""
+            g5.datasetHome.getData(5,i),
+            g5.datasetHome.getData(6,i),
+            g5.datasetHome.getData(7,i)
             );
     }    
 }
@@ -269,6 +283,7 @@ ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <height>738</height>
       <heightRatio>1</heightRatio>
       <layerName>Page1</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <leftRatio>0.00227790432801822</leftRatio>
       <sizeRatio>1.68109339407745</sizeRatio>
@@ -581,7 +596,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <leftRatio>0.783599088838269</leftRatio>
       <onClick>g5.newPhoto1 = "";
 ee.setEditText(ee.getControl("edit1"), "");
-ee.setImage(ee.getControl("panel52"), null);
+ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
 ee.setText(ee.getControl("panel45"), "发推");
 g5.uplinkType = "N";
 g5.uplinkId = 0;
@@ -1168,7 +1183,6 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>发推文</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -1366,6 +1380,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <widthRatio>0.92255125284738</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel51/panel52">
+      <backgroundImg>empty.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>259</height>
@@ -2005,7 +2020,19 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var userName =db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
 
-sql = "select TOP (30) * from tContent where userId = " + userId + " order by id desc";
+sql = 
+    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime," + 
+    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1, " +
+    "      dbo.tContent.likeCount," + 
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount," + 
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END)" + 
+    "      AS forwardCount" +
+    " FROM dbo.tContent LEFT OUTER JOIN " +
+    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId" +
+    " GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId," + 
+    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount " +
+    " where userId = " + userId +
+    " ORDER BY dbo.tContent.id DESC ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -2013,7 +2040,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,regDatetime,userId,content,photo1,uplinkId,uplinkType", 0, 99999); 
+eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount", 0, 99999); 
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
     return;
