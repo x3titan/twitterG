@@ -183,6 +183,55 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     eb.processDock();
 }
 
+g5.itemsPage2 = new Array();
+g5.appendItemPage2 = function(parent, username, nickname, userPhoto) {
+    //v_username
+    //c_userphoto, c_label
+    var hd = "e" + g5.itemsPage2.length + "_";
+    if (eb.isEmpty(userPhoto)) userPhoto = "";
+    var w = eb.getDivRect(parent).w;
+    var h = eb.getDivRect(parent).h;
+    var y = 0;
+    if (g5.itemsPage2.length > 0) {
+        y = eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).y + eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).h;
+    }
+    y += 2; //v-space
+    
+    c = createPanel($g("ee_divRoot"), hd+"panel12", "FFFFFF", 0, y, w, h*0.100376411543287);
+    var root = c;
+    g5.itemsPage2.push(root);
+    root.v_username = username;
+    eb.setDock(c,"disabled","disabled");
+    c = createPanel($g(hd+"panel12"), hd+"panel13", "", 13, 10, 57, 59);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.0296127562642369;
+    c.widthRatio=0.129840546697039;
+    c.topRatio=0.125;
+    c.heightRatio=0.7375;
+    c = createPanel($g(hd+"panel13"), hd+"panel14", "", 0, 0, 57, 59);
+    root.c_userphoto = c;
+    if (userPhoto == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + userPhoto,"trim","","")
+    }
+    eb.setDock(c,"fill","fill");
+    c = createPanel($g(hd+"panel13"), hd+"panel15", "", 0, 0, 57, 59);
+    ee.setImage(c,"/twitterG/main/page2/cirMask.png","trim","","")
+    eb.setDock(c,"fill","fill");
+    c = createPanel($g(hd+"panel12"), hd+"panel16", "", 86, 18, 347, 43);
+    root.c_label = c;
+    addText(c, "<b>" + nickname + "</b>@" + username, "left", "middle", "Helvetica", 9, "000000", "normal");
+    eb.setFontSizeAuto(c, 20);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.195899772209567;
+    c.widthRatio=0.790432801822323;
+    c.topRatio=0.225;
+    c.heightRatio=0.5375;
+    
+    eb.processDock();
+}
+
 g5.getMins = function(mins) {
     mins = parseInt(mins);
     if (mins<60) {
@@ -201,9 +250,8 @@ g5.refreshPage1 = function() {
     
     while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
     g5.itemsHome = new Array();
-    //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount"
-    for (i=0; i< g5.datasetHome.rowCount; i++) {
-        g5.appendItem(
+    for (i=0; i< g5.itemsHome.rowCount; i++) {
+        g5.appendItemPage2(
             root,
             g5.userName, g5.nickName,
             g5.getMins(g5.datasetHome.getData(1,i)),
@@ -215,6 +263,24 @@ g5.refreshPage1 = function() {
             g5.datasetHome.getData(6,i),
             g5.datasetHome.getData(7,i)
             );
+    }    
+}
+
+g5.refreshPage2 = function() {
+    if (eb.isEmpty(g5.datasetPage2)) return;
+    var i;
+    var root = ee.getControl("layoutyitem6"); 
+    
+    while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
+    g5.itemsPage2 = new Array();
+    for (i=0; i< g5.datasetPage2.rowCount; i++) {
+        //function(parent, username, nickname, userPhoto)
+        //dataset: id,userName,nickName,photo"
+        g5.appendItem(
+            root,
+            g5.datasetPage2.getData(1,i),
+            g5.datasetPage2.getData(2,i),
+            g5.datasetPage2.getData(3,i));
     }    
 }
 
@@ -511,12 +577,14 @@ ee.showAni(ee.getControl("panel27"), 0);
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem5/panel17">
       <backgroundImg>config.png</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
       <height>50</height>
       <heightRatio>0.819672131147541</heightRatio>
       <left>380</left>
       <leftRatio>0.865603644646925</leftRatio>
+      <onClick>searchUser();</onClick>
       <sizeRatio>0.925925925925926</sizeRatio>
       <top>5</top>
       <topRatio>0.0819672131147541</topRatio>
@@ -553,7 +621,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>1.54214123006834</sizeRatio>
       <top>61</top>
-      <topRatio>0.0813008130081301</topRatio>
+      <topRatio>0.0826558265582656</topRatio>
       <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -1753,7 +1821,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="4">
+  <taskSet count="5">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 if (g5.token == "") {
@@ -1998,6 +2066,31 @@ eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCou
 g5.datasetHome = eio.readDataSet();
 g5.refreshPage1();
                         
+</script3>
+    </taskSetItem>
+    <taskSetItem name="searchUser">
+      <script1>var searchString = ee.getEditText(ee.getControl("edit5"));
+if (searchString == "") return;
+eio.appendString16(searchString);</script1>
+      <script2>var searchString = eio.readString16();
+var sql,sqlResult;  
+
+sql = "select * from userInfo where (userName like '%" + db.encode(searchString) + "%') " +
+    " or (nickName like '%" + db.encode(searchString) + "%') ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"id,userName,nickName,photo", 0, 99999);
+</script2>
+      <script3>if (eio.readString8() != "T") {
+    return;
+}
+g5.datasetPage2 = eio.readDataSet();
+g5.refreshPage2();
 </script3>
     </taskSetItem>
   </taskSet>
