@@ -2428,7 +2428,7 @@ for (var i=0; i<g5.itemsPageUser.length; i++) {
 g5.itemsPageUser = new Array();
 ee.showAni(ee.getControl("panel16"), 0);
 
-eio.appendString16(this.userName);
+eio.appendString16(showUserPage.userName);
 ]]></script1>
       <script2>var username = eio.readString16();
 var sql,sqlResult;  
@@ -2441,7 +2441,11 @@ if (sqlResult == null) {
     eio.appendString8("系统繁忙请稍后再试");
     return;
 }
-db.read(sqlResult);
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("该用户不存在");
+    return;
+}
 eio.appendString8("T");
 var userId = db.getString(sqlResult,"id");
 eio.appendString8(db.getString(sqlResult,"id"));
@@ -2494,6 +2498,7 @@ var homePage = eio.readString16();
 g5.datasetPageUser = eio.readDataSet();
 
 ee.setText(ee.getControl("panel18"), nickName);
+ee.setVisible(ee.getControl("panel18"), true);
 
 
 
