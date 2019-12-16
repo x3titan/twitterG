@@ -2030,11 +2030,11 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <fontSize>15</fontSize>
       <fontSizeAuto>24</fontSizeAuto>
       <hAlign>left</hAlign>
-      <height>45</height>
-      <heightRatio>0.0564617314930991</heightRatio>
+      <height>31</height>
+      <heightRatio>0.0388958594730238</heightRatio>
       <left>14</left>
       <leftRatio>0.0265654648956357</leftRatio>
-      <sizeRatio>0.0907258064516129</sizeRatio>
+      <sizeRatio>0.0625</sizeRatio>
       <text>自我介绍</text>
       <top>314</top>
       <topRatio>0.393977415307403</topRatio>
@@ -2497,9 +2497,24 @@ var note = eio.readString16();
 var homePage = eio.readString16();
 g5.datasetPageUser = eio.readDataSet();
 
+var rootH = eb.getDivRect(ee.getControl("panel16")).h;
+
 ee.setText(ee.getControl("panel18"), nickName);
 ee.setVisible(ee.getControl("panel18"), true);
+ee.setText(ee.getControl("panel21"), "@" + userName);
+ee.setVisible(ee.getControl("panel21"), true);
+var cy = ee.getControl("panel21").topRatio + ee.getControl("panel21").heightRatio;
+var vspace = 0.03;
+cy += vspace;
+if (note != "") {
+    ee.getControl("panel69").topRatio = cy;
+    ee.setText(ee.getControl("panel69"), note);
+    ee.setVisible(ee.getControl("panel69"), true);
+    ee.getControl("panel69").heightRatio = eb.getDivRect(c.label).h / rootH;
+    cy += vspace + ee.getControl("panel69").heightRatio;
+}
 
+eb.processDock();
 
 
 
