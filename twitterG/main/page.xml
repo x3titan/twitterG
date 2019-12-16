@@ -2530,7 +2530,7 @@ eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCou
 
 
 </script2>
-      <script3>if (eio.readString8() != "T") {
+      <script3><![CDATA[if (eio.readString8() != "T") {
     ee.setVisible(ee.getControl("panel16"), false);
     return;
 }
@@ -2589,12 +2589,33 @@ ee.getControl("panel73").topRatio = cy;
 ee.setVisible(ee.getControl("panel73"), true);
 cy += vspace + ee.getControl("panel73").heightRatio;
 
+var i, item;
+var root = ee.getControl("panel16"); 
+//g5.itemsPageUser  
+var cy = cy * rootH;
+for (i=0; i< g5.datasetPageUser.rowCount; i++) {
+    item = g5.appendItem(
+        root,
+        userName, nickName,
+        g5.getMins(g5.datasetPageUser.getData(1,i)),
+        g5.datasetPageUser.getData(0,i),
+        photo,
+        g5.datasetPageUser.getData(4,i),
+        g5.datasetPageUser.getData(3,i),
+        g5.datasetPageUser.getData(5,i),
+        g5.datasetPageUser.getData(6,i),
+        g5.datasetPageUser.getData(7,i),
+        cy
+        );
+    g5.itemsPageUser.push(item);
+    cy += 2 + eb.getDivRect(item).h;    
+}
 
 eb.processDock();
 
 
 
-</script3>
+]]></script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
