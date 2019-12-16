@@ -2478,6 +2478,7 @@ ee.setVisible(ee.getControl("layoutx7"), false);
 ee.setVisible(ee.getControl("panel72"), false);
 ee.setImage(ee.getControl("panel23"), "/twitterG/main/user.png");
 ee.setImage(ee.getControl("panel20"), "/twitterG/main/empty.png");
+ee.setText(ee.getControl("panel19"), "  ");
 for (var i=0; i<g5.itemsPageUser.length; i++) {
     ee.removeControl(g5.itemsPageUser[i]);
 }
@@ -2702,6 +2703,11 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     return;
 }
 var myUserId = db.getString(sqlResult,"id");
+if (myUserId == userId) {
+    eio.appendString8("F");
+    eio.appendString8("关注自己就没意思了吧？");
+    return;
+}
 
 if (follow == "T") {
     sql = "delete follow where userId = " + myUserId + " and followId = " + userId;
