@@ -71,16 +71,13 @@ g5.refreshUserInfo = function() {
     }
 }
 
-g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3) {
+g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, startY) {
     var hd = "e" + g5.itemsHome.length + "_";
     if (eb.isEmpty(userPhoto)) userPhoto = "";
     if (eb.isEmpty(photo1)) photo1 = "";
     var w = eb.getDivRect(parent).w;
-    var y = 0;
-    if (g5.itemsHome.length > 0) {
-        y = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]).y + eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]).h;
-    }
-    y += 2; //v-space
+    if (eb.isEmpty(startY)) startY = 0;
+    y = startY + 2; //v-space
     
     //root:v_userPhoto,v_titleText,v_text,v_btn1,v_btn2,v_btn3,v_btn4,v_label1,v_label2,v_label3
     //v_contentId
@@ -185,7 +182,8 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     rect = eb.getDivRect(root.v_btn1);
     eb.setDivRect(root, null, null, null, rect.y + rect.h + 0.03*w);
     
-    eb.processDock();
+    eb.processDock()
+    return root;
 }
 
 g5.itemsPage2 = new Array();
@@ -255,13 +253,14 @@ g5.getMins = function(mins) {
 
 g5.refreshPage1 = function() {
     if (eb.isEmpty(g5.datasetHome)) return;
-    var i;
+    var i, item;
     var root = ee.getControl("layoutyitem4"); 
     
-    while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
+    for (i=0; i<g5.itemsHome.length; i++) ee.removeControl(g5.itemsHome[i]);
     g5.itemsHome = new Array();
+    var cy = 0;
     for (i=0; i< g5.datasetHome.rowCount; i++) {
-        g5.appendItem(
+        item = g5.appendItem(
             root,
             g5.userName, g5.nickName,
             g5.getMins(g5.datasetHome.getData(1,i)),
@@ -271,8 +270,11 @@ g5.refreshPage1 = function() {
             g5.datasetHome.getData(3,i),
             g5.datasetHome.getData(5,i),
             g5.datasetHome.getData(6,i),
-            g5.datasetHome.getData(7,i)
+            g5.datasetHome.getData(7,i),
+            cy
             );
+        g5.itemsHome.push(item);
+        cy += 2 + eb.getDivRect(item).h;    
     }    
 }
 
