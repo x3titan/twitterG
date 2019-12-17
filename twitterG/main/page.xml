@@ -2413,18 +2413,20 @@ var userName =db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
 
 sql = 
-    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime," + 
-    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1, " +
-    "      dbo.tContent.likeCount," + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount," + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END)" + 
-    "      AS forwardCount" +
-    " FROM dbo.tContent LEFT OUTER JOIN " +
-    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId" +
-    " WHERE (dbo.tContent.userId = " + userId + ")" +
-    " GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId," + 
+    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime, " + 
+    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1, " + 
+    "      dbo.tContent.likeCount, " +
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount, " + 
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) " + 
+    "      AS forwardCount " +
+    "FROM dbo.tContent INNER JOIN " +
+    "      dbo.follow ON dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
+    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " +
+    "WHERE (dbo.follow.userId = " + userId + ") " +
+    "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId, " + 
     "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount " +
-    " ORDER BY dbo.tContent.id DESC ";
+    "ORDER BY dbo.tContent.id DESC ";
+
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
