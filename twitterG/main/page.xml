@@ -260,12 +260,14 @@ g5.refreshPage1 = function() {
     g5.itemsHome = new Array();
     var cy = 0;
     for (i=0; i< g5.datasetHome.rowCount; i++) {
+        //id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo
         item = g5.appendItem(
             root,
-            g5.userName, g5.nickName,
+            g5.datasetHome.getData(8,i),
+            g5.datasetHome.getData(9,i),
             g5.getMins(g5.datasetHome.getData(1,i)),
             g5.datasetHome.getData(0,i),
-            g5.photo,
+            g5.datasetHome.getData(10,i),
             g5.datasetHome.getData(4,i),
             g5.datasetHome.getData(3,i),
             g5.datasetHome.getData(5,i),
@@ -2413,18 +2415,20 @@ var userName =db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
 
 sql = 
-    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime, " + 
-    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1, " + 
-    "      dbo.tContent.likeCount, " +
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount, " + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) " + 
-    "      AS forwardCount " +
-    "FROM dbo.tContent INNER JOIN " +
-    "      dbo.follow ON dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
-    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " +
-    "WHERE (dbo.follow.userId = " + userId + ") " +
-    "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId, " + 
-    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount " +
+    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
+    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " + 
+    "      dbo.tContent.likeCount,  " + 
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " + 
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) AS forwardCount,  " + 
+    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName " + 
+    "FROM dbo.tContent INNER JOIN " + 
+    "      dbo.follow ON dbo.tContent.userId = dbo.follow.followId INNER JOIN " + 
+    "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " + 
+    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " + 
+    "WHERE (dbo.follow.userId = " + userId + ") " + 
+    "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId,  " + 
+    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount,  " + 
+    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName " + 
     "ORDER BY dbo.tContent.id DESC ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -2434,7 +2438,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount", 0, 99999); 
+eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo", 0, 99999); 
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
     return;
