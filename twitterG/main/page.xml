@@ -71,7 +71,8 @@ g5.refreshUserInfo = function() {
     }
 }
 
-g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, startY, hd) {
+g5.appendItem = function(parent, startY, hd, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3,
+    reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto) {
     if (eb.isEmpty(userPhoto)) userPhoto = "";
     if (eb.isEmpty(photo1)) photo1 = "";
     var w = eb.getDivRect(parent).w;
@@ -106,7 +107,7 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     //v_titleText
     c = createPanel($g(hd+"panel12"), hd+"panel16", "", w*0.18595825426945, w*0.00405679513184584, w*0.800759013282732, w*0.0872210953346856);
     root.v_titleText = c;
-    addText(c, "<b>" + nickname + "</b>@" + username + " - " + times, "left", "middle", "Helvetica", 9, "000000", "normal");
+    addText(c, "<b>" + nickname + "</b>@" + username + " - " + times, "left", "middle", "黑体", 9, "000000", "normal");
     eb.setFontSizeAuto(c, 22);
     eb.setDock(c,"disabled","disabled");
     //v_text
@@ -134,53 +135,57 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
         eb.setDock(c,"fill","fill");
     }
     
-    if (1==2) {
-        c = createPanel($g("ee_panel12"), "ee_panel2", "", 98, 322, 415, 157);
-        eb.setDock(c,"ratio","ratio");
-        c.leftRatio=0.18595825426945;
-        c.widthRatio=0.787476280834915;
-        c.topRatio=0.653144016227181;
-        c.heightRatio=0.318458417849899;
-        c = createPanel($g("ee_panel2"), "ee_panel6", "", 0, 0, 415, 157);
-        eb.setDock(c,"fill","fill");
-        c = createPanel($g("ee_panel6"), "ee_panel8", "", 12, 7, 41, 41);
-        eb.setDock(c,"ratio","ratio");
-        c.leftRatio=0.0289156626506024;
-        c.widthRatio=0.0987951807228916;
-        c.topRatio=0.0445859872611465;
-        c.heightRatio=0.261146496815287;
-        c = createPanel($g("ee_panel8"), "ee_panel9", "", 1, 1, 39, 39);
+    if (reUserName != "") {
+        var p1ratio = 2.64;
+        c = createPanel($g(hd+"panel12"), hd+"panel2", "", w*0.18595825426945, cy, w*0.787476280834915, 100);
+        eb.setDock(c,"disabled","disabled");
+        var p1w = eb.getDivRect(c).w;
+        var p1h = p1w / p1ratio;
+        c = createPanel($g(hd+"panel2"), hd+"panel6", "", 0, 0, p1w, 100);
+        eb.setDock(c,"disabled","disabled");
+        c = createPanel($g(hd+"panel6"), hd+"panel8", "", p1w*0.0289156626506024, p1h*0.044585987261146, p1w*0.0987951807228916, p1w*0.0987951807228916);
+        eb.setDock(c,"disabled","disabled");
+        //rePhoto
+        c = createPanel($g(hd+"panel8"), hd+"panel9", "", 1, 1, 39, 39);
         eb.setOuter(c,1,1,1,1);
-        ee.setImage(c,"/twitterG/main/page1/CPY0000.jpg","trim","","")
+        if (rePhoto == "") {
+            ee.setImage(c,"/twitterG/main/user.png","trim","","")
+        } else {
+            ee.setImage(c,"url:" + g5.imgUrl + rePhoto,"trim","","")
+        }
         eb.setDock(c,"fill","fill");
-        c = createPanel($g("ee_panel8"), "ee_panel10", "", 0, 0, 41, 41);
-        ee.setImage(c,"/twitterG/main/page1/cirMask.png","trim","","")
+        c = createPanel($g(hd+"panel8"), hd+"panel10", "", 0, 0, 41, 41);
+        ee.setImage(c,"/twitterG/main/page1/cirMask.png","trim","","");
         eb.setDock(c,"fill","fill");
-        c = createPanel($g("ee_panel6"), "ee_panel11", "", 61, 9, 346, 36);
-        addText(c, "Annie@annie257 - 1小时", "left", "middle", "Helvetica", 9, "000000", "normal");
+        //reUserName,reNickName,reTime
+        c = createPanel($g(hd+"panel6"), hd+"panel11", "", p1w*0.146987951807229, p1h*0.0573248407643312, p1w*0.833734939759036, p1h*0.229299363057325);
+        addText(c, "<b>" + reNickName + "</b>@" + reUserName + " - " + reTimes, "left", "middle", "黑体", 9, "000000", "normal");
         eb.setFontSizeAuto(c, 24);
-        eb.setDock(c,"ratio","ratio");
-        c.leftRatio=0.146987951807229;
-        c.widthRatio=0.833734939759036;
-        c.topRatio=0.0573248407643312;
-        c.heightRatio=0.229299363057325;
-        c = createPanel($g("ee_panel6"), "ee_panel25", "", 16, 52, 385, 27);
-        addText(c, "You know how I always say you can get free stuff? Well now is the time to follow me if your're not already !! Jolly Hohn is here and he's ready to give away some serious prizes for 12Daysof Magenta!! So be sure to follow me and getting ready to win some amazing gear!", "left", "top", "黑体", 9, "000000", "normal");
+        eb.setDock(c,"disabled","disabled");
+        //reContent
+        c = createPanel($g(hd+"panel6"), hd+"panel25", "", p1w*0.0385542168674699, p1h*0.331210191082803, p1w*0.927710843373494, 10);
+        addText(c, reContent, "left", "top", "黑体", 9, "000000", "normal");
         eb.setFontSizeAuto(c, 25);
-        eb.setDock(c,"ratio","ratio");
-        c.leftRatio=0.0385542168674699;
-        c.widthRatio=0.927710843373494;
-        c.topRatio=0.331210191082803;
-        c.heightRatio=0.171974522292994;
-        c = createPanel($g("ee_panel6"), "ee_panel26", "", 0, 88, 415, 68);
-        ee.setImage(c,"/twitterG/main/page1/CPY0002.jpg","trim","","")
-        eb.setDock(c,"fill","disabled");
-        c = createPanel($g("ee_panel2"), "ee_panel7", "", 0, 0, 415, 157);
+        eb.setDock(c,"disabled","disabled");
+        rect = eb.getDivRect(c.label);
+        ee.setRect(c, null, null, null, rect.h);
+        var p1y = rect.y + rect.h + p1h * 0.05;
+        //rePhoto1
+        if (rePhoto1 != "") {
+            c = createPanel($g(hd+"panel6"), hd+"panel26", "", 0, p1w, p1y, parseInt(p1w*0.7));
+            ee.setImage(c,"url:" + g5.imgUrl + rePhoto1,"trim","","")
+            eb.setDock(c,"disabled","disabled");
+            p1y += eb.getDivRect(c).h;
+        }
+        c = createPanel($g(hd+"panel2"), hd+"panel7", "", 0, 0, p1w, p1y);
         addSkin(c, "/twitterG/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
-        eb.setDock(c,"fill","fill");
+        eb.setDock(c,"disabled","disabled");
+        c = $g(hd+"panel2");
+        ee.setRect(c, null, null, null, p1y);
+        c = $g(hd+"panel6");
+        ee.setRect(c, null, null, null, p1y);
+        cy += p1y + w*0.03;
     }    
-    
-    
     
     //4 button
     c = createPanel($g(hd+"panel12"), hd+"panel21", "", w*0.18595825426945, cy, w*0.0645161290322581, w*0.062);
@@ -318,6 +323,7 @@ g5.refreshPage1 = function() {
         //id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo
         item = g5.appendItem(
             root,
+            cy, "page1_" + i + "_",
             g5.datasetHome.getData(8,i),
             g5.datasetHome.getData(9,i),
             g5.getMins(g5.datasetHome.getData(1,i)),
@@ -327,8 +333,7 @@ g5.refreshPage1 = function() {
             g5.datasetHome.getData(3,i),
             g5.datasetHome.getData(5,i),
             g5.datasetHome.getData(6,i),
-            g5.datasetHome.getData(7,i),
-            cy, "page1_" + i + "_"
+            g5.datasetHome.getData(7,i)
             );
         g5.itemsHome.push(item);
         cy += 2 + eb.getDivRect(item).h;    
@@ -2720,6 +2725,7 @@ var cy = cy * rootH;
 for (i=0; i< g5.datasetPageUser.rowCount; i++) {
     item = g5.appendItem(
         root,
+        cy, "puser" + i + "_",
         userName, nickName,
         g5.getMins(g5.datasetPageUser.getData(1,i)),
         g5.datasetPageUser.getData(0,i),
@@ -2728,8 +2734,7 @@ for (i=0; i< g5.datasetPageUser.rowCount; i++) {
         g5.datasetPageUser.getData(3,i),
         g5.datasetPageUser.getData(5,i),
         g5.datasetPageUser.getData(6,i),
-        g5.datasetPageUser.getData(7,i),
-        cy, "puser" + i + "_"
+        g5.datasetPageUser.getData(7,i)
         );
     g5.itemsPageUser.push(item);
     cy += 2 + eb.getDivRect(item).h;    
