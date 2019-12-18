@@ -1289,7 +1289,6 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>发推文</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -1929,6 +1928,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
@@ -2470,16 +2470,16 @@ var userName =db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
 
 sql = 
-    "SELECT SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
+    "SELECT TOP (30) PERCENT dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
     "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " + 
     "      dbo.tContent.likeCount,  " + 
     "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " + 
     "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) AS forwardCount,  " + 
     "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
-    "      DATEDIFF(minute, tContent_2.regDatetime, GETDATE()) AS reMins, tContent_2.[content] AS reContent,  " + 
-    "      tContent_2.photo1 AS rePhoto1, tContent_2.userId AS reUserId,  " + 
-    "      userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " + 
-    "      userInfo_1.photo AS rePhoto " + 
+    "      DATEDIFF(minute, tContent_2.regDatetime, GETDATE()) AS reMins,  " + 
+    "      tContent_2.[content] AS reContent, tContent_2.photo1 AS rePhoto1,  " + 
+    "      tContent_2.userId AS reUserId, userInfo_1.userName AS reUserName,  " + 
+    "      userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto " + 
     "FROM dbo.userInfo AS userInfo_1 INNER JOIN " + 
     "      dbo.tContent AS tContent_2 ON userInfo_1.id = tContent_2.userId RIGHT OUTER JOIN " + 
     "      dbo.tContent INNER JOIN " + 
@@ -2493,7 +2493,8 @@ sql =
     "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
     "      tContent_2.regDatetime, tContent_2.[content], tContent_2.photo1, tContent_2.userId,  " + 
     "      userInfo_1.userName, userInfo_1.nickName, userInfo_1.photo " + 
-    "ORDER BY dbo.tContent.id DESC ";
+    "ORDER BY dbo.tContent.id DESC     "; 
+    
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
