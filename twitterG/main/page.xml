@@ -134,6 +134,54 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
         eb.setDock(c,"fill","fill");
     }
     
+    if (1==2) {
+        c = createPanel($g("ee_panel12"), "ee_panel2", "", 98, 322, 415, 157);
+        eb.setDock(c,"ratio","ratio");
+        c.leftRatio=0.18595825426945;
+        c.widthRatio=0.787476280834915;
+        c.topRatio=0.653144016227181;
+        c.heightRatio=0.318458417849899;
+        c = createPanel($g("ee_panel2"), "ee_panel6", "", 0, 0, 415, 157);
+        eb.setDock(c,"fill","fill");
+        c = createPanel($g("ee_panel6"), "ee_panel8", "", 12, 7, 41, 41);
+        eb.setDock(c,"ratio","ratio");
+        c.leftRatio=0.0289156626506024;
+        c.widthRatio=0.0987951807228916;
+        c.topRatio=0.0445859872611465;
+        c.heightRatio=0.261146496815287;
+        c = createPanel($g("ee_panel8"), "ee_panel9", "", 1, 1, 39, 39);
+        eb.setOuter(c,1,1,1,1);
+        ee.setImage(c,"/twitterG/main/page1/CPY0000.jpg","trim","","")
+        eb.setDock(c,"fill","fill");
+        c = createPanel($g("ee_panel8"), "ee_panel10", "", 0, 0, 41, 41);
+        ee.setImage(c,"/twitterG/main/page1/cirMask.png","trim","","")
+        eb.setDock(c,"fill","fill");
+        c = createPanel($g("ee_panel6"), "ee_panel11", "", 61, 9, 346, 36);
+        addText(c, "Annie@annie257 - 1小时", "left", "middle", "Helvetica", 9, "000000", "normal");
+        eb.setFontSizeAuto(c, 24);
+        eb.setDock(c,"ratio","ratio");
+        c.leftRatio=0.146987951807229;
+        c.widthRatio=0.833734939759036;
+        c.topRatio=0.0573248407643312;
+        c.heightRatio=0.229299363057325;
+        c = createPanel($g("ee_panel6"), "ee_panel25", "", 16, 52, 385, 27);
+        addText(c, "You know how I always say you can get free stuff? Well now is the time to follow me if your're not already !! Jolly Hohn is here and he's ready to give away some serious prizes for 12Daysof Magenta!! So be sure to follow me and getting ready to win some amazing gear!", "left", "top", "黑体", 9, "000000", "normal");
+        eb.setFontSizeAuto(c, 25);
+        eb.setDock(c,"ratio","ratio");
+        c.leftRatio=0.0385542168674699;
+        c.widthRatio=0.927710843373494;
+        c.topRatio=0.331210191082803;
+        c.heightRatio=0.171974522292994;
+        c = createPanel($g("ee_panel6"), "ee_panel26", "", 0, 88, 415, 68);
+        ee.setImage(c,"/twitterG/main/page1/CPY0002.jpg","trim","","")
+        eb.setDock(c,"fill","disabled");
+        c = createPanel($g("ee_panel2"), "ee_panel7", "", 0, 0, 415, 157);
+        addSkin(c, "/twitterG/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
+        eb.setDock(c,"fill","fill");
+    }    
+    
+    
+    
     //4 button
     c = createPanel($g(hd+"panel12"), hd+"panel21", "", w*0.18595825426945, cy, w*0.0645161290322581, w*0.062);
     root.v_btn1 = c;
@@ -152,6 +200,15 @@ g5.appendItem = function(parent, username, nickname, times, contentId, userPhoto
     root.v_btn2 = c;
     ee.setImage(c,"/twitterG/main/home/e2.png","fill","","")
     eb.setDock(c,"disabled","disabled");
+    ee.setOnClick(c,function(sender,event) {
+        g5.newPhoto1 = "";
+        ee.setEditText(ee.getControl("edit1"), "");
+        ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
+        ee.setText(ee.getControl("panel45"), "转发");
+        g5.uplinkType = "F";
+        g5.uplinkId = sender.parentNode.v_contentId;
+        ee.showAni(ee.getControl("panel42"), 0);
+    });
     c = createPanel($g(hd+"panel12"), hd+"panel23", "", w*0.616698292220114, cy, w*0.0645161290322581, w*0.062);
     root.v_btn3 = c;
     ee.setImage(c,"/twitterG/main/home/e3.png","fill","","")
@@ -2413,20 +2470,29 @@ var userName =db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
 
 sql = 
-    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
+    "SELECT SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
     "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " + 
     "      dbo.tContent.likeCount,  " + 
     "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " + 
     "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) AS forwardCount,  " + 
-    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName " + 
-    "FROM dbo.tContent INNER JOIN " + 
+    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
+    "      DATEDIFF(minute, tContent_2.regDatetime, GETDATE()) AS reMins, tContent_2.[content] AS reContent,  " + 
+    "      tContent_2.photo1 AS rePhoto1, tContent_2.userId AS reUserId,  " + 
+    "      userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " + 
+    "      userInfo_1.photo AS rePhoto " + 
+    "FROM dbo.userInfo AS userInfo_1 INNER JOIN " + 
+    "      dbo.tContent AS tContent_2 ON userInfo_1.id = tContent_2.userId RIGHT OUTER JOIN " + 
+    "      dbo.tContent INNER JOIN " + 
     "      dbo.follow ON dbo.tContent.userId = dbo.follow.followId INNER JOIN " + 
-    "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " + 
+    "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id ON  " + 
+    "      tContent_2.id = dbo.tContent.uplinkId LEFT OUTER JOIN " + 
     "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " + 
     "WHERE (dbo.follow.userId = " + userId + ") " + 
     "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId,  " + 
     "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount,  " + 
-    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName " + 
+    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
+    "      tContent_2.regDatetime, tContent_2.[content], tContent_2.photo1, tContent_2.userId,  " + 
+    "      userInfo_1.userName, userInfo_1.nickName, userInfo_1.photo " + 
     "ORDER BY dbo.tContent.id DESC ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -2436,7 +2502,8 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo", 0, 99999); 
+eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
+    ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
     return;
