@@ -2636,26 +2636,38 @@ if (db.read(sqlResult)) {
 
 //query twitter
 sql = 
-    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime," + 
-    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1, " +
-    "      dbo.tContent.likeCount," + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount," + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END)" + 
-    "      AS forwardCount" +
-    " FROM dbo.tContent LEFT OUTER JOIN " +
-    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId" +
-    " WHERE (dbo.tContent.userId = " + userId + ")" +
-    " GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId," + 
-    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount " +
-    " ORDER BY dbo.tContent.id DESC ";
+    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " +
+    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " +
+    "      dbo.tContent.likeCount,  " +
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " +
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) AS forwardCount,  " +
+    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
+    "      DATEDIFF(minute, tContent_2.regDatetime, GETDATE()) AS reMins,  " +
+    "      tContent_2.[content] AS reContent, tContent_2.photo1 AS rePhoto1,  " +
+    "      tContent_2.userId AS reUserId, userInfo_1.userName AS reUserName,  " +
+    "      userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto " +
+    "FROM dbo.userInfo AS userInfo_1 INNER JOIN " +
+    "      dbo.tContent AS tContent_2 ON userInfo_1.id = tContent_2.userId RIGHT OUTER JOIN " +
+    "      dbo.tContent INNER JOIN " +
+    "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id ON  " +
+    "      tContent_2.id = dbo.tContent.uplinkId LEFT OUTER JOIN " +
+    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " +
+    "WHERE (dbo.tContent.userId = " + userId + ") " +
+    "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId,  " +
+    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount,  " +
+    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
+    "      tContent_2.regDatetime, tContent_2.[content], tContent_2.photo1, tContent_2.userId,  " +
+    "      userInfo_1.userName, userInfo_1.nickName, userInfo_1.photo " +
+    "ORDER BY dbo.tContent.id DESC     ";
+    
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
     es.logWarning("数据库执行错误, sql=" + sql);
     return;
 }
-eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount", 0, 99999); 
-
+eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
+    ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
 
 
 ]]></script2>
@@ -2734,6 +2746,7 @@ var root = ee.getControl("panel16");
 //g5.itemsPageUser  
 var cy = cy * rootH;
 for (i=0; i< g5.datasetPageUser.rowCount; i++) {
+    /*
     item = g5.appendItem(
         root,
         cy, "puser" + i + "_",
@@ -2747,6 +2760,29 @@ for (i=0; i< g5.datasetPageUser.rowCount; i++) {
         g5.datasetPageUser.getData(6,i),
         g5.datasetPageUser.getData(7,i)
         );
+    */
+    item = g5.appendItem(
+        root,
+        cy, "puser" + i + "_",
+        g5.datasetPageUser.getData(8,i),
+        g5.datasetPageUser.getData(9,i),
+        g5.getMins(g5.datasetPageUser.getData(1,i)),
+        g5.datasetPageUser.getData(0,i),
+        g5.datasetPageUser.getData(10,i),
+        g5.datasetPageUser.getData(4,i),
+        g5.datasetPageUser.getData(3,i),
+        g5.datasetPageUser.getData(5,i),
+        g5.datasetPageUser.getData(6,i),
+        g5.datasetPageUser.getData(7,i),
+        g5.getMins(g5.datasetPageUser.getData(11,i)),
+        g5.datasetPageUser.getData(12,i),
+        g5.datasetPageUser.getData(13,i),
+        g5.datasetPageUser.getData(14,i),
+        g5.datasetPageUser.getData(15,i),
+        g5.datasetPageUser.getData(16,i),
+        g5.datasetPageUser.getData(17,i)
+        );        
+        
     g5.itemsPageUser.push(item);
     cy += 2 + eb.getDivRect(item).h;    
 }
