@@ -184,13 +184,22 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         //rePhoto1
         if (rePhoto1 != "") {
             c = createPanel($g(hd+"panel6"), hd+"panel26", "", 0, p1y, p1w, parseInt(p1w*0.7));
-            ee.setImage(c,"url:" + g5.imgUrl + rePhoto1,"trim","","")
+            if (rePhoto1.substr(0,4) == "?YTB") {
+              ee.setText(c,
+                    "<iframe width='" + parseInt(p1w) + "' height='" + parseInt(p1w*0.7) + "' src='https://www.youtube.com/embed/" +
+                    photo1.substr(4, rePhoto1.length) + 
+                    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+                );
+            } else {
+                ee.setImage(c,"url:" + g5.imgUrl + rePhoto1,"trim","","");
+            }
             eb.setDock(c,"disabled","disabled");
             p1y += eb.getDivRect(c).h;
         }
         c = createPanel($g(hd+"panel2"), hd+"panel7", "", 0, 0, p1w, p1y);
         addSkin(c, "/twitterG/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
         eb.setDock(c,"disabled","disabled");
+        c.style.pointerEvents = "none";
         c = $g(hd+"panel2");
         ee.setRect(c, null, null, null, p1y);
         c = $g(hd+"panel6");
