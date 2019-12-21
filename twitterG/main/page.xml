@@ -128,11 +128,20 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         cy += w*0.474645030425964 + w*0.03;
         eb.setDock(c,"disabled","disabled");
         c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
-        ee.setImage(c,"url:" + g5.imgUrl + photo1,"trim","","")
+        if (photo1.substr(0,4) == "?YTB") {
+            ee.setText(c,
+                "<iframe width='" + parseInt(w*0.787476280834915) + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
+                photo1.substr(4, photo1.lengthn) + 
+                "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+            );
+        } else {
+            ee.setImage(c,"url:" + g5.imgUrl + photo1,"trim","","");
+        }
         eb.setDock(c,"fill","fill");
         c = createPanel($g(hd+"panel18"), hd+"panel20", "", 0, 0, 415, 234);
         addSkin(c, "/twitterG/skins/bodyMask.png","9x",57,56,19,20,20,18,19,20,20,18);
         eb.setDock(c,"fill","fill");
+        c.style.pointerEvents = "none";
     }
     
     if (reUserName != "") {
@@ -2058,6 +2067,7 @@ follow();
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00125470514429109</topRatio>
       <width>527</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2086,7 +2096,8 @@ follow();
       <heightRatio>0.0602258469259724</heightRatio>
       <left>18</left>
       <leftRatio>0.0341685649202733</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel42"), 1);</onClick>
+      <onClick>ee.setText(ee.getControl("panel52"), " ");
+ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <sizeRatio>1</sizeRatio>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
@@ -2209,6 +2220,7 @@ follow();
       <heightRatio>1</heightRatio>
       <left>0</left>
       <onUploadCompleteC>g5.newPhoto1 = eio.readString16();
+ee.setText(ee.getControl("panel52"), " ");
 ee.setImage(ee.getControl("panel52"), "url:" + g5.imgUrl + g5.newPhoto1, "trim", "", "");
 
 
@@ -2298,10 +2310,13 @@ if (url.substr(0, "https://www.youtube.com/watch?v=".length).toLowerCase() != "h
     return;
 }
 //<iframe width='260' height='115' src='https://www.youtube.com/embed/P0NHPC9m3Wc' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
 var rect = eb.getDivRect(ee.getControl("panel52"));
+g5.newPhoto1 = url.substr("https://www.youtube.com/watch?v=".length, url.length);
 url = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
-    url.substr("https://www.youtube.com/watch?v=".length, url.length) + 
+    g5.newPhoto1 + 
     "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+g5.newPhoto1 = "?YTB" + g5.newPhoto1;
 ee.setText(ee.getControl("panel52"), url);   
 ee.getControl("panel53").style.pointerEvents = "none";
     
@@ -3060,6 +3075,7 @@ if (!db.executeNoneQuery("DB", sql)) {
     alert(eio.readString8());
     return;
 }
+ee.setText(ee.getControl("panel52"), " ");
 ee.showAni(ee.getControl("panel42"), 1);
 updateHomepage();</script3>
     </taskSetItem>
