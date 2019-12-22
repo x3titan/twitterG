@@ -1,5 +1,5 @@
 <page>
-  <controls count="144">
+  <controls count="150">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -11,6 +11,7 @@
 g5.imgUrl = "/incoming/";
 g5.itemsHome = new Array(); //home
 g5.itemsPageUser = new Array();
+g5.newUser = false;
 
 g5.changePage = function(pageIndex) {
     if ((pageIndex<0) || (pageIndex>=4)) return false;
@@ -29,6 +30,7 @@ g5.changePage = function(pageIndex) {
     if (pageIndex == 0) {
         ee.setImage(ee.getControl("panel1"), "/twitterG/main/d1s.png", "fill", "", "");
         ee.showAni(ee.getControl("layouty2"), 0);
+        setTimeout(function() { updateHomePage(); }, 1000);
     } else if (pageIndex == 1) {
         ee.setImage(ee.getControl("panel2"), "/twitterG/main/d2s.png", "fill", "", "");
         ee.showAni(ee.getControl("layouty3"), 0);
@@ -335,6 +337,13 @@ g5.refreshPage1 = function() {
     if (eb.isEmpty(g5.datasetHome)) return;
     var i, item;
     var root = ee.getControl("layoutyitem4"); 
+    //new user ?
+    if (g5.datasetHome.rowCount <= 0) {
+        g5.newUser = true;
+        ee.showAni(ee.getControl("layouty4"), 0);
+        searchUser();
+        return;    
+    }
     
     for (i=0; i<g5.itemsHome.length; i++) ee.removeControl(g5.itemsHome[i]);
     g5.itemsHome = new Array();
@@ -373,6 +382,9 @@ g5.refreshPage2 = function() {
     if (eb.isEmpty(g5.datasetPage2)) return;
     var i;
     var root = ee.getControl("layoutyitem6"); 
+    if (g5.newUser) {
+        root = ee.getControl("layoutyitem8");
+    }
     
     while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
     g5.itemsPage2 = new Array();
@@ -423,7 +435,7 @@ ee.getControl("divRoot").dockY = "disabled";
 eb.setAlpha(ee.getControl("panel26"), 100);
 ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
     </control>
     <control type="LayoutY" pathname="/divRoot/layouty1">
       <dockX>fill</dockX>
@@ -434,7 +446,7 @@ ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
@@ -445,7 +457,7 @@ ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <left>0</left>
       <sizeRatio>1.40037950664137</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutY" pathname="/divRoot/layouty1/layoutyitem1/layouty2">
@@ -461,7 +473,7 @@ ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <left>0</left>
       <sizeRatio>1.40037950664137</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem3">
@@ -473,7 +485,7 @@ ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <left>0</left>
       <sizeRatio>0.127134724857685</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem3/panel6">
@@ -487,15 +499,15 @@ ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <sizeRatio>0.00189753320683112</sizeRatio>
       <top>66</top>
       <topRatio>0.985074626865672</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem3/panel7">
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <height>53</height>
+      <height>48</height>
       <heightRatio>0.786885245901639</heightRatio>
-      <left>18</left>
+      <left>13</left>
       <leftRatio>0.0296127562642369</leftRatio>
       <lockRatio>true</lockRatio>
       <onClick>ee.setVisible(ee.getControl("panel26"), true);
@@ -503,16 +515,16 @@ eb.setAlpha(ee.getControl("panel26"), 100);
 ee.showAni(ee.getControl("panel27"), 0);
 </onClick>
       <sizeRatio>1.02127659574468</sizeRatio>
-      <top>5</top>
+      <top>7</top>
       <topRatio>0.0655737704918033</topRatio>
-      <width>52</width>
+      <width>47</width>
       <widthRatio>0.107061503416856</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem3/panel7/panel8">
       <backgroundImg>user.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>51</height>
+      <height>46</height>
       <heightRatio>0.962264150943396</heightRatio>
       <left>1</left>
       <leftRatio>0.0192307692307692</leftRatio>
@@ -523,19 +535,19 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>1.02</sizeRatio>
       <top>1</top>
       <topRatio>0.0188679245283019</topRatio>
-      <width>50</width>
+      <width>45</width>
       <widthRatio>0.961538461538462</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem3/panel7/panel9">
       <backgroundImg>cirMask.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>53</height>
+      <height>48</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <sizeRatio>1.01923076923077</sizeRatio>
       <top>0</top>
-      <width>52</width>
+      <width>47</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem3/panel10">
@@ -546,12 +558,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>67</height>
       <heightRatio>1</heightRatio>
-      <left>95</left>
+      <left>79</left>
       <leftRatio>0.17995444191344</leftRatio>
       <sizeRatio>0.628865979381443</sizeRatio>
       <text>主页</text>
       <top>0</top>
-      <width>116</width>
+      <width>97</width>
       <widthRatio>0.220956719817768</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem3/panel11">
@@ -560,12 +572,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockY>ratio</dockY>
       <height>54</height>
       <heightRatio>0.80327868852459</heightRatio>
-      <left>456</left>
+      <left>380</left>
       <leftRatio>0.865603644646925</leftRatio>
       <sizeRatio>0.96078431372549</sizeRatio>
       <top>7</top>
       <topRatio>0.0983606557377049</topRatio>
-      <width>61</width>
+      <width>51</width>
       <widthRatio>0.116173120728929</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1/layouty2/layoutyitem4">
@@ -578,7 +590,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>1.27324478178368</sizeRatio>
       <top>67</top>
       <topRatio>0.0907859078590786</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel25">
@@ -586,9 +598,9 @@ ee.showAni(ee.getControl("panel27"), 0);
       <backgroundImgMode>fill</backgroundImgMode>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <height>109</height>
+      <height>91</height>
       <heightRatio>0.14769647696477</heightRatio>
-      <left>407</left>
+      <left>339</left>
       <leftRatio>0.772296015180266</leftRatio>
       <lockRatio>true</lockRatio>
       <onClick>g5.newPhoto1 = "";
@@ -600,9 +612,9 @@ g5.uplinkId = 0;
 ee.showAni(ee.getControl("panel42"), 0);
 </onClick>
       <sizeRatio>0.923728813559322</sizeRatio>
-      <top>627</top>
+      <top>636</top>
       <topRatio>0.849593495934959</topRatio>
-      <width>118</width>
+      <width>98</width>
       <widthRatio>0.223908918406072</widthRatio>
     </control>
     <control type="LayoutY" pathname="/divRoot/layouty1/layoutyitem1/layouty3">
@@ -618,7 +630,7 @@ ee.showAni(ee.getControl("panel42"), 0);
       <left>0</left>
       <sizeRatio>1.40037950664137</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem5">
@@ -630,7 +642,7 @@ ee.showAni(ee.getControl("panel42"), 0);
       <left>0</left>
       <sizeRatio>0.127134724857685</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem5/panel12">
@@ -644,15 +656,15 @@ ee.showAni(ee.getControl("panel42"), 0);
       <sizeRatio>0.00189753320683112</sizeRatio>
       <top>66</top>
       <topRatio>0.985074626865672</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem5/panel13">
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <height>53</height>
+      <height>48</height>
       <heightRatio>0.786885245901639</heightRatio>
-      <left>18</left>
+      <left>13</left>
       <leftRatio>0.0296127562642369</leftRatio>
       <lockRatio>true</lockRatio>
       <onClick>ee.setVisible(ee.getControl("panel26"), true);
@@ -660,16 +672,16 @@ eb.setAlpha(ee.getControl("panel26"), 100);
 ee.showAni(ee.getControl("panel27"), 0);
 </onClick>
       <sizeRatio>1.02127659574468</sizeRatio>
-      <top>5</top>
+      <top>7</top>
       <topRatio>0.0655737704918033</topRatio>
-      <width>52</width>
+      <width>47</width>
       <widthRatio>0.107061503416856</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem5/panel13/panel14">
       <backgroundImg>user.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>51</height>
+      <height>46</height>
       <heightRatio>0.962264150943396</heightRatio>
       <left>1</left>
       <leftRatio>0.0192307692307692</leftRatio>
@@ -680,19 +692,19 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>1.02</sizeRatio>
       <top>1</top>
       <topRatio>0.0188679245283019</topRatio>
-      <width>50</width>
+      <width>45</width>
       <widthRatio>0.961538461538462</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem5/panel13/panel15">
       <backgroundImg>cirMask.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>53</height>
+      <height>48</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <sizeRatio>1.01923076923077</sizeRatio>
       <top>0</top>
-      <width>52</width>
+      <width>47</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem5/panel17">
@@ -703,13 +715,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockY>ratio</dockY>
       <height>55</height>
       <heightRatio>0.819672131147541</heightRatio>
-      <left>456</left>
+      <left>380</left>
       <leftRatio>0.865603644646925</leftRatio>
       <onClick>searchUser();</onClick>
       <sizeRatio>0.925925925925926</sizeRatio>
       <top>5</top>
       <topRatio>0.0819672131147541</topRatio>
-      <width>65</width>
+      <width>54</width>
       <widthRatio>0.123006833712984</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem5/edit5">
@@ -724,13 +736,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <heightRatio>0.552238805970149</heightRatio>
       <inputFont>黑体</inputFont>
       <inputFontSizeAuto>24</inputFontSizeAuto>
-      <left>94</left>
+      <left>78</left>
       <leftRatio>0.178368121442125</leftRatio>
       <sizeRatio>0.102777777777778</sizeRatio>
       <text>搜索用户</text>
       <top>15</top>
       <topRatio>0.223880597014925</topRatio>
-      <width>360</width>
+      <width>300</width>
       <widthRatio>0.683111954459203</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem6">
@@ -743,7 +755,98 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>1.27324478178368</sizeRatio>
       <top>67</top>
       <topRatio>0.0907859078590786</topRatio>
-      <width>527</width>
+      <width>439</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1/layoutyitem1/layouty4">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+      <height>738</height>
+      <heightRatio>1</heightRatio>
+      <layerName>Page5</layerName>
+      <left>0</left>
+      <sizeRatio>1.68109339407745</sizeRatio>
+      <top>0</top>
+      <width>439</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1/layouty4/layoutyitem7">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>25</heavy>
+      <height>148</height>
+      <heightRatio>0.200542005420054</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.337129840546697</sizeRatio>
+      <top>0</top>
+      <width>439</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty4/layoutyitem7/panel106">
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0149253731343284</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00189753320683112</sizeRatio>
+      <top>147</top>
+      <topRatio>0.985074626865672</topRatio>
+      <width>439</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty4/layoutyitem7/panel107">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>24</fontSize>
+      <fontSizeAuto>24</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>128</height>
+      <heightRatio>0.864864864864865</heightRatio>
+      <left>59</left>
+      <leftRatio>0.134396355353075</leftRatio>
+      <sizeRatio>0.351648351648352</sizeRatio>
+      <text><![CDATA[欢迎您首次使用GET，在这里您可以了解在世界上发生的最真实的故事。
+我们为您推荐了众多网友关注的推文账号，您可以在看了他们的账号信息和推文后选择<b>关注</b>。
+感谢您对GET的关心和支持！]]></text>
+      <top>12</top>
+      <topRatio>0.0810810810810811</topRatio>
+      <width>364</width>
+      <widthRatio>0.829157175398633</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty4/layoutyitem7/panel108">
+      <backgroundImg>close.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>48</height>
+      <heightRatio>0.324324324324324</heightRatio>
+      <left>7</left>
+      <leftRatio>0.0159453302961276</leftRatio>
+      <onClick>ee.showAni(ee.getControl("layouty4"), 1);</onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>5</top>
+      <topRatio>0.0337837837837838</topRatio>
+      <width>48</width>
+      <widthRatio>0.109339407744875</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1/layouty4/layoutyitem8">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>590</height>
+      <heightRatio>0.909214092140921</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.27324478178368</sizeRatio>
+      <top>148</top>
+      <topRatio>0.0907859078590786</topRatio>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
@@ -756,7 +859,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>0.111954459203036</sizeRatio>
       <top>738</top>
       <topRatio>0.925972396486826</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel1">
@@ -767,12 +870,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockY>fill</dockY>
       <height>59</height>
       <heightRatio>1</heightRatio>
-      <left>32</left>
+      <left>27</left>
       <leftRatio>0.061503416856492</leftRatio>
       <onClick>g5.changePage(0);</onClick>
       <sizeRatio>1.07272727272727</sizeRatio>
       <top>0</top>
-      <width>66</width>
+      <width>55</width>
       <widthRatio>0.125284738041002</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel2">
@@ -783,12 +886,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockY>fill</dockY>
       <height>59</height>
       <heightRatio>1</heightRatio>
-      <left>158</left>
+      <left>132</left>
       <leftRatio>0.300683371298405</leftRatio>
       <onClick>g5.changePage(1);</onClick>
       <sizeRatio>1.07272727272727</sizeRatio>
       <top>0</top>
-      <width>66</width>
+      <width>55</width>
       <widthRatio>0.125284738041002</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel3">
@@ -799,12 +902,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockY>fill</dockY>
       <height>59</height>
       <heightRatio>1</heightRatio>
-      <left>283</left>
+      <left>236</left>
       <leftRatio>0.537585421412301</leftRatio>
       <onClick>g5.changePage(2);</onClick>
       <sizeRatio>1.07272727272727</sizeRatio>
       <top>0</top>
-      <width>66</width>
+      <width>55</width>
       <widthRatio>0.125284738041002</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel4">
@@ -815,12 +918,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockY>fill</dockY>
       <height>59</height>
       <heightRatio>1</heightRatio>
-      <left>409</left>
+      <left>341</left>
       <leftRatio>0.776765375854214</leftRatio>
       <onClick>g5.changePage(3);</onClick>
       <sizeRatio>1.07272727272727</sizeRatio>
       <top>0</top>
-      <width>66</width>
+      <width>55</width>
       <widthRatio>0.125284738041002</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel5">
@@ -833,7 +936,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>0.00189753320683112</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26">
@@ -851,7 +954,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
       <topRatio>0.00125470514429109</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27">
@@ -868,7 +971,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <leftRatio>-0.00455580865603645</leftRatio>
       <sizeRatio>2.19559228650138</sizeRatio>
       <top>0</top>
-      <width>436</width>
+      <width>363</width>
       <widthRatio>0.826879271070615</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel28">
@@ -877,7 +980,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockY>ratio</dockY>
       <height>71</height>
       <heightRatio>0.0890840652446675</heightRatio>
-      <left>30</left>
+      <left>19</left>
       <leftRatio>0.0523415977961433</leftRatio>
       <lockRatio>true</lockRatio>
       <sizeRatio>0.986111111111111</sizeRatio>
@@ -924,14 +1027,14 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>72</height>
       <heightRatio>0.0903387703889586</heightRatio>
-      <left>23</left>
+      <left>19</left>
       <leftRatio>0.0527522935779817</leftRatio>
       <sizeRatio>0.211764705882353</sizeRatio>
       <text>Annie
 @annie257</text>
       <top>101</top>
       <topRatio>0.1267252195734</topRatio>
-      <width>340</width>
+      <width>283</width>
       <widthRatio>0.779816513761468</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel32">
@@ -942,12 +1045,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockY>ratio</dockY>
       <height>44</height>
       <heightRatio>0.055207026348808</heightRatio>
-      <left>375</left>
+      <left>312</left>
       <leftRatio>0.859504132231405</leftRatio>
       <sizeRatio>1.04761904761905</sizeRatio>
       <top>99</top>
       <topRatio>0.124215809284818</topRatio>
-      <width>50</width>
+      <width>42</width>
       <widthRatio>0.115702479338843</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel33">
@@ -960,13 +1063,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0451693851944793</heightRatio>
-      <left>25</left>
+      <left>21</left>
       <leftRatio>0.0578512396694215</leftRatio>
       <sizeRatio>0.109422492401216</sizeRatio>
       <text>你关注了4位推友 3位推友关注了你</text>
       <top>173</top>
       <topRatio>0.217063989962359</topRatio>
-      <width>395</width>
+      <width>329</width>
       <widthRatio>0.90633608815427</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel34">
@@ -980,7 +1083,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>0.00275482093663912</sizeRatio>
       <top>228</top>
       <topRatio>0.286072772898369</topRatio>
-      <width>436</width>
+      <width>363</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel26/panel27/layoutx1">
@@ -990,14 +1093,14 @@ ee.showAni(ee.getControl("panel27"), 0);
       <fieldCount>2</fieldCount>
       <height>43</height>
       <heightRatio>0.0539523212045169</heightRatio>
-      <left>28</left>
+      <left>23</left>
       <leftRatio>0.0633608815426997</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 0);
 </onClick>
       <sizeRatio>0.137820512820513</sizeRatio>
       <top>265</top>
       <topRatio>0.332496863237139</topRatio>
-      <width>375</width>
+      <width>312</width>
       <widthRatio>0.859504132231405</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx1/layoutxitem1">
@@ -1010,7 +1113,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>0.573333333333333</sizeRatio>
       <top>0</top>
-      <width>75</width>
+      <width>62</width>
       <widthRatio>0.2</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx1/layoutxitem2">
@@ -1020,12 +1123,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>1</heightRatio>
-      <left>75</left>
+      <left>62</left>
       <leftRatio>0.2</leftRatio>
       <sizeRatio>0.143333333333333</sizeRatio>
       <text>个人资料</text>
       <top>0</top>
-      <width>300</width>
+      <width>250</width>
       <widthRatio>0.8</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel26/panel27/layoutx2">
@@ -1035,12 +1138,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <fieldCount>2</fieldCount>
       <height>43</height>
       <heightRatio>0.0539523212045169</heightRatio>
-      <left>28</left>
+      <left>23</left>
       <leftRatio>0.0633608815426997</leftRatio>
       <sizeRatio>0.137820512820513</sizeRatio>
       <top>322</top>
       <topRatio>0.404015056461731</topRatio>
-      <width>375</width>
+      <width>312</width>
       <widthRatio>0.859504132231405</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx2/layoutxitem3">
@@ -1053,7 +1156,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>0.573333333333333</sizeRatio>
       <top>0</top>
-      <width>75</width>
+      <width>62</width>
       <widthRatio>0.2</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx2/layoutxitem4">
@@ -1063,13 +1166,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>1</heightRatio>
-      <left>75</left>
+      <left>62</left>
       <leftRatio>0.2</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel82"), 0);</onClick>
       <sizeRatio>0.143333333333333</sizeRatio>
       <text>话题</text>
       <top>0</top>
-      <width>300</width>
+      <width>250</width>
       <widthRatio>0.8</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel26/panel27/layoutx3">
@@ -1079,12 +1182,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <fieldCount>2</fieldCount>
       <height>43</height>
       <heightRatio>0.0539523212045169</heightRatio>
-      <left>28</left>
+      <left>23</left>
       <leftRatio>0.0633608815426997</leftRatio>
       <sizeRatio>0.137820512820513</sizeRatio>
       <top>378</top>
       <topRatio>0.474278544542033</topRatio>
-      <width>375</width>
+      <width>312</width>
       <widthRatio>0.859504132231405</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx3/layoutxitem5">
@@ -1097,7 +1200,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>0.573333333333333</sizeRatio>
       <top>0</top>
-      <width>75</width>
+      <width>62</width>
       <widthRatio>0.2</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx3/layoutxitem6">
@@ -1107,13 +1210,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>1</heightRatio>
-      <left>75</left>
+      <left>62</left>
       <leftRatio>0.2</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel70"), 0);</onClick>
       <sizeRatio>0.143333333333333</sizeRatio>
       <text>列表</text>
       <top>0</top>
-      <width>300</width>
+      <width>250</width>
       <widthRatio>0.8</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel26/panel27/layoutx4">
@@ -1123,12 +1226,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <fieldCount>2</fieldCount>
       <height>43</height>
       <heightRatio>0.0539523212045169</heightRatio>
-      <left>28</left>
+      <left>23</left>
       <leftRatio>0.0633608815426997</leftRatio>
       <sizeRatio>0.137820512820513</sizeRatio>
       <top>435</top>
       <topRatio>0.545796737766625</topRatio>
-      <width>375</width>
+      <width>312</width>
       <widthRatio>0.859504132231405</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx4/layoutxitem7">
@@ -1141,7 +1244,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>0.573333333333333</sizeRatio>
       <top>0</top>
-      <width>75</width>
+      <width>62</width>
       <widthRatio>0.2</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx4/layoutxitem8">
@@ -1151,13 +1254,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>1</heightRatio>
-      <left>75</left>
+      <left>62</left>
       <leftRatio>0.2</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel91"), 0);</onClick>
       <sizeRatio>0.143333333333333</sizeRatio>
       <text>书签</text>
       <top>0</top>
-      <width>300</width>
+      <width>250</width>
       <widthRatio>0.8</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel26/panel27/layoutx5">
@@ -1167,12 +1270,12 @@ ee.showAni(ee.getControl("panel27"), 0);
       <fieldCount>2</fieldCount>
       <height>43</height>
       <heightRatio>0.0539523212045169</heightRatio>
-      <left>28</left>
+      <left>23</left>
       <leftRatio>0.0633608815426997</leftRatio>
       <sizeRatio>0.137820512820513</sizeRatio>
       <top>491</top>
       <topRatio>0.616060225846926</topRatio>
-      <width>375</width>
+      <width>312</width>
       <widthRatio>0.859504132231405</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx5/layoutxitem9">
@@ -1185,7 +1288,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>0.573333333333333</sizeRatio>
       <top>0</top>
-      <width>75</width>
+      <width>62</width>
       <widthRatio>0.2</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel26/panel27/layoutx5/layoutxitem10">
@@ -1195,13 +1298,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>1</heightRatio>
-      <left>75</left>
+      <left>62</left>
       <leftRatio>0.2</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel97"), 0);</onClick>
       <sizeRatio>0.143333333333333</sizeRatio>
       <text>瞬间</text>
       <top>0</top>
-      <width>300</width>
+      <width>250</width>
       <widthRatio>0.8</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel35">
@@ -1215,7 +1318,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>0.00275482093663912</sizeRatio>
       <top>575</top>
       <topRatio>0.721455457967378</topRatio>
-      <width>436</width>
+      <width>363</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel36">
@@ -1227,13 +1330,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>52</height>
       <heightRatio>0.0652446675031368</heightRatio>
-      <left>40</left>
+      <left>33</left>
       <leftRatio>0.0909090909090909</leftRatio>
       <sizeRatio>0.183745583038869</sizeRatio>
       <text>设置隐私</text>
       <top>596</top>
       <topRatio>0.747804265997491</topRatio>
-      <width>340</width>
+      <width>283</width>
       <widthRatio>0.779614325068871</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel37">
@@ -1245,7 +1348,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <hAlign>left</hAlign>
       <height>52</height>
       <heightRatio>0.0652446675031368</heightRatio>
-      <left>40</left>
+      <left>33</left>
       <leftRatio>0.0909090909090909</leftRatio>
       <onClick>eb.delCookie("twitterGToken");
 window.location.href = ee.getUrl("/new");</onClick>
@@ -1253,7 +1356,7 @@ window.location.href = ee.getUrl("/new");</onClick>
       <text>退出登录</text>
       <top>652</top>
       <topRatio>0.818067754077792</topRatio>
-      <width>340</width>
+      <width>283</width>
       <widthRatio>0.779614325068871</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel38">
@@ -1267,7 +1370,7 @@ window.location.href = ee.getUrl("/new");</onClick>
       <sizeRatio>0.00275482093663912</sizeRatio>
       <top>725</top>
       <topRatio>0.909661229611041</topRatio>
-      <width>436</width>
+      <width>363</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel39">
@@ -1278,12 +1381,12 @@ window.location.href = ee.getUrl("/new");</onClick>
       <dockY>ratio</dockY>
       <height>37</height>
       <heightRatio>0.0464240903387704</heightRatio>
-      <left>10</left>
+      <left>8</left>
       <leftRatio>0.0220385674931129</leftRatio>
       <sizeRatio>0.474358974358974</sizeRatio>
       <top>746</top>
       <topRatio>0.936010037641154</topRatio>
-      <width>94</width>
+      <width>78</width>
       <widthRatio>0.214876033057851</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel27/panel40">
@@ -1294,12 +1397,12 @@ window.location.href = ee.getUrl("/new");</onClick>
       <dockY>ratio</dockY>
       <height>37</height>
       <heightRatio>0.0464240903387704</heightRatio>
-      <left>334</left>
+      <left>278</left>
       <leftRatio>0.765840220385675</leftRatio>
       <sizeRatio>0.474358974358974</sizeRatio>
       <top>746</top>
       <topRatio>0.936010037641154</topRatio>
-      <width>94</width>
+      <width>78</width>
       <widthRatio>0.214876033057851</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel41">
@@ -1311,14 +1414,14 @@ window.location.href = ee.getUrl("/new");</onClick>
       <hAlign>left</hAlign>
       <height>796</height>
       <heightRatio>0.998745294855709</heightRatio>
-      <left>435</left>
+      <left>362</left>
       <leftRatio>0.824601366742597</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel26"), 1);               
 ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <sizeRatio>10.7567567567568</sizeRatio>
       <top>1</top>
       <topRatio>0.00125470514429109</topRatio>
-      <width>89</width>
+      <width>74</width>
       <widthRatio>0.168564920273349</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54">
@@ -1336,7 +1439,7 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel56">
@@ -1347,13 +1450,13 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <dockY>ratio</dockY>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>6</left>
+      <left>5</left>
       <leftRatio>0.0113895216400911</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.607594936708861</sizeRatio>
       <top>11</top>
       <topRatio>0.013801756587202</topRatio>
-      <width>95</width>
+      <width>79</width>
       <widthRatio>0.17995444191344</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel57">
@@ -1367,14 +1470,14 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <fontSizeAuto>20</fontSizeAuto>
       <height>46</height>
       <heightRatio>0.0577164366373902</heightRatio>
-      <left>388</left>
+      <left>323</left>
       <leftRatio>0.735763097949886</leftRatio>
       <onClick>updateUserInfo();</onClick>
       <sizeRatio>0.442307692307692</sizeRatio>
       <text>保存</text>
       <top>12</top>
       <topRatio>0.0150564617314931</topRatio>
-      <width>125</width>
+      <width>104</width>
       <widthRatio>0.236902050113895</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel58">
@@ -1388,7 +1491,7 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <sizeRatio>0.469248291571754</sizeRatio>
       <top>69</top>
       <topRatio>0.0865746549560853</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel58/panel61">
@@ -1398,12 +1501,12 @@ ee.showAni(ee.getControl("panel27"), 1);</onClick>
       <dockY>ratio</dockY>
       <height>62</height>
       <heightRatio>0.300970873786408</heightRatio>
-      <left>214</left>
+      <left>178</left>
       <leftRatio>0.405466970387244</leftRatio>
       <sizeRatio>0.849315068493151</sizeRatio>
       <top>68</top>
       <topRatio>0.330097087378641</topRatio>
-      <width>88</width>
+      <width>73</width>
       <widthRatio>0.16628701594533</widthRatio>
     </control>
     <control type="FileUpload" pathname="/divRoot/panel54/panel58/panel61/fileupload3">
@@ -1454,7 +1557,7 @@ var sn = db.getInt32(sqlResult, "Sn");
 newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <sizeRatio>0.704545454545455</sizeRatio>
       <top>0</top>
-      <width>88</width>
+      <width>73</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel55">
@@ -1462,7 +1565,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <dockY>ratio</dockY>
       <height>71</height>
       <heightRatio>0.0890840652446675</heightRatio>
-      <left>24</left>
+      <left>14</left>
       <leftRatio>0.0318906605922551</leftRatio>
       <lockRatio>true</lockRatio>
       <sizeRatio>0.986111111111111</sizeRatio>
@@ -1575,13 +1678,13 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <hAlign>left</hAlign>
       <height>33</height>
       <heightRatio>0.041405269761606</heightRatio>
-      <left>22</left>
+      <left>18</left>
       <leftRatio>0.041002277904328</leftRatio>
       <sizeRatio>0.0863874345549738</sizeRatio>
       <text>昵称或姓名</text>
       <top>378</top>
       <topRatio>0.474278544542033</topRatio>
-      <width>459</width>
+      <width>382</width>
       <widthRatio>0.870159453302961</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel54/edit2">
@@ -1591,12 +1694,12 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <height>49</height>
       <heightRatio>0.0614805520702635</heightRatio>
       <inputFontSizeAuto>22</inputFontSizeAuto>
-      <left>23</left>
+      <left>19</left>
       <leftRatio>0.0436432637571157</leftRatio>
       <sizeRatio>0.102510460251046</sizeRatio>
       <top>408</top>
       <topRatio>0.511919698870765</topRatio>
-      <width>478</width>
+      <width>398</width>
       <widthRatio>0.907020872865275</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/edit2/panel64">
@@ -1615,7 +1718,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <sizeRatio>0.00627615062761506</sizeRatio>
       <top>46</top>
       <topRatio>0.938775510204082</topRatio>
-      <width>478</width>
+      <width>398</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel65">
@@ -1628,13 +1731,13 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <hAlign>left</hAlign>
       <height>33</height>
       <heightRatio>0.041405269761606</heightRatio>
-      <left>22</left>
+      <left>18</left>
       <leftRatio>0.041002277904328</leftRatio>
       <sizeRatio>0.0863874345549738</sizeRatio>
       <text>简介</text>
       <top>470</top>
       <topRatio>0.589711417816813</topRatio>
-      <width>459</width>
+      <width>382</width>
       <widthRatio>0.870159453302961</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel54/edit3">
@@ -1644,13 +1747,13 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <height>122</height>
       <heightRatio>0.153074027603513</heightRatio>
       <inputFontSizeAuto>22</inputFontSizeAuto>
-      <left>23</left>
+      <left>19</left>
       <leftRatio>0.0436432637571157</leftRatio>
       <multiLine>true</multiLine>
       <sizeRatio>0.255230125523013</sizeRatio>
       <top>508</top>
       <topRatio>0.637390213299875</topRatio>
-      <width>478</width>
+      <width>398</width>
       <widthRatio>0.907020872865275</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/edit3/panel66">
@@ -1669,7 +1772,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <sizeRatio>0.00627615062761506</sizeRatio>
       <top>119</top>
       <topRatio>0.975409836065574</topRatio>
-      <width>478</width>
+      <width>398</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel67">
@@ -1682,13 +1785,13 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <hAlign>left</hAlign>
       <height>33</height>
       <heightRatio>0.041405269761606</heightRatio>
-      <left>22</left>
+      <left>18</left>
       <leftRatio>0.041002277904328</leftRatio>
       <sizeRatio>0.0863874345549738</sizeRatio>
       <text>网页</text>
       <top>659</top>
       <topRatio>0.826850690087829</topRatio>
-      <width>459</width>
+      <width>382</width>
       <widthRatio>0.870159453302961</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel54/edit4">
@@ -1698,12 +1801,12 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <height>45</height>
       <heightRatio>0.0564617314930991</heightRatio>
       <inputFontSizeAuto>22</inputFontSizeAuto>
-      <left>23</left>
+      <left>19</left>
       <leftRatio>0.0436432637571157</leftRatio>
       <sizeRatio>0.0941422594142259</sizeRatio>
       <top>689</top>
       <topRatio>0.864491844416562</topRatio>
-      <width>478</width>
+      <width>398</width>
       <widthRatio>0.907020872865275</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/edit4/panel68">
@@ -1722,7 +1825,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <sizeRatio>0.00627615062761506</sizeRatio>
       <top>42</top>
       <topRatio>0.933333333333333</topRatio>
-      <width>478</width>
+      <width>398</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16">
@@ -1741,7 +1844,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel19">
@@ -1755,7 +1858,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <fontSizeAuto>24</fontSizeAuto>
       <height>41</height>
       <heightRatio>0.0514429109159348</heightRatio>
-      <left>359</left>
+      <left>299</left>
       <leftRatio>0.681214421252372</leftRatio>
       <onClick>follow.follow = sender.follow;
 follow.userId = ee.getControl("panel16").userId;
@@ -1769,7 +1872,7 @@ follow();
       <text>关注</text>
       <top>227</top>
       <topRatio>0.284818067754078</topRatio>
-      <width>157</width>
+      <width>131</width>
       <widthRatio>0.297912713472486</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel20">
@@ -1782,7 +1885,7 @@ follow();
       <left>0</left>
       <sizeRatio>0.390891840607211</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel20/panel75">
@@ -1796,13 +1899,13 @@ follow();
       <fontSizeAuto>24</fontSizeAuto>
       <height>42</height>
       <heightRatio>0.203883495145631</heightRatio>
-      <left>10</left>
+      <left>8</left>
       <leftRatio>0.0189753320683112</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel16"), 1);</onClick>
       <sizeRatio>0.531645569620253</sizeRatio>
       <top>9</top>
       <topRatio>0.0436893203883495</topRatio>
-      <width>79</width>
+      <width>66</width>
       <widthRatio>0.149905123339658</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel20/panel75/panel76">
@@ -1815,28 +1918,28 @@ follow();
       <left>0</left>
       <sizeRatio>0.531645569620253</sizeRatio>
       <top>0</top>
-      <width>79</width>
+      <width>66</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel22">
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <height>87</height>
+      <height>72</height>
       <heightRatio>0.109159347553325</heightRatio>
-      <left>12</left>
+      <left>10</left>
       <leftRatio>0.0227703984819734</leftRatio>
       <lockRatio>true</lockRatio>
       <sizeRatio>1.02352941176471</sizeRatio>
-      <top>219</top>
+      <top>226</top>
       <topRatio>0.273525721455458</topRatio>
-      <width>85</width>
+      <width>71</width>
       <widthRatio>0.161290322580645</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel22/panel23">
       <backgroundImg>user.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>85</height>
+      <height>70</height>
       <heightRatio>0.977011494252874</heightRatio>
       <left>1</left>
       <leftRatio>0.0117647058823529</leftRatio>
@@ -1847,19 +1950,19 @@ follow();
       <sizeRatio>1.02409638554217</sizeRatio>
       <top>1</top>
       <topRatio>0.0114942528735632</topRatio>
-      <width>83</width>
+      <width>69</width>
       <widthRatio>0.976470588235294</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel22/panel24">
       <backgroundImg>cirMask.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>87</height>
+      <height>72</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <sizeRatio>1.02352941176471</sizeRatio>
       <top>0</top>
-      <width>85</width>
+      <width>71</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel18">
@@ -1872,13 +1975,13 @@ follow();
       <hAlign>left</hAlign>
       <height>46</height>
       <heightRatio>0.0577164366373902</heightRatio>
-      <left>111</left>
+      <left>92</left>
       <leftRatio>0.210626185958254</leftRatio>
       <sizeRatio>0.194092827004219</sizeRatio>
       <text>昵称nicheng</text>
       <top>221</top>
       <topRatio>0.277289836888331</topRatio>
-      <width>237</width>
+      <width>197</width>
       <widthRatio>0.449715370018975</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel21">
@@ -1891,13 +1994,13 @@ follow();
       <hAlign>left</hAlign>
       <height>46</height>
       <heightRatio>0.0577164366373902</heightRatio>
-      <left>111</left>
+      <left>92</left>
       <leftRatio>0.210626185958254</leftRatio>
       <sizeRatio>0.189300411522634</sizeRatio>
       <text>@用户名</text>
       <top>266</top>
       <topRatio>0.33375156838143</topRatio>
-      <width>243</width>
+      <width>202</width>
       <widthRatio>0.461100569259962</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel69">
@@ -1909,14 +2012,14 @@ follow();
       <hAlign>left</hAlign>
       <height>31</height>
       <heightRatio>0.0388958594730238</heightRatio>
-      <left>18</left>
+      <left>15</left>
       <leftRatio>0.0341555977229602</leftRatio>
       <sizeRatio>0.0630081300813008</sizeRatio>
       <text>自我介绍</text>
       <top>314</top>
       <topRatio>0.393977415307403</topRatio>
       <vAlign>top</vAlign>
-      <width>492</width>
+      <width>410</width>
       <widthRatio>0.933586337760911</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel72">
@@ -1929,13 +2032,13 @@ follow();
       <hAlign>left</hAlign>
       <height>40</height>
       <heightRatio>0.0501882057716437</heightRatio>
-      <left>18</left>
+      <left>15</left>
       <leftRatio>0.0341555977229602</leftRatio>
       <sizeRatio>0.0813008130081301</sizeRatio>
       <text>48正在关注     200关注者</text>
       <top>437</top>
       <topRatio>0.548306148055207</topRatio>
-      <width>492</width>
+      <width>410</width>
       <widthRatio>0.933586337760911</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel73">
@@ -1948,13 +2051,13 @@ follow();
       <hAlign>left</hAlign>
       <height>39</height>
       <heightRatio>0.0489335006273526</heightRatio>
-      <left>13</left>
+      <left>11</left>
       <leftRatio>0.0246679316888046</leftRatio>
       <sizeRatio>0.0781563126252505</sizeRatio>
       <text> 推文</text>
       <top>476</top>
       <topRatio>0.59723964868256</topRatio>
-      <width>499</width>
+      <width>416</width>
       <widthRatio>0.946869070208729</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel16/panel73/panel74">
@@ -1973,7 +2076,7 @@ follow();
       <sizeRatio>0.00601202404809619</sizeRatio>
       <top>36</top>
       <topRatio>0.923076923076923</topRatio>
-      <width>499</width>
+      <width>416</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel16/layoutx6">
@@ -1982,12 +2085,12 @@ follow();
       <fieldCount>2</fieldCount>
       <height>36</height>
       <heightRatio>0.0451693851944793</heightRatio>
-      <left>18</left>
+      <left>15</left>
       <leftRatio>0.0341555977229602</leftRatio>
       <sizeRatio>0.0725806451612903</sizeRatio>
       <top>346</top>
       <topRatio>0.434127979924718</topRatio>
-      <width>496</width>
+      <width>413</width>
       <widthRatio>0.941176470588235</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel16/layoutx6/layoutxitem11">
@@ -2000,7 +2103,7 @@ follow();
       <left>0</left>
       <sizeRatio>0.8</sizeRatio>
       <top>0</top>
-      <width>45</width>
+      <width>38</width>
       <widthRatio>0.0907258064516129</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel16/layoutx6/layoutxitem12">
@@ -2011,12 +2114,12 @@ follow();
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>1</heightRatio>
-      <left>45</left>
+      <left>38</left>
       <leftRatio>0.0907258064516129</leftRatio>
       <sizeRatio>0.0798226164079823</sizeRatio>
       <text>主页http://www.baidu.com</text>
       <top>0</top>
-      <width>451</width>
+      <width>375</width>
       <widthRatio>0.909274193548387</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel16/layoutx7">
@@ -2025,12 +2128,12 @@ follow();
       <fieldCount>2</fieldCount>
       <height>36</height>
       <heightRatio>0.0451693851944793</heightRatio>
-      <left>18</left>
+      <left>15</left>
       <leftRatio>0.0341555977229602</leftRatio>
       <sizeRatio>0.0725806451612903</sizeRatio>
       <top>391</top>
       <topRatio>0.490589711417817</topRatio>
-      <width>496</width>
+      <width>413</width>
       <widthRatio>0.941176470588235</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel16/layoutx7/layoutxitem13">
@@ -2043,7 +2146,7 @@ follow();
       <left>0</left>
       <sizeRatio>0.8</sizeRatio>
       <top>0</top>
-      <width>45</width>
+      <width>38</width>
       <widthRatio>0.0907258064516129</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel16/layoutx7/layoutxitem14">
@@ -2054,12 +2157,12 @@ follow();
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>1</heightRatio>
-      <left>45</left>
+      <left>38</left>
       <leftRatio>0.0907258064516129</leftRatio>
       <sizeRatio>0.0798226164079823</sizeRatio>
       <text>2019年12月加入</text>
       <top>0</top>
-      <width>451</width>
+      <width>375</width>
       <widthRatio>0.909274193548387</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42">
@@ -2073,11 +2176,12 @@ follow();
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>发推文</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
       <topRatio>-0.00125470514429109</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel43">
@@ -2092,7 +2196,7 @@ follow();
       <sizeRatio>0.00275482093663912</sizeRatio>
       <top>77</top>
       <topRatio>0.0966122961104141</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>0.826879271070615</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel44">
@@ -2103,14 +2207,14 @@ follow();
       <dockY>ratio</dockY>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>18</left>
+      <left>15</left>
       <leftRatio>0.0341685649202733</leftRatio>
       <onClick>ee.setText(ee.getControl("panel52"), " ");
 ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <sizeRatio>1</sizeRatio>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>58</width>
+      <width>48</width>
       <widthRatio>0.109339407744875</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel45">
@@ -2124,35 +2228,35 @@ ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <fontSizeAuto>20</fontSizeAuto>
       <height>46</height>
       <heightRatio>0.0577164366373902</heightRatio>
-      <left>388</left>
+      <left>323</left>
       <leftRatio>0.735763097949886</leftRatio>
       <onClick>newTwitter();</onClick>
       <sizeRatio>0.442307692307692</sizeRatio>
       <text>发推</text>
       <top>13</top>
       <topRatio>0.0163111668757842</topRatio>
-      <width>125</width>
+      <width>104</width>
       <widthRatio>0.236902050113895</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel46">
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <height>71</height>
+      <height>59</height>
       <heightRatio>0.0890840652446675</heightRatio>
-      <left>26</left>
+      <left>22</left>
       <leftRatio>0.0493358633776091</leftRatio>
       <lockRatio>true</lockRatio>
       <sizeRatio>0.986111111111111</sizeRatio>
-      <top>98</top>
+      <top>104</top>
       <topRatio>0.122961104140527</topRatio>
-      <width>72</width>
+      <width>60</width>
       <widthRatio>0.136622390891841</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel46/panel47">
       <backgroundImg>user.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>69</height>
+      <height>57</height>
       <heightRatio>0.971830985915493</heightRatio>
       <left>1</left>
       <leftRatio>0.0138888888888889</leftRatio>
@@ -2163,19 +2267,19 @@ ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <sizeRatio>0.985714285714286</sizeRatio>
       <top>1</top>
       <topRatio>0.0140845070422535</topRatio>
-      <width>70</width>
+      <width>58</width>
       <widthRatio>0.972222222222222</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel46/panel48">
       <backgroundImg>cirMask.png</backgroundImg>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>71</height>
+      <height>59</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <sizeRatio>0.986111111111111</sizeRatio>
       <top>0</top>
-      <width>72</width>
+      <width>60</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel42/edit1">
@@ -2185,13 +2289,13 @@ ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <height>184</height>
       <heightRatio>0.230865746549561</heightRatio>
       <inputFontSizeAuto>20</inputFontSizeAuto>
-      <left>126</left>
+      <left>105</left>
       <leftRatio>0.239179954441913</leftRatio>
       <multiLine>true</multiLine>
       <sizeRatio>0.576802507836991</sizeRatio>
       <top>99</top>
       <topRatio>0.124215809284818</topRatio>
-      <width>383</width>
+      <width>319</width>
       <widthRatio>0.726651480637813</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel49">
@@ -2199,11 +2303,12 @@ ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <dockY>ratio</dockY>
       <height>61</height>
       <heightRatio>0.0765370138017566</heightRatio>
-      <left>13</left>
+      <left>11</left>
       <leftRatio>0.0250569476082005</leftRatio>
       <sizeRatio>0.734939759036145</sizeRatio>
       <top>236</top>
       <topRatio>0.296110414052698</topRatio>
+      <width>83</width>
       <widthRatio>0.189066059225513</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel49/panel50">
@@ -2218,6 +2323,7 @@ ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <left>0</left>
       <sizeRatio>0.61</sizeRatio>
       <top>0</top>
+      <width>83</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="FileUpload" pathname="/divRoot/panel42/panel49/fileupload1">
@@ -2259,6 +2365,7 @@ var sn = db.getInt32(sqlResult, "Sn");
 newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <sizeRatio>0.61</sizeRatio>
       <top>0</top>
+      <width>83</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel51">
@@ -2266,12 +2373,12 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <dockY>ratio</dockY>
       <height>259</height>
       <heightRatio>0.324968632371393</heightRatio>
-      <left>24</left>
+      <left>20</left>
       <leftRatio>0.0455580865603645</leftRatio>
       <sizeRatio>0.639506172839506</sizeRatio>
       <top>304</top>
       <topRatio>0.381430363864492</topRatio>
-      <width>486</width>
+      <width>405</width>
       <widthRatio>0.92255125284738</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel51/panel52">
@@ -2283,7 +2390,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <left>0</left>
       <sizeRatio>0.532921810699588</sizeRatio>
       <top>0</top>
-      <width>486</width>
+      <width>405</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel51/panel53">
@@ -2295,7 +2402,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <left>0</left>
       <sizeRatio>0.532921810699588</sizeRatio>
       <top>0</top>
-      <width>486</width>
+      <width>405</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel42/panel105">
@@ -2305,7 +2412,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <dockY>ratio</dockY>
       <height>36</height>
       <heightRatio>0.0451693851944793</heightRatio>
-      <left>19</left>
+      <left>16</left>
       <leftRatio>0.0360531309297913</leftRatio>
       <onClick><![CDATA[var url = prompt("请输入播放地址：", "");
 if (url == null) return;
@@ -2336,7 +2443,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <sizeRatio>0.418604651162791</sizeRatio>
       <top>195</top>
       <topRatio>0.244667503136763</topRatio>
-      <width>86</width>
+      <width>72</width>
       <widthRatio>0.163187855787476</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel70">
@@ -2354,7 +2461,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel70/panel71">
@@ -2365,13 +2472,13 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <dockY>ratio</dockY>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>6</left>
+      <left>5</left>
       <leftRatio>0.0113851992409867</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel70"), 1);</onClick>
       <sizeRatio>0.623376623376623</sizeRatio>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>77</width>
+      <width>64</width>
       <widthRatio>0.146110056925996</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel70/panel77">
@@ -2390,7 +2497,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <sizeRatio>0.00569259962049336</sizeRatio>
       <top>77</top>
       <topRatio>0.0966122961104141</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel70/panel78">
@@ -2403,14 +2510,14 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <fontSizeAuto>18</fontSizeAuto>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>87</left>
+      <left>72</left>
       <leftRatio>0.165085388994307</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.623376623376623</sizeRatio>
       <text>列表</text>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>77</width>
+      <width>64</width>
       <widthRatio>0.146110056925996</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel70/panel79">
@@ -2421,12 +2528,13 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <dockY>ratio</dockY>
       <height>151</height>
       <heightRatio>0.189460476787955</heightRatio>
+      <left>83</left>
       <leftRatio>0.189393939393939</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.483974358974359</sizeRatio>
       <top>597</top>
       <topRatio>0.749058971141782</topRatio>
-      <width>311</width>
+      <width>259</width>
       <widthRatio>0.590909090909091</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel70/panel80">
@@ -2437,12 +2545,12 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <dockY>ratio</dockY>
       <height>95</height>
       <heightRatio>0.119196988707654</heightRatio>
-      <left>406</left>
+      <left>338</left>
       <leftRatio>0.770398481973435</leftRatio>
       <sizeRatio>0.805084745762712</sizeRatio>
       <top>694</top>
       <topRatio>0.870765370138018</topRatio>
-      <width>118</width>
+      <width>98</width>
       <widthRatio>0.223908918406072</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel70/panel81">
@@ -2456,7 +2564,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <fontSizeAuto>18</fontSizeAuto>
       <height>71</height>
       <heightRatio>0.0890840652446675</heightRatio>
-      <left>11</left>
+      <left>9</left>
       <leftRatio>0.0208728652751423</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.141153081510934</sizeRatio>
@@ -2464,7 +2572,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
 创建列表方便管理您的推文</text>
       <top>145</top>
       <topRatio>0.181932245922208</topRatio>
-      <width>503</width>
+      <width>419</width>
       <widthRatio>0.954459203036053</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82">
@@ -2483,7 +2591,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
       <topRatio>-0.00125470514429109</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82/panel83">
@@ -2494,13 +2602,13 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <dockY>ratio</dockY>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>6</left>
+      <left>5</left>
       <leftRatio>0.0113851992409867</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel82"), 1);</onClick>
       <sizeRatio>0.623376623376623</sizeRatio>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>77</width>
+      <width>64</width>
       <widthRatio>0.146110056925996</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82/panel84">
@@ -2519,7 +2627,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <sizeRatio>0.00569259962049336</sizeRatio>
       <top>77</top>
       <topRatio>0.0966122961104141</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82/panel85">
@@ -2533,14 +2641,13 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <hAlign>left</hAlign>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>87</left>
+      <left>72</left>
       <leftRatio>0.165085388994307</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.4</sizeRatio>
       <text>话题</text>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>120</width>
       <widthRatio>0.227703984819734</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82/panel87">
@@ -2551,12 +2658,12 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <dockY>ratio</dockY>
       <height>169</height>
       <heightRatio>0.212045169385194</heightRatio>
-      <left>23</left>
+      <left>19</left>
       <leftRatio>0.0436432637571157</leftRatio>
       <sizeRatio>0.342105263157895</sizeRatio>
       <top>81</top>
       <topRatio>0.101631116687578</topRatio>
-      <width>494</width>
+      <width>412</width>
       <widthRatio>0.937381404174573</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82/panel88">
@@ -2569,7 +2676,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <hAlign>left</hAlign>
       <height>131</height>
       <heightRatio>0.164366373902133</heightRatio>
-      <left>39</left>
+      <left>32</left>
       <leftRatio>0.0740037950664137</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.291759465478842</sizeRatio>
@@ -2577,7 +2684,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <top>258</top>
       <topRatio>0.323713927227102</topRatio>
       <vAlign>top</vAlign>
-      <width>449</width>
+      <width>374</width>
       <widthRatio>0.851992409867173</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82/panel86">
@@ -2596,7 +2703,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <sizeRatio>0.0189753320683112</sizeRatio>
       <top>394</top>
       <topRatio>0.49435382685069</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82/panel89">
@@ -2615,7 +2722,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <sizeRatio>0.00189753320683112</sizeRatio>
       <top>567</top>
       <topRatio>0.711417816813049</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel82/panel90">
@@ -2629,7 +2736,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <hAlign>left</hAlign>
       <height>145</height>
       <heightRatio>0.181932245922208</heightRatio>
-      <left>40</left>
+      <left>33</left>
       <leftRatio>0.0759013282732448</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.336426914153132</sizeRatio>
@@ -2637,7 +2744,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <top>410</top>
       <topRatio>0.514429109159348</topRatio>
       <vAlign>top</vAlign>
-      <width>431</width>
+      <width>359</width>
       <widthRatio>0.817836812144213</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel91">
@@ -2655,7 +2762,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel91/panel92">
@@ -2666,13 +2773,13 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <dockY>ratio</dockY>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>6</left>
+      <left>5</left>
       <leftRatio>0.0113851992409867</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel91"), 1);</onClick>
       <sizeRatio>0.623376623376623</sizeRatio>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>77</width>
+      <width>64</width>
       <widthRatio>0.146110056925996</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel91/panel94">
@@ -2686,14 +2793,13 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <hAlign>left</hAlign>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>87</left>
+      <left>72</left>
       <leftRatio>0.165085388994307</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.4</sizeRatio>
       <text>书签</text>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>120</width>
       <widthRatio>0.227703984819734</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel91/panel93">
@@ -2707,7 +2813,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <sizeRatio>1.37001897533207</sizeRatio>
       <top>75</top>
       <topRatio>0.0941028858218319</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel91/panel93/panel96">
@@ -2728,7 +2834,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <top>142</top>
       <topRatio>0.196675900277008</topRatio>
       <vAlign>top</vAlign>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>0.952561669829222</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel91/panel93/panel98">
@@ -2745,7 +2851,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <left>0</left>
       <sizeRatio>0.00189753320683112</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel91/panel93/panel95">
@@ -2766,7 +2872,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <top>226</top>
       <topRatio>0.313019390581717</topRatio>
       <vAlign>top</vAlign>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>0.952561669829222</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel97">
@@ -2784,7 +2890,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <left>0</left>
       <sizeRatio>1.5123339658444</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel97/panel99">
@@ -2795,13 +2901,13 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <dockY>ratio</dockY>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>6</left>
+      <left>5</left>
       <leftRatio>0.0113851992409867</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel97"), 1);</onClick>
       <sizeRatio>0.623376623376623</sizeRatio>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>77</width>
+      <width>64</width>
       <widthRatio>0.146110056925996</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel97/panel100">
@@ -2815,14 +2921,13 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <hAlign>left</hAlign>
       <height>48</height>
       <heightRatio>0.0602258469259724</heightRatio>
-      <left>87</left>
+      <left>72</left>
       <leftRatio>0.165085388994307</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.4</sizeRatio>
       <text>瞬间</text>
       <top>15</top>
       <topRatio>0.0188205771643664</topRatio>
-      <width>120</width>
       <widthRatio>0.227703984819734</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel97/panel101">
@@ -2836,7 +2941,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <sizeRatio>1.37001897533207</sizeRatio>
       <top>75</top>
       <topRatio>0.0941028858218319</topRatio>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel97/panel101/panel102">
@@ -2856,7 +2961,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <top>142</top>
       <topRatio>0.196675900277008</topRatio>
       <vAlign>top</vAlign>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel97/panel101/panel103">
@@ -2873,7 +2978,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <left>0</left>
       <sizeRatio>0.00189753320683112</sizeRatio>
       <top>0</top>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel97/panel101/panel104">
@@ -2893,7 +2998,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <top>226</top>
       <topRatio>0.313019390581717</topRatio>
       <vAlign>top</vAlign>
-      <width>527</width>
+      <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
   </controls>
@@ -2924,6 +3029,7 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 } 
 
 session.set("userName", db.getString(sqlResult,"userName"));
+var userId = db.getString(sqlResult,"id");
 
 eio.appendString8("T");
 es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
@@ -2935,7 +3041,20 @@ eio.appendString16(db.getString(sqlResult,"titleBg"));
 eio.appendString16(db.getString(sqlResult,"note"));
 eio.appendString16(db.getString(sqlResult,"homePage"));
 
-
+//new user?
+/*
+sql = "select count(*) as c from follow where userId = " + userId + " and followId <> userId";
+if (sqlResult == null) {
+    eio.appendString16("F");
+    return;
+}
+db.read(sqlResult);
+if (db.getInt32(sqlResult,"c") > 0) {
+    eio.appendString16("F");
+} else {
+    eio.appendString16("T");
+}
+*/
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
     alert(eio.readString8());
@@ -2949,7 +3068,11 @@ g5.photo = eio.readString16();
 g5.titleBg = eio.readString16();
 g5.userNote = eio.readString16();
 g5.userHomepage = eio.readString16();
-
+/*
+if (eio.readString16() == "F") {
+    g5.newUser = false;
+} else g5.newUser = true;
+*/
 g5.refreshUserInfo();
 updateHomepage();
                                
@@ -3160,13 +3283,15 @@ g5.refreshPage1();
     </taskSetItem>
     <taskSetItem name="searchUser">
       <script1>var searchString = ee.getEditText(ee.getControl("edit5"));
-if (searchString == "") return;
 eio.appendString16(searchString);</script1>
       <script2>var searchString = eio.readString16();
 var sql,sqlResult;  
 
-sql = "select * from userInfo where (userName like '%" + db.encode(searchString) + "%') " +
-    " or (nickName like '%" + db.encode(searchString) + "%') ";
+sql = "select * from userInfo ";
+if (searchString != "") {
+    sql += "where (userName like '%" + db.encode(searchString) + "%') " +
+        " or (nickName like '%" + db.encode(searchString) + "%') ";
+}
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
