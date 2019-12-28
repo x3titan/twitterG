@@ -4075,7 +4075,7 @@ showChat.myphoto = eio.readString16();
 showChat.chatUserId = eio.readString16();
 showChat.chatNickName = eio.readString16();
 showChat.chatUserName = eio.readString16();
-showChat.chatphoto = eio.readString16();
+showChat.chatPhoto = eio.readString16();
 showChat.dataset = eio.readDataSet();
 
 var root = ee.getControl("layoutyitem12");
@@ -4092,15 +4092,29 @@ var rh = rect.h;
 y += rh * 0.05;
 var hd = "pch_";
 for (var i = 0; i < showChat.dataset.rowCount; i++) {
+    var left = true;
+    if (parseInt(showChat.dataset.getData(0,i))==parseInt(showChat.myUserId)) {
+        left = false;
+    }
     //user photo
     var hd1 = "u" + showChat.dataset.getData(0,i);
-    c = createPanel(root, hd+hd1+"panel13", "", parseInt(rw*0.0296), y, parseInt(rw*0.1002),  parseInt(rw*0.1002));
+    if (left) {
+        c = createPanel(root, hd+hd1+"panel13", "", parseInt(rw*0.0296), y, parseInt(rw*0.1002),  parseInt(rw*0.1002));
+    } else {
+        c = createPanel(root, hd+hd1+"panel13", "", parseInt(rw*0.8405), y, parseInt(rw*0.1002),  parseInt(rw*0.1002));
+    }
     eb.setDock(c,"disabled","disabled");
     c = createPanel($g(hd+hd1+"panel13"), hd+hd1+"panel14", "", 0, 0, 79, 77);
-    if (showChat.myphoto == "") {
+    var photo;
+    if (left) {
+        photo = showChat.chatPhoto;
+    } else {
+        photo = showChat.myphoto
+    }
+    if (photo == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
     } else {
-        ee.setImage(c,"url:" + g5.imgUrl + showChat.myphoto,"trim","","")
+        ee.setImage(c,"url:" + g5.imgUrl + photo,"trim","","")
     }
     eb.setDock(c,"fill","fill");
     eb.setOuter(c,1,1,1,1);
@@ -4109,7 +4123,11 @@ for (var i = 0; i < showChat.dataset.rowCount; i++) {
     eb.setDock(c,"fill","fill");
     //content
     c = createPanel(root, hd+hd1+"panel2", "", rw*0.1549, y, parseInt(rw*0.75), 45);
-    addSkin(c, "/twitterG/skins/button1.png","9x",37,36,16,16,4,4,17,2,4,32);
+    if (left) {
+        addSkin(c, "/twitterG/skins/button1.png","9x",37,36,16,16,4,4,17,2,4,32);
+    } else {
+        addSkin(c, "/twitterG/skins/twitterG002.png","9x",37,36,16,16,4,4,17,2,4,32);
+    }
     addText(c, "a", "left", "center", "黑体", 9, "FFFFFF", "normal");
     c.label.style.whiteSpace = "nowrap";
     eb.setFontSizeAuto(c, 24);
@@ -4124,13 +4142,16 @@ for (var i = 0; i < showChat.dataset.rowCount; i++) {
     }
     ee.setRect(c, null, null, rect.w + 32, rect.h + 32);
     rect = eb.getDivRect(c);
-    y += rect.h + rh * 0.01;
+    if (!left) {
+        ee.setRect(c, rw*0.8405 - rect.w, null, null, null)
+    }
+    y += rect.h + rh * 0.05;
     
     //time
     c = createPanel(root, hd+hd1+"panel5", "", rw*0.15489, y, rw*0.70387, rh*0.051127);
     var s = showChat.dataset.getData(1,i);
     addText(c, 
-        parseInt(s.substr(6,2)) + "月" + parseInt(s.substr(9,2)) + "日" + s.substr(12,8),
+        parseInt(s.substr(6,2)) + "月" + parseInt(s.substr(9,2)) + "日  " + s.substr(12,8),
         "left", "middle", "黑体", 9, "808080", "bold");
     eb.setFontSizeAuto(c, 24);
     
@@ -4143,7 +4164,7 @@ for (var i = 0; i < showChat.dataset.rowCount; i++) {
     */
         
     rect = eb.getDivRect(c);
-    y += rect.h + rh * 0.02;
+    y += rect.h + rh * 0.01;
 
 
 }
