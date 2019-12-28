@@ -3363,7 +3363,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <widthRatio>0.118451025056948</widthRatio>
     </control>
   </controls>
-  <taskSet count="9">
+  <taskSet count="10">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 
@@ -4231,6 +4231,32 @@ eio.appendString8("T");
 }
 ee.setEditText(ee.getControl("edit6"), "");
 showChat();</script3>
+    </taskSetItem>
+    <taskSetItem name="showChatList">
+      <script1>eio.appendString16(g5.token);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+eio.appendString8("T");
+
+]]></script2>
+      <script3 />
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
