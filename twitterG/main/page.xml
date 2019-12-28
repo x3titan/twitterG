@@ -1,5 +1,5 @@
 <page>
-  <controls count="171">
+  <controls count="172">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -1989,6 +1989,7 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
@@ -3181,7 +3182,6 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniEnd>showChat();</onAniEnd>
       <sizeRatio>1.81548974943052</sizeRatio>
@@ -3275,6 +3275,23 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <topRatio>0.082810539523212</topRatio>
       <width>439</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel116/layouty6/layoutyitem12/panel122">
+      <backgroundImg>arrowR.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>42</height>
+      <heightRatio>0.0631578947368421</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0296127562642369</leftRatio>
+      <onClick>sendChat();</onClick>
+      <sizeRatio>0.954545454545455</sizeRatio>
+      <top>16</top>
+      <topRatio>0.0240601503759399</topRatio>
+      <width>44</width>
+      <widthRatio>0.100227790432802</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel116/layouty6/layoutyitem13">
       <backgroundColor>f0f0f0</backgroundColor>
@@ -4046,7 +4063,7 @@ eio.appendDataSet(sqlResult,"id,regDatetime,sendUserId,recvUserId,content,photo1
 
 
 ]]></script2>
-      <script3>if (eio.readString8()!="T") {
+      <script3><![CDATA[if (eio.readString8()!="T") {
     alert(eio.readString8());
     return;
 }
@@ -4061,7 +4078,41 @@ showChat.chatUserName = eio.readString16();
 showChat.chatphoto = eio.readString16();
 showChat.dataset = eio.readDataSet();
 
-</script3>
+var root = ee.getControl("layoutyitem12");
+var y = 0;
+var c;
+var rect;
+if (root.eeChildren.length>0) {
+    rect = eb.getDivRect(root.eeChildren[root.eeChildren.length-1]));
+    y = rect.h + rect.y;
+}
+rect = eb.getDivRect(root);
+var rw = rect.w;
+var rh = rect.h;
+y += rh * 0.05;
+var hd = "pch_";
+for (var i = 0; i < showChat.dataset.rowCount; i++) {
+    //user photo
+    c = createPanel(root, hd+"panel13", "", parseInt(rw*0.0296), y, parseInt(rw*0.1002),  parseInt(rw*0.1002));
+    eb.setDock(c,"disabled","disabled");
+    c = createPanel($g(hd+"panel13"), hd+"panel14", "", 0, 0, 79, 77);
+    if (showChat.myphoto == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + showChat.myphoto,"trim","","")
+    }
+    eb.setDock(c,"fill","fill");
+    eb.setOuter(c,1,1,1,1);
+    c = createPanel($g(hd+"panel13"), hd+"panel15", "", 0, 0, 79, 77);
+    ee.setImage(c,"/twitterG/main/home/cirMask.png","trim","","")
+    eb.setDock(c,"fill","fill");
+
+    y += rh * 0.05;
+
+
+}
+
+eb.processDock();]]></script3>
     </taskSetItem>
     <taskSetItem name="sendChat">
       <script1><![CDATA[var content = ee.getEditText(ee.getControl("edit6"));
