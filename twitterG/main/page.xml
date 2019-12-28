@@ -2330,7 +2330,9 @@ follow();
       <heightRatio>0.0526976160602258</heightRatio>
       <left>369</left>
       <leftRatio>0.840546697038724</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel116"), 0);</onClick>
+      <onClick>showChat.userName = showUserPage.userName;
+showChat.userId = 0;
+ee.showAni(ee.getControl("panel116"), 0);</onClick>
       <sizeRatio>0.807692307692308</sizeRatio>
       <top>272</top>
       <topRatio>0.341279799247177</topRatio>
@@ -3185,9 +3187,9 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
       <left>0</left>
+      <onAniEnd>showChat();</onAniEnd>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
-      <topRatio>-0.00125470514429109</topRatio>
       <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -3315,6 +3317,8 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <fontSizeAuto>26</fontSizeAuto>
       <height>40</height>
       <heightRatio>0.606060606060606</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>26</inputFontSizeAuto>
       <left>16</left>
       <leftRatio>0.0364464692482916</leftRatio>
       <sizeRatio>0.112994350282486</sizeRatio>
@@ -3330,25 +3334,38 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <cursor>pointer</cursor>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <height>46</height>
-      <heightRatio>0.696969696969697</heightRatio>
+      <height>43</height>
+      <heightRatio>0.651515151515151</heightRatio>
       <left>379</left>
       <leftRatio>0.863325740318907</leftRatio>
-      <sizeRatio>0.884615384615385</sizeRatio>
-      <top>9</top>
-      <topRatio>0.136363636363636</topRatio>
+      <sizeRatio>0.826923076923077</sizeRatio>
+      <top>12</top>
+      <topRatio>0.181818181818182</topRatio>
       <width>52</width>
       <widthRatio>0.118451025056948</widthRatio>
     </control>
   </controls>
-  <taskSet count="7">
+  <taskSet count="9">
     <taskSetItem name="getUserInfo">
-      <script1>g5.token = eb.getCookie("twitterGToken");
-if (g5.token == "") {
-    window.location.href = ee.getUrl("/new");
-    return;
+      <script1><![CDATA[var c;
+if (showChat.new) {
+    c = ee.getControl("layoutyitem12");
+    while (c.eeChildren.length>0) ee.removeControl(c.eeChildren[0]);
+    c.scrollTop = "0px";
+    showChat.chatId = 0;
 }
-eio.appendString16(g5.token);</script1>
+
+eio.appendString16(g5.token);
+
+
+
+
+
+
+
+
+
+]]></script1>
       <script2><![CDATA[var token = eio.readString16();
 var sql,sqlResult;  
 
@@ -3952,6 +3969,158 @@ if (f == "T") {
     ee.setText(ee.getControl("panel19"), "正在关注");
 }
 </script3>
+    </taskSetItem>
+    <taskSetItem name="showChat">
+      <script1><![CDATA[var c;
+if (showChat.chatId == 0) {
+    c = ee.getControl("layoutyitem12");
+    while (c.eeChildren.length>0) ee.removeControl(c.eeChildren[0]);
+    c.scrollTop = "0px";
+}
+
+eio.appendString16(g5.token);
+eio.appendString16(showChat.username);
+eio.appendString16(showChat.chatId);
+
+
+
+
+
+
+
+
+
+]]></script1>
+      <script2><![CDATA[var token = eio.readString16();
+var username = eio.readString16();
+var chatId = parseInt(eio.readString16());
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+eio.appendString8("T");
+eio.appendString16(db.getString(sqlResult,"id");
+eio.appendString16(db.getString(sqlResult,"nickName");
+eio.appendString16(db.getString(sqlResult,"userName");
+eio.appendString16(db.getString(sqlResult,"photo");
+
+
+sql = "select * from userInfo where userName='" + db.encode(username) + "'"; 
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("用户不存在");
+    return;
+}
+var userId = parseInt(db.getString(sqlResult, "id"));
+eio.appendString16(db.getString(sqlResult,"id");
+eio.appendString16(db.getString(sqlResult,"nickName");
+eio.appendString16(db.getString(sqlResult,"userName");
+eio.appendString16(db.getString(sqlResult,"photo");
+
+sql = "select top(30) * from chat where " +
+    "(sendUserId=" + myUserId + " and recvUserId=" + userId + ") " +
+    " or (sendUserId=" + userId + " and recvUserId=" + myUserId + ") ";
+if (chatId>0) {
+    sql += " and id>" + chatId + " ";
+}
+sql += " order by id";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendDataSet(sqlResult,"id,regDatetime,sendUserId,recvUserId,content,photo1", 0, 99999);
+ 
+    
+
+
+
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert(eio.readString8());
+    return;
+}
+
+showChat.myUserId = eio.readString16();
+showChat.myNickName = eio.readString16();
+showChat.myUserName = eio.readString16();
+showChat.myphoto = eio.readString16();
+showChat.chatUserId = eio.readString16();
+showChat.chatNickName = eio.readString16();
+showChat.chatUserName = eio.readString16();
+showChat.chatphoto = eio.readString16();
+showChat.dataset = eio.readDataSet();
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="sendChat">
+      <script1><![CDATA[var content = ee.getEditText(ee.getControl("edit6"));
+if (content.length<=0) return;
+eio.appendString16(g5.token);
+eio.appendString16(showChat.chatUserId);
+eio.appendString16(content);]]></script1>
+      <script2><![CDATA[var token = eio.readString16();
+var chatUserId = parseInt(eio.readString16());
+var content = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql = "insert into chat (sendUserId, recvUserId, [content], photo1) values (" +
+    myUserId +
+    "," + chatUserId + 
+    ",'" + db.encode(content) + "'" +
+    ",'')";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙");
+    es.logCommon("sql执行错误,sql=" + sql);
+    return;
+}
+
+eio.appendString8("T");
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert(eio.readString8());
+    return;
+}
+ee.setEditText(ee.getControl("edit6"), "");
+showChat();</script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
