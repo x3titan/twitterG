@@ -61,12 +61,14 @@ g5.refreshUserInfo = function() {
         ee.setImage(ee.getControl("panel47"), "/twitterG/main/user.png");
         ee.setImage(ee.getControl("panel59"), "/twitterG/main/user.png");
         ee.setImage(ee.getControl("panel14"), "/twitterG/main/user.png");
+        ee.setImage(ee.getControl("panel111"), "/twitterG/main/user.png");
     } else {
         ee.setImage(ee.getControl("panel8"), "url:" + g5.imgUrl + g5.photo);
         ee.setImage(ee.getControl("panel29"), "url:" + g5.imgUrl + g5.photo);
         ee.setImage(ee.getControl("panel47"), "url:" + g5.imgUrl + g5.photo);
         ee.setImage(ee.getControl("panel59"), "url:" + g5.imgUrl + g5.photo);
         ee.setImage(ee.getControl("panel14"), "url:" + g5.imgUrl + g5.photo);
+        ee.setImage(ee.getControl("panel111"), "url:" + g5.imgUrl + g5.photo);
     }
     if (g5.titleBg == "") {
         ee.setImage(ee.getControl("panel58"));
@@ -780,6 +782,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>738</height>
       <heightRatio>1</heightRatio>
       <layerName>Page4</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniEnd>showChatList();</onAniEnd>
       <sizeRatio>1.68109339407745</sizeRatio>
@@ -3187,7 +3190,6 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniEnd>showChat();</onAniEnd>
       <sizeRatio>1.81548974943052</sizeRatio>
@@ -4300,8 +4302,11 @@ for (var i = 0; i < showChatList.dataset.rowCount; i++) {
     c = createPanel(root, hd+"panel4", "", 0, y, rw, parseInt(rw*0.1735));
     y += parseInt(rw*0.1735);
     c.style.cursor="pointer";
+    c.userName = showChatList.dataset.getData(6,i);
     ee.setOnClick(c,function(sender,event) {
-        sendChat();
+        showChat.userName = sender.userName;
+        showChat.chatId = 0;
+        ee.showAni(ee.getControl("panel116"), 0);
     });
     c = createPanel($g(hd+"panel4"), hd+"panel2", "C0C0C0", 0, 75, 439, 1);
     eb.setDock(c,"fill","bottom");
