@@ -780,8 +780,8 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>738</height>
       <heightRatio>1</heightRatio>
       <layerName>Page4</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
+      <onAniEnd>showChatList();</onAniEnd>
       <sizeRatio>1.68109339407745</sizeRatio>
       <top>0</top>
       <width>439</width>
@@ -3187,6 +3187,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniEnd>showChat();</onAniEnd>
       <sizeRatio>1.81548974943052</sizeRatio>
@@ -4253,10 +4254,111 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     return;
 } 
 var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "SELECT TOP (30) derivedtbl_2.chatUserId, derivedtbl_2.maxId, " +
+    "      dbo.chat.regDatetime, dbo.chat.[content], dbo.chat.photo1, dbo.userInfo.nickName,  " +
+    "      dbo.userInfo.userName, dbo.userInfo.photo " +
+    "FROM (SELECT chatUserId, MAX(id) AS maxId " +
+    "        FROM (SELECT CASE WHEN sendUserId = " + myUserId + " THEN recvUserId WHEN recvUserId = " + myUserId + " " +
+    "                       THEN sendUserId ELSE - 1 END AS chatUserId, id " +                 
+    "                FROM dbo.chat AS t1 " +
+    "                WHERE (sendUserId = " + myUserId + ") OR " +
+    "                      (recvUserId = " + myUserId + ")) AS derivedtbl_1 " +
+    "        GROUP BY chatUserId) AS derivedtbl_2 INNER JOIN " +
+    "      dbo.chat ON derivedtbl_2.maxId = dbo.chat.id INNER JOIN " +
+    "      dbo.userInfo ON derivedtbl_2.chatUserId = dbo.userInfo.id " +
+    "ORDER BY derivedtbl_2.maxId DESC     ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
 eio.appendString8("T");
+eio.appendDataSet(sqlResult,"chatUserId,maxId,regDatetime,content,photo1,nickName,userName,photo", 0, 99999);
+
+
+
 
 ]]></script2>
-      <script3 />
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    alert(eio.readString8());
+    return;
+}
+showChatList.dataset = eio.readDataSet();
+
+var root = ee.getControl("layoutyitem10");
+var y = 0;
+var c,s,hd;
+var rect;
+rect = eb.getDivRect(root);
+var rw = rect.w;
+while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
+for (var i = 0; i < showChatList.dataset.rowCount; i++) {
+    hd = "clist_" + i;
+    c = createPanel(root, hd+"panel4", "", 0, y, rw, parseInt(rw*0.1735));
+    y += parseInt(rw*0.1735);
+    c.style.cursor="pointer";
+    ee.setOnClick(c,function(sender,event) {
+        sendChat();
+    });
+    c = createPanel($g(hd+"panel4"), hd+"panel2", "C0C0C0", 0, 75, 439, 1);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel($g(hd+"panel4"), hd+"panel13", "", 11, 7, 62, 62);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.0250569476082005;
+    c.widthRatio=0.14123006833713;
+    c.topRatio=0.0921052631578947;
+    c.heightRatio=0.815789473684211;
+    c = createPanel($g(hd+"panel13"), hd+"panel14", "", 1, 1, 60, 60);
+    eb.setOuter(c,1,1,1,1);
+    if (showChatList.dataset.getDate(7,i) == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + showChatList.dataset.getDate(7,i),"trim","","")
+    }    
+    eb.setDock(c,"fill","fill");
+    c = createPanel($g(hd+"panel13"), hd+"panel15", "", 0, 0, 62, 62);
+    ee.setImage(c,"/twitterG/main/page4/cirMask.png","trim","","")
+    eb.setDock(c,"fill","fill");
+    c = createPanel($g(hd+"panel4"), hd+"panel3", "", 97, 10, 246, 29);
+    addText(c, "<b>" + showChatList.dataset.getDate(5,i) + "</b>" +
+        "<font color = '#A0A0A0'>@" + showChatList.dataset.getDate(6,i) + "</font>",
+        "left", "middle", "黑体", 9, "000000", "normal");
+    eb.setFontSizeAuto(c, 24);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.220956719817768;
+    c.widthRatio=0.560364464692483;
+    c.topRatio=0.131578947368421;
+    c.heightRatio=0.381578947368421;
+    c = createPanel($g(hd+"panel4"), hd+"panel5", "", 97, 36, 246, 29);
+    s = showChatList.dataset.getDate(3,i);
+    if (s.length > 12) {
+        s = s.substr(0,12) + "...";
+    } 
+    addText(c, s, "left", "middle", "黑体", 9, "000000", "normal");
+    eb.setFontSizeAuto(c, 24);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.220956719817768;
+    c.widthRatio=0.560364464692483;
+    c.topRatio=0.473684210526316;
+    c.heightRatio=0.381578947368421;
+    c = createPanel($g(hd+"panel4"), hd+"panel6", "", 352, 10, 85, 55);
+    s = showChatList.dataset.getDate(2,i);
+    s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
+    addText(c, s, "left", "middle", "黑体", 9, "808080", "normal");
+    eb.setFontSizeAuto(c, 28);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.801822323462415;
+    c.widthRatio=0.193621867881549;
+    c.topRatio=0.131578947368421;
+    c.heightRatio=0.723684210526316;
+    
+        
+}
+
+]]></script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
