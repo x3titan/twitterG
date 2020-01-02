@@ -31,7 +31,6 @@ g5.changePage = function(pageIndex) {
     if (pageIndex == 0) {
         ee.setImage(ee.getControl("panel1"), "/twitterG/main/d1s.png", "fill", "", "");
         ee.showAni(ee.getControl("layouty2"), 0);
-        setTimeout(function() { updateHomepage(); }, 1000);
     } else if (pageIndex == 1) {
         ee.setImage(ee.getControl("panel2"), "/twitterG/main/d2s.png", "fill", "", "");
         ee.showAni(ee.getControl("layouty3"), 0);
@@ -360,9 +359,14 @@ g5.refreshPage1 = function() {
     }
     g5.newUser = false;
     
-    for (i=0; i<g5.itemsHome.length; i++) ee.removeControl(g5.itemsHome[i]);
-    g5.itemsHome = new Array();
     var cy = 0;
+    if (updateHomepage.needRefresh) {
+        for (i=0; i<g5.itemsHome.length; i++) ee.removeControl(g5.itemsHome[i]);
+        g5.itemsHome = new Array();
+    } else {
+        var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
+        cy = 2 + rect.y + rect.h;
+    }
     for (i=0; i< g5.datasetHome.rowCount; i++) {
         //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
         //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto"
@@ -414,6 +418,7 @@ g5.refreshPage2 = function() {
     }    
 }
 
+updateHomepage.needRefresh = true;
 g5.changePage(0);
 eb.setTouchEnabled(true);
 eb.setAlpha(ee.getControl("fileupload1"), 1);
@@ -449,6 +454,12 @@ ee.getControl("divRoot").dockY = "disabled";
       <onSlideRight>ee.setVisible(ee.getControl("panel26"), true);
 eb.setAlpha(ee.getControl("panel26"), 100);
 ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
+      <onSlideUp><![CDATA[var c = ee.getControl("layoutyitem4");
+if (c.label.parentNode.clientHeight+c.label.parentNode.scrollTop >= c.label.parentNode.scrollHeight) {
+    updateHomepage();    
+}
+
+]]></onSlideUp>
       <top>0</top>
       <width>439</width>
     </control>
@@ -484,7 +495,6 @@ ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
       <height>738</height>
       <heightRatio>1</heightRatio>
       <layerName>Page1</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.68109339407745</sizeRatio>
       <top>0</top>
@@ -602,6 +612,10 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>671</height>
       <heightRatio>0.909214092140921</heightRatio>
       <left>0</left>
+      <leftRatio>-0.00227790432801822</leftRatio>
+      <onAni2End>if (updateHomepage.needRefresh)  {
+    updateHomepage();
+}</onAni2End>
       <sizeRatio>1.52847380410023</sizeRatio>
       <top>67</top>
       <topRatio>0.0907859078590786</topRatio>
@@ -3190,6 +3204,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <height>797</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniEnd>showChat();</onAniEnd>
       <sizeRatio>1.81548974943052</sizeRatio>
@@ -3583,11 +3598,23 @@ ee.showAni(ee.getControl("panel42"), 1);
 updateHomepage();</script3>
     </taskSetItem>
     <taskSetItem name="updateHomepage">
-      <script1>eio.appendString16(g5.token);
+      <script1><![CDATA[eio.appendString16(g5.token);
+if (ee.getControl("layoutyitem4").eeChildren.length<=0) {
+    updateHomepage.needRefresh = true;
+}
+if (updateHomepage.needRefresh) {
+    eio.appendString16("T");
+    eio.appendString16("0");
+} else {
+    eio.appendString16("F");
+    eio.appendString16(updateHomepage.lastId);
+}
+updateHomepage.needRefresh = false;
 
-
-</script1>
+]]></script1>
       <script2><![CDATA[var token = eio.readString16();
+var needRefresh = eio.readString16();
+var lastId = parseInt(eio.readString16());
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -3606,9 +3633,13 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 } 
 var userName =db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
+var sql1 = "";
+if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
+    sql1 = "and dbo.tContent.id < " + lastId + " ";
+}
 
 sql = 
-    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
+    "SELECT TOP (3) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
     "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " + 
     "      dbo.tContent.likeCount,  " + 
     "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " + 
@@ -3625,7 +3656,7 @@ sql =
     "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id ON  " + 
     "      tContent_2.id = dbo.tContent.uplinkId LEFT OUTER JOIN " + 
     "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " + 
-    "WHERE (dbo.follow.userId = " + userId + ") " + 
+    "WHERE (dbo.follow.userId = " + userId + ") " + sql11 + 
     "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId,  " + 
     "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount,  " + 
     "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
@@ -3644,13 +3675,18 @@ eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
     ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
 ]]></script2>
-      <script3>if (eio.readString8() != "T") {
+      <script3><![CDATA[if (eio.readString8() != "T") {
     return;
 }
 g5.datasetHome = eio.readDataSet();
+if (g5.datasetHome.rowCount >= 0) {
+    updateHomepage.lastId = g5.datasetHome.getData(0, g5.datasetHome.rowCount - 1);
+} else {
+    updateHomepage.lastId = "0";
+}
 g5.refreshPage1();
                         
-</script3>
+]]></script3>
     </taskSetItem>
     <taskSetItem name="searchUser">
       <script1>var searchString = ee.getEditText(ee.getControl("edit5"));
