@@ -44,6 +44,26 @@ g5.changePage = function(pageIndex) {
     return true;
 }
 
+g5.changePage2 = function(pageIndex) {
+    if ((pageIndex<0) || (pageIndex>=2)) return false;
+    ee.setVisible(ee.getControl("panel132"), false);
+    ee.setVisible(ee.getControl("panel133"), false);
+    ee.setVisible(ee.getControl("panel128"), false);
+    ee.setVisible(ee.getControl("panel129"), false);
+    ee.setTextColor(ee.getControl("layoutxitem15"), "808080");
+    ee.setTextColor(ee.getControl("layoutxitem16"), "808080");
+    if (pageIndex == 0) {
+        ee.setVisible(ee.getControl("panel132"), true);
+        ee.setVisible(ee.getControl("panel128"), true);
+        ee.setTextColor(ee.getControl("layoutxitem15"), "1C94E0");
+    } else if (pageIndex == 1) {
+        ee.setVisible(ee.getControl("panel133"), true);
+        ee.setVisible(ee.getControl("panel129"), true);
+        ee.setTextColor(ee.getControl("layoutxitem16"), "1C94E0");
+    }
+}
+g5.changePage2(0);
+
 g5.refreshUserInfo = function() {
     var s;
     if (eb.isEmpty(g5.userName)) return;
@@ -402,7 +422,7 @@ g5.refreshPage1 = function() {
 g5.refreshPage2 = function() {
     if (eb.isEmpty(g5.datasetPage2)) return;
     var i;
-    var root = ee.getControl("layoutyitem6"); 
+    var root = ee.getControl("panel128"); 
     if (g5.newUser) {
         root = ee.getControl("layoutyitem8");
     }
@@ -836,6 +856,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>61</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
+      <onClick>g5.changePage2(0);</onClick>
       <sizeRatio>0.277272727272727</sizeRatio>
       <text>用户</text>
       <top>0</top>
@@ -881,6 +902,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <heightRatio>1</heightRatio>
       <left>220</left>
       <leftRatio>0.501138952164009</leftRatio>
+      <onClick>g5.changePage2(1);</onClick>
       <sizeRatio>0.278538812785388</sizeRatio>
       <text>推文</text>
       <top>0</top>
