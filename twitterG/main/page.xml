@@ -504,7 +504,6 @@ if (c.clientHeight+c.scrollTop >= c.scrollHeight) {
       <left>0</left>
       <sizeRatio>1.68109339407745</sizeRatio>
       <top>0</top>
-      <topRatio>-0.00125470514429109</topRatio>
       <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -916,12 +915,11 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>1</height>
       <heightRatio>0.0163934426229508</heightRatio>
       <left>0</left>
-      <leftRatio>0.392694063926941</leftRatio>
-      <sizeRatio>0.00454545454545455</sizeRatio>
+      <sizeRatio>0.0045662100456621</sizeRatio>
       <top>60</top>
-      <topRatio>0.59016393442623</topRatio>
+      <topRatio>0.983606557377049</topRatio>
       <width>219</width>
-      <widthRatio>1.00456621004566</widthRatio>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem16/panel133">
       <backgroundColor>1C94E0</backgroundColor>
@@ -931,12 +929,11 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>5</height>
       <heightRatio>0.0819672131147541</heightRatio>
       <left>0</left>
-      <leftRatio>0.378995433789954</leftRatio>
-      <sizeRatio>0.0227272727272727</sizeRatio>
+      <sizeRatio>0.0228310502283105</sizeRatio>
       <top>56</top>
-      <topRatio>0.409836065573771</topRatio>
+      <topRatio>0.918032786885246</topRatio>
       <width>219</width>
-      <widthRatio>1.00456621004566</widthRatio>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1/layouty3/layoutyitem6/layouty7/layoutyitem15">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -956,6 +953,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>610</height>
       <heightRatio>1</heightRatio>
       <layerName>Page2-1-用户</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.38952164009112</sizeRatio>
       <top>0</top>
@@ -969,7 +967,6 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>610</height>
       <heightRatio>1</heightRatio>
       <layerName>Page2-2-推文</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.38952164009112</sizeRatio>
       <top>0</top>
@@ -2336,7 +2333,6 @@ newFileName = "D:\\www\\defaultRoot\\incoming\\img" + sn + fileExt;</onUploadSta
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
-      <topRatio>-0.00125470514429109</topRatio>
       <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -3546,7 +3542,6 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <left>0</left>
       <sizeRatio>1.81548974943052</sizeRatio>
       <top>0</top>
-      <topRatio>-0.00125470514429109</topRatio>
       <width>439</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -3707,7 +3702,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <widthRatio>0.118451025056948</widthRatio>
     </control>
   </controls>
-  <taskSet count="10">
+  <taskSet count="11">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 
@@ -4020,7 +4015,10 @@ ee.setVisible(ee.getControl("panel123"), false);
     </taskSetItem>
     <taskSetItem name="searchUser">
       <script1>var searchString = ee.getEditText(ee.getControl("edit5"));
-eio.appendString16(searchString);</script1>
+eio.appendString16(searchString);
+ee.setVisible(ee.getControl("panel123"), true);
+
+</script1>
       <script2>var searchString = eio.readString16();
 var sql,sqlResult;  
 
@@ -4043,7 +4041,137 @@ eio.appendDataSet(sqlResult,"id,userName,nickName,photo", 0, 99999);
 }
 g5.datasetPage2 = eio.readDataSet();
 g5.refreshPage2();
-</script3>
+searchTwitter();</script3>
+    </taskSetItem>
+    <taskSetItem name="searchTwitter">
+      <script1><![CDATA[var searchString = ee.getEditText(ee.getControl("edit5"));
+eio.appendString16(searchString);
+if (ee.getControl("panel129").eeChildren.length<=0) {
+    searchTwitter.needRefresh = true;
+}
+if (searchTwitter.needRefresh) {
+    eio.appendString16("T");
+    eio.appendString16("0");
+} else {
+    eio.appendString16("F");
+    eio.appendString16(searchTwitter.lastId);
+}
+ee.setVisible(ee.getControl("panel123"), true);
+
+
+]]></script1>
+      <script2><![CDATA[var searchString = eio.readString16();
+var needRefresh = eio.readString16();
+var lastId = parseInt(eio.readString16());
+var sql,sqlResult;  
+
+var cond = "";
+if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
+    cond = " (dbo.tContent.id < " + lastId + ") ";
+}
+if (searchString != "") {
+    if (cond != "") cond += "and ";
+    cond += " (dbo.tContent.content like '%" + db.encode(searchString) + "%') ";
+}
+if (cond != "") {
+    cond = "WHERE " + cond;
+}
+
+sql = 
+    "SELECT TOP (3) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
+    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " + 
+    "      dbo.tContent.likeCount,  " + 
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " + 
+    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) AS forwardCount,  " + 
+    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
+    "      DATEDIFF(minute, tContent_2.regDatetime, GETDATE()) AS reMins,  " + 
+    "      tContent_2.[content] AS reContent, tContent_2.photo1 AS rePhoto1,  " + 
+    "      tContent_2.userId AS reUserId, userInfo_1.userName AS reUserName,  " + 
+    "      userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto " + 
+    "FROM dbo.userInfo AS userInfo_1 INNER JOIN " + 
+    "      dbo.tContent AS tContent_2 ON userInfo_1.id = tContent_2.userId RIGHT OUTER JOIN " + 
+    "      dbo.tContent INNER JOIN " + 
+    "      dbo.follow ON dbo.tContent.userId = dbo.follow.followId INNER JOIN " + 
+    "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id ON  " + 
+    "      tContent_2.id = dbo.tContent.uplinkId LEFT OUTER JOIN " + 
+    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " + 
+    cond +
+    "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId,  " + 
+    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount,  " + 
+    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
+    "      tContent_2.regDatetime, tContent_2.[content], tContent_2.photo1, tContent_2.userId,  " + 
+    "      userInfo_1.userName, userInfo_1.nickName, userInfo_1.photo " + 
+    "ORDER BY dbo.tContent.id DESC     "; 
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
+    ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+]]></script2>
+      <script3><![CDATA[if (eio.readString8() != "T") {
+    ee.setVisible(ee.getControl("panel123"), false);
+    return;
+}
+searchTwitter.dataset = eio.readDataSet();
+if (searchTwittere.rowCount >= 0) {
+    searchTwittere.lastId = searchTwittere.dataset.getData(0, searchTwittere.dataset.rowCount - 1);
+} else {
+    searchTwittere.lastId = "0";
+}
+
+var i, item;
+var root = ee.getControl("panel129"); 
+var cy = 0; 
+if (eb.isEmpty(searchTwitter.items)) {
+    searchTwitter.items = new Array();
+}
+if (searchTwitter.needRefresh) {
+    for (i=0; i<searchTwitter.items.length; i++) ee.removeControl(searchTwitter.items[i]);
+    searchTwitter.items = new Array();
+} else {
+    if (searchTwitter.items.length>0) {
+        var rect = eb.getDivRect(searchTwitter.items[searchTwitter.items.length-1]);
+        cy = 2 + rect.y + rect.h;
+    }
+}
+for (i=0; i< searchTwitter.dataset.rowCount; i++) {
+    //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
+    //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto"
+    //    reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto
+    item = g5.appendItem(
+        root,
+        cy, "p12_" + searchTwitter.items.length + "_",
+        searchTwitter.dataset.getData(8,i),
+        searchTwitter.dataset.getData(9,i),
+        g5.getMins(searchTwitter.dataset.getData(1,i)),
+        searchTwitter.dataset.getData(0,i),
+        searchTwitter.dataset.getData(10,i),
+        searchTwitter.dataset.getData(4,i),
+        searchTwitter.dataset.getData(3,i),
+        searchTwitter.dataset.getData(5,i),
+        searchTwitter.dataset.getData(6,i),
+        searchTwitter.dataset.getData(7,i),
+        g5.getMins(searchTwitter.dataset.getData(11,i)),
+        searchTwitter.dataset.getData(12,i),
+        searchTwitter.dataset.getData(13,i),
+        searchTwitter.dataset.getData(14,i),
+        searchTwitter.dataset.getData(15,i),
+        searchTwitter.dataset.getData(16,i),
+        searchTwitter.dataset.getData(17,i)
+        );
+    searchTwitter.items.push(item);
+    cy += 2 + eb.getDivRect(item).h;    
+}    
+
+searchTwittere.needRefresh = false;
+ee.setVisible(ee.getControl("panel123"), false);
+                        
+]]></script3>
     </taskSetItem>
     <taskSetItem name="showUserPage">
       <script1><![CDATA[//function(username)
