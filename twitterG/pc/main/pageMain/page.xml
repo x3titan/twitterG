@@ -10,9 +10,10 @@
       <onControlLoad><![CDATA[g5.p1 = ee.getControl("panel2");
 g5.p2 = ee.getControl("panel3");
 g5.p3 = ee.getControl("panel4");
+g5.mainDiv = ee.getControl("panel1");
 
 g5.lastWidth = 0;
-g5.refreshMainWidth = function() {
+g5.refreshMain = function() {
     var cw = $g("divRoot").offsetWidth;    
     if (g5.lastWidth == cw) return;
     g5.lastWidth = cw;
@@ -45,8 +46,56 @@ g5.refreshMainWidth = function() {
     ee.setRect(g5.p2,left+p1w,null,p2w,null);
     ee.setRect(g5.p3,left+p1w+p2w,null,p3w,null);
 }
+setInterval(function() {g5.refreshMain();}, 100);
 
-setInterval(function() {g5.refreshMainWidth();}, 100);
+g5.lastScrollY = g5.mainDiv.scrollTop;
+eb.addEvent(g5.mainDiv, "scroll", function() {
+    var temp = g5.mainDiv.scrollTop;
+    var dy = temp - g5.lastScrollY;
+    g5.lastScrollY = temp;
+    var ch = $g("divRoot").offsetHeight;
+    var p3h = eb.getDivRect(g5.p3).h;
+    temp = eb.getDivRect(g5.p3).y;
+    if (p3h<=ch) {
+        if (temp!=0) eb.setDivRect(g5.p3,null,0,null,null);
+        return;
+    }
+    var temp1 = temp;
+    if (dy>0) {
+        temp1 = temp - dy;
+        if (temp1<ch-p3h) temp1 = ch-p3h;
+    } else if (dy<0) {
+        temp1 = temp - dy;
+        if (temp1>0) temp1 = 0;        
+    }
+    if (temp!=temp1) eb.setDivRect(g5.p3,null,temp1,null,null);
+}, false);
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ]]></onControlLoad>
       <top>0</top>
@@ -71,11 +120,11 @@ setInterval(function() {g5.refreshMainWidth();}, 100);
       <fontBold>true</fontBold>
       <fontFamily>Helvetica</fontFamily>
       <fontSize>100</fontSize>
-      <height>722</height>
-      <heightRatio>0.907035175879397</heightRatio>
+      <height>2722</height>
+      <heightRatio>3.41959798994975</heightRatio>
       <left>411</left>
       <leftRatio>0.318111455108359</leftRatio>
-      <sizeRatio>1.34450651769088</sizeRatio>
+      <sizeRatio>5.06890130353818</sizeRatio>
       <text>P2</text>
       <top>12</top>
       <topRatio>0.0150753768844221</topRatio>
