@@ -49,6 +49,7 @@ g5.refreshMain = function() {
 setInterval(function() {g5.refreshMain();}, 100);
 
 g5.lastScrollY = g5.mainDiv.scrollTop;
+/*
 eb.addEvent(g5.mainDiv, "scroll", function() {
     var temp = g5.mainDiv.scrollTop;
     var dy = temp - g5.lastScrollY;
@@ -70,7 +71,31 @@ eb.addEvent(g5.mainDiv, "scroll", function() {
     }
     if (temp!=temp1) eb.setDivRect(g5.p3,null,temp1,null,null);
 }, false);
+*/
 
+eb.addEvent(g5.mainDiv, "scroll", function() {
+    var viewPortY = g5.mainDiv.scrollTop;
+    var dy = viewPortY - g5.lastScrollY;
+    g5.lastScrollY = viewPortY
+    var viewPortH = $g("divRoot").offsetHeight;
+    var p3h = eb.getDivRect(g5.p3).h;
+    p3y = eb.getDivRect(g5.p3).y;
+    if (p3h<=viewPortH) {
+        eb.setDivRect(g5.p3,null,viewPortY,null,null);
+        return;
+    }
+    var newY = p3y;
+    if (dy>0) {
+        if (newY+p3h<viewPortY+viewPortH) {
+            newY = viewPortY+viewPortH-p3h;
+        }
+    } else if (dy<0) {
+        if (newY>viewPortY) {
+            newY = viewPortY;
+        }
+    }
+    if (newY!=p3y) eb.setDivRect(g5.p3,null,newY,null,null);
+}, false);
     
 
 
@@ -99,7 +124,7 @@ eb.addEvent(g5.mainDiv, "scroll", function() {
 
 ]]></onControlLoad>
       <top>0</top>
-      <width>1292</width>
+      <width>1242</width>
     </control>
     <control type="Panel" pathname="/divRoot/panel1">
       <autoScroll>true</autoScroll>
@@ -112,7 +137,7 @@ eb.addEvent(g5.mainDiv, "scroll", function() {
       <left>0</left>
       <sizeRatio>0.61609907120743</sizeRatio>
       <top>0</top>
-      <width>1292</width>
+      <width>1242</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel1/panel3">
@@ -123,13 +148,28 @@ eb.addEvent(g5.mainDiv, "scroll", function() {
       <height>2722</height>
       <heightRatio>3.41959798994975</heightRatio>
       <left>411</left>
-      <leftRatio>0.318111455108359</leftRatio>
+      <leftRatio>0.330917874396135</leftRatio>
       <sizeRatio>5.06890130353818</sizeRatio>
       <text>P2</text>
-      <top>12</top>
-      <topRatio>0.0150753768844221</topRatio>
+      <top>0</top>
       <width>537</width>
-      <widthRatio>0.415634674922601</widthRatio>
+      <widthRatio>0.432367149758454</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontBold>true</fontBold>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>100</fontSize>
+      <height>722</height>
+      <heightRatio>0.907035175879397</heightRatio>
+      <left>955</left>
+      <leftRatio>0.768921095008052</leftRatio>
+      <sizeRatio>2.66420664206642</sizeRatio>
+      <text>P3</text>
+      <top>0</top>
+      <width>271</width>
+      <widthRatio>0.218196457326892</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel2">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -140,30 +180,12 @@ eb.addEvent(g5.mainDiv, "scroll", function() {
       <height>722</height>
       <heightRatio>0.907035175879397</heightRatio>
       <left>136</left>
-      <leftRatio>0.105263157894737</leftRatio>
+      <leftRatio>0.109500805152979</leftRatio>
       <sizeRatio>2.66420664206642</sizeRatio>
       <text>P1</text>
-      <top>11</top>
-      <topRatio>0.0138190954773869</topRatio>
+      <top>0</top>
       <width>271</width>
-      <widthRatio>0.209752321981424</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel4">
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <fontBold>true</fontBold>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSize>100</fontSize>
-      <height>722</height>
-      <heightRatio>0.907035175879397</heightRatio>
-      <left>955</left>
-      <leftRatio>0.739164086687306</leftRatio>
-      <sizeRatio>2.66420664206642</sizeRatio>
-      <text>P3</text>
-      <top>10</top>
-      <topRatio>0.0125628140703518</topRatio>
-      <width>271</width>
-      <widthRatio>0.209752321981424</widthRatio>
+      <widthRatio>0.218196457326892</widthRatio>
     </control>
   </controls>
   <taskSet count="0" />
