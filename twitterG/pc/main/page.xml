@@ -284,6 +284,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     if (eb.isEmpty(startY)) startY = 0;
     y = startY + 2; //v-space
     
+    //16,9,50x50
     //root:v_userPhoto,v_titleText,v_text,v_btn1,v_btn2,v_btn3,v_btn4,v_label1,v_label2,v_label3
     //v_contentId
     var c;
@@ -292,10 +293,23 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     root.v_contentId = contentId;
     eb.setDock(c,"disabled","disabled");
     //avata image box
-    c = createPanel($g(hd+"panel12"), hd+"panel13", "", w*0.0208728652751423, w*0.026369168356998, w*0.149905123339658, w*0.149905123339658);
-    eb.setDock(c,"disabled","disabled");
+    c = createPanel($g(hd+"panel12"), hd+"panel13", "", 16, 9, 50, 50);
+    root.v_userPhoto = c;
+    if (userPhoto == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + userPhoto,"trim","","")
+    }
+    c.v_username = username;
+    c.style.cursor="pointer";
+    c.style.borderRadius = "50%";
+    ee.setOnClick(c,function(sender,event) {
+        showUserPage.userName=sender.v_username;
+        showUserPage();
+    });
     
     //v_userPhoto
+    /*
     c = createPanel($g(hd+"panel13"), hd+"panel14", "", 0, 0, 69, 67);
     root.v_userPhoto = c;
     if (userPhoto == "") {
@@ -314,9 +328,10 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         showUserPage.userName=sender.v_username;
         showUserPage();
     });
+    */
     
     //v_titleText
-    c = createPanel($g(hd+"panel12"), hd+"panel16", "", w*0.18595825426945, w*0.00405679513184584, w*0.800759013282732, w*0.0872210953346856);
+    c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, w*0.00405679513184584, w*0.800759013282732, w*0.0872210953346856);
     root.v_titleText = c;
     addText(c, "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username + " - " + times + "</font>", "left", "middle", "微软雅黑", 14, "000000", "normal");
     //eb.setFontSizeAuto(c, 22);
@@ -328,7 +343,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         showUserPage();
     });
     //v_text
-    c = createPanel($g(hd+"panel12"), hd+"panel17", "", w*0.18595825426945, w*0.0872210953346856, w*0.77988614800759, w*0.0547667342799189);
+    c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, w*0.0872210953346856, w*0.77988614800759, w*0.0547667342799189);
     root.v_text = c;
     addText(c, text, "left", "top", "微软雅黑", 12, "000000", "normal");
     //eb.setFontSizeAuto(c, 25);
@@ -341,7 +356,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     
     //photo1
     if (photo1 != "") {
-        c = createPanel($g(hd+"panel12"), hd+"panel18", "", w*0.18595825426945, cy, w*0.787476280834915, w*0.474645030425964);
+        c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, w*0.787476280834915, w*0.474645030425964);
         cy += w*0.474645030425964 + w*0.03;
         eb.setDock(c,"disabled","disabled");
         c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
@@ -353,7 +368,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             );
             eb.setDock(c,"fill","fill");
             cy -= w*0.03;
-            c = createPanel($g(hd+"panel12"), hd+"panel181", "", w*0.18595825426945, cy, w*0.787476280834915, w*0.054);
+            c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, w*0.787476280834915, w*0.054);
             cy += w*0.054 + w*0.03;
             var temp = "https://www.youtube.com/watch?v=" + photo1.substr(4, photo1.length);
             addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
@@ -373,7 +388,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     
     if (reUserName != "") {
         var p1ratio = 2.64;
-        c = createPanel($g(hd+"panel12"), hd+"panel2", "", w*0.18595825426945, cy, w*0.787476280834915, 100);
+        c = createPanel($g(hd+"panel12"), hd+"panel2", "", 75, cy, w*0.787476280834915, 100);
         eb.setDock(c,"disabled","disabled");
         var p1w = eb.getDivRect(c).w;
         var p1h = p1w / p1ratio;
@@ -448,7 +463,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     if (rePhoto1 != "") {
         if (rePhoto1.substr(0,4) == "?YTB") {
             cy -= w*0.03;
-            c = createPanel($g(hd+"panel12"), hd+"panel182", "", w*0.18595825426945, cy, w*0.787476280834915, w*0.054);
+            c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, w*0.787476280834915, w*0.054);
             cy += w*0.054 + w*0.03;
             var temp = "https://www.youtube.com/watch?v=" + rePhoto1.substr(4, rePhoto1.length);
             addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
@@ -675,6 +690,26 @@ g5.refreshPage2 = function() {
     }    
     ee.setRect(root,null,null,null,cy);
 }
+
+//init buttons    
+g5.initLButton = function(name,text,dy,icon) {
+    var cc = ee.getControl(name);
+    ee.setText(cc.status1, "<svg viewBox='0 "+dy+" 24 24' style='height: 1.75rem;color: rgba(0,0,0,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
+    ee.setTextColor(cc.status1, "rgb(0,0,0)");
+    ee.setText(cc.status2, "<svg viewBox='0 "+dy+" 24 24' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
+    ee.setTextColor(cc.status2, "rgb(29,161,242)");
+    ee.setText(cc.status3, "<svg viewBox='0 "+dy+" 24 24' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
+    ee.setTextColor(cc.status3, "rgb(29,161,242)");
+}
+g5.initLButton("button8","主 页",2,"<g><path d=\"M22.58 7.35L12.475 1.897c-.297-.16-.654-.16-.95 0L1.425 7.35c-.486.264-.667.87-.405 1.356.18.335.525.525.88.525.16 0 .324-.038.475-.12l.734-.396 1.59 11.25c.216 1.214 1.31 2.062 2.66 2.062h9.282c1.35 0 2.444-.848 2.662-2.088l1.588-11.225.737.398c.485.263 1.092.082 1.354-.404.263-.486.08-1.093-.404-1.355zM12 15.435c-1.795 0-3.25-1.455-3.25-3.25s1.455-3.25 3.25-3.25 3.25 1.455 3.25 3.25-1.455 3.25-3.25 3.25z\"></path></g>");
+g5.initLButton("button1","列 表",2,"<g><path d=\"M19.75 22H4.25C3.01 22 2 20.99 2 19.75V4.25C2 3.01 3.01 2 4.25 2h15.5C20.99 2 22 3.01 22 4.25v15.5c0 1.24-1.01 2.25-2.25 2.25zM4.25 3.5c-.414 0-.75.337-.75.75v15.5c0 .413.336.75.75.75h15.5c.414 0 .75-.337.75-.75V4.25c0-.413-.336-.75-.75-.75H4.25z\"></path><path d=\"M17 8.64H7c-.414 0-.75-.337-.75-.75s.336-.75.75-.75h10c.414 0 .75.335.75.75s-.336.75-.75.75zm0 4.11H7c-.414 0-.75-.336-.75-.75s.336-.75.75-.75h10c.414 0 .75.336.75.75s-.336.75-.75.75zm-5 4.11H7c-.414 0-.75-.335-.75-.75s.336-.75.75-.75h5c.414 0 .75.337.75.75s-.336.75-.75.75z\"></path></g>");
+g5.initLButton("button3","书 签",2,"<g><path d=\"M19.9 23.5c-.157 0-.312-.05-.442-.144L12 17.928l-7.458 5.43c-.228.164-.53.19-.782.06-.25-.127-.41-.385-.41-.667V5.6c0-1.24 1.01-2.25 2.25-2.25h12.798c1.24 0 2.25 1.01 2.25 2.25v17.15c0 .282-.158.54-.41.668-.106.055-.223.082-.34.082zM12 16.25c.155 0 .31.048.44.144l6.71 4.883V5.6c0-.412-.337-.75-.75-.75H5.6c-.413 0-.75.338-.75.75v15.677l6.71-4.883c.13-.096.285-.144.44-.144z\"></path></g>");
+g5.initLButton("button4","瞬 间",2,"<g><path d=\"M8.98 22.698c-.103 0-.205-.02-.302-.063-.31-.135-.49-.46-.44-.794l1.228-8.527H6.542c-.22 0-.43-.098-.573-.266-.144-.17-.204-.393-.167-.61L7.49 2.5c.062-.36.373-.625.74-.625h6.81c.23 0 .447.105.59.285.142.18.194.415.14.64l-1.446 6.075H19c.29 0 .553.166.678.428.124.262.087.57-.096.796L9.562 22.42c-.146.18-.362.276-.583.276zM7.43 11.812h2.903c.218 0 .425.095.567.26.142.164.206.382.175.598l-.966 6.7 7.313-8.995h-4.05c-.228 0-.445-.105-.588-.285-.142-.18-.194-.415-.14-.64l1.446-6.075H8.864L7.43 11.812z\"></path></g>");
+g5.initLButton("button5","话 题",0,"<g><path d=\"M12.003 23.274c-.083 0-.167-.014-.248-.042-.3-.105-.502-.39-.502-.708v-4.14c-2.08-.172-4.013-1.066-5.506-2.56-3.45-3.45-3.45-9.062 0-12.51s9.062-3.45 12.512 0c3.096 3.097 3.45 8.07.82 11.565l-6.49 8.112c-.146.182-.363.282-.587.282zm0-21.05c-1.882 0-3.763.717-5.195 2.15-2.864 2.863-2.864 7.524 0 10.39 1.388 1.387 3.233 2.15 5.195 2.15.414 0 .75.337.75.75v2.72l5.142-6.425c2.17-2.885 1.876-7.014-.696-9.587-1.434-1.43-3.316-2.148-5.197-2.148z\"></path><path d=\"M15.55 8.7h-7.1c-.413 0-.75-.337-.75-.75s.337-.75.75-.75h7.1c.413 0 .75.335.75.75s-.337.75-.75.75zm-3.05 3.238H8.45c-.413 0-.75-.336-.75-.75s.337-.75.75-.75h4.05c.414 0 .75.336.75.75s-.336.75-.75.75z\"></path></g>");
+g5.initLButton("button2","退出登录",2,"<g><path d=\"M20.75 22H3.25C2.01 22 1 20.99 1 19.75V4.25C1 3.01 2.01 2 3.25 2h17.5C21.99 2 23 3.01 23 4.25v15.5c0 1.24-1.01 2.25-2.25 2.25zM3.25 3.5c-.414 0-.75.337-.75.75v15.5c0 .413.336.75.75.75h17.5c.414 0 .75-.337.75-.75V4.25c0-.413-.336-.75-.75-.75H3.25z\"></path><path d=\"M16.758 6.982h-5.806c-.414 0-.75.336-.75.75s.336.75.75.75h3.995L6.92 16.508c-.292.293-.292.768 0 1.06.147.147.34.22.53.22s.385-.072.53-.22l8.027-8.025v3.995c0 .414.336.75.75.75s.75-.336.75-.75V7.732c0-.414-.335-.75-.75-.75z\"></path></g>");
+g5.initLButton("button7","个人资料",0,"<g><path d=\"M12 22.75C6.072 22.75 1.25 17.928 1.25 12S6.072 1.25 12 1.25 22.75 6.072 22.75 12 17.928 22.75 12 22.75zm0-20C6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25s9.25-4.15 9.25-9.25S17.1 2.75 12 2.75z\"></path><path d=\"M12 17.115c-1.892 0-3.633-.95-4.656-2.544-.224-.348-.123-.81.226-1.035.348-.226.812-.124 1.036.226.747 1.162 2.016 1.855 3.395 1.855s2.648-.693 3.396-1.854c.224-.35.688-.45 1.036-.225.35.224.45.688.226 1.036-1.025 1.594-2.766 2.545-4.658 2.545z\"></path><circle cx=\"14.738\" cy=\"9.458\" r=\"1.478\"></circle><circle cx=\"9.262\" cy=\"9.458\" r=\"1.478\"></circle></g>");
+g5.initLButton("button6","私 信",2,"<g><path d=\"M19.25 3.018H4.75C3.233 3.018 2 4.252 2 5.77v12.495c0 1.518 1.233 2.753 2.75 2.753h14.5c1.517 0 2.75-1.235 2.75-2.753V5.77c0-1.518-1.233-2.752-2.75-2.752zm-14.5 1.5h14.5c.69 0 1.25.56 1.25 1.25v.714l-8.05 5.367c-.273.18-.626.182-.9-.002L3.5 6.482v-.714c0-.69.56-1.25 1.25-1.25zm14.5 14.998H4.75c-.69 0-1.25-.56-1.25-1.25V8.24l7.24 4.83c.383.256.822.384 1.26.384.44 0 .877-.128 1.26-.383l7.24-4.83v10.022c0 .69-.56 1.25-1.25 1.25z\"></path></g>");
+
 
 g5.changePage(0);
 eb.setTouchEnabled(true);
@@ -2858,10 +2893,11 @@ ee.showAni(ee.getControl("panel27"), 0);
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>643</height>
-      <heightRatio>0.751552795031056</heightRatio>
+      <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>2.01666666666667</sizeRatio>
+      <sizeRatio>2.14333333333333</sizeRatio>
       <top>0</top>
+      <topRatio>0.0031104199066874</topRatio>
       <width>300</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2875,8 +2911,8 @@ ee.showAni(ee.getControl("panel27"), 0);
       <fontSize>14</fontSize>
       <height>46</height>
       <heightRatio>0.0715396578538103</heightRatio>
-      <left>106</left>
-      <leftRatio>0.353333333333333</leftRatio>
+      <left>114</left>
+      <leftRatio>0.38</leftRatio>
       <onClick>g5.newPhoto1 = "";
 ee.setEditText(ee.getControl("edit1"), "");
 ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
@@ -2884,160 +2920,25 @@ ee.setText(ee.getControl("panel45"), "发推");
 g5.uplinkType = "N";
 g5.uplinkId = 0;
 ee.showAni(ee.getControl("panel42"), 0);</onClick>
-      <sizeRatio>0.261363636363636</sizeRatio>
+      <sizeRatio>0.273809523809524</sizeRatio>
       <text>发推</text>
-      <top>465</top>
-      <topRatio>0.723172628304821</topRatio>
-      <width>176</width>
-      <widthRatio>0.586666666666667</widthRatio>
+      <top>511</top>
+      <topRatio>0.794712286158631</topRatio>
+      <width>168</width>
+      <widthRatio>0.56</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel144">
       <backgroundImg>getLogo2.png</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
       <height>30</height>
       <heightRatio>0.046656298600311</heightRatio>
-      <left>97</left>
-      <leftRatio>0.323333333333333</leftRatio>
+      <left>104</left>
+      <leftRatio>0.346666666666667</leftRatio>
       <sizeRatio>0.461538461538462</sizeRatio>
       <top>33</top>
       <topRatio>0.0513219284603421</topRatio>
       <width>65</width>
       <widthRatio>0.216666666666667</widthRatio>
-    </control>
-    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button1">
-      <backgroundImg>L01a.png</backgroundImg>
-      <backgroundImg1>L01b.png</backgroundImg1>
-      <backgroundImg2>L01c.png</backgroundImg2>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundImgMode1>fill</backgroundImgMode1>
-      <backgroundImgMode2>fill</backgroundImgMode2>
-      <cursor>pointer</cursor>
-      <height>40</height>
-      <heightRatio>0.0622083981337481</heightRatio>
-      <left>73</left>
-      <leftRatio>0.243333333333333</leftRatio>
-      <onClick>g5.mainDiv.scrollTop = 0;
-g5.changeP2(0);</onClick>
-      <sizeRatio>0.193236714975845</sizeRatio>
-      <top>77</top>
-      <topRatio>0.119751166407465</topRatio>
-      <width>207</width>
-      <widthRatio>0.69</widthRatio>
-    </control>
-    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button2">
-      <backgroundImg>L02a.png</backgroundImg>
-      <backgroundImg1>L02b.png</backgroundImg1>
-      <backgroundImg2>L02c.png</backgroundImg2>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundImgMode1>fill</backgroundImgMode1>
-      <backgroundImgMode2>fill</backgroundImgMode2>
-      <cursor>pointer</cursor>
-      <height>40</height>
-      <heightRatio>0.0622083981337481</heightRatio>
-      <left>73</left>
-      <leftRatio>0.243333333333333</leftRatio>
-      <onClick>g5.changeP2(2);</onClick>
-      <sizeRatio>0.193236714975845</sizeRatio>
-      <top>133</top>
-      <topRatio>0.206842923794712</topRatio>
-      <width>207</width>
-      <widthRatio>0.69</widthRatio>
-    </control>
-    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button3">
-      <backgroundImg>L03a.png</backgroundImg>
-      <backgroundImg1>L03b.png</backgroundImg1>
-      <backgroundImg2>L03c.png</backgroundImg2>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundImgMode1>fill</backgroundImgMode1>
-      <backgroundImgMode2>fill</backgroundImgMode2>
-      <cursor>pointer</cursor>
-      <height>40</height>
-      <heightRatio>0.0622083981337481</heightRatio>
-      <left>73</left>
-      <leftRatio>0.243333333333333</leftRatio>
-      <onClick>g5.changeP2(3);</onClick>
-      <sizeRatio>0.193236714975845</sizeRatio>
-      <top>188</top>
-      <topRatio>0.292379471228616</topRatio>
-      <width>207</width>
-      <widthRatio>0.69</widthRatio>
-    </control>
-    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button4">
-      <backgroundImg>L04a.png</backgroundImg>
-      <backgroundImg1>L04b.png</backgroundImg1>
-      <backgroundImg2>L04c.png</backgroundImg2>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundImgMode1>fill</backgroundImgMode1>
-      <backgroundImgMode2>fill</backgroundImgMode2>
-      <cursor>pointer</cursor>
-      <height>40</height>
-      <heightRatio>0.0622083981337481</heightRatio>
-      <left>73</left>
-      <leftRatio>0.243333333333333</leftRatio>
-      <onClick>g5.changeP2(4);</onClick>
-      <sizeRatio>0.193236714975845</sizeRatio>
-      <top>243</top>
-      <topRatio>0.377916018662519</topRatio>
-      <width>207</width>
-      <widthRatio>0.69</widthRatio>
-    </control>
-    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button5">
-      <backgroundImg>L05a.png</backgroundImg>
-      <backgroundImg1>L05b.png</backgroundImg1>
-      <backgroundImg2>L05c.png</backgroundImg2>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundImgMode1>fill</backgroundImgMode1>
-      <backgroundImgMode2>fill</backgroundImgMode2>
-      <cursor>pointer</cursor>
-      <height>40</height>
-      <heightRatio>0.0622083981337481</heightRatio>
-      <left>73</left>
-      <leftRatio>0.243333333333333</leftRatio>
-      <onClick>g5.changeP2(5);</onClick>
-      <sizeRatio>0.193236714975845</sizeRatio>
-      <top>299</top>
-      <topRatio>0.465007776049767</topRatio>
-      <width>207</width>
-      <widthRatio>0.69</widthRatio>
-    </control>
-    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button6">
-      <backgroundImg>L06a.png</backgroundImg>
-      <backgroundImg1>L06b.png</backgroundImg1>
-      <backgroundImg2>L06c.png</backgroundImg2>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundImgMode1>fill</backgroundImgMode1>
-      <backgroundImgMode2>fill</backgroundImgMode2>
-      <cursor>pointer</cursor>
-      <height>40</height>
-      <heightRatio>0.0622083981337481</heightRatio>
-      <left>73</left>
-      <leftRatio>0.243333333333333</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel54"), 0);</onClick>
-      <sizeRatio>0.193236714975845</sizeRatio>
-      <top>355</top>
-      <topRatio>0.552099533437014</topRatio>
-      <width>207</width>
-      <widthRatio>0.69</widthRatio>
-    </control>
-    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button7">
-      <backgroundImg>L07a.png</backgroundImg>
-      <backgroundImg1>L07b.png</backgroundImg1>
-      <backgroundImg2>L07c.png</backgroundImg2>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundImgMode1>fill</backgroundImgMode1>
-      <backgroundImgMode2>fill</backgroundImgMode2>
-      <cursor>pointer</cursor>
-      <height>40</height>
-      <heightRatio>0.0622083981337481</heightRatio>
-      <left>73</left>
-      <leftRatio>0.243333333333333</leftRatio>
-      <onClick>eb.delCookie("twitterGToken");
-window.location.href = ee.getUrl("/pc/new");</onClick>
-      <sizeRatio>0.193236714975845</sizeRatio>
-      <top>410</top>
-      <topRatio>0.637636080870918</topRatio>
-      <width>207</width>
-      <widthRatio>0.69</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel35">
       <height>171</height>
@@ -3140,26 +3041,161 @@ window.location.href = ee.getUrl("/pc/new");</onClick>
       <width>272</width>
       <widthRatio>0.957746478873239</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel34">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundSkin>LRBtn9</backgroundSkin>
-      <cursor>pointer</cursor>
+    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button8">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
       <fontBold>true</fontBold>
-      <fontColor>FFFFFF</fontColor>
+      <fontColor2>0000C0</fontColor2>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
-      <height>35</height>
-      <heightRatio>0.0544323483670296</heightRatio>
-      <left>121</left>
-      <leftRatio>0.403333333333333</leftRatio>
+      <height>39</height>
+      <heightRatio>0.0606531881804044</heightRatio>
+      <left>79</left>
+      <leftRatio>0.263333333333333</leftRatio>
+      <onClick>g5.mainDiv.scrollTop = 0;
+g5.changeP2(0);</onClick>
+      <sizeRatio>0.242236024844721</sizeRatio>
+      <text>主页</text>
+      <top>84</top>
+      <topRatio>0.130637636080871</topRatio>
+      <width>161</width>
+      <widthRatio>0.536666666666667</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button1">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
+      <fontBold>true</fontBold>
+      <fontColor2>0000C0</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.0606531881804044</heightRatio>
+      <left>79</left>
+      <leftRatio>0.263333333333333</leftRatio>
+      <onClick>g5.mainDiv.scrollTop = 0;
+g5.changeP2(3);</onClick>
+      <sizeRatio>0.242236024844721</sizeRatio>
+      <text>列表</text>
+      <top>240</top>
+      <topRatio>0.373250388802488</topRatio>
+      <width>161</width>
+      <widthRatio>0.536666666666667</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button3">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
+      <fontBold>true</fontBold>
+      <fontColor2>0000C0</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.0606531881804044</heightRatio>
+      <left>79</left>
+      <leftRatio>0.263333333333333</leftRatio>
+      <onClick>g5.changeP2(4);</onClick>
+      <sizeRatio>0.242236024844721</sizeRatio>
+      <text>书签</text>
+      <top>291</top>
+      <topRatio>0.452566096423017</topRatio>
+      <width>161</width>
+      <widthRatio>0.536666666666667</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button4">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
+      <fontBold>true</fontBold>
+      <fontColor2>0000C0</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.0606531881804044</heightRatio>
+      <left>79</left>
+      <leftRatio>0.263333333333333</leftRatio>
+      <onClick>g5.changeP2(5);</onClick>
+      <sizeRatio>0.242236024844721</sizeRatio>
+      <text>瞬间</text>
+      <top>343</top>
+      <topRatio>0.53343701399689</topRatio>
+      <width>161</width>
+      <widthRatio>0.536666666666667</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button5">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
+      <fontBold>true</fontBold>
+      <fontColor2>0000C0</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.0606531881804044</heightRatio>
+      <left>79</left>
+      <leftRatio>0.263333333333333</leftRatio>
+      <onClick>g5.changeP2(2);</onClick>
+      <sizeRatio>0.242236024844721</sizeRatio>
+      <text>话题</text>
+      <top>188</top>
+      <topRatio>0.292379471228616</topRatio>
+      <width>161</width>
+      <widthRatio>0.536666666666667</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button2">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
+      <fontBold>true</fontBold>
+      <fontColor2>0000C0</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.0606531881804044</heightRatio>
+      <left>85</left>
+      <leftRatio>0.283333333333333</leftRatio>
+      <onClick>eb.delCookie("twitterGToken");
+window.location.href = ee.getUrl("/pc/new");</onClick>
+      <sizeRatio>0.213114754098361</sizeRatio>
+      <text>退出登录</text>
+      <top>447</top>
+      <topRatio>0.695178849144635</topRatio>
+      <width>183</width>
+      <widthRatio>0.61</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button7">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
+      <fontBold>true</fontBold>
+      <fontColor2>0000C0</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.0606531881804044</heightRatio>
+      <left>85</left>
+      <leftRatio>0.283333333333333</leftRatio>
+      <onClick>ee.showAni(ee.getControl("panel54"), 0);</onClick>
+      <sizeRatio>0.213114754098361</sizeRatio>
+      <text>个人资料</text>
+      <top>395</top>
+      <topRatio>0.614307931570762</topRatio>
+      <width>183</width>
+      <widthRatio>0.61</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel136/panel26/panel27/button6">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
+      <fontBold>true</fontBold>
+      <fontColor2>0000C0</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.0606531881804044</heightRatio>
+      <left>79</left>
+      <leftRatio>0.263333333333333</leftRatio>
       <onClick>g5.changeP2(6);
 showChatList();</onClick>
-      <sizeRatio>0.236486486486486</sizeRatio>
-      <text>私信测试</text>
-      <top>563</top>
-      <topRatio>0.875583203732504</topRatio>
-      <width>148</width>
-      <widthRatio>0.493333333333333</widthRatio>
+      <sizeRatio>0.242236024844721</sizeRatio>
+      <text>私信</text>
+      <top>136</top>
+      <topRatio>0.211508553654743</topRatio>
+      <width>161</width>
+      <widthRatio>0.536666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
