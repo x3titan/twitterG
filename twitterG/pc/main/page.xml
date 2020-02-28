@@ -1,5 +1,5 @@
 <page>
-  <controls count="183">
+  <controls count="182">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -308,32 +308,12 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         showUserPage();
     });
     
-    //v_userPhoto
-    /*
-    c = createPanel($g(hd+"panel13"), hd+"panel14", "", 0, 0, 69, 67);
-    root.v_userPhoto = c;
-    if (userPhoto == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
-    } else {
-        ee.setImage(c,"url:" + g5.imgUrl + userPhoto,"trim","","")
-    }
-    eb.setDock(c,"fill","fill");
-    eb.setOuter(c,1,1,1,1);
-    c = createPanel($g(hd+"panel13"), hd+"panel15", "", 0, 0, 69, 67);
-    ee.setImage(c,"/twitterG/main/cirMask.png","trim","","")
-    eb.setDock(c,"fill","fill");
-    c.v_username = username;
-    c.style.cursor="pointer";
-    ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.v_username;
-        showUserPage();
-    });
-    */
-    
+    var mainWidth = parseInt((w-75)*0.97);
+        
     //v_titleText
-    c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, w*0.00405679513184584, w*0.800759013282732, w*0.0872210953346856);
+    c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, 6, mainWidth, 26);
     root.v_titleText = c;
-    addText(c, "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username + " - " + times + "</font>", "left", "middle", "微软雅黑", 14, "000000", "normal");
+    addText(c, "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username + " · " + times + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     //eb.setFontSizeAuto(c, 22);
     eb.setDock(c,"disabled","disabled");
     c.v_username = username;
@@ -343,32 +323,32 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         showUserPage();
     });
     //v_text
-    c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, w*0.0872210953346856, w*0.77988614800759, w*0.0547667342799189);
+    c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, 26, mainWidth, w*0.0547667342799189);
     root.v_text = c;
-    addText(c, text, "left", "top", "微软雅黑", 12, "000000", "normal");
+    addText(c, "<font style='line-height:1.2;'>" + text + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
     //eb.setFontSizeAuto(c, 25);
     eb.setDock(c,"disabled","disabled");
     eb.processDock();
     var rect = eb.getDivRect(c.label);
     ee.setRect(c, null, null, null, rect.h);
     rect = eb.getDivRect(c);
-    var cy = rect.y + rect.h + 0.03*w;
+    var cy = rect.y + rect.h + 1;
     
     //photo1
     if (photo1 != "") {
-        c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, w*0.787476280834915, w*0.474645030425964);
+        c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, mainWidth, w*0.474645030425964);
+        c.style.borderRadius = "15px";
         cy += w*0.474645030425964 + w*0.03;
-        eb.setDock(c,"disabled","disabled");
-        c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
+        //c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
         if (photo1.substr(0,4) == "?YTB") {
             ee.setText(c,
-                "<iframe width='" + parseInt(w*0.787476280834915) + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
+                "<iframe width='" + mainWidth + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
                 photo1.substr(4, photo1.length) + 
-                "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+                "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen style='border-radius:15px;'></iframe>"
             );
-            eb.setDock(c,"fill","fill");
+            //eb.setDock(c,"fill","fill");
             cy -= w*0.03;
-            c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, w*0.787476280834915, w*0.054);
+            c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, mainWidth, w*0.054);
             cy += w*0.054 + w*0.03;
             var temp = "https://www.youtube.com/watch?v=" + photo1.substr(4, photo1.length);
             addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
@@ -378,36 +358,34 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             });
         } else {
             ee.setImage(c,"url:" + g5.imgUrl + photo1,"trim","","");
-            eb.setDock(c,"fill","fill");
+            //eb.setDock(c,"fill","fill");
         }
-        c = createPanel($g(hd+"panel18"), hd+"panel20", "", 0, 0, 415, 234);
-        addSkin(c, "/twitterG/skins/bodyMask.png","9x",57,56,19,20,20,18,19,20,20,18);
-        eb.setDock(c,"fill","fill");
-        c.style.pointerEvents = "none";
+        //c = createPanel($g(hd+"panel18"), hd+"panel20", "", 0, 0, 415, 234);
+        //addSkin(c, "/twitterG/skins/bodyMask.png","9x",57,56,19,20,20,18,19,20,20,18);
+        //eb.setDock(c,"fill","fill");
+        //c.style.pointerEvents = "none";
     }
     
     if (reUserName != "") {
         var p1ratio = 2.64;
-        c = createPanel($g(hd+"panel12"), hd+"panel2", "", 75, cy, w*0.787476280834915, 100);
-        eb.setDock(c,"disabled","disabled");
+        c = createPanel($g(hd+"panel12"), hd+"panel2", "", 75, cy, mainWidth-2, 100);
+        c.style.borderRadius = "15px";
+        //c.style.pointerEvents = "none";
+        c.style.borderWidth = "1px";
+        c.style.borderColor = "#A0A0A0";
+        c.style.borderStyle = "solid";
         var p1w = eb.getDivRect(c).w;
         var p1h = p1w / p1ratio;
         c = createPanel($g(hd+"panel2"), hd+"panel6", "", 0, 0, p1w, 100);
         eb.setDock(c,"disabled","disabled");
-        c = createPanel($g(hd+"panel6"), hd+"panel8", "", p1w*0.0289156626506024, p1h*0.044585987261146, p1w*0.0987951807228916, p1w*0.0987951807228916);
-        eb.setDock(c,"disabled","disabled");
         //rePhoto
-        c = createPanel($g(hd+"panel8"), hd+"panel9", "", 1, 1, 39, 39);
-        eb.setOuter(c,1,1,1,1);
+        c = createPanel($g(hd+"panel6"), hd+"panel8", "", 16, 12, 20, 20);
         if (rePhoto == "") {
             ee.setImage(c,"/twitterG/main/user.png","trim","","")
         } else {
             ee.setImage(c,"url:" + g5.imgUrl + rePhoto,"trim","","")
         }
-        eb.setDock(c,"fill","fill");
-        c = createPanel($g(hd+"panel8"), hd+"panel10", "", 0, 0, 41, 41);
-        ee.setImage(c,"/twitterG/main/page1/cirMask.png","trim","","");
-        eb.setDock(c,"fill","fill");
+        c.style.borderRadius = "50%";
         c.v_username = reUserName;
         c.style.cursor="pointer";
         ee.setOnClick(c,function(sender,event) {
@@ -415,10 +393,8 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             showUserPage();
         });
         //reUserName,reNickName,reTime
-        c = createPanel($g(hd+"panel6"), hd+"panel11", "", p1w*0.146987951807229, p1h*0.0573248407643312, p1w*0.833734939759036, p1h*0.229299363057325);
-        addText(c, "<b>" + reNickName + "</b> <font color='#808080' style='font-size:12pt'>@" + reUserName + " - " + reTimes + "</font>", "left", "middle", "微软雅黑", 14, "000000", "normal");
-        //eb.setFontSizeAuto(c, 24);
-        eb.setDock(c,"disabled","disabled");
+        c = createPanel($g(hd+"panel6"), hd+"panel11", "", 45, 8, p1w*0.833734939759036, 28);
+        addText(c, "<b>" + reNickName + "</b> <font color='#808080' style='font-size:12pt'>@" + reUserName + " · " + reTimes + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
         c.v_username = reUserName;
         c.style.cursor="pointer";
         ee.setOnClick(c,function(sender,event) {
@@ -426,7 +402,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             showUserPage();
         });
         //reContent
-        c = createPanel($g(hd+"panel6"), hd+"panel25", "", p1w*0.0385542168674699, p1h*0.331210191082803, p1w*0.927710843373494, 10);
+        c = createPanel($g(hd+"panel6"), hd+"panel25", "", 16, 36, p1w*0.927710843373494, 10);
         addText(c, reContent, "left", "top", "微软雅黑", 12, "000000", "normal");
         //eb.setFontSizeAuto(c, 25);
         eb.setDock(c,"disabled","disabled");
@@ -450,10 +426,10 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             eb.setDock(c,"disabled","disabled");
             p1y += eb.getDivRect(c).h;
         }
-        c = createPanel($g(hd+"panel2"), hd+"panel7", "", 0, 0, p1w, p1y);
-        addSkin(c, "/twitterG/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
-        eb.setDock(c,"disabled","disabled");
-        c.style.pointerEvents = "none";
+        
+        //c = createPanel($g(hd+"panel2"), hd+"panel7", "", 0, 0, p1w, p1y);
+        //addSkin(c, "/twitterG/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
+        //c.style.pointerEvents = "none";
         c = $g(hd+"panel2");
         ee.setRect(c, null, null, null, p1y);
         c = $g(hd+"panel6");
@@ -463,7 +439,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     if (rePhoto1 != "") {
         if (rePhoto1.substr(0,4) == "?YTB") {
             cy -= w*0.03;
-            c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, w*0.787476280834915, w*0.054);
+            c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, mainWidth, w*0.054);
             cy += w*0.054 + w*0.03;
             var temp = "https://www.youtube.com/watch?v=" + rePhoto1.substr(4, rePhoto1.length);
             addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
@@ -607,7 +583,8 @@ g5.getMins = function(mins) {
     } else if (mins<60*24) {
         return parseInt(mins/60) + "小时" + (mins%60) + "分钟";
     } else {
-        return parseInt(mins/(60*24)) + "天" + parseInt((mins%(60*24))/60) + "小时";
+        var time = new Date((new Date()).getTime()-mins*60*1000);
+        return (time.getMonth()+1) + "月" + (time.getDate()+1) + "日";
     }
 }
 
@@ -709,6 +686,12 @@ g5.initLButton("button5","话 题",0,"<g><path d=\"M12.003 23.274c-.083 0-.167-.
 g5.initLButton("button2","退出登录",2,"<g><path d=\"M20.75 22H3.25C2.01 22 1 20.99 1 19.75V4.25C1 3.01 2.01 2 3.25 2h17.5C21.99 2 23 3.01 23 4.25v15.5c0 1.24-1.01 2.25-2.25 2.25zM3.25 3.5c-.414 0-.75.337-.75.75v15.5c0 .413.336.75.75.75h17.5c.414 0 .75-.337.75-.75V4.25c0-.413-.336-.75-.75-.75H3.25z\"></path><path d=\"M16.758 6.982h-5.806c-.414 0-.75.336-.75.75s.336.75.75.75h3.995L6.92 16.508c-.292.293-.292.768 0 1.06.147.147.34.22.53.22s.385-.072.53-.22l8.027-8.025v3.995c0 .414.336.75.75.75s.75-.336.75-.75V7.732c0-.414-.335-.75-.75-.75z\"></path></g>");
 g5.initLButton("button7","个人资料",0,"<g><path d=\"M12 22.75C6.072 22.75 1.25 17.928 1.25 12S6.072 1.25 12 1.25 22.75 6.072 22.75 12 17.928 22.75 12 22.75zm0-20C6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25s9.25-4.15 9.25-9.25S17.1 2.75 12 2.75z\"></path><path d=\"M12 17.115c-1.892 0-3.633-.95-4.656-2.544-.224-.348-.123-.81.226-1.035.348-.226.812-.124 1.036.226.747 1.162 2.016 1.855 3.395 1.855s2.648-.693 3.396-1.854c.224-.35.688-.45 1.036-.225.35.224.45.688.226 1.036-1.025 1.594-2.766 2.545-4.658 2.545z\"></path><circle cx=\"14.738\" cy=\"9.458\" r=\"1.478\"></circle><circle cx=\"9.262\" cy=\"9.458\" r=\"1.478\"></circle></g>");
 g5.initLButton("button6","私 信",2,"<g><path d=\"M19.25 3.018H4.75C3.233 3.018 2 4.252 2 5.77v12.495c0 1.518 1.233 2.753 2.75 2.753h14.5c1.517 0 2.75-1.235 2.75-2.753V5.77c0-1.518-1.233-2.752-2.75-2.752zm-14.5 1.5h14.5c.69 0 1.25.56 1.25 1.25v.714l-8.05 5.367c-.273.18-.626.182-.9-.002L3.5 6.482v-.714c0-.69.56-1.25 1.25-1.25zm14.5 14.998H4.75c-.69 0-1.25-.56-1.25-1.25V8.24l7.24 4.83c.383.256.822.384 1.26.384.44 0 .877-.128 1.26-.383l7.24-4.83v10.022c0 .69-.56 1.25-1.25 1.25z\"></path></g>");
+//init interface
+var cc = ee.getControl("panel23");
+cc.style.borderRadius = "50%";
+cc.style.borderWidth = "4px";
+cc.style.borderColor = "#ffffff";
+cc.style.borderStyle = "solid";
 
 
 g5.changePage(0);
@@ -1359,11 +1342,9 @@ follow();
       <backgroundImgMode>stretch</backgroundImgMode>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
-      <dockY>fill</dockY>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00170357751277683</leftRatio>
       <outerLeft>1</outerLeft>
@@ -1444,92 +1425,50 @@ follow();
       <width>88</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel22">
-      <height>85</height>
-      <heightRatio>0.108974358974359</heightRatio>
-      <left>19</left>
-      <leftRatio>0.0324786324786325</leftRatio>
-      <lockRatio>true</lockRatio>
-      <sizeRatio>1.02409638554217</sizeRatio>
-      <top>214</top>
-      <topRatio>0.274358974358974</topRatio>
-      <width>83</width>
-      <widthRatio>0.141880341880342</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel22/panel23">
-      <backgroundImg>user.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>83</height>
-      <heightRatio>0.976470588235294</heightRatio>
-      <left>1</left>
-      <leftRatio>0.0120481927710843</leftRatio>
-      <outerBottom>1</outerBottom>
-      <outerLeft>1</outerLeft>
-      <outerRight>1</outerRight>
-      <outerTop>1</outerTop>
-      <sizeRatio>1.02469135802469</sizeRatio>
-      <top>1</top>
-      <topRatio>0.0117647058823529</topRatio>
-      <width>81</width>
-      <widthRatio>0.975903614457831</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel22/panel24">
-      <backgroundImg>cirMask.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>85</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>1.02409638554217</sizeRatio>
-      <top>0</top>
-      <width>83</width>
-      <widthRatio>1</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel18">
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>16</fontSize>
+      <fontSize>14</fontSize>
       <hAlign>left</hAlign>
-      <height>45</height>
-      <heightRatio>0.0576923076923077</heightRatio>
-      <left>123</left>
-      <leftRatio>0.21025641025641</leftRatio>
-      <sizeRatio>0.171102661596958</sizeRatio>
+      <height>34</height>
+      <heightRatio>0.0435897435897436</heightRatio>
+      <left>21</left>
+      <leftRatio>0.0358974358974359</leftRatio>
+      <sizeRatio>0.129277566539924</sizeRatio>
       <text>昵称nicheng</text>
-      <top>218</top>
-      <topRatio>0.279487179487179</topRatio>
+      <top>258</top>
+      <topRatio>0.330769230769231</topRatio>
       <width>263</width>
       <widthRatio>0.44957264957265</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel21">
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>16</fontSize>
+      <fontSize>14</fontSize>
       <hAlign>left</hAlign>
-      <height>45</height>
-      <heightRatio>0.0576923076923077</heightRatio>
-      <left>123</left>
-      <leftRatio>0.21025641025641</leftRatio>
-      <sizeRatio>0.166666666666667</sizeRatio>
+      <height>34</height>
+      <heightRatio>0.0435897435897436</heightRatio>
+      <left>21</left>
+      <leftRatio>0.0358974358974359</leftRatio>
+      <sizeRatio>0.129277566539924</sizeRatio>
       <text>@用户名</text>
-      <top>258</top>
-      <topRatio>0.330769230769231</topRatio>
-      <width>270</width>
-      <widthRatio>0.461538461538462</widthRatio>
+      <top>283</top>
+      <topRatio>0.362820512820513</topRatio>
+      <width>263</width>
+      <widthRatio>0.44957264957265</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel69">
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
+      <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>30</height>
       <heightRatio>0.0384615384615385</heightRatio>
-      <left>20</left>
-      <leftRatio>0.0341880341880342</leftRatio>
+      <left>21</left>
+      <leftRatio>0.0358974358974359</leftRatio>
       <sizeRatio>0.0549450549450549</sizeRatio>
       <text>自我介绍</text>
-      <top>307</top>
-      <topRatio>0.393589743589744</topRatio>
+      <top>320</top>
+      <topRatio>0.41025641025641</topRatio>
       <vAlign>top</vAlign>
       <width>546</width>
       <widthRatio>0.933333333333333</widthRatio>
@@ -1537,7 +1476,7 @@ follow();
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel72">
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
+      <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>39</height>
       <heightRatio>0.05</heightRatio>
@@ -1593,8 +1532,8 @@ follow();
       <left>20</left>
       <leftRatio>0.0341880341880342</leftRatio>
       <sizeRatio>0.0635208711433757</sizeRatio>
-      <top>339</top>
-      <topRatio>0.434615384615385</topRatio>
+      <top>348</top>
+      <topRatio>0.446153846153846</topRatio>
       <width>551</width>
       <widthRatio>0.941880341880342</widthRatio>
     </control>
@@ -1615,7 +1554,7 @@ follow();
       <backgroundColor>d0d0d0</backgroundColor>
       <fontColor>1C94E0</fontColor>
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
+      <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>35</height>
       <heightRatio>1</heightRatio>
@@ -1656,7 +1595,7 @@ follow();
       <backgroundColor>d0d0d0</backgroundColor>
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
+      <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>35</height>
       <heightRatio>1</heightRatio>
@@ -1692,6 +1631,45 @@ ee.showAni(ee.getControl("panel116"), 0);</onClick>
       <topRatio>0.341025641025641</topRatio>
       <width>69</width>
       <widthRatio>0.117948717948718</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel135/panel16/button9">
+      <backgroundSkin>LRBtn10</backgroundSkin>
+      <backgroundSkin1>LRBtn11</backgroundSkin1>
+      <backgroundSkin2>twitterG007</backgroundSkin2>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>1C94E0</fontColor>
+      <fontColor1>404040</fontColor1>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.0512820512820513</heightRatio>
+      <left>392</left>
+      <leftRatio>0.67008547008547</leftRatio>
+      <onClick>ee.showAni(ee.getControl("panel54"), 0);
+</onClick>
+      <sizeRatio>0.229885057471264</sizeRatio>
+      <text>编辑个人资料</text>
+      <top>222</top>
+      <topRatio>0.284615384615385</topRatio>
+      <width>174</width>
+      <widthRatio>0.297435897435897</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel23">
+      <backgroundImg>user.png</backgroundImg>
+      <height>135</height>
+      <heightRatio>0.173076923076923</heightRatio>
+      <left>21</left>
+      <leftRatio>0.0358974358974359</leftRatio>
+      <outerBottom>1</outerBottom>
+      <outerLeft>1</outerLeft>
+      <outerRight>1</outerRight>
+      <outerTop>1</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>117</top>
+      <topRatio>0.15</topRatio>
+      <width>135</width>
+      <widthRatio>0.230769230769231</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel82">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
@@ -2264,6 +2242,7 @@ ee.showAni(ee.getControl("panel116"), 0);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->7->私信列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00170357751277683</leftRatio>
       <onAniEnd>showChatList();</onAniEnd>
@@ -2682,6 +2661,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>722</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P3->3->私信聊天]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <leftRatio>0.00325732899022801</leftRatio>
       <sizeRatio>2.35179153094463</sizeRatio>
@@ -2911,8 +2891,8 @@ ee.showAni(ee.getControl("panel27"), 0);
       <fontSize>14</fontSize>
       <height>46</height>
       <heightRatio>0.0715396578538103</heightRatio>
-      <left>114</left>
-      <leftRatio>0.38</leftRatio>
+      <left>55</left>
+      <leftRatio>0.183333333333333</leftRatio>
       <onClick>g5.newPhoto1 = "";
 ee.setEditText(ee.getControl("edit1"), "");
 ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
@@ -2920,23 +2900,23 @@ ee.setText(ee.getControl("panel45"), "发推");
 g5.uplinkType = "N";
 g5.uplinkId = 0;
 ee.showAni(ee.getControl("panel42"), 0);</onClick>
-      <sizeRatio>0.273809523809524</sizeRatio>
+      <sizeRatio>0.207207207207207</sizeRatio>
       <text>发推</text>
-      <top>511</top>
-      <topRatio>0.794712286158631</topRatio>
-      <width>168</width>
-      <widthRatio>0.56</widthRatio>
+      <top>503</top>
+      <topRatio>0.782270606531882</topRatio>
+      <width>222</width>
+      <widthRatio>0.74</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel144">
       <backgroundImg>getLogo2.png</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
       <height>30</height>
       <heightRatio>0.046656298600311</heightRatio>
-      <left>104</left>
-      <leftRatio>0.346666666666667</leftRatio>
+      <left>45</left>
+      <leftRatio>0.15</leftRatio>
       <sizeRatio>0.461538461538462</sizeRatio>
-      <top>33</top>
-      <topRatio>0.0513219284603421</topRatio>
+      <top>25</top>
+      <topRatio>0.0388802488335925</topRatio>
       <width>65</width>
       <widthRatio>0.216666666666667</widthRatio>
     </control>
@@ -3050,14 +3030,14 @@ ee.showAni(ee.getControl("panel42"), 0);</onClick>
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.0606531881804044</heightRatio>
-      <left>79</left>
-      <leftRatio>0.263333333333333</leftRatio>
+      <left>20</left>
+      <leftRatio>0.0666666666666667</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;
 g5.changeP2(0);</onClick>
       <sizeRatio>0.242236024844721</sizeRatio>
       <text>主页</text>
-      <top>84</top>
-      <topRatio>0.130637636080871</topRatio>
+      <top>76</top>
+      <topRatio>0.118195956454121</topRatio>
       <width>161</width>
       <widthRatio>0.536666666666667</widthRatio>
     </control>
@@ -3070,14 +3050,14 @@ g5.changeP2(0);</onClick>
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.0606531881804044</heightRatio>
-      <left>79</left>
-      <leftRatio>0.263333333333333</leftRatio>
+      <left>20</left>
+      <leftRatio>0.0666666666666667</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;
 g5.changeP2(3);</onClick>
       <sizeRatio>0.242236024844721</sizeRatio>
       <text>列表</text>
-      <top>240</top>
-      <topRatio>0.373250388802488</topRatio>
+      <top>232</top>
+      <topRatio>0.360808709175739</topRatio>
       <width>161</width>
       <widthRatio>0.536666666666667</widthRatio>
     </control>
@@ -3090,13 +3070,13 @@ g5.changeP2(3);</onClick>
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.0606531881804044</heightRatio>
-      <left>79</left>
-      <leftRatio>0.263333333333333</leftRatio>
+      <left>20</left>
+      <leftRatio>0.0666666666666667</leftRatio>
       <onClick>g5.changeP2(4);</onClick>
       <sizeRatio>0.242236024844721</sizeRatio>
       <text>书签</text>
-      <top>291</top>
-      <topRatio>0.452566096423017</topRatio>
+      <top>283</top>
+      <topRatio>0.440124416796268</topRatio>
       <width>161</width>
       <widthRatio>0.536666666666667</widthRatio>
     </control>
@@ -3109,13 +3089,13 @@ g5.changeP2(3);</onClick>
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.0606531881804044</heightRatio>
-      <left>79</left>
-      <leftRatio>0.263333333333333</leftRatio>
+      <left>20</left>
+      <leftRatio>0.0666666666666667</leftRatio>
       <onClick>g5.changeP2(5);</onClick>
       <sizeRatio>0.242236024844721</sizeRatio>
       <text>瞬间</text>
-      <top>343</top>
-      <topRatio>0.53343701399689</topRatio>
+      <top>335</top>
+      <topRatio>0.52099533437014</topRatio>
       <width>161</width>
       <widthRatio>0.536666666666667</widthRatio>
     </control>
@@ -3128,13 +3108,13 @@ g5.changeP2(3);</onClick>
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.0606531881804044</heightRatio>
-      <left>79</left>
-      <leftRatio>0.263333333333333</leftRatio>
+      <left>20</left>
+      <leftRatio>0.0666666666666667</leftRatio>
       <onClick>g5.changeP2(2);</onClick>
       <sizeRatio>0.242236024844721</sizeRatio>
       <text>话题</text>
-      <top>188</top>
-      <topRatio>0.292379471228616</topRatio>
+      <top>180</top>
+      <topRatio>0.279937791601866</topRatio>
       <width>161</width>
       <widthRatio>0.536666666666667</widthRatio>
     </control>
@@ -3147,14 +3127,14 @@ g5.changeP2(3);</onClick>
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.0606531881804044</heightRatio>
-      <left>85</left>
-      <leftRatio>0.283333333333333</leftRatio>
+      <left>26</left>
+      <leftRatio>0.0866666666666667</leftRatio>
       <onClick>eb.delCookie("twitterGToken");
 window.location.href = ee.getUrl("/pc/new");</onClick>
       <sizeRatio>0.213114754098361</sizeRatio>
       <text>退出登录</text>
-      <top>447</top>
-      <topRatio>0.695178849144635</topRatio>
+      <top>439</top>
+      <topRatio>0.682737169517885</topRatio>
       <width>183</width>
       <widthRatio>0.61</widthRatio>
     </control>
@@ -3167,13 +3147,16 @@ window.location.href = ee.getUrl("/pc/new");</onClick>
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.0606531881804044</heightRatio>
-      <left>85</left>
-      <leftRatio>0.283333333333333</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel54"), 0);</onClick>
+      <left>26</left>
+      <leftRatio>0.0866666666666667</leftRatio>
+      <onClick>showUserPage.userName = g5.userName;
+showUserPage();
+
+</onClick>
       <sizeRatio>0.213114754098361</sizeRatio>
       <text>个人资料</text>
-      <top>395</top>
-      <topRatio>0.614307931570762</topRatio>
+      <top>387</top>
+      <topRatio>0.601866251944012</topRatio>
       <width>183</width>
       <widthRatio>0.61</widthRatio>
     </control>
@@ -3186,14 +3169,14 @@ window.location.href = ee.getUrl("/pc/new");</onClick>
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.0606531881804044</heightRatio>
-      <left>79</left>
-      <leftRatio>0.263333333333333</leftRatio>
+      <left>20</left>
+      <leftRatio>0.0666666666666667</leftRatio>
       <onClick>g5.changeP2(6);
 showChatList();</onClick>
       <sizeRatio>0.242236024844721</sizeRatio>
       <text>私信</text>
-      <top>136</top>
-      <topRatio>0.211508553654743</topRatio>
+      <top>128</top>
+      <topRatio>0.199066874027994</topRatio>
       <width>161</width>
       <widthRatio>0.536666666666667</widthRatio>
     </control>
@@ -4065,7 +4048,8 @@ if (!db.executeNoneQuery("DB", sql)) {
     return;
 }
 ee.showAni(ee.getControl("panel54"), 1);
-getUserInfo();</script3>
+getUserInfo();
+if (g5.currentPageIndex == 1) showUserPage();</script3>
     </taskSetItem>
     <taskSetItem name="newTwitter">
       <script1><![CDATA[var text = ee.getEditText(ee.getControl("edit1"));
@@ -4531,6 +4515,16 @@ var homePage = eio.readString16();
 var follow = eio.readString16();
 g5.datasetPageUser = eio.readDataSet();
 
+if (userName == g5.userName) {
+    ee.setVisible(ee.getControl("button9"), true);
+    ee.setVisible(ee.getControl("panel19"), false);
+    ee.setVisible(ee.getControl("panel115"), false);
+} else {
+    ee.setVisible(ee.getControl("button9"), false);
+    ee.setVisible(ee.getControl("panel19"), true);
+    ee.setVisible(ee.getControl("panel115"), true);
+}
+
 ee.getControl("panel16").userId = id;
 ee.getControl("panel16").userName = userName;
 var rootH = eb.getDivRect(ee.getControl("panel16")).h;
@@ -4628,7 +4622,7 @@ for (i=0; i< g5.datasetPageUser.rowCount; i++) {
     g5.itemsPageUser.push(item);
     cy += 2 + eb.getDivRect(item).h;    
 }
-eb.setDivRect(root,null,null,null,cy);
+ee.setRect(root,null,null,null,cy);
 g5.changeP2(1);
 //eb.processDock();
 
