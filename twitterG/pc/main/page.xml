@@ -304,6 +304,13 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         showTopic.needRefresh = true;
         g5.changeP2(7);
     });
+    ee.setOnMouseEnter(c, function(sender,e){
+        sender.style.backgroundColor = "rgb(245,248,250)";
+    });
+    ee.setOnMouseLeave(c, function(sender,e){
+        sender.style.backgroundColor = "#ffffff";
+    });
+    
     //avata image box
     c = createPanel($g(hd+"panel12"), hd+"panel13", "", 16, 9, 50, 50);
     root.v_userPhoto = c;
@@ -348,17 +355,18 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     
     //photo1
     if (photo1 != "") {
-        c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, mainWidth, w*0.474645030425964);
+        c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, mainWidth, parseInt(w*0.474645030425964));
         c.style.borderRadius = "15px";
+        c.style.borderWidth = "1px";
+        c.style.borderColor = "#A0A0A0";
+        c.style.borderStyle = "solid";
+        
         cy += w*0.474645030425964 + w*0.03;
         //c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
         if (photo1.substr(0,4) == "?YTB") {
-            ee.setText(c,
-                "<iframe width='" + mainWidth + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
+            c.innerHTML = "<iframe width='" + mainWidth + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
                 photo1.substr(4, photo1.length) + 
-                "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen style='border-radius:15px;'></iframe>"
-            );
-            //eb.setDock(c,"fill","fill");
+                "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
             cy -= w*0.03;
             c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, mainWidth, w*0.054);
             cy += w*0.054 + w*0.03;
@@ -372,10 +380,6 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             ee.setImage(c,"url:" + g5.imgUrl + photo1,"trim","","");
             //eb.setDock(c,"fill","fill");
         }
-        //c = createPanel($g(hd+"panel18"), hd+"panel20", "", 0, 0, 415, 234);
-        //addSkin(c, "/twitterG/skins/bodyMask.png","9x",57,56,19,20,20,18,19,20,20,18);
-        //eb.setDock(c,"fill","fill");
-        //c.style.pointerEvents = "none";
     }
     
     if (reUserName != "") {
@@ -386,6 +390,13 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         c.style.borderWidth = "1px";
         c.style.borderColor = "#A0A0A0";
         c.style.borderStyle = "solid";
+        ee.setOnMouseEnter(c, function(sender,e){
+            sender.style.backgroundColor = "rgb(237,240,242)";
+        });
+        ee.setOnMouseLeave(c, function(sender,e){
+            sender.style.backgroundColor = "";
+        });
+        
         var p1w = eb.getDivRect(c).w;
         var p1h = p1w / p1ratio;
         c = createPanel($g(hd+"panel2"), hd+"panel6", "", 0, 0, p1w, 100);
@@ -427,11 +438,9 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         if (rePhoto1 != "") {
             c = createPanel($g(hd+"panel6"), hd+"panel26", "", 0, p1y, p1w, parseInt(p1w*0.7));
             if (rePhoto1.substr(0,4) == "?YTB") {
-              ee.setText(c,
-                    "<iframe width='" + parseInt(p1w) + "' height='" + parseInt(p1w*0.7) + "' src='https://www.youtube.com/embed/" +
+                c.innerHTML = "<iframe width='" + parseInt(p1w) + "' height='" + parseInt(p1w*0.7) + "' src='https://www.youtube.com/embed/" +
                     rePhoto1.substr(4, rePhoto1.length) + 
-                    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
-                );
+                    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
             } else {
                 ee.setImage(c,"url:" + g5.imgUrl + rePhoto1,"trim","","");
             }
@@ -1358,6 +1367,7 @@ follow();
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00170357751277683</leftRatio>
       <outerLeft>1</outerLeft>
