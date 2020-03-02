@@ -1,5 +1,5 @@
 <page>
-  <controls count="187">
+  <controls count="191">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -353,6 +353,14 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         showUserPage();
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+    });
     
     var mainWidth = parseInt((w-75)*0.97);
         
@@ -373,6 +381,54 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     ee.setOnMouseLeave(c,function(sender,e){
         sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="";
     });
+    
+    //button
+    if (username==g5.userName) {
+    c = createPanel(root,hd+"button1", "", w-45, 6, 30, 30);
+    ee.setImage(c,"url:/res/empty.png","stretch","","")
+    c = createPanel($g(hd+"button1"), hd+"button1status1", "", 22, 20, 40, 39);
+    addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(hd+"button1");
+    c.status1=$g(hd+"button1status1");
+    c.status1.button=c;
+    c = createPanel($g(hd+"button1"), hd+"button1status2", "", 22, 20, 40, 39);
+    addSkin(c, "/twitterG/skins/LRBtn12.png","LR3x",65,50,24,0,17,50,1,3,63,43);
+    addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(hd+"button1");
+    c.status2=$g(hd+"button1status2");
+    c.status2.button=c;
+    c = createPanel($g(hd+"button1"), hd+"button1status3", "", 22, 20, 40, 39);
+    addSkin(c, "/twitterG/skins/twitterG008.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+    addText(c, "<", "center", "middle", "微软雅黑", 14, "0000C0", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(hd+"button1");
+    c.status3=$g(hd+"button1status3");
+    c.status3.button=c;
+    c = createPanel($g(hd+"button1"), hd+"button1clickLayer", "", 22, 20, 40, 39);
+    ee.setImage(c,"url:/res/empty.png","stretch","","")
+    eb.setDock(c,"fill","fill");
+    ee.setOnClick(c,function(sender,event) {
+        ee.setVisible(ee.getControl("panel40"), true);
+        var e = event || window.event;
+        ee.setRect(ee.getControl("panel149"), e.clientX - eb.getDivRect(ee.getControl("panel149")).w +20, e.clientY - 20, null, null);
+        ee.showAni(ee.getControl("panel149"), 0);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    c=$g(hd+"button1");
+    c.clickLayer=$g(hd+"button1clickLayer");
+    c.clickLayer.button=c;
+    eb.initButton(c);
+    c.downX=1;
+    c.downY=2;
+    c=$g(hd+"button1");
+    c.onCreate=function(sender) {
+        initLButton(sender,"",-6,"<g><path d=\"M20.207 8.147c-.39-.39-1.023-.39-1.414 0L12 14.94 5.207 8.147c-.39-.39-1.023-.39-1.414 0-.39.39-.39 1.023 0 1.414l7.5 7.5c.195.196.45.294.707.294s.512-.098.707-.293l7.5-7.5c.39-.39.39-1.022 0-1.413z\"></path></g>","48 48",-6);
+    };
+    c.onCreate(c);    
+    }
+    
     //v_text
     c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, 26, mainWidth, w*0.0547667342799189);
     root.v_text = c;
@@ -759,12 +815,14 @@ eb.processDock();
 
 
                                             ]]></onControlLoad>
-      <onPageCreate><![CDATA[initLButton = function(button,text,dy,icon) {
-    ee.setText(button.status1, "<svg viewBox='0 "+dy+" 24 24' style='height: 1.75rem;color: rgba(0,0,0,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
+      <onPageCreate><![CDATA[initLButton = function(button,text,dy,icon,size,dx) {
+    if (eb.isEmpty(size)) size = "24 24";
+    if (eb.isEmpty(dx)) dx = "0";
+    ee.setText(button.status1, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(0,0,0,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
     ee.setTextColor(button.status1, "rgb(0,0,0)");
-    ee.setText(button.status2, "<svg viewBox='0 "+dy+" 24 24' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
+    ee.setText(button.status2, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
     ee.setTextColor(button.status2, "rgb(29,161,242)");
-    ee.setText(button.status3, "<svg viewBox='0 "+dy+" 24 24' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
+    ee.setText(button.status3, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
 ]]></onPageCreate>
@@ -3793,6 +3851,7 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <height>571</height>
       <heightRatio>0.717336683417085</heightRatio>
       <layerName><![CDATA[Root->发推文]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>357</left>
       <leftRatio>0.272260273972603</leftRatio>
       <sizeRatio>1.07330827067669</sizeRatio>
@@ -4058,6 +4117,89 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <topRatio>0.287215411558669</topRatio>
       <width>79</width>
       <widthRatio>0.148496240601504</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>796</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[Root->主界面弹窗->Root]]></layerName>
+      <left>0</left>
+      <onClick>ee.showAni(ee.getControl("panel149"), 1);</onClick>
+      <onCreate>sender.style.zIndex=100;</onCreate>
+      <sizeRatio>0.638331996792302</sizeRatio>
+      <top>0</top>
+      <topRatio>-0.00125628140703518</topRatio>
+      <width>1247</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniSize>pointAppear:点扩展出现</aniSize>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>104</height>
+      <heightRatio>0.130653266331658</heightRatio>
+      <layerName><![CDATA[Root->主界面弹窗->A]]></layerName>
+      <left>381</left>
+      <leftRatio>0.305533279871692</leftRatio>
+      <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
+      <onCreate>sender.style.borderRadius = "6px";
+/*
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+  */
+sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
+</onCreate>
+      <sizeRatio>0.481481481481481</sizeRatio>
+      <top>192</top>
+      <topRatio>0.241206030150754</topRatio>
+      <width>216</width>
+      <widthRatio>0.173215717722534</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149/panel110">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>E0245E</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.191570881226054</heightRatio>
+      <left>0</left>
+      <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
+      <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
+      <sizeRatio>0.256410256410256</sizeRatio>
+      <text><![CDATA[   <svg viewBox="0 -2 34 34" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'><g><path d="M20.746 5.236h-3.75V4.25c0-1.24-1.01-2.25-2.25-2.25h-5.5c-1.24 0-2.25 1.01-2.25 2.25v.986h-3.75c-.414 0-.75.336-.75.75s.336.75.75.75h.368l1.583 13.262c.216 1.193 1.31 2.027 2.658 2.027h8.282c1.35 0 2.442-.834 2.664-2.072l1.577-13.217h.368c.414 0 .75-.336.75-.75s-.335-.75-.75-.75zM8.496 4.25c0-.413.337-.75.75-.75h5.5c.413 0 .75.337.75.75v.986h-7V4.25zm8.822 15.48c-.1.55-.664.795-1.18.795H7.854c-.517 0-1.083-.246-1.175-.75L5.126 6.735h13.74L17.32 19.732z"></path><path d="M10 17.75c.414 0 .75-.336.75-.75v-7c0-.414-.336-.75-.75-.75s-.75.336-.75.75v7c0 .414.336.75.75.75zm4 0c.414 0 .75-.336.75-.75v-7c0-.414-.336-.75-.75-.75s-.75.336-.75.75v7c0 .414.336.75.75.75z"></path></g></svg> 删除
+]]></text>
+      <top>0</top>
+      <width>216</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149/panel111">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.480769230769231</heightRatio>
+      <left>0</left>
+      <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
+      <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
+      <sizeRatio>0.231481481481481</sizeRatio>
+      <text><![CDATA[   <svg viewBox="0 -4 34 34" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'><g><path d="M20.472 14.738c-.388-1.808-2.24-3.517-3.908-4.246l-.474-4.307 1.344-2.016c.258-.387.28-.88.062-1.286-.218-.406-.64-.66-1.102-.66H7.54c-.46 0-.884.254-1.1.66-.22.407-.197.9.06 1.284l1.35 2.025-.42 4.3c-1.667.732-3.515 2.44-3.896 4.222-.066.267-.043.672.222 1.01.14.178.46.474 1.06.474h3.858l2.638 6.1c.12.273.39.45.688.45s.57-.177.688-.45l2.638-6.1h3.86c.6 0 .92-.297 1.058-.474.265-.34.288-.745.228-.988zM12 20.11l-1.692-3.912h3.384L12 20.11zm-6.896-5.413c.456-1.166 1.904-2.506 3.265-2.96l.46-.153.566-5.777-1.39-2.082h7.922l-1.39 2.08.637 5.78.456.153c1.355.45 2.796 1.78 3.264 2.96H5.104z"></path></g></svg> 置顶到你的个人资料
+]]></text>
+      <top>52</top>
+      <topRatio>0.5</topRatio>
+      <width>216</width>
+      <widthRatio>1</widthRatio>
     </control>
   </controls>
   <taskSet count="12">
