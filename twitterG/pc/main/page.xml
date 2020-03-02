@@ -1362,14 +1362,17 @@ follow();
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->2->用户(个人)信息页]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>1</left>
-      <leftRatio>0.00170357751277683</leftRatio>
-      <outerLeft>1</outerLeft>
-      <outerRight>1</outerRight>
-      <sizeRatio>1.33333333333333</sizeRatio>
+      <left>0</left>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+</onCreate>
+      <sizeRatio>1.33105802047782</sizeRatio>
       <top>0</top>
-      <width>585</width>
-      <widthRatio>0.996592844974446</widthRatio>
+      <width>587</width>
+      <widthRatio>0.998296422487223</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel19">
       <backgroundImgMode>fill</backgroundImgMode>
@@ -1406,7 +1409,7 @@ follow();
       <left>0</left>
       <sizeRatio>0.345299145299145</sizeRatio>
       <top>0</top>
-      <width>585</width>
+      <width>587</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel20/panel75">
@@ -2355,6 +2358,7 @@ sender.style.borderStyle = "solid";</onCreate>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->8->话题页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniEnd>showTopic();</onAniEnd>
       <sizeRatio>1.33105802047782</sizeRatio>
@@ -3789,7 +3793,6 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <height>571</height>
       <heightRatio>0.717336683417085</heightRatio>
       <layerName><![CDATA[Root->发推文]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>357</left>
       <leftRatio>0.272260273972603</leftRatio>
       <sizeRatio>1.07330827067669</sizeRatio>
@@ -4021,24 +4024,24 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <leftRatio>0.0319548872180451</leftRatio>
       <onClick><![CDATA[var url = prompt("请输入播放地址：", "");
 if (url == null) return;
-//https://www.youtube.com/watch?v=yJG3WMG1dak
-if (url.length < "youtube.com/watch?v=".length) {
+if (url.length<=0) return;
+g5.newPhoto1 = "";
+var pos;
+if ((pos=url.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
+    //https://www.youtube.com/watch?v=yJG3WMG1dak
+    g5.newPhoto1 = url.substr(pos + "youtube.com/watch?v=".length, url.length);
+} else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
+    //https://youtu.be/edESgyDUKDU
+    g5.newPhoto1 = url.substr(pos + "youtu.be/".length, url.length);
+} else {
     alert("您输入的视频地址不正确");
     return;
 }
-var startPos = url.toLowerCase().indexOf("youtube.com/watch?v=",0);
-if (startPos<0) {
-    alert("您输入的视频地址不正确");
-    return;
-}
-//<iframe width='260' height='115' src='https://www.youtube.com/embed/P0NHPC9m3Wc' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
-ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
-var rect = eb.getDivRect(ee.getControl("panel52"));
-g5.newPhoto1 = url.substr(startPos + "youtube.com/watch?v=".length, url.length);
 if ((g5.newPhoto1.length<=8)||(g5.newPhoto1.length>=14)) {
     alert("您输入的视频地址不正确");
     return;
 }
+var rect = eb.getDivRect(ee.getControl("panel52"));
 url = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
     g5.newPhoto1 + 
     "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
@@ -4613,7 +4616,9 @@ for (i=0; i< g5.datasetPageUser.rowCount; i++) {
         );        
         
     g5.itemsPageUser.push(item);
-    cy += 0 + eb.getDivRect(item).h;    
+    cy += 0 + eb.getDivRect(item).h;
+    item.style.borderLeft="";    
+    item.style.borderRight="";    
 }
 ee.setRect(root,null,null,null,cy);
 g5.changeP2(1);
