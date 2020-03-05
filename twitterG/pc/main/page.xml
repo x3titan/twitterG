@@ -331,6 +331,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     ee.setOnClick(c,function(sender,event) {
         showTopic.topicId = sender.v_contentId;
         showTopic.needRefresh = true;
+        if (g5.currentPageIndex == 7) g5.changeP2(-1);
         g5.changeP2(7);
     });
     ee.setOnMouseEnter(c, function(sender,e){
@@ -598,6 +599,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         g5.uplinkType = "R";
         g5.uplinkId = sender.parentNode.v_contentId;
         ee.showAni(ee.getControl("panel42"), 0);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     c = createPanel($g(hd+"panel12"), hd+"panel22", "", w*0.402277039848197, cy, w*0.040, w*0.040);
     c.style.cursor="pointer";
@@ -612,6 +614,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         g5.uplinkType = "F";
         g5.uplinkId = sender.parentNode.v_contentId;
         ee.showAni(ee.getControl("panel42"), 0);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     c = createPanel($g(hd+"panel12"), hd+"panel23", "", w*0.616698292220114, cy, w*0.040, w*0.040);
     c.style.cursor="pointer";
@@ -713,8 +716,10 @@ g5.appendItemPage2 = function(parent, username, nickname, userPhoto) {
     return y;
 }
 
-g5.getMins = function(mins) {
-    mins = parseInt(mins);
+g5.getMins = function(seconds) {
+    seconds = parseInt(seconds);
+    if (seconds<60) return seconds+"秒";
+    var mins=parseInt(seconds/60);
     if (mins<60) {
         return mins+"分钟";
     } else if (mins<60*24) {
@@ -3876,285 +3881,6 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <width>267</width>
       <widthRatio>0.594043887147335</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel42">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <ani2Pos>bottomFlyOut:底部飞出</ani2Pos>
-      <aniAlpha>appear:渐变出现</aniAlpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>stretch</backgroundImgMode>
-      <backgroundSkin>body5</backgroundSkin>
-      <dockX>center</dockX>
-      <dockY>center</dockY>
-      <height>571</height>
-      <heightRatio>0.717336683417085</heightRatio>
-      <layerName><![CDATA[Root->发推文]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>357</left>
-      <leftRatio>0.286287089013633</leftRatio>
-      <sizeRatio>1.07330827067669</sizeRatio>
-      <top>112</top>
-      <topRatio>0.14070351758794</topRatio>
-      <width>532</width>
-      <widthRatio>0.426623897353649</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel43">
-      <backgroundColor>C0C0C0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <height>1</height>
-      <heightRatio>0.00175131348511384</heightRatio>
-      <left>8</left>
-      <leftRatio>0.0150375939849624</leftRatio>
-      <outerLeft>8</outerLeft>
-      <outerRight>8</outerRight>
-      <sizeRatio>0.00193798449612403</sizeRatio>
-      <top>64</top>
-      <topRatio>0.112084063047285</topRatio>
-      <width>516</width>
-      <widthRatio>0.969924812030075</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel44">
-      <backgroundImg>close.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <height>47</height>
-      <heightRatio>0.0823117338003503</heightRatio>
-      <left>18</left>
-      <leftRatio>0.0338345864661654</leftRatio>
-      <onClick>ee.setText(ee.getControl("panel52"), " ");
-ee.showAni(ee.getControl("panel42"), 1);</onClick>
-      <sizeRatio>0.734375</sizeRatio>
-      <top>11</top>
-      <topRatio>0.0192644483362522</topRatio>
-      <width>64</width>
-      <widthRatio>0.120300751879699</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel45">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundSkin>LRBtn9</backgroundSkin>
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontColor>FFFFFF</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>37</height>
-      <heightRatio>0.0647985989492119</heightRatio>
-      <left>342</left>
-      <leftRatio>0.642857142857143</leftRatio>
-      <onClick>newTwitter();</onClick>
-      <sizeRatio>0.226993865030675</sizeRatio>
-      <text>发推</text>
-      <top>17</top>
-      <topRatio>0.0297723292469352</topRatio>
-      <width>163</width>
-      <widthRatio>0.306390977443609</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel46">
-      <height>60</height>
-      <heightRatio>0.10507880910683</heightRatio>
-      <left>27</left>
-      <leftRatio>0.0507518796992481</leftRatio>
-      <lockRatio>true</lockRatio>
-      <sizeRatio>1</sizeRatio>
-      <top>82</top>
-      <topRatio>0.143607705779334</topRatio>
-      <width>60</width>
-      <widthRatio>0.112781954887218</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel46/panel47">
-      <backgroundImg>user.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>58</height>
-      <heightRatio>0.966666666666667</heightRatio>
-      <left>1</left>
-      <leftRatio>0.0166666666666667</leftRatio>
-      <outerBottom>1</outerBottom>
-      <outerLeft>1</outerLeft>
-      <outerRight>1</outerRight>
-      <outerTop>1</outerTop>
-      <sizeRatio>1</sizeRatio>
-      <top>1</top>
-      <topRatio>0.0166666666666667</topRatio>
-      <width>58</width>
-      <widthRatio>0.966666666666667</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel46/panel48">
-      <backgroundImg>cirMask.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>60</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>1</sizeRatio>
-      <top>0</top>
-      <width>60</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Edit" pathname="/divRoot/panel42/edit1">
-      <backgroundSkin>edit1</backgroundSkin>
-      <height>154</height>
-      <heightRatio>0.269702276707531</heightRatio>
-      <inputFont>微软雅黑</inputFont>
-      <inputFontSize>12</inputFontSize>
-      <left>116</left>
-      <leftRatio>0.218045112781955</leftRatio>
-      <multiLine>true</multiLine>
-      <sizeRatio>0.398963730569948</sizeRatio>
-      <top>83</top>
-      <topRatio>0.145359019264448</topRatio>
-      <width>386</width>
-      <widthRatio>0.725563909774436</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel49">
-      <height>51</height>
-      <heightRatio>0.0893169877408056</heightRatio>
-      <left>12</left>
-      <leftRatio>0.0225563909774436</leftRatio>
-      <sizeRatio>0.56043956043956</sizeRatio>
-      <top>198</top>
-      <topRatio>0.346760070052539</topRatio>
-      <width>91</width>
-      <widthRatio>0.171052631578947</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel49/panel50">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImg>img.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>51</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.56043956043956</sizeRatio>
-      <top>0</top>
-      <width>91</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="FileUpload" pathname="/divRoot/panel42/panel49/fileupload1">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>51</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onUploadCompleteC>g5.newPhoto1 = eio.readString16();
-ee.setText(ee.getControl("panel52"), " ");
-ee.setImage(ee.getControl("panel52"), "url:" + g5.imgUrl + g5.newPhoto1, "trim", "", "");
-
-
-
-
-
-</onUploadCompleteC>
-      <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
-var filename = newFileName.substring(pos+1);  
-eio.appendString16(filename);</onUploadCompleteS>
-      <onUploadStartC>fileExt = fileExt.toLowerCase();
-if ((fileExt != ".bmp") &amp;&amp;
-    (fileExt != ".jpg") &amp;&amp;
-    (fileExt != ".jpeg") &amp;&amp;
-    (fileExt != ".png") &amp;&amp;
-    (fileExt != ".tif") &amp;&amp;
-    (fileExt != ".tiff")) return;
-    </onUploadStartC>
-      <onUploadStartS>var sql,sqlResult;  
-sql = "select next value for dbo.SEQImageSn as Sn";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    return;
-}
-db.read(sqlResult);
-var sn = db.getInt32(sqlResult, "Sn");
-newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
-      <sizeRatio>0.56043956043956</sizeRatio>
-      <top>0</top>
-      <width>91</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel51">
-      <height>292</height>
-      <heightRatio>0.51138353765324</heightRatio>
-      <left>26</left>
-      <leftRatio>0.0488721804511278</leftRatio>
-      <sizeRatio>0.613445378151261</sizeRatio>
-      <top>255</top>
-      <topRatio>0.446584938704028</topRatio>
-      <width>476</width>
-      <widthRatio>0.894736842105263</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel51/panel52">
-      <backgroundColor>F4F4F4</backgroundColor>
-      <backgroundImg>empty.png</backgroundImg>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>292</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.613445378151261</sizeRatio>
-      <top>0</top>
-      <width>476</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel51/panel53">
-      <backgroundSkin>bodyMask</backgroundSkin>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>292</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.613445378151261</sizeRatio>
-      <top>0</top>
-      <width>476</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel42/panel105">
-      <backgroundImg>CPY0003.jpg</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <height>30</height>
-      <heightRatio>0.0525394045534151</heightRatio>
-      <left>17</left>
-      <leftRatio>0.0319548872180451</leftRatio>
-      <onClick><![CDATA[var url = prompt("请输入播放地址：", "");
-if (url == null) return;
-if (url.length<=0) return;
-g5.newPhoto1 = "";
-var pos;
-if ((pos=url.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
-    //https://www.youtube.com/watch?v=yJG3WMG1dak
-    g5.newPhoto1 = url.substr(pos + "youtube.com/watch?v=".length, url.length);
-} else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
-    //https://youtu.be/edESgyDUKDU
-    g5.newPhoto1 = url.substr(pos + "youtu.be/".length, url.length);
-} else {
-    alert("您输入的视频地址不正确");
-    return;
-}
-if ((g5.newPhoto1.length<=8)||(g5.newPhoto1.length>=14)) {
-    alert("您输入的视频地址不正确");
-    return;
-}
-var rect = eb.getDivRect(ee.getControl("panel52"));
-url = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
-    g5.newPhoto1 + 
-    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-g5.newPhoto1 = "?YTB" + g5.newPhoto1;
-ee.setText(ee.getControl("panel52"), url);   
-ee.getControl("panel53").style.pointerEvents = "none";
-    
-    
-
-
-]]></onClick>
-      <sizeRatio>0.379746835443038</sizeRatio>
-      <top>164</top>
-      <topRatio>0.287215411558669</topRatio>
-      <width>79</width>
-      <widthRatio>0.148496240601504</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel40">
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundSkin>empty</backgroundSkin>
@@ -4251,12 +3977,16 @@ ee.showAni(ee.getControl("panel117"), 0);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色->Root]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (ee.getControl("panel117").style.visibility != "hidden") {
     ee.showAni(ee.getControl("panel117"), 1);
 }
 if (ee.getControl("panel142").style.visibility != "hidden") {
     ee.showAni(ee.getControl("panel142"), 1);
+}
+if (ee.getControl("panel42").style.visibility != "hidden") {
+    ee.showAni(ee.getControl("panel42"), 1);
 }
 </onClick>
       <onCreate>sender.style.zIndex=100;</onCreate>
@@ -4277,7 +4007,7 @@ if (ee.getControl("panel142").style.visibility != "hidden") {
       <dockY>center</dockY>
       <height>228</height>
       <heightRatio>0.28643216080402</heightRatio>
-      <layerName><![CDATA[Root->主界面弹窗黑色->A]]></layerName>
+      <layerName><![CDATA[Root->主界面弹窗黑色->删除推文确认]]></layerName>
       <layerVisible>false</layerVisible>
       <left>450</left>
       <leftRatio>0.360866078588613</leftRatio>
@@ -4292,7 +4022,7 @@ if (sender.formResult) {
       <onCreate>sender.formResult = false;</onCreate>
       <sizeRatio>0.658959537572254</sizeRatio>
       <top>284</top>
-      <topRatio>0.35678391959799</topRatio>
+      <topRatio>0.355527638190955</topRatio>
       <width>346</width>
       <widthRatio>0.277465918203689</widthRatio>
     </control>
@@ -4379,12 +4109,14 @@ ee.showAni(ee.getControl("panel117"), 1);
       <dockY>fill</dockY>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerName><![CDATA[Root->主界面弹窗黑色->B]]></layerName>
+      <layerName><![CDATA[Root->主界面弹窗黑色->图片展示]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
       <sizeRatio>0.638331996792302</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00125628140703518</topRatio>
       <width>1247</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -4436,6 +4168,289 @@ ee.showAni(ee.getControl("panel117"), 1);
       <topRatio>0.05</topRatio>
       <width>48</width>
       <widthRatio>0.9</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <ani2Size>tinyZoomOut:轻微缩小</ani2Size>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniSize>tinyZoom:轻微放大</aniSize>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <backgroundSkin>body5</backgroundSkin>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>571</height>
+      <heightRatio>0.717336683417085</heightRatio>
+      <layerName><![CDATA[Root->发推文]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>357</left>
+      <leftRatio>0.286287089013633</leftRatio>
+      <onAni2End>ee.setVisible(ee.getControl("panel112"), false);</onAni2End>
+      <onAniStart>ee.setVisible(ee.getControl("panel112"), true);</onAniStart>
+      <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <sizeRatio>1.07330827067669</sizeRatio>
+      <top>112</top>
+      <topRatio>0.14070351758794</topRatio>
+      <width>532</width>
+      <widthRatio>0.426623897353649</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel43">
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>1</height>
+      <heightRatio>0.00175131348511384</heightRatio>
+      <left>8</left>
+      <leftRatio>0.0150375939849624</leftRatio>
+      <outerLeft>8</outerLeft>
+      <outerRight>8</outerRight>
+      <sizeRatio>0.00193798449612403</sizeRatio>
+      <top>64</top>
+      <topRatio>0.112084063047285</topRatio>
+      <width>516</width>
+      <widthRatio>0.969924812030075</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel44">
+      <backgroundImg>close.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <height>47</height>
+      <heightRatio>0.0823117338003503</heightRatio>
+      <left>18</left>
+      <leftRatio>0.0338345864661654</leftRatio>
+      <onClick>ee.setText(ee.getControl("panel52"), " ");
+ee.showAni(ee.getControl("panel42"), 1);</onClick>
+      <sizeRatio>0.734375</sizeRatio>
+      <top>11</top>
+      <topRatio>0.0192644483362522</topRatio>
+      <width>64</width>
+      <widthRatio>0.120300751879699</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel45">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundSkin>LRBtn9</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>37</height>
+      <heightRatio>0.0647985989492119</heightRatio>
+      <left>342</left>
+      <leftRatio>0.642857142857143</leftRatio>
+      <onClick>newTwitter();</onClick>
+      <sizeRatio>0.226993865030675</sizeRatio>
+      <text>发推</text>
+      <top>17</top>
+      <topRatio>0.0297723292469352</topRatio>
+      <width>163</width>
+      <widthRatio>0.306390977443609</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel46">
+      <height>60</height>
+      <heightRatio>0.10507880910683</heightRatio>
+      <left>27</left>
+      <leftRatio>0.0507518796992481</leftRatio>
+      <lockRatio>true</lockRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>82</top>
+      <topRatio>0.143607705779334</topRatio>
+      <width>60</width>
+      <widthRatio>0.112781954887218</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel46/panel47">
+      <backgroundImg>user.png</backgroundImg>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>58</height>
+      <heightRatio>0.966666666666667</heightRatio>
+      <left>1</left>
+      <leftRatio>0.0166666666666667</leftRatio>
+      <outerBottom>1</outerBottom>
+      <outerLeft>1</outerLeft>
+      <outerRight>1</outerRight>
+      <outerTop>1</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>1</top>
+      <topRatio>0.0166666666666667</topRatio>
+      <width>58</width>
+      <widthRatio>0.966666666666667</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel46/panel48">
+      <backgroundImg>cirMask.png</backgroundImg>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>1</sizeRatio>
+      <top>0</top>
+      <width>60</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel112/panel42/edit1">
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>154</height>
+      <heightRatio>0.269702276707531</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>12</inputFontSize>
+      <left>116</left>
+      <leftRatio>0.218045112781955</leftRatio>
+      <multiLine>true</multiLine>
+      <sizeRatio>0.398963730569948</sizeRatio>
+      <top>83</top>
+      <topRatio>0.145359019264448</topRatio>
+      <width>386</width>
+      <widthRatio>0.725563909774436</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel49">
+      <height>51</height>
+      <heightRatio>0.0893169877408056</heightRatio>
+      <left>12</left>
+      <leftRatio>0.0225563909774436</leftRatio>
+      <sizeRatio>0.56043956043956</sizeRatio>
+      <top>198</top>
+      <topRatio>0.346760070052539</topRatio>
+      <width>91</width>
+      <widthRatio>0.171052631578947</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel49/panel50">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImg>img.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>51</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.56043956043956</sizeRatio>
+      <top>0</top>
+      <width>91</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="FileUpload" pathname="/divRoot/panel112/panel42/panel49/fileupload1">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>51</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onUploadCompleteC>g5.newPhoto1 = eio.readString16();
+ee.setText(ee.getControl("panel52"), " ");
+ee.setImage(ee.getControl("panel52"), "url:" + g5.imgUrl + g5.newPhoto1, "trim", "", "");
+
+
+
+
+
+</onUploadCompleteC>
+      <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
+var filename = newFileName.substring(pos+1);  
+eio.appendString16(filename);</onUploadCompleteS>
+      <onUploadStartC>fileExt = fileExt.toLowerCase();
+if ((fileExt != ".bmp") &amp;&amp;
+    (fileExt != ".jpg") &amp;&amp;
+    (fileExt != ".jpeg") &amp;&amp;
+    (fileExt != ".png") &amp;&amp;
+    (fileExt != ".tif") &amp;&amp;
+    (fileExt != ".tiff")) return;
+    </onUploadStartC>
+      <onUploadStartS>var sql,sqlResult;  
+sql = "select next value for dbo.SEQImageSn as Sn";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
+      <sizeRatio>0.56043956043956</sizeRatio>
+      <top>0</top>
+      <width>91</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel51">
+      <height>292</height>
+      <heightRatio>0.51138353765324</heightRatio>
+      <left>26</left>
+      <leftRatio>0.0488721804511278</leftRatio>
+      <sizeRatio>0.613445378151261</sizeRatio>
+      <top>255</top>
+      <topRatio>0.446584938704028</topRatio>
+      <width>476</width>
+      <widthRatio>0.894736842105263</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel51/panel52">
+      <backgroundColor>F4F4F4</backgroundColor>
+      <backgroundImg>empty.png</backgroundImg>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>292</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.613445378151261</sizeRatio>
+      <top>0</top>
+      <width>476</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel51/panel53">
+      <backgroundSkin>bodyMask</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>292</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.613445378151261</sizeRatio>
+      <top>0</top>
+      <width>476</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel105">
+      <backgroundImg>CPY0003.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <height>30</height>
+      <heightRatio>0.0525394045534151</heightRatio>
+      <left>17</left>
+      <leftRatio>0.0319548872180451</leftRatio>
+      <onClick><![CDATA[var url = prompt("请输入播放地址：", "");
+if (url == null) return;
+if (url.length<=0) return;
+g5.newPhoto1 = "";
+var pos;
+if ((pos=url.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
+    //https://www.youtube.com/watch?v=yJG3WMG1dak
+    g5.newPhoto1 = url.substr(pos + "youtube.com/watch?v=".length, url.length);
+} else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
+    //https://youtu.be/edESgyDUKDU
+    g5.newPhoto1 = url.substr(pos + "youtu.be/".length, url.length);
+} else {
+    alert("您输入的视频地址不正确");
+    return;
+}
+if ((g5.newPhoto1.length<=8)||(g5.newPhoto1.length>=14)) {
+    alert("您输入的视频地址不正确");
+    return;
+}
+var rect = eb.getDivRect(ee.getControl("panel52"));
+url = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
+    g5.newPhoto1 + 
+    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+g5.newPhoto1 = "?YTB" + g5.newPhoto1;
+ee.setText(ee.getControl("panel52"), url);   
+ee.getControl("panel53").style.pointerEvents = "none";
+    
+    
+
+
+]]></onClick>
+      <sizeRatio>0.379746835443038</sizeRatio>
+      <top>164</top>
+      <topRatio>0.287215411558669</topRatio>
+      <width>79</width>
+      <widthRatio>0.148496240601504</widthRatio>
     </control>
   </controls>
   <taskSet count="13">
@@ -4636,7 +4651,11 @@ var userId = db.getString(sqlResult,"id");
 sql = "exec twitterNew " +
     userId + 
     ",'" + db.encode(text) + "'" +
+    ",1" +
     ",'" + db.encode(photo1) + "'" +
+    ",''" +
+    ",''" +
+    ",''" +
     ",'" + db.encode(uplinkType) + "'" +
     "," + db.encode(uplinkId);
 if (!db.executeNoneQuery("DB", sql)) {
@@ -4700,7 +4719,7 @@ var sql1 = "";
 if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
     sql1 = "and dbo.tContent.id < " + lastId + " ";
 }
-
+/*
 sql = 
     "SELECT TOP (10) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
     "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " + 
@@ -4727,7 +4746,25 @@ sql =
     "      tContent_2.regDatetime, tContent_2.[content], tContent_2.photo1, tContent_2.userId,  " + 
     "      userInfo_1.userName, userInfo_1.nickName, userInfo_1.photo " + 
     "ORDER BY dbo.tContent.id DESC     "; 
-    
+*/
+sql =
+    "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +  
+    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
+    "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
+    "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
+    "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
+    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " + 
+    "                tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount, tContent_1.reCount AS reReCount,  " + 
+    "                tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " + 
+    "                userInfo_1.photo AS rePhoto " + 
+    "FROM      dbo.userInfo RIGHT OUTER JOIN " + 
+    "                dbo.tContent RIGHT OUTER JOIN " + 
+    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId ON dbo.userInfo.id = dbo.tContent.userId LEFT OUTER JOIN " + 
+    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " + 
+    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " + 
+    "WHERE   (dbo.follow.userId = " + userId + ") " + sql1 +
+    "ORDER BY dbo.tContent.id DESC     ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -4736,8 +4773,8 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
-    ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status", 0, 99999); 
+eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     ee.setVisible(ee.getControl("panel123"), false);
@@ -4839,29 +4876,22 @@ if (db.read(sqlResult)) {
 
 //query twitter
 sql = 
-    "SELECT TOP (30) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " +
-    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " +
-    "      dbo.tContent.likeCount,  " +
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " +
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) AS forwardCount,  " +
-    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
-    "      DATEDIFF(minute, tContent_2.regDatetime, GETDATE()) AS reMins,  " +
-    "      tContent_2.[content] AS reContent, tContent_2.photo1 AS rePhoto1,  " +
-    "      tContent_2.userId AS reUserId, userInfo_1.userName AS reUserName,  " +
-    "      userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto " +
-    "FROM dbo.userInfo AS userInfo_1 INNER JOIN " +
-    "      dbo.tContent AS tContent_2 ON userInfo_1.id = tContent_2.userId RIGHT OUTER JOIN " +
-    "      dbo.tContent INNER JOIN " +
-    "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id ON  " +
-    "      tContent_2.id = dbo.tContent.uplinkId LEFT OUTER JOIN " +
-    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " +
+    "SELECT   TOP (30) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " + 
+    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
+    "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
+    "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
+    "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
+    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " + 
+    "                tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount, tContent_1.reCount AS reReCount,  " + 
+    "                tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " + 
+    "                userInfo_1.photo AS rePhoto " + 
+    "FROM      dbo.userInfo RIGHT OUTER JOIN " + 
+    "                dbo.tContent ON dbo.userInfo.id = dbo.tContent.userId LEFT OUTER JOIN " + 
+    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " + 
+    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " + 
     "WHERE (dbo.tContent.userId = " + userId + ") " +
-    "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId,  " +
-    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount,  " +
-    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
-    "      tContent_2.regDatetime, tContent_2.[content], tContent_2.photo1, tContent_2.userId,  " +
-    "      userInfo_1.userName, userInfo_1.nickName, userInfo_1.photo " +
-    "ORDER BY dbo.tContent.id DESC     ";
+    "ORDER BY dbo.tContent.id DESC";
     
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -4869,8 +4899,8 @@ if (sqlResult == null) {
     es.logWarning("数据库执行错误, sql=" + sql);
     return;
 }
-eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
-    ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
 
 
 ]]></script2>
@@ -5056,32 +5086,23 @@ if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
     sql1 = "and dbo.tContent.id < " + lastId + " ";
 }
 
-sql = 
-    "SELECT TOP (5) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
-    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " + 
-    "      dbo.tContent.likeCount,  " + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) AS forwardCount,  " + 
-    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
-    "      DATEDIFF(minute, tContent_2.regDatetime, GETDATE()) AS reMins,  " + 
-    "      tContent_2.[content] AS reContent, tContent_2.photo1 AS rePhoto1,  " + 
-    "      tContent_2.userId AS reUserId, userInfo_1.userName AS reUserName,  " + 
-    "      userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto " + 
-    "FROM dbo.userInfo AS userInfo_1 INNER JOIN " + 
-    "      dbo.tContent AS tContent_2 ON userInfo_1.id = tContent_2.userId RIGHT OUTER JOIN " + 
-    "      dbo.tContent INNER JOIN " + 
-    "      dbo.follow ON dbo.tContent.userId = dbo.follow.followId INNER JOIN " + 
-    "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id ON  " + 
-    "      tContent_2.id = dbo.tContent.uplinkId LEFT OUTER JOIN " + 
-    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " + 
+sql =
+    "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " + 
+    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
+    "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
+    "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
+    "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
+    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " + 
+    "                tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount, tContent_1.reCount AS reReCount,  " + 
+    "                tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " + 
+    "                userInfo_1.photo AS rePhoto " + 
+    "FROM      dbo.userInfo RIGHT OUTER JOIN " + 
+    "                dbo.tContent ON dbo.userInfo.id = dbo.tContent.userId LEFT OUTER JOIN " + 
+    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " + 
+    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " + 
     "WHERE (dbo.tContent.uplinkId = " + topicId + ") OR (dbo.tContent.id = " + topicId + ") " +
-    "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId,  " + 
-    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount,  " + 
-    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
-    "      tContent_2.regDatetime, tContent_2.[content], tContent_2.photo1, tContent_2.userId,  " + 
-    "      userInfo_1.userName, userInfo_1.nickName, userInfo_1.photo " + 
-    "ORDER BY dbo.tContent.id    "; 
-    
+    "ORDER BY dbo.tContent.id ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -5090,9 +5111,22 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
-    ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
-]]></script2>
+eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+
+sql = "exec [twitterSource] " + userId + "," + topicId;
+es.logCommon(sql);
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+while (db.nextResult(sqlResult)) {
+    es.logCommon("nextResult");
+    eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
+        ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+}]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     showTopic.busy = false;
     return;
@@ -5104,6 +5138,11 @@ if (showTopic.data.rowCount >= 0) {
     showTopic.lastId = "0";
 }
 if (eb.isEmpty(showTopic.items)) showTopic.items = new Array();
+showTopic.backTrace = eio.readDataSet();
+while (true) {
+    var tempData = eio.readDataSet();
+    if (!showTopic.backTrace.appendDataset(tempData)) break;
+}
 
 
     var i, item;
@@ -5118,6 +5157,35 @@ if (eb.isEmpty(showTopic.items)) showTopic.items = new Array();
             cy = 2 + rect.y + rect.h;
         }
     }
+    
+    for (i=showTopic.backTrace.rowCount-1; i >= 0; i--) {
+        item = g5.appendItem(
+            root,
+            cy, "page8_" + showTopic.items.length + "_",
+            showTopic.backTrace.getData(8,i),
+            showTopic.backTrace.getData(9,i),
+            g5.getMins(showTopic.backTrace.getData(1,i)),
+            showTopic.backTrace.getData(0,i),
+            showTopic.backTrace.getData(10,i),
+            showTopic.backTrace.getData(4,i),
+            showTopic.backTrace.getData(3,i),
+            showTopic.backTrace.getData(5,i),
+            showTopic.backTrace.getData(6,i),
+            showTopic.backTrace.getData(7,i),
+            g5.getMins(showTopic.backTrace.getData(11,i)),
+            showTopic.backTrace.getData(12,i),
+            showTopic.backTrace.getData(13,i),
+            showTopic.backTrace.getData(14,i),
+            i>0?"":showTopic.backTrace.getData(15,i),
+            showTopic.backTrace.getData(16,i),
+            showTopic.backTrace.getData(17,i)
+            );
+        showTopic.items.push(item);
+        cy += 0 + eb.getDivRect(item).h;    
+    }
+    
+    var scrollY = cy - eb.getDivRect(g5.p4).h;
+    
     for (i=0; i< showTopic.data.rowCount; i++) {
         item = g5.appendItem(
             root,
@@ -5147,6 +5215,7 @@ if (eb.isEmpty(showTopic.items)) showTopic.items = new Array();
         eb.setDivRect(ee.getControl("panel135"),null,null,null,cy);
     }
     eb.setDivRect(ee.getControl("panel22"),null,null,null,cy);
+    g5.mainDiv.scrollTop = scrollY;
     eb.processDock();
 
 
