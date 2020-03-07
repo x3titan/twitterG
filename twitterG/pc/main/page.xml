@@ -168,7 +168,9 @@ g5.changeP2 = function(pageIndex) {
     if (g5.currentPageIndex == 0) {
         ee.setVisible(g5.p4, false);
         ee.setVisible(ee.getControl("panel34"), false);
-        ee.showAni(ee.getControl("panel41"), 1);
+        ee.setVisible(ee.getControl("panel41"), false);
+        //ee.showAni(ee.getControl("panel41"), 1);
+        g5.mainDiv.lastScrollTop = g5.mainDiv.scrollTop;
     } else if (g5.currentPageIndex == 1) {
         ee.setVisible(g5.p4, false);
         ee.showAni(ee.getControl("panel16"), 1);
@@ -191,10 +193,12 @@ g5.changeP2 = function(pageIndex) {
     } else if (g5.currentPageIndex ==7) {
         ee.setVisible(g5.p4, false);
         ee.setVisible(ee.getControl("panel38"), false);
-        ee.showAni(ee.getControl("panel22"), 1);
+        ee.setVisible(ee.getControl("panel22"), false);
+        //ee.showAni(ee.getControl("panel22"), 1);
     }
     if (pageIndex == 0) {
-        g5.mainDiv.scrollTop = 0;
+        if (eb.isEmpty(g5.mainDiv.lastScrollTop))g5.mainDiv.lastScrollTop = 0;
+        g5.mainDiv.scrollTop = g5.mainDiv.lastScrollTop;
         g5.pageMode = 0;
         g5.refreshMain(true);
         ee.setVisible(g5.p4, true);
@@ -236,7 +240,7 @@ g5.changeP2 = function(pageIndex) {
         ee.showAni(ee.getControl("layouty5"), 0);
         ee.showAni(ee.getControl("panel116"), 0);
     } else if (pageIndex == 7) {
-        g5.mainDiv.scrollTop = 0;
+        //g5.mainDiv.scrollTop = 0;
         g5.pageMode = 0;
         ee.setVisible(g5.p4, true);
         ee.setVisible(ee.getControl("panel38"), true);
@@ -303,8 +307,16 @@ g5.refreshUserInfo = function() {
     }
 }
 
-g5.appendItem = function(parent, startY, hd, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3,
-    reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto) {
+g5.setImage = function(div, url, style, alt, title, delay) {
+    eval("setTimeout(function() { "+
+        "ee.setImage($g(\""+div.id+"\"),\""+url+"\",\"" + style + "\",\""+alt+"\",\""+title+"\");" +
+        " }, " + delay + ")");
+}
+
+
+
+g5.appendItem = function(parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3,
+    uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto, status, uplinkType) {
     if (eb.isEmpty(userPhoto)) userPhoto = "";
     if (eb.isEmpty(photo1)) photo1 = "";
     var w = eb.getDivRect(parent).w;
@@ -323,23 +335,38 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     root.style.borderColor = "rgb(230,236,240)";
     root.style.borderStyle = "solid";
     root.style.borderTop = "";
-    root.style.cursor = "pointer"; 
+    while (mode.length<5) mode += " ";
+    if ((mode.substr(0,2) != "  ") &amp;&amp; (mode.substr(0,2) != "T ")) {
+        root.style.borderBottom = "";                       
+    }
     eb.setAni2(root,1,"disappear", "rightFlyOut", "null", 0, true);
     eb.setAniEvent(root,1,function(){}, function(sender) {
         g5.deletePage1(sender);
     });
-    ee.setOnClick(c,function(sender,event) {
-        showTopic.topicId = sender.v_contentId;
-        showTopic.needRefresh = true;
-        if (g5.currentPageIndex == 7) g5.changeP2(-1);
-        g5.changeP2(7);
-    });
-    ee.setOnMouseEnter(c, function(sender,e){
-        sender.style.backgroundColor = "rgb(245,248,250)";
-    });
-    ee.setOnMouseLeave(c, function(sender,e){
-        sender.style.backgroundColor = "#ffffff";
-    });
+    if (mode.charAt(2) != "x") {
+        root.style.cursor = "pointer"; 
+        ee.setOnClick(c,function(sender,event) {
+            showTopic.topicId = sender.v_contentId;
+            showTopic.needRefresh = true;
+            showTopic();
+            g5.changeP2(-1);
+        });
+        ee.setOnMouseEnter(c, function(sender,e){
+            sender.style.backgroundColor = "rgb(245,248,250)";
+        });
+        ee.setOnMouseLeave(c, function(sender,e){
+            sender.style.backgroundColor = "#ffffff";
+        });
+    }
+    
+    //uplink
+    if (mode.charAt(0) == "T") {
+        c = createPanel(root, hd+"uplink01", "ccd6dd", 40, 0, 2, 6);
+    }
+    //downlink
+    if (mode.charAt(1) == "T") {
+        c = createPanel(root, hd+"downlink01", "ccd6dd", 40, 64, 2, 1000);
+    }
     
     //avata image box
     c = createPanel($g(hd+"panel12"), hd+"panel13", "", 16, 9, 50, 50);
@@ -371,7 +398,13 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     //v_titleText
     c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, 6, mainWidth, 26);
     root.v_titleText = c;
-    addText(c, "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username + " · " + times + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+    var temp = "";
+    temp = "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username;
+    if (mode.charAt(2) != "x") {
+        temp+=" · " + times;
+    }
+    temp+="</font>";    
+    addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
     c.v_username = username;
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
@@ -434,17 +467,42 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
     c.onCreate(c);    
     }
     
+    //reUsername
+    var cy = 26;
+    if (uplinkType == "R") {
+        c = createPanel(root, hd+"pareUsername01nel17", "", 75, cy, mainWidth, 22);
+        cy += 22;
+        addText(c, "<font color='#808080'>回复 </font><font color='#1b95e0'>@" + reUserName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+        c.style.cursor="pointer";
+        c.v_username = reUserName;
+        ee.setOnClick(c,function(sender,event) {
+            showUserPage.userName=sender.v_username;
+            showUserPage();
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+        });
+        ee.setOnMouseEnter(c,function(sender,e){
+            sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="underline";
+        });
+        ee.setOnMouseLeave(c,function(sender,e){
+            sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="";
+        });
+    }
+    
     //v_text
-    c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, 26, mainWidth, w*0.0547667342799189);
+    c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
     root.v_text = c;
-    addText(c, "<font style='line-height:1.2;'>" + text + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
+    if (mode.charAt(2) == "x") {
+        addText(c, "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 16, "000000", "normal");
+    } else {
+        addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
+    }
     //eb.setFontSizeAuto(c, 25);
     eb.setDock(c,"disabled","disabled");
     eb.processDock();
     var rect = eb.getDivRect(c.label);
     ee.setRect(c, null, null, null, rect.h);
     rect = eb.getDivRect(c);
-    var cy = rect.y + rect.h + 1;
+    cy = rect.y + rect.h + 1;
     
     //photo1
     if (photo1 != "") {
@@ -463,7 +521,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             cy -= w*0.03;
             c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, mainWidth, w*0.054);
             cy += w*0.054 + w*0.03;
-            var temp = "https://www.youtube.com/watch?v=" + photo1.substr(4, photo1.length);
+            temp = "https://www.youtube.com/watch?v=" + photo1.substr(4, photo1.length);
             addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
             c.style.cursor = "pointer";
             ee.setOnClick(c,function(sender,event) {
@@ -471,7 +529,8 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             });
         } else {
             c.imgUrl = "url:" + g5.imgUrl + photo1;
-            ee.setImage(c,c.imgUrl,"trim","","");
+            //ee.setImage(c,c.imgUrl,"trim","","");
+            g5.setImage(c,c.imgUrl,"trim","","",400);
             ee.setOnClick(c,function(sender,event) {
                 ee.setVisible(ee.getControl("panel112"), true);
                 ee.showAni(ee.getControl("panel142"), 0);
@@ -480,12 +539,12 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
             });
         }
     }
-    
-    if (reUserName != "") {
+                       
+    if (uplinkType == "F") {
         var p1ratio = 2.64;
         c = createPanel($g(hd+"panel12"), hd+"panel2", "", 75, cy, mainWidth-2, 100);
         c.style.borderRadius = "15px";
-        //c.style.pointerEvents = "none";
+        c.style.cursor = "pointer"; 
         c.style.borderWidth = "1px";
         c.style.borderColor = "rgb(204,214,221)";
         c.style.borderStyle = "solid";
@@ -494,6 +553,14 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         });
         ee.setOnMouseLeave(c, function(sender,e){
             sender.style.backgroundColor = "";
+        });
+        c.v_uplinkId = uplinkId
+        ee.setOnClick(c,function(sender,event) {
+            showTopic.topicId = sender.v_uplinkId;
+            showTopic.needRefresh = true;
+            showTopic();
+            g5.changeP2(-1);
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
         });
         
         var p1w = eb.getDivRect(c).w;
@@ -533,7 +600,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         });
         //reContent
         c = createPanel($g(hd+"panel6"), hd+"panel25", "", 16, 36, p1w*0.927710843373494, 10);
-        addText(c, reContent, "left", "top", "微软雅黑", 12, "000000", "normal");
+        addText(c, g5.showCommonText(reContent), "left", "top", "微软雅黑", 12, "000000", "normal");
         //eb.setFontSizeAuto(c, 25);
         eb.setDock(c,"disabled","disabled");
         eb.processDock();
@@ -570,23 +637,45 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         c = $g(hd+"panel6");
         ee.setRect(c, null, null, null, p1y);
         cy += p1y + w*0.03;
+        if (rePhoto1 != "") {
+            if (rePhoto1.substr(0,4) == "?YTB") {
+                cy -= w*0.03;
+                c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, mainWidth, w*0.054);
+                cy += w*0.054 + w*0.03;
+                temp = "https://www.youtube.com/watch?v=" + rePhoto1.substr(4, rePhoto1.length);
+                addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
+                c.style.cursor = "pointer";
+                ee.setOnClick(c,function(sender,event) {
+                    window.open(temp);
+                });
+            }
+        }
     }    
-    if (rePhoto1 != "") {
-        if (rePhoto1.substr(0,4) == "?YTB") {
-            cy -= w*0.03;
-            c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, mainWidth, w*0.054);
-            cy += w*0.054 + w*0.03;
-            var temp = "https://www.youtube.com/watch?v=" + rePhoto1.substr(4, rePhoto1.length);
-            addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
-            c.style.cursor = "pointer";
-            ee.setOnClick(c,function(sender,event) {
-                window.open(temp);
-            });
+    
+    if (mode.charAt(2) == "x") {
+        c = createPanel(root, hd+"bottom01", "", 16, cy, mainWidth, 26); cy+=33;
+        addText(c, times, "left", "middle", "微软雅黑", 12, "808080", "normal");
+        c = createPanel(root, hd+"btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
+        if ((label1!="0") || (label2!="0")) {
+            c = createPanel(root, hd+"bottom02", "", 16, cy-6, mainWidth, 22); cy+=33;
+            temp = "";
+            if (label1!="0") {
+                temp += "<font color='#000000'><b>"+label1+"</b></font>回复    ";
+            }
+            if (label2!="0") {
+                temp += "<font color='#000000'><b>"+label2+"</b></font>转推    ";
+            }
+            addText(c, temp, "left", "middle", "微软雅黑", 12, "808080", "normal");
+            c = createPanel(root, hd+"btnline02", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
         }
     }
-        
+            
     //4 button
-    c = createPanel($g(hd+"panel12"), hd+"panel21", "", w*0.18595825426945, cy, w*0.040, w*0.040);
+    var b1=76;
+    var b2=76+parseInt((w-76*2-20)/3);
+    var b3=76+parseInt((w-76*2-20)/3*2);
+    var b4=76+parseInt((w-76*2-20)/3*3);
+    c = createPanel($g(hd+"panel12"), hd+"panel21", "", b1, cy, 18, 18);
     c.style.cursor="pointer";
     root.v_btn1 = c;
     ee.setImage(c,"/twitterG/main/e1.png","fill","","")
@@ -601,7 +690,7 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         ee.showAni(ee.getControl("panel42"), 0);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
-    c = createPanel($g(hd+"panel12"), hd+"panel22", "", w*0.402277039848197, cy, w*0.040, w*0.040);
+    c = createPanel($g(hd+"panel12"), hd+"panel22", "",  b2, cy, 18, 18);
     c.style.cursor="pointer";
     root.v_btn2 = c;
     ee.setImage(c,"/twitterG/main/e2.png","fill","","")
@@ -616,41 +705,34 @@ g5.appendItem = function(parent, startY, hd, username, nickname, times, contentI
         ee.showAni(ee.getControl("panel42"), 0);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
-    c = createPanel($g(hd+"panel12"), hd+"panel23", "", w*0.616698292220114, cy, w*0.040, w*0.040);
+    c = createPanel($g(hd+"panel12"), hd+"panel23", "",  b3, cy, 18, 18);
     c.style.cursor="pointer";
     root.v_btn3 = c;
     ee.setImage(c,"/twitterG/main/e3.png","fill","","")
     eb.setDock(c,"disabled","disabled");
-    c = createPanel($g(hd+"panel12"), hd+"panel24", "", w*0.833017077798861, cy, w*0.040, w*0.040);
+    c = createPanel($g(hd+"panel12"), hd+"panel24", "",  b4, cy, 18, 18);
     c.style.cursor="pointer";
     root.v_btn4 = c;
     ee.setImage(c,"/twitterG/main/e4.png","fill","","")
     eb.setDock(c,"disabled","disabled");
     //3 label
-    if (label1=="0") label1="";
-    if (label2=="0") label2="";
-    if (label3=="0") label3="";
-    c = createPanel($g(hd+"panel12"), hd+"panel3", "", w*(0.25426944971537-0.02), cy-5, w*0.111954459203036, w*0.062);
-    root.v_label1 = c;
-    addText(c, label1, "left", "middle", "Arial", 14, "808080", "bold");
-    //eb.setFontSizeAuto(c, 30);
-    eb.setDock(c,"disabled","disabled");
-    c = createPanel($g(hd+"panel12"), hd+"panel4", "", w*(0.472485768500949-0.02), cy-5, w*0.12523719165085, w*0.062);
-    root.v_label2 = c;
-    addText(c, label2, "left", "middle", "Arial", 14, "808080", "bold");
-    //eb.setFontSizeAuto(c, 30);
-    eb.setDock(c,"disabled","disabled");
-    c = createPanel($g(hd+"panel12"), hd+"panel5", "", w*(0.685009487666034-0.02), cy-5, w*0.123339658444023, w*0.062);
-    root.v_label3 = c;
-    addText(c, label3, "left", "middle", "Arial", 14, "808080", "bold");
-    //eb.setFontSizeAuto(c, 30);
-    eb.setDock(c,"disabled","disabled");
-    c = createPanel($g(hd+"panel12"), hd+"panel511","C0C0C0", 0, cy+18, w, 1);
-    eb.setDock(c,"fill","bottom");    
+    if (mode.charAt(2) != "x") {
+        if (label1=="0") label1="";
+        if (label2=="0") label2="";
+        if (label3=="0") label3="";
+        c = createPanel($g(hd+"panel12"), hd+"panel3", "", b1+25, cy-2, 40, 22);
+        root.v_label1 = c;
+        addText(c, label1, "left", "middle", "Arial", 12, "808080", "bold");
+        c = createPanel($g(hd+"panel12"), hd+"panel4", "", b2+25, cy-2, 40, 22);
+        root.v_label2 = c;
+        addText(c, label2, "left", "middle", "Arial", 12, "808080", "bold");
+        c = createPanel($g(hd+"panel12"), hd+"panel5", "", b3+25, cy-2, 40, 22);
+        root.v_label3 = c;
+        addText(c, label3, "left", "middle", "Arial", 12, "808080", "bold");
+    }
     //set total height
     rect = eb.getDivRect(root.v_btn1);
     eb.setDivRect(root, null, null, null, rect.y + rect.h + 0.03*w);
-    
     eb.processDock()
     return root;
 }
@@ -730,6 +812,10 @@ g5.getMins = function(seconds) {
     }
 }
 
+g5.showCommonText = function(text) {
+    return text.replace("<","&amp;lt;").replace(">","&amp;gt;");
+}
+
 g5.refreshPage1 = function() {
     if (eb.isEmpty(g5.datasetHome)) return;
     var i, item;
@@ -755,11 +841,12 @@ g5.refreshPage1 = function() {
     }
     for (i=0; i< g5.datasetHome.rowCount; i++) {
         //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
-        //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status"
+        //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId(20)"
         if (g5.datasetHome.getData(18,i) == "DEL") continue;
         item = g5.appendItem(
             root,
             cy, "page1_" + g5.itemsHome.length + "_",
+            "",
             g5.datasetHome.getData(8,i),
             g5.datasetHome.getData(9,i),
             g5.getMins(g5.datasetHome.getData(1,i)),
@@ -770,13 +857,16 @@ g5.refreshPage1 = function() {
             g5.datasetHome.getData(5,i),
             g5.datasetHome.getData(6,i),
             g5.datasetHome.getData(7,i),
+            g5.datasetHome.getData(20,i),
             g5.getMins(g5.datasetHome.getData(11,i)),
             g5.datasetHome.getData(12,i),
             g5.datasetHome.getData(13,i),
             g5.datasetHome.getData(14,i),
             g5.datasetHome.getData(15,i),
             g5.datasetHome.getData(16,i),
-            g5.datasetHome.getData(17,i)
+            g5.datasetHome.getData(17,i),
+            g5.datasetHome.getData(18,i),
+            g5.datasetHome.getData(19,i),
             );
         g5.itemsHome.push(item);
         cy += 0 + eb.getDivRect(item).h;    
@@ -1454,7 +1544,6 @@ follow();
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
       <aniAlpha>appear:渐变出现</aniAlpha>
-      <aniDelay>300</aniDelay>
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>stretch</backgroundImgMode>
       <bgColorEnabled>true</bgColorEnabled>
@@ -1470,10 +1559,10 @@ sender.style.borderColor = "rgb(230,236,240)";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 </onCreate>
-      <sizeRatio>1.33105802047782</sizeRatio>
+      <sizeRatio>1.32879045996593</sizeRatio>
       <top>0</top>
       <width>587</width>
-      <widthRatio>0.998296422487223</widthRatio>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel19">
       <backgroundImgMode>fill</backgroundImgMode>
@@ -2461,7 +2550,6 @@ sender.style.borderStyle = "solid";</onCreate>
       <layerName><![CDATA[P2->8->话题页面]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onAniEnd>showTopic();</onAniEnd>
       <sizeRatio>1.33105802047782</sizeRatio>
       <top>0</top>
       <width>587</width>
@@ -3977,7 +4065,6 @@ ee.showAni(ee.getControl("panel117"), 0);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色->Root]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (ee.getControl("panel117").style.visibility != "hidden") {
     ee.showAni(ee.getControl("panel117"), 1);
@@ -4181,8 +4268,7 @@ ee.showAni(ee.getControl("panel117"), 1);
       <dockY>center</dockY>
       <height>571</height>
       <heightRatio>0.717336683417085</heightRatio>
-      <layerName><![CDATA[Root->发推文]]></layerName>
-      <layerVisible>false</layerVisible>
+      <layerName><![CDATA[Root->主界面弹窗黑色->发推文]]></layerName>
       <left>357</left>
       <leftRatio>0.286287089013633</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);</onAni2End>
@@ -4607,7 +4693,7 @@ if (g5.currentPageIndex == 1) showUserPage();</script3>
     </taskSetItem>
     <taskSetItem name="newTwitter">
       <script1><![CDATA[var text = ee.getEditText(ee.getControl("edit1"));
-if (text.length<=0) {
+if ((text.length<=0) &amp;&amp; (g5.newPhoto1.length<=0)) {
     alert("推文内容不能为空");
     return;
 }
@@ -4719,38 +4805,11 @@ var sql1 = "";
 if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
     sql1 = "and dbo.tContent.id < " + lastId + " ";
 }
-/*
-sql = 
-    "SELECT TOP (10) dbo.tContent.id, DATEDIFF(minute, dbo.tContent.regDatetime,  " + 
-    "      GETDATE()) AS mins, dbo.tContent.userId, dbo.tContent.[content], dbo.tContent.photo1,  " + 
-    "      dbo.tContent.likeCount,  " + 
-    "      dbo.tContent.[status],  " + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'R' THEN 1 ELSE 0 END) AS replyCount,  " + 
-    "      SUM(CASE WHEN tContent_1.uplinkType = 'F' THEN 1 ELSE 0 END) AS forwardCount,  " + 
-    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
-    "      DATEDIFF(minute, tContent_2.regDatetime, GETDATE()) AS reMins,  " + 
-    "      tContent_2.[content] AS reContent, tContent_2.photo1 AS rePhoto1,  " + 
-    "      tContent_2.userId AS reUserId, userInfo_1.userName AS reUserName,  " + 
-    "      userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto " + 
-    "FROM dbo.userInfo AS userInfo_1 INNER JOIN " + 
-    "      dbo.tContent AS tContent_2 ON userInfo_1.id = tContent_2.userId RIGHT OUTER JOIN " + 
-    "      dbo.tContent INNER JOIN " + 
-    "      dbo.follow ON dbo.tContent.userId = dbo.follow.followId INNER JOIN " + 
-    "      dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id ON  " + 
-    "      tContent_2.id = dbo.tContent.uplinkId LEFT OUTER JOIN " + 
-    "      dbo.tContent AS tContent_1 ON dbo.tContent.id = tContent_1.uplinkId " + 
-    "WHERE (dbo.follow.userId = " + userId + ") " + sql1 + 
-    "GROUP BY dbo.tContent.id, dbo.tContent.regDatetime, dbo.tContent.userId,  " + 
-    "      dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.likeCount, dbo.tContent.[status],  " + 
-    "      dbo.userInfo.photo, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
-    "      tContent_2.regDatetime, tContent_2.[content], tContent_2.photo1, tContent_2.userId,  " + 
-    "      userInfo_1.userName, userInfo_1.nickName, userInfo_1.photo " + 
-    "ORDER BY dbo.tContent.id DESC     "; 
-*/
+
 sql =
     "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +  
     "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
     "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
     "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
     "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
@@ -4774,7 +4833,7 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     ee.setVisible(ee.getControl("panel123"), false);
@@ -4811,7 +4870,7 @@ for (var i=0; i<g5.itemsPageUser.length; i++) {
     ee.removeControl(g5.itemsPageUser[i]);
 }
 g5.itemsPageUser = new Array();
-ee.showAni(ee.getControl("panel16"), 0);
+//ee.showAni(ee.getControl("panel16"), 0);
 
 eio.appendString16(g5.token);
 eio.appendString16(showUserPage.userName);
@@ -4878,7 +4937,7 @@ if (db.read(sqlResult)) {
 sql = 
     "SELECT   TOP (30) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " + 
     "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
     "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
     "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
     "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
@@ -4900,7 +4959,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
 
 
 ]]></script2>
@@ -5005,6 +5064,7 @@ for (i=0; i< g5.datasetPageUser.rowCount; i++) {
     item = g5.appendItem(
         root,
         cy, "puser" + i + "_",
+        "",
         g5.datasetPageUser.getData(8,i),
         g5.datasetPageUser.getData(9,i),
         g5.getMins(g5.datasetPageUser.getData(1,i)),
@@ -5015,14 +5075,17 @@ for (i=0; i< g5.datasetPageUser.rowCount; i++) {
         g5.datasetPageUser.getData(5,i),
         g5.datasetPageUser.getData(6,i),
         g5.datasetPageUser.getData(7,i),
+        g5.datasetPageUser.getData(20,i),
         g5.getMins(g5.datasetPageUser.getData(11,i)),
         g5.datasetPageUser.getData(12,i),
         g5.datasetPageUser.getData(13,i),
         g5.datasetPageUser.getData(14,i),
         g5.datasetPageUser.getData(15,i),
         g5.datasetPageUser.getData(16,i),
-        g5.datasetPageUser.getData(17,i)
-        );        
+        g5.datasetPageUser.getData(17,i),
+        g5.datasetPageUser.getData(18,i),
+        g5.datasetPageUser.getData(19,i)
+    );        
         
     g5.itemsPageUser.push(item);
     cy += 0 + eb.getDivRect(item).h;
@@ -5041,6 +5104,7 @@ g5.changeP2(1);
       <script1><![CDATA[if (eb.isEmpty(showTopic.busy)) showTopic.busy = false;
 if (showTopic.busy) return;
 showTopic.busy = true;
+showTopic.startTime = new Date();
 
 eio.appendString16(g5.token);
 if (ee.getControl("panel22").eeChildren.length<=0) {
@@ -5089,7 +5153,7 @@ if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
 sql =
     "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " + 
     "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
     "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
     "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
     "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
@@ -5112,20 +5176,18 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
 
 sql = "exec [twitterSource] " + userId + "," + topicId;
-es.logCommon(sql);
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     return;
 }
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
 while (db.nextResult(sqlResult)) {
-    es.logCommon("nextResult");
     eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-        ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+        ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
 }]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     showTopic.busy = false;
@@ -5158,10 +5220,16 @@ while (true) {
         }
     }
     
+    var uType,dType;
     for (i=showTopic.backTrace.rowCount-1; i >= 0; i--) {
+        if (i==showTopic.backTrace.rowCount-1) {
+            uType = " "
+        } else uType = "T";
+        dType = "T";
         item = g5.appendItem(
             root,
             cy, "page8_" + showTopic.items.length + "_",
+            uType + dType,
             showTopic.backTrace.getData(8,i),
             showTopic.backTrace.getData(9,i),
             g5.getMins(showTopic.backTrace.getData(1,i)),
@@ -5172,13 +5240,16 @@ while (true) {
             showTopic.backTrace.getData(5,i),
             showTopic.backTrace.getData(6,i),
             showTopic.backTrace.getData(7,i),
+            showTopic.backTrace.getData(20,i),
             g5.getMins(showTopic.backTrace.getData(11,i)),
             showTopic.backTrace.getData(12,i),
             showTopic.backTrace.getData(13,i),
             showTopic.backTrace.getData(14,i),
-            i>0?"":showTopic.backTrace.getData(15,i),
+            showTopic.backTrace.getData(15,i),
             showTopic.backTrace.getData(16,i),
-            showTopic.backTrace.getData(17,i)
+            showTopic.backTrace.getData(17,i),
+            showTopic.backTrace.getData(18,i),
+            showTopic.backTrace.getData(19,i)
             );
         showTopic.items.push(item);
         cy += 0 + eb.getDivRect(item).h;    
@@ -5187,9 +5258,15 @@ while (true) {
     var scrollY = cy - eb.getDivRect(g5.p4).h;
     
     for (i=0; i< showTopic.data.rowCount; i++) {
+        uType = " "; dType = " ";
+        if ((i==0) &amp;&amp; (showTopic.backTrace.rowCount>0)) {
+            uType="T"; dType = " ";
+        }
+        if (i==0) dType += "x";
         item = g5.appendItem(
             root,
             cy, "page8_" + showTopic.items.length + "_",
+            uType + dType,
             showTopic.data.getData(8,i),
             showTopic.data.getData(9,i),
             g5.getMins(showTopic.data.getData(1,i)),
@@ -5200,13 +5277,16 @@ while (true) {
             showTopic.data.getData(5,i),
             showTopic.data.getData(6,i),
             showTopic.data.getData(7,i),
+            showTopic.data.getData(20,i),
             g5.getMins(showTopic.data.getData(11,i)),
             showTopic.data.getData(12,i),
             showTopic.data.getData(13,i),
             showTopic.data.getData(14,i),
-            i>0?"":showTopic.data.getData(15,i),
+            showTopic.data.getData(15,i),
             showTopic.data.getData(16,i),
-            showTopic.data.getData(17,i)
+            showTopic.data.getData(17,i),
+            showTopic.data.getData(18,i),
+            showTopic.data.getData(19,i)
             );
         showTopic.items.push(item);
         cy += 0 + eb.getDivRect(item).h;    
@@ -5215,13 +5295,26 @@ while (true) {
         eb.setDivRect(ee.getControl("panel135"),null,null,null,cy);
     }
     eb.setDivRect(ee.getControl("panel22"),null,null,null,cy);
-    g5.mainDiv.scrollTop = scrollY;
+    showTopic.scrollY = scrollY;
     eb.processDock();
 
 
 showTopic.needRefresh = false;
 ee.setVisible(ee.getControl("panel123"), false);
 showTopic.busy = false;
+
+var dTime = (new Date()).getTime() - showTopic.startTime;
+if (dTime>50) {
+    if (g5.currentPageIndex == 7) g5.changeP2(-1);
+    g5.changeP2(7);
+    g5.mainDiv.scrollTop = showTopic.scrollY;
+} else {
+    setTimeout(function() { 
+        if (g5.currentPageIndex == 7) g5.changeP2(-1);
+        g5.changeP2(7);
+        g5.mainDiv.scrollTop = showTopic.scrollY;
+    }, 50-dTime);
+}
                         
 ]]></script3>
     </taskSetItem>
@@ -5324,7 +5417,7 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
-    ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto", 0, 99999); 
+    ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     ee.setVisible(ee.getControl("panel123"), false);
@@ -5359,6 +5452,7 @@ for (i=0; i< searchTwitter.dataset.rowCount; i++) {
     item = g5.appendItem(
         root,
         cy, "p12_" + searchTwitter.items.length + "_",
+        "",
         searchTwitter.dataset.getData(8,i),
         searchTwitter.dataset.getData(9,i),
         g5.getMins(searchTwitter.dataset.getData(1,i)),
