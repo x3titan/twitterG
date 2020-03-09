@@ -1,5 +1,5 @@
 <page>
-  <controls count="201">
+  <controls count="188">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -12,9 +12,9 @@
 
     var p2h = eb.getDivRect(ee.getControl("panel135")).h;
     if (p2h>viewPortH) {
-        if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 300) {
-            if (!eb.isEmpty(g5.datasetHome)) {
-                if (g5.datasetHome.rowCount>0) {
+        if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
+            if (!eb.isEmpty(updateHomepage.data)) {
+                if (updateHomepage.data.rowCount>0) {
                     updateHomepage();
                 }
             }
@@ -46,95 +46,12 @@
 }, false);
 
 
-g5.changePage = function(pageIndex) {
-    if ((pageIndex<0) || (pageIndex>=4)) return false;
-    if (g5.currentPageIndex == pageIndex) return true;
-    if (g5.currentPageIndex == 0) {
-        ee.setImage(ee.getControl("panel1"), "/twitterG/main/d1.png", "fill", "", "");
-        ee.showAni(ee.getControl("layouty2"), 1);
-    } else if (g5.currentPageIndex == 1) {
-        ee.setImage(ee.getControl("panel2"), "/twitterG/main/d2.png", "fill", "", "");
-        ee.showAni(ee.getControl("layouty3"), 1);
-    } else if (g5.currentPageIndex == 2) {
-        ee.setImage(ee.getControl("panel3"), "/twitterG/main/d3.png", "fill", "", "");
-    } else if (g5.currentPageIndex == 3) {
-        ee.setImage(ee.getControl("panel4"), "/twitterG/main/d4.png", "fill", "", "");
-        ee.showAni(ee.getControl("layouty5"), 1);
-    }
-    if (pageIndex == 0) {
-        ee.setImage(ee.getControl("panel1"), "/twitterG/main/d1s.png", "fill", "", "");
-        ee.showAni(ee.getControl("layouty2"), 0);
-    } else if (pageIndex == 1) {
-        ee.setImage(ee.getControl("panel2"), "/twitterG/main/d2s.png", "fill", "", "");
-        ee.showAni(ee.getControl("layouty3"), 0);
-    } else if (pageIndex == 2) {
-        ee.setImage(ee.getControl("panel3"), "/twitterG/main/d3s.png", "fill", "", "");
-    } else if (pageIndex == 3) {
-        ee.setImage(ee.getControl("panel4"), "/twitterG/main/d4s.png", "fill", "", "");
-        ee.showAni(ee.getControl("layouty5"), 0);
-    }
-    g5.currentPageIndex = pageIndex;
-    return true;
-}
-
 g5.changeP2(0);
+g5.changeP3(1);
 
-
-g5.changePage2 = function(pageIndex) {
-    if ((pageIndex<0) || (pageIndex>=2)) return false;
-    ee.setVisible(ee.getControl("panel132"), false);
-    ee.setVisible(ee.getControl("panel133"), false);
-    ee.setVisible(ee.getControl("panel128"), false);
-    ee.setVisible(ee.getControl("panel129"), false);
-    ee.setTextColor(ee.getControl("layoutxitem15"), "#808080");
-    ee.setTextColor(ee.getControl("layoutxitem16"), "#808080");
-    if (pageIndex == 0) {
-        ee.setVisible(ee.getControl("panel132"), true);
-        ee.setVisible(ee.getControl("panel128"), true);
-        ee.setTextColor(ee.getControl("layoutxitem15"), "#1C94E0");
-    } else if (pageIndex == 1) {
-        ee.setVisible(ee.getControl("panel133"), true);
-        ee.setVisible(ee.getControl("panel129"), true);
-        ee.setTextColor(ee.getControl("layoutxitem16"), "#1C94E0");
-    }
-}
-g5.changePage2(1);
-
-
-
-g5.deletePage1 = function(item) {
-    var i=0;
-    for (i=0; i<g5.itemsHome.length; i++) {
-        if (g5.itemsHome[i]==item) {
-            break;
-        }
-    }
-    if (i>=g5.itemsHome.length) return;
-    var pos = i;
-    var dh = eb.getDivRect(g5.itemsHome[pos]).h;
-    ee.removeControl(g5.itemsHome[pos]);
-    g5.itemsHome.slice(pos,1);
-    for (i=pos; i<g5.itemsHome.length; i++) {
-        ee.setRect(g5.itemsHome[i],null,eb.getDivRect(g5.itemsHome[i]).y-dh,null,null);
-    }
-    if (g5.itemsHome.length>0) {
-        var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
-        eb.setDivRect(ee.getControl("panel41"),null,null,null,rect.y+rect.h);
-    }
-}
-
-
-g5.changePage(0);
-eb.setTouchEnabled(true);
-eb.setAlpha(ee.getControl("fileupload1"), 1);
-eb.setAlpha(ee.getControl("fileupload2"), 1);
-eb.setAlpha(ee.getControl("fileupload3"), 1);
 getUserInfo();
 searchUser();
 eb.processDock();
-//ee.getControl("divRoot").dockX = "disabled";
-//ee.getControl("divRoot").dockY = "disabled";
-//setTimeout(function() { ee.autoResize=false; }, 200);
 setInterval(function() {g5.refreshMain();}, 100);
 
 
@@ -163,30 +80,6 @@ setInterval(function() {g5.refreshMain();}, 100);
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
 ]]></onPageCreate>
-      <onSlideLeft>if (ee.getControl("panel26").style.visibility != "hidden") {
-    ee.showAni(ee.getControl("panel26"), 1);               
-    ee.showAni(ee.getControl("panel27"), 1);
-}
-
-</onSlideLeft>
-      <onSlideRight>ee.setVisible(ee.getControl("panel26"), true);
-eb.setAlpha(ee.getControl("panel26"), 100);
-ee.showAni(ee.getControl("panel27"), 0);</onSlideRight>
-      <onSlideUp><![CDATA[var c;
-c = ee.getControl("layoutyitem4");
-if (c.clientHeight+c.scrollTop >= c.scrollHeight) {
-    if (g5.currentPageIndex == 0) {
-        updateHomepage();
-    }    
-}
-c = ee.getControl("panel129");
-if (c.clientHeight+c.scrollTop >= c.scrollHeight) {
-    if (g5.currentPageIndex == 1) {
-        searchTwitter();
-    }    
-}
-
-]]></onSlideUp>
       <top>0</top>
       <width>1247</width>
     </control>
@@ -216,520 +109,12 @@ if (c.clientHeight+c.scrollTop >= c.scrollHeight) {
       <heightRatio>0.979899497487437</heightRatio>
       <left>300</left>
       <leftRatio>0.240577385725742</leftRatio>
+      <note>P2</note>
       <sizeRatio>1.32879045996593</sizeRatio>
       <top>-2</top>
       <topRatio>-0.00251256281407035</topRatio>
       <width>587</width>
       <widthRatio>0.470729751403368</widthRatio>
-    </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel135/layouty1">
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <fieldCount>2</fieldCount>
-      <height>780</height>
-      <heightRatio>1</heightRatio>
-      <layerName>主页</layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>1.32879045996593</sizeRatio>
-      <top>0</top>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1">
-      <backgroundColor>f0f0f0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>722</height>
-      <heightRatio>0.925641025641026</heightRatio>
-      <left>0</left>
-      <sizeRatio>1.22998296422487</sizeRatio>
-      <top>0</top>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2">
-      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
-      <aniPos>rightFlyIn:右侧飞入</aniPos>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <fieldCount>2</fieldCount>
-      <height>722</height>
-      <heightRatio>1</heightRatio>
-      <layerName>Page1</layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onAniEnd>updateHomepage.needRefresh = true;
-updateHomepage();
-</onAniEnd>
-      <sizeRatio>1.22998296422487</sizeRatio>
-      <top>0</top>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2/layoutyitem3">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <heavy>10</heavy>
-      <height>66</height>
-      <heightRatio>0.0914127423822715</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.112436115843271</sizeRatio>
-      <top>0</top>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2/layoutyitem3/panel6">
-      <backgroundColor>C0C0C0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <height>1</height>
-      <heightRatio>0.0151515151515152</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00170357751277683</sizeRatio>
-      <top>65</top>
-      <topRatio>0.984848484848485</topRatio>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2/layoutyitem3/panel7">
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>52</height>
-      <heightRatio>0.786885245901639</heightRatio>
-      <left>24</left>
-      <leftRatio>0.0296127562642369</leftRatio>
-      <lockRatio>true</lockRatio>
-      <onClick>ee.setVisible(ee.getControl("panel26"), true);
-eb.setAlpha(ee.getControl("panel26"), 100);
-ee.showAni(ee.getControl("panel27"), 0);
-</onClick>
-      <sizeRatio>1.02127659574468</sizeRatio>
-      <top>4</top>
-      <topRatio>0.0655737704918033</topRatio>
-      <width>51</width>
-      <widthRatio>0.107061503416856</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2/layoutyitem3/panel7/panel8">
-      <backgroundImg>user.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>50</height>
-      <heightRatio>0.961538461538462</heightRatio>
-      <left>1</left>
-      <leftRatio>0.0196078431372549</leftRatio>
-      <outerBottom>1</outerBottom>
-      <outerLeft>1</outerLeft>
-      <outerRight>1</outerRight>
-      <outerTop>1</outerTop>
-      <sizeRatio>1.02040816326531</sizeRatio>
-      <top>1</top>
-      <topRatio>0.0192307692307692</topRatio>
-      <width>49</width>
-      <widthRatio>0.96078431372549</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2/layoutyitem3/panel7/panel9">
-      <backgroundImg>cirMask.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>52</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>1.01960784313725</sizeRatio>
-      <top>0</top>
-      <width>51</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2/layoutyitem3/panel10">
-      <dockX>ratio</dockX>
-      <dockY>fill</dockY>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>18</fontSize>
-      <hAlign>left</hAlign>
-      <height>66</height>
-      <heightRatio>1</heightRatio>
-      <left>106</left>
-      <leftRatio>0.180579216354344</leftRatio>
-      <sizeRatio>0.507692307692308</sizeRatio>
-      <text>主页</text>
-      <top>0</top>
-      <width>130</width>
-      <widthRatio>0.221465076660988</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2/layoutyitem3/panel11">
-      <backgroundImg>CPY0001.jpg</backgroundImg>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>53</height>
-      <heightRatio>0.80327868852459</heightRatio>
-      <left>508</left>
-      <leftRatio>0.865603644646925</leftRatio>
-      <sizeRatio>0.96078431372549</sizeRatio>
-      <top>6</top>
-      <topRatio>0.0983606557377049</topRatio>
-      <width>68</width>
-      <widthRatio>0.116173120728929</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty2/layoutyitem4">
-      <autoScroll>true</autoScroll>
-      <backgroundColor>E6ECF0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>656</height>
-      <heightRatio>0.908587257617729</heightRatio>
-      <left>0</left>
-      <onAni2End>if (updateHomepage.needRefresh)  {
-    updateHomepage();
-}</onAni2End>
-      <sizeRatio>1.1175468483816</sizeRatio>
-      <top>66</top>
-      <topRatio>0.0914127423822715</topRatio>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/panel25">
-      <backgroundImg>newGet.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>107</height>
-      <heightRatio>0.14769647696477</heightRatio>
-      <left>462</left>
-      <leftRatio>0.772296015180266</leftRatio>
-      <lockRatio>true</lockRatio>
-      <onClick>g5.newPhoto1 = "";
-ee.setEditText(ee.getControl("edit1"), "");
-ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
-ee.setText(ee.getControl("panel45"), "发推");
-g5.uplinkType = "N";
-g5.uplinkId = 0;
-ee.showAni(ee.getControl("panel42"), 0);
-</onClick>
-      <sizeRatio>0.923728813559322</sizeRatio>
-      <top>614</top>
-      <topRatio>0.849593495934959</topRatio>
-      <width>115</width>
-      <widthRatio>0.223908918406072</widthRatio>
-    </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty4">
-      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
-      <aniPos>rightFlyIn:右侧飞入</aniPos>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <fieldCount>2</fieldCount>
-      <height>722</height>
-      <heightRatio>1</heightRatio>
-      <layerName>Page5</layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>1.22998296422487</sizeRatio>
-      <top>0</top>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty4/layoutyitem7">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <heavy>25</heavy>
-      <height>144</height>
-      <heightRatio>0.199445983379501</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.245315161839864</sizeRatio>
-      <top>0</top>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty4/layoutyitem7/panel106">
-      <backgroundColor>C0C0C0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <height>1</height>
-      <heightRatio>0.00694444444444444</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00170357751277683</sizeRatio>
-      <top>143</top>
-      <topRatio>0.993055555555556</topRatio>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty4/layoutyitem7/panel107">
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontFamily>黑体</fontFamily>
-      <fontSize>24</fontSize>
-      <fontSizeAuto>24</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>125</height>
-      <heightRatio>0.864864864864865</heightRatio>
-      <left>79</left>
-      <leftRatio>0.134396355353075</leftRatio>
-      <sizeRatio>0.351648351648352</sizeRatio>
-      <text><![CDATA[欢迎您首次使用GET，在这里您可以了解在世界上发生的最真实的故事。
-我们为您推荐了众多网友关注的推文账号，您可以在看了他们的账号信息和推文后选择<b>关注</b>。
-感谢您对GET的关心和支持！]]></text>
-      <top>12</top>
-      <topRatio>0.0810810810810811</topRatio>
-      <width>487</width>
-      <widthRatio>0.829157175398633</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty4/layoutyitem7/panel108">
-      <backgroundImg>close.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>47</height>
-      <heightRatio>0.324324324324324</heightRatio>
-      <left>9</left>
-      <leftRatio>0.0159453302961276</leftRatio>
-      <onClick>ee.showAni(ee.getControl("layouty4"), 1);
-setTimeout(function() { updateHomepage(); }, 500);</onClick>
-      <sizeRatio>1</sizeRatio>
-      <top>5</top>
-      <topRatio>0.0337837837837838</topRatio>
-      <width>64</width>
-      <widthRatio>0.109339407744875</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/layouty4/layoutyitem8">
-      <autoScroll>true</autoScroll>
-      <backgroundColor>E6ECF0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>578</height>
-      <heightRatio>0.800554016620499</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.984667802385009</sizeRatio>
-      <top>144</top>
-      <topRatio>0.199445983379501</topRatio>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/panel123">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>ratio</dockY>
-      <fontColor>FFFFFF</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>24</fontSizeAuto>
-      <height>143</height>
-      <heightRatio>0.197831978319783</heightRatio>
-      <layerName>wait</layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onClick>follow.follow = sender.follow;
-follow.userId = ee.getControl("panel16").userId;
-follow();
-
-
-
-
-</onClick>
-      <sizeRatio>0.332574031890661</sizeRatio>
-      <top>284</top>
-      <topRatio>0.392953929539295</topRatio>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/panel123/panel124">
-      <backgroundImg>0152395be39c37a80121ab5d479b6c.gif</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontColor>FFFFFF</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>24</fontSizeAuto>
-      <height>214</height>
-      <heightRatio>1.5</heightRatio>
-      <left>16</left>
-      <leftRatio>0.0273348519362187</leftRatio>
-      <onClick>follow.follow = sender.follow;
-follow.userId = ee.getControl("panel16").userId;
-follow();
-
-
-
-
-</onClick>
-      <sizeRatio>0.539408866995074</sizeRatio>
-      <top>-36</top>
-      <topRatio>-0.253424657534247</topRatio>
-      <width>543</width>
-      <widthRatio>0.924829157175399</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/panel123/panel125">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>ratio</dockY>
-      <fontBold>true</fontBold>
-      <fontColor>808080</fontColor>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSizeAuto>20</fontSizeAuto>
-      <height>47</height>
-      <heightRatio>0.328767123287671</heightRatio>
-      <left>0</left>
-      <onClick>follow.follow = sender.follow;
-follow.userId = ee.getControl("panel16").userId;
-follow();
-
-
-
-
-</onClick>
-      <sizeRatio>0.109339407744875</sizeRatio>
-      <text>... loading ...</text>
-      <top>73</top>
-      <topRatio>0.513698630136986</topRatio>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/panel123/panel126">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>top</dockY>
-      <fontBold>true</fontBold>
-      <fontColor>808080</fontColor>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSizeAuto>20</fontSizeAuto>
-      <height>5</height>
-      <heightRatio>0.034965034965035</heightRatio>
-      <left>0</left>
-      <onClick>follow.follow = sender.follow;
-follow.userId = ee.getControl("panel16").userId;
-follow();
-
-
-
-
-</onClick>
-      <sizeRatio>0.00851788756388416</sizeRatio>
-      <top>0</top>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem1/panel123/panel127">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <fontBold>true</fontBold>
-      <fontColor>808080</fontColor>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSizeAuto>20</fontSizeAuto>
-      <height>5</height>
-      <heightRatio>0.034965034965035</heightRatio>
-      <left>0</left>
-      <onClick>follow.follow = sender.follow;
-follow.userId = ee.getControl("panel16").userId;
-follow();
-
-
-
-
-</onClick>
-      <sizeRatio>0.00851788756388416</sizeRatio>
-      <top>138</top>
-      <topRatio>0.965034965034965</topRatio>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem2">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <heavy>8</heavy>
-      <height>58</height>
-      <heightRatio>0.0743589743589744</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.0988074957410562</sizeRatio>
-      <top>722</top>
-      <topRatio>0.925641025641026</topRatio>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem2/panel1">
-      <backgroundImg>d1.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>fill</dockY>
-      <height>58</height>
-      <heightRatio>1</heightRatio>
-      <left>36</left>
-      <leftRatio>0.061503416856492</leftRatio>
-      <onClick>g5.changePage(0);</onClick>
-      <sizeRatio>1.07272727272727</sizeRatio>
-      <top>0</top>
-      <width>74</width>
-      <widthRatio>0.125284738041002</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem2/panel2">
-      <backgroundImg>d2.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>fill</dockY>
-      <height>58</height>
-      <heightRatio>1</heightRatio>
-      <left>177</left>
-      <leftRatio>0.300683371298405</leftRatio>
-      <onClick>g5.changePage(1);</onClick>
-      <sizeRatio>1.07272727272727</sizeRatio>
-      <top>0</top>
-      <width>74</width>
-      <widthRatio>0.125284738041002</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem2/panel3">
-      <backgroundImg>d3.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>fill</dockY>
-      <height>58</height>
-      <heightRatio>1</heightRatio>
-      <left>316</left>
-      <leftRatio>0.537585421412301</leftRatio>
-      <onClick>g5.changePage(2);</onClick>
-      <sizeRatio>1.07272727272727</sizeRatio>
-      <top>0</top>
-      <width>74</width>
-      <widthRatio>0.125284738041002</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem2/panel4">
-      <backgroundImg>d4.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>fill</dockY>
-      <height>58</height>
-      <heightRatio>1</heightRatio>
-      <left>456</left>
-      <leftRatio>0.776765375854214</leftRatio>
-      <onClick>g5.changePage(3);</onClick>
-      <sizeRatio>1.07272727272727</sizeRatio>
-      <top>0</top>
-      <width>74</width>
-      <widthRatio>0.125284738041002</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty1/layoutyitem2/panel5">
-      <backgroundColor>C0C0C0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>top</dockY>
-      <height>1</height>
-      <heightRatio>0.0172413793103448</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00170357751277683</sizeRatio>
-      <top>0</top>
-      <width>587</width>
-      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -738,12 +123,258 @@ follow();
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.32879045996593</sizeRatio>
-      <top>0</top>
+      <top>-4</top>
+      <topRatio>-0.00512820512820513</topRatio>
       <width>587</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1">
+      <dockX>fill</dockX>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>20</fontSize>
+      <height>462</height>
+      <heightRatio>0.592307692307692</heightRatio>
+      <left>0</left>
+      <note>主页顶部发帖</note>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+ee.setRect(sender,null,null,null,140);
+ee.setVisible(ee.getControl("panel7"), false);
+                                             
+</onCreate>
+      <sizeRatio>0.787052810902896</sizeRatio>
+      <top>129</top>
+      <topRatio>0.165384615384615</topRatio>
+      <width>587</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel2">
+      <backgroundImg>user.png</backgroundImg>
+      <height>50</height>
+      <heightRatio>0.357142857142857</heightRatio>
+      <left>16</left>
+      <leftRatio>0.0272572402044293</leftRatio>
+      <onCreate>sender.style.borderRadius = "50%";</onCreate>
+      <sizeRatio>1</sizeRatio>
+      <top>10</top>
+      <topRatio>0.0714285714285714</topRatio>
+      <width>50</width>
+      <widthRatio>0.0851788756388416</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel3">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>10</height>
+      <heightRatio>0.0684931506849315</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0170357751277683</sizeRatio>
+      <top>452</top>
+      <topRatio>0.876712328767123</topRatio>
+      <width>587</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel4">
+      <dockY>bottom</dockY>
+      <height>36</height>
+      <heightRatio>0.257142857142857</heightRatio>
+      <left>76</left>
+      <leftRatio>0.129471890971039</leftRatio>
+      <outerBottom>15</outerBottom>
+      <sizeRatio>1</sizeRatio>
+      <top>411</top>
+      <topRatio>0.635714285714286</topRatio>
+      <width>36</width>
+      <widthRatio>0.0613287904599659</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel4/panel5">
+      <height>36</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M19.75 2H4.25C3.01 2 2 3.01 2 4.25v15.5C2 20.99 3.01 22 4.25 22h15.5c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2zM4.25 3.5h15.5c.413 0 .75.337.75.75v9.676l-3.858-3.858c-.14-.14-.33-.22-.53-.22h-.003c-.2 0-.393.08-.532.224l-4.317 4.384-1.813-1.806c-.14-.14-.33-.22-.53-.22-.193-.03-.395.08-.535.227L3.5 17.642V4.25c0-.413.337-.75.75-.75zm-.744 16.28l5.418-5.534 6.282 6.254H4.25c-.402 0-.727-.322-.744-.72zm16.244.72h-2.42l-5.007-4.987 3.792-3.85 4.385 4.384v3.703c0 .413-.337.75-.75.75z\"></path><circle cx=\"8.868\" cy=\"8.309\" r=\"1.542\"></circle></g></svg>";
+sender.style.borderRadius = "50%";
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>图片</text>
+      <top>0</top>
+      <width>36</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="FileUpload" pathname="/divRoot/panel134/panel135/panel41/panel1/panel4/fileupload4">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <height>36</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate>eb.setAlpha(sender, 1);
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.parentNode.eeChildren[0].style.backgroundColor = "#dfeffa";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.parentNode.eeChildren[0].style.backgroundColor = "";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+</onCreate>
+      <onUploadCompleteC>newTwitter.photo1 = eio.readString16();
+ee.setImage(ee.getControl("panel7"), "url:" + g5.imgUrl + newTwitter.photo1, "trim", "", "");
+if (ee.getControl("panel7").style.visibility=="hidden") {
+    ee.setVisible(ee.getControl("panel7"), true);
+    ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+462-140);
+    g5.homepageMoveY(0,462-140);
+    eb.processDock();
+}
+
+
+
+
+
+
+</onUploadCompleteC>
+      <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
+var filename = newFileName.substring(pos+1);  
+eio.appendString16(filename);</onUploadCompleteS>
+      <onUploadStartC>fileExt = fileExt.toLowerCase();
+if ((fileExt != ".bmp") &amp;&amp;
+    (fileExt != ".jpg") &amp;&amp;
+    (fileExt != ".jpeg") &amp;&amp;
+    (fileExt != ".png") &amp;&amp;
+    (fileExt != ".tif") &amp;&amp;
+    (fileExt != ".tiff")) return;
+    </onUploadStartC>
+      <onUploadStartS>var sql,sqlResult;  
+sql = "select next value for dbo.SEQImageSn as Sn";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
+      <sizeRatio>1</sizeRatio>
+      <top>0</top>
+      <width>36</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel134/panel135/panel41/panel1/edit7">
+      <backgroundSkin>empty</backgroundSkin>
+      <fontColor>9197A3</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>16</fontSize>
+      <hAlign>left</hAlign>
+      <height>83</height>
+      <heightRatio>0.592857142857143</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>16</inputFontSize>
+      <left>77</left>
+      <leftRatio>0.131175468483816</leftRatio>
+      <multiLine>true</multiLine>
+      <onChange>//var backup = sender.style.height;
+//sender.style.height = "";
+var dy = sender.scrollHeight - sender.lastHeight;
+//sender.style.height = backup;
+if (dy==0) return;
+sender.lastHeight = sender.scrollHeight;
+//adjust interface
+ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
+ee.setRect(ee.getControl("edit7"),null,null,null,eb.getDivRect(ee.getControl("edit7")).h + dy);
+g5.homepageMoveY(0,dy);
+eb.processDock();
+
+</onChange>
+      <onCreate>sender._input.lastHeight = sender._input.scrollHeight;
+sender._input.style.resize = "none";</onCreate>
+      <sizeRatio>0.170431211498973</sizeRatio>
+      <text>有什么新鲜事？</text>
+      <top>7</top>
+      <topRatio>0.05</topRatio>
+      <vAlign>top</vAlign>
+      <width>487</width>
+      <widthRatio>0.829642248722317</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel6">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundSkin>LRBtn9</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockY>bottom</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>39</height>
+      <heightRatio>0.278571428571429</heightRatio>
+      <left>476</left>
+      <leftRatio>0.810902896081772</leftRatio>
+      <onClick>newTwitter.content = ee.getEditText(ee.getControl("edit7"));
+if (ee.getControl("panel7").style.visibility=="hidden") {
+    newTwitter.photo1 = "";
+}
+g5.uplinkType = "N";
+g5.uplinkId = 0;
+newTwitter();
+</onClick>
+      <outerBottom>18</outerBottom>
+      <sizeRatio>0.428571428571429</sizeRatio>
+      <text>推文</text>
+      <top>405</top>
+      <topRatio>0.592857142857143</topRatio>
+      <width>91</width>
+      <widthRatio>0.155025553662692</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel7">
+      <backgroundImg>CPY0002.jpg</backgroundImg>
+      <dockY>bottom</dockY>
+      <height>289</height>
+      <heightRatio>0.625541125541126</heightRatio>
+      <left>75</left>
+      <leftRatio>0.127768313458262</leftRatio>
+      <onCreate>sender.style.borderRadius = "15px";
+//sender.style.borderWidth = "1px";
+//sender.style.borderColor = "rgb(204,214,221)";
+//sender.style.borderStyle = "solid";</onCreate>
+      <outerBottom>70</outerBottom>
+      <sizeRatio>0.588594704684318</sizeRatio>
+      <top>103</top>
+      <topRatio>0.222943722943723</topRatio>
+      <width>491</width>
+      <widthRatio>0.836456558773424</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel7/panel8">
+      <cursor>pointer</cursor>
+      <height>36</height>
+      <heightRatio>0.194594594594595</heightRatio>
+      <left>437</left>
+      <leftRatio>0.890020366598778</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel7"), false);
+ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h-(462-140));
+g5.homepageMoveY(0,-(462-140));
+eb.processDock();</onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgba(255,255,255,1);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M13.414 12l5.793-5.793c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0L12 10.586 6.207 4.793c-.39-.39-1.023-.39-1.414 0s-.39 1.023 0 1.414L10.586 12l-5.793 5.793c-.39.39-.39 1.023 0 1.414.195.195.45.293.707.293s.512-.098.707-.293L12 13.414l5.793 5.793c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L13.414 12z\"></path></g></svg>";
+sender.style.borderRadius = "50%";
+sender.style.backgroundColor = "rgba(0,0,0,0.8)";
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "rgba(0,0,0,0.5)";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "rgba(0,0,0,0.8)";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>x</text>
+      <top>11</top>
+      <topRatio>0.0594594594594595</topRatio>
+      <width>36</width>
+      <widthRatio>0.0733197556008147</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
@@ -1759,6 +1390,98 @@ sender.style.borderStyle = "solid";</onCreate>
       <width>587</width>
       <widthRatio>1</widthRatio>
     </control>
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/layouty4">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <dockX>fill</dockX>
+      <fieldCount>2</fieldCount>
+      <height>780</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[P2->8->新用户页]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.32879045996593</sizeRatio>
+      <top>0</top>
+      <width>587</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/layouty4/layoutyitem7">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>25</heavy>
+      <height>156</height>
+      <heightRatio>0.199445983379501</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.245315161839864</sizeRatio>
+      <top>0</top>
+      <width>587</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty4/layoutyitem7/panel106">
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.00694444444444444</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00170357751277683</sizeRatio>
+      <top>155</top>
+      <topRatio>0.993055555555556</topRatio>
+      <width>587</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty4/layoutyitem7/panel107">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>24</fontSize>
+      <fontSizeAuto>24</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>135</height>
+      <heightRatio>0.864864864864865</heightRatio>
+      <left>79</left>
+      <leftRatio>0.134396355353075</leftRatio>
+      <sizeRatio>0.351648351648352</sizeRatio>
+      <text><![CDATA[欢迎您首次使用GET，在这里您可以了解在世界上发生的最真实的故事。
+我们为您推荐了众多网友关注的推文账号，您可以在看了他们的账号信息和推文后选择<b>关注</b>。
+感谢您对GET的关心和支持！]]></text>
+      <top>13</top>
+      <topRatio>0.0810810810810811</topRatio>
+      <width>487</width>
+      <widthRatio>0.829157175398633</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/layouty4/layoutyitem7/panel108">
+      <backgroundImg>close.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>51</height>
+      <heightRatio>0.324324324324324</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0159453302961276</leftRatio>
+      <onClick>ee.showAni(ee.getControl("layouty4"), 1);
+setTimeout(function() { updateHomepage(); }, 500);</onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>5</top>
+      <topRatio>0.0337837837837838</topRatio>
+      <width>64</width>
+      <widthRatio>0.109339407744875</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/layouty4/layoutyitem8">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>624</height>
+      <heightRatio>0.800554016620499</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.984667802385009</sizeRatio>
+      <top>156</top>
+      <topRatio>0.199445983379501</topRatio>
+      <width>587</width>
+      <widthRatio>1</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -1769,6 +1492,7 @@ sender.style.borderStyle = "solid";</onCreate>
       <heightRatio>0.907035175879397</heightRatio>
       <left>887</left>
       <leftRatio>0.71130713712911</leftRatio>
+      <note>P3</note>
       <sizeRatio>2.35179153094463</sizeRatio>
       <top>0</top>
       <width>307</width>
@@ -1967,7 +1691,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>60</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <onClick>g5.changePage2(0);</onClick>
+      <onClick>g5.changeP3(0);</onClick>
       <sizeRatio>0.38961038961039</sizeRatio>
       <text>用户</text>
       <top>0</top>
@@ -2013,7 +1737,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <heightRatio>1</heightRatio>
       <left>154</left>
       <leftRatio>0.501628664495114</leftRatio>
-      <onClick>g5.changePage2(1);</onClick>
+      <onClick>g5.changeP3(1);</onClick>
       <sizeRatio>0.392156862745098</sizeRatio>
       <text>推文</text>
       <top>0</top>
@@ -2275,6 +1999,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>643</height>
       <heightRatio>0.807788944723618</heightRatio>
       <left>0</left>
+      <note>P1</note>
       <sizeRatio>2.14333333333333</sizeRatio>
       <text>P1</text>
       <top>-2</top>
@@ -2629,11 +2354,12 @@ showChatList();</onClick>
     <control type="Panel" pathname="/divRoot/panel134/panel24">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>244</height>
-      <heightRatio>0.306532663316583</heightRatio>
+      <height>117</height>
+      <heightRatio>0.146984924623116</heightRatio>
       <left>306</left>
       <leftRatio>0.245388933440257</leftRatio>
-      <sizeRatio>0.426573426573427</sizeRatio>
+      <note>P4</note>
+      <sizeRatio>0.204545454545455</sizeRatio>
       <top>-2</top>
       <topRatio>-0.00251256281407035</topRatio>
       <width>572</width>
@@ -2835,6 +2561,7 @@ g5.changeP2(0);</onClick>
       <height>52</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
+      <onCreate>eb.setAlpha(sender, 1);</onCreate>
       <onUploadCompleteC>if (eio.readString8() == "F") {
     return;
 }
@@ -2945,6 +2672,7 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <height>60</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
+      <onCreate>eb.setAlpha(sender, 1);</onCreate>
       <onUploadCompleteC>if (eio.readString8() == "F") {
     return;
 }
@@ -3471,7 +3199,6 @@ ee.showAni(ee.getControl("panel117"), 1);
       <height>571</height>
       <heightRatio>0.717336683417085</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色->发推文]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>357</left>
       <leftRatio>0.286287089013633</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);</onAni2End>
@@ -3527,7 +3254,8 @@ ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <heightRatio>0.0647985989492119</heightRatio>
       <left>342</left>
       <leftRatio>0.642857142857143</leftRatio>
-      <onClick>newTwitter();</onClick>
+      <onClick>newTwitter.content = ee.getEditText(ee.getControl("edit1"));
+newTwitter();</onClick>
       <sizeRatio>0.226993865030675</sizeRatio>
       <text>发推</text>
       <top>17</top>
@@ -3626,9 +3354,10 @@ ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <height>51</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <onUploadCompleteC>g5.newPhoto1 = eio.readString16();
+      <onCreate>eb.setAlpha(sender, 1);</onCreate>
+      <onUploadCompleteC>newTwitter.photo1 = eio.readString16();
 ee.setText(ee.getControl("panel52"), " ");
-ee.setImage(ee.getControl("panel52"), "url:" + g5.imgUrl + g5.newPhoto1, "trim", "", "");
+ee.setImage(ee.getControl("panel52"), "url:" + g5.imgUrl + newTwitter.photo1, "trim", "", "");
 
 
 
@@ -3895,15 +3624,15 @@ getUserInfo();
 if (g5.currentPageIndex == 1) showUserPage();</script3>
     </taskSetItem>
     <taskSetItem name="newTwitter">
-      <script1><![CDATA[var text = ee.getEditText(ee.getControl("edit1"));
-if ((text.length<=0) &amp;&amp; (g5.newPhoto1.length<=0)) {
+      <script1><![CDATA[var text = newTwitter.content;
+if ((text.length<=0) &amp;&amp; (newTwitter.photo1.length<=0)) {
     alert("推文内容不能为空");
     return;
 }
 
 eio.appendString16(g5.token);
 eio.appendString16(text);
-eio.appendString16(g5.newPhoto1);
+eio.appendString16(newTwitter.photo1);
 eio.appendString16(g5.uplinkType);
 eio.appendString16(g5.uplinkId+"");
 
@@ -3961,25 +3690,31 @@ if (!db.executeNoneQuery("DB", sql)) {
 }
 ee.setText(ee.getControl("panel52"), " ");
 ee.showAni(ee.getControl("panel42"), 1);
+updateHomepage.getNews = true;
 updateHomepage();</script3>
     </taskSetItem>
     <taskSetItem name="updateHomepage">
-      <script1><![CDATA[if (eb.isEmpty(updateHomepage.busy)) updateHomepage.busy = false;
+      <script1><![CDATA[if (eb.isEmpty(updateHomepage.getNews)) updateHomepage.getNews=false;
+if (eb.isEmpty(updateHomepage.busy)) updateHomepage.busy = false;
+
 if (updateHomepage.busy) return;
 updateHomepage.busy = true;
 
 eio.appendString16(g5.token);
-if (ee.getControl("panel41").eeChildren.length<=0) {
+if (ee.getControl("panel41").eeChildren.length<=1) {
     updateHomepage.needRefresh = true;
 }
 if (updateHomepage.needRefresh) {
     eio.appendString16("T");
     eio.appendString16("0");
+} else if (updateHomepage.getNews) {
+    eio.appendString16("N");
+    if (eb.isEmpty(updateHomepage.data)) return;
+    eio.appendString16(updateHomepage.data.getData(0,0));
 } else {
     eio.appendString16("F");
     eio.appendString16(updateHomepage.lastId);
 }
-ee.setVisible(ee.getControl("panel123"), true);
 
 
 ]]></script1>
@@ -4007,6 +3742,9 @@ var userId = db.getString(sqlResult,"id");
 var sql1 = "";
 if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
     sql1 = "and dbo.tContent.id < " + lastId + " ";
+} else if (needRefresh=="N") {
+    if (isNaN(lastId)) lastId = 0;
+    sql1 = "and dbo.tContent.id > " + lastId + " ";
 }
 
 sql =
@@ -4039,19 +3777,24 @@ eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,li
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
-    ee.setVisible(ee.getControl("panel123"), false);
     updateHomepage.busy = false;
     return;
 }
-g5.datasetHome = eio.readDataSet();
-if (g5.datasetHome.rowCount >= 0) {
-    updateHomepage.lastId = g5.datasetHome.getData(0, g5.datasetHome.rowCount - 1);
+updateHomepage.data = eio.readDataSet();
+if (updateHomepage.data.rowCount >= 0) {
+    updateHomepage.lastId = updateHomepage.data.getData(0, updateHomepage.data.rowCount - 1);
 } else {
     updateHomepage.lastId = "0";
 }
-g5.refreshPage1();
+
+if (updateHomepage.getNews) {
+    g5.refreshPage1("N");
+    updateHomepage.getNews = false;
+} else {
+    g5.refreshPage1("");
+}
+
 updateHomepage.needRefresh = false;
-ee.setVisible(ee.getControl("panel123"), false);
 
 updateHomepage.busy = false;
                         
@@ -4325,7 +4068,6 @@ if (showTopic.needRefresh) {
     eio.appendString16(showTopic.topicId);
     eio.appendString16(showTopic.lastId);
 }
-ee.setVisible(ee.getControl("panel123"), true);
 
 
 ]]></script1>
@@ -4506,7 +4248,6 @@ while (true) {
 
 
 showTopic.needRefresh = false;
-ee.setVisible(ee.getControl("panel123"), false);
 showTopic.busy = false;
 
 var dTime = (new Date()).getTime() - showTopic.startTime;
@@ -4527,7 +4268,6 @@ if (dTime>50) {
     <taskSetItem name="searchUser">
       <script1>var searchString = ee.getEditText(ee.getControl("edit5"));
 eio.appendString16(searchString);
-ee.setVisible(ee.getControl("panel123"), true);
 
 </script1>
       <script2>var searchString = eio.readString16();
@@ -4568,7 +4308,6 @@ if (searchTwitter.needRefresh) {
     eio.appendString16("F");
     eio.appendString16(searchTwitter.lastId);
 }
-ee.setVisible(ee.getControl("panel123"), true);
 
 
 ]]></script1>
@@ -4626,7 +4365,6 @@ eio.appendDataSet(sqlResult,"id,mins,userId,content,photo1,replyCount,forwardCou
     ",reMins,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
-    ee.setVisible(ee.getControl("panel123"), false);
     return;
 }
 searchTwitter.dataset = eio.readDataSet();
@@ -4682,7 +4420,6 @@ for (i=0; i< searchTwitter.dataset.rowCount; i++) {
 }    
 
 searchTwitter.needRefresh = false;
-ee.setVisible(ee.getControl("panel123"), false);
 ee.setRect(root,null,null,null,cy);
 cy1 = eb.getDivRect(ee.getControl("panel128")).h;
 cy = Math.max(cy1,cy);
@@ -5177,7 +4914,7 @@ ee.showAni(g5.itemsHome[i],1);]]></script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="24">
+  <g5Items count="27">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -5416,14 +5153,14 @@ ee.setEditText(ee.getControl("edit3"), g5.userNote);
 ee.setEditText(ee.getControl("edit4"), g5.userHomepage);
 
 if (g5.photo == "") {
-    ee.setImage(ee.getControl("panel8"), "/twitterG/main/user.png");
+    ee.setImage(ee.getControl("panel2"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel29"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel47"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel59"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel14"), "/twitterG/main/user.png");
     //ee.setImage(ee.getControl("panel111"), "/twitterG/main/user.png");
 } else {
-    ee.setImage(ee.getControl("panel8"), "url:" + g5.imgUrl + g5.photo);
+    ee.setImage(ee.getControl("panel2"), "url:" + g5.imgUrl + g5.photo);
     ee.setImage(ee.getControl("panel29"), "url:" + g5.imgUrl + g5.photo);
     ee.setImage(ee.getControl("panel47"), "url:" + g5.imgUrl + g5.photo);
     ee.setImage(ee.getControl("panel59"), "url:" + g5.imgUrl + g5.photo);
@@ -5448,95 +5185,275 @@ if (g5.titleBg == "") {
     <item name="appendItem" type="20">
       <varValue />
       <functionParam>parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto, status, uplinkType</functionParam>
-      <functionCode><![CDATA[    if (eb.isEmpty(userPhoto)) userPhoto = "";
-    if (eb.isEmpty(photo1)) photo1 = "";
-    var w = eb.getDivRect(parent).w;
-    if (eb.isEmpty(startY)) startY = 0;
-    y = startY + 0; //v-space
-    
-    //16,9,50x50
-    //root:v_userPhoto,v_titleText,v_text,v_btn1,v_btn2,v_btn3,v_btn4,v_label1,v_label2,v_label3
-    //v_contentId
-    var c;
-    c = createPanel(parent, hd+"panel12", "FFFFFF", 0, y, w, 100);
-    var root = c;
-    root.v_contentId = contentId;
-    root.style.boxSizing="border-box";
-    root.style.borderWidth = "1px";
-    root.style.borderColor = "rgb(230,236,240)";
-    root.style.borderStyle = "solid";
-    root.style.borderTop = "";
-    while (mode.length<5) mode += " ";
-    if ((mode.substr(0,2) != "  ") &amp;&amp; (mode.substr(0,2) != "T ")) {
-        root.style.borderBottom = "";                       
-    }
-    eb.setAni2(root,1,"disappear", "rightFlyOut", "null", 0, true);
-    eb.setAniEvent(root,1,function(){}, function(sender) {
-        g5.deletePage1(sender);
+      <functionCode><![CDATA[if (eb.isEmpty(userPhoto)) userPhoto = "";
+if (eb.isEmpty(photo1)) photo1 = "";
+var w = eb.getDivRect(parent).w;
+if (eb.isEmpty(startY)) startY = 0;
+y = startY + 0; //v-space
+
+//16,9,50x50
+//root:v_userPhoto,v_titleText,v_text,v_btn1,v_btn2,v_btn3,v_btn4,v_label1,v_label2,v_label3
+//v_contentId
+var c;
+c = createPanel(parent, hd+"panel12", "FFFFFF", 0, y, w, 100);
+var root = c;
+root.v_contentId = contentId;
+root.style.boxSizing="border-box";
+root.style.borderWidth = "1px";
+root.style.borderColor = "rgb(230,236,240)";
+root.style.borderStyle = "solid";
+root.style.borderTop = "";
+while (mode.length<5) mode += " ";
+if ((mode.substr(0,2) != "  ") &amp;&amp; (mode.substr(0,2) != "T ")) {
+    root.style.borderBottom = "";                       
+}
+eb.setAni2(root,1,"disappear", "rightFlyOut", "null", 0, true);
+eb.setAniEvent(root,1,function(){}, function(sender) {
+    g5.deletePage1(sender);
+});
+if (mode.charAt(2) != "x") {
+    root.style.cursor = "pointer"; 
+    ee.setOnClick(c,function(sender,event) {
+        showTopic.topicId = sender.v_contentId;
+        showTopic.needRefresh = true;
+        showTopic();
+        g5.changeP2(-1);
     });
-    if (mode.charAt(2) != "x") {
-        root.style.cursor = "pointer"; 
-        ee.setOnClick(c,function(sender,event) {
-            showTopic.topicId = sender.v_contentId;
-            showTopic.needRefresh = true;
-            showTopic();
-            g5.changeP2(-1);
-        });
-        ee.setOnMouseEnter(c, function(sender,e){
-            sender.style.backgroundColor = "rgb(245,248,250)";
-        });
-        ee.setOnMouseLeave(c, function(sender,e){
-            sender.style.backgroundColor = "#ffffff";
-        });
-    }
+    ee.setOnMouseEnter(c, function(sender,e){
+        sender.style.backgroundColor = "rgb(245,248,250)";
+    });
+    ee.setOnMouseLeave(c, function(sender,e){
+        sender.style.backgroundColor = "#ffffff";
+    });
+}
+
+//uplink
+if (mode.charAt(0) == "T") {
+    c = createPanel(root, hd+"uplink01", "ccd6dd", 40, 0, 2, 6);
+}
+//downlink
+if (mode.charAt(1) == "T") {
+    c = createPanel(root, hd+"downlink01", "ccd6dd", 40, 64, 2, 1000);
+}
+
+//avata image box
+c = createPanel($g(hd+"panel12"), hd+"panel13", "", 16, 9, 50, 50);
+root.v_userPhoto = c;
+if (userPhoto == "") {
+    ee.setImage(c,"/twitterG/main/user.png","trim","","")
+} else {
+    ee.setImage(c,"url:" + g5.imgUrl + userPhoto,"trim","","")
+}
+c.v_username = username;
+c.style.cursor="pointer";
+c.style.borderRadius = "50%";
+ee.setOnClick(c,function(sender,event) {
+    showUserPage.userName=sender.v_username;
+    showUserPage();
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
+ee.setOnMouseEnter(c, function(sender,e) {
+    sender.style.webkitFilter="brightness(80%)";
+    sender.style.filter="brightness(80%)";
+});
+ee.setOnMouseLeave(c, function(sender,e) {
+    sender.style.webkitFilter="brightness(100%)";
+    sender.style.filter="brightness(100%)";
+});
+
+var mainWidth = parseInt((w-75)*0.97);
     
-    //uplink
-    if (mode.charAt(0) == "T") {
-        c = createPanel(root, hd+"uplink01", "ccd6dd", 40, 0, 2, 6);
-    }
-    //downlink
-    if (mode.charAt(1) == "T") {
-        c = createPanel(root, hd+"downlink01", "ccd6dd", 40, 64, 2, 1000);
-    }
-    
-    //avata image box
-    c = createPanel($g(hd+"panel12"), hd+"panel13", "", 16, 9, 50, 50);
-    root.v_userPhoto = c;
-    if (userPhoto == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
-    } else {
-        ee.setImage(c,"url:" + g5.imgUrl + userPhoto,"trim","","")
-    }
-    c.v_username = username;
+//v_titleText
+c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, 6, mainWidth, 26);
+root.v_titleText = c;
+var temp = "";
+temp = "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username;
+if (mode.charAt(2) != "x") {
+    temp+=" · " + times;
+}
+temp+="</font>";    
+addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
+c.v_username = username;
+c.style.cursor="pointer";
+ee.setOnClick(c,function(sender,event) {
+    showUserPage.userName=sender.v_username;
+    showUserPage();
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
+ee.setOnMouseEnter(c,function(sender,e){
+    sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="underline";
+});
+ee.setOnMouseLeave(c,function(sender,e){
+    sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="";
+});
+
+//button
+if (username==g5.userName) {
+c = createPanel(root,hd+"button1", "", w-45, 6, 30, 30);
+ee.setImage(c,"url:/res/empty.png","stretch","","")
+c = createPanel($g(hd+"button1"), hd+"button1status1", "", 22, 20, 40, 39);
+addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
+eb.setDock(c,"fill","fill");
+c=$g(hd+"button1");
+c.status1=$g(hd+"button1status1");
+c.status1.button=c;
+c = createPanel($g(hd+"button1"), hd+"button1status2", "", 22, 20, 40, 39);
+addSkin(c, "/twitterG/skins/LRBtn12.png","LR3x",65,50,24,0,17,50,1,3,63,43);
+addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
+eb.setDock(c,"fill","fill");
+c=$g(hd+"button1");
+c.status2=$g(hd+"button1status2");
+c.status2.button=c;
+c = createPanel($g(hd+"button1"), hd+"button1status3", "", 22, 20, 40, 39);
+addSkin(c, "/twitterG/skins/twitterG008.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+addText(c, "<", "center", "middle", "微软雅黑", 14, "0000C0", "bold");
+eb.setDock(c,"fill","fill");
+c=$g(hd+"button1");
+c.status3=$g(hd+"button1status3");
+c.status3.button=c;
+c = createPanel($g(hd+"button1"), hd+"button1clickLayer", "", 22, 20, 40, 39);
+ee.setImage(c,"url:/res/empty.png","stretch","","")
+eb.setDock(c,"fill","fill");
+ee.setOnClick(c,function(sender,event) {
+    ee.setVisible(ee.getControl("panel40"), true);
+    var e = event || window.event;
+    ee.setRect(ee.getControl("panel149"), e.clientX - eb.getDivRect(ee.getControl("panel149")).w +20, e.clientY - 20, null, null);
+    ee.showAni(ee.getControl("panel149"), 0);
+    delTwitter.contentId = sender.parentNode.parentNode.v_contentId;
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
+c=$g(hd+"button1");
+c.clickLayer=$g(hd+"button1clickLayer");
+c.clickLayer.button=c;
+eb.initButton(c);
+c.downX=1;
+c.downY=2;
+c=$g(hd+"button1");
+c.onCreate=function(sender) {
+    initLButton(sender,"",-6,"<g><path d=\"M20.207 8.147c-.39-.39-1.023-.39-1.414 0L12 14.94 5.207 8.147c-.39-.39-1.023-.39-1.414 0-.39.39-.39 1.023 0 1.414l7.5 7.5c.195.196.45.294.707.294s.512-.098.707-.293l7.5-7.5c.39-.39.39-1.022 0-1.413z\"></path></g>","48 48",-6);
+};
+c.onCreate(c);    
+}
+
+//reUsername
+var cy = 26;
+if (uplinkType == "R") {
+    c = createPanel(root, hd+"pareUsername01nel17", "", 75, cy, mainWidth, 22);
+    cy += 22;
+    addText(c, "<font color='#808080'>回复 </font><font color='#1b95e0'>@" + reUserName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     c.style.cursor="pointer";
-    c.style.borderRadius = "50%";
+    c.v_username = reUserName;
     ee.setOnClick(c,function(sender,event) {
         showUserPage.userName=sender.v_username;
         showUserPage();
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
-    ee.setOnMouseEnter(c, function(sender,e) {
-        sender.style.webkitFilter="brightness(80%)";
-        sender.style.filter="brightness(80%)";
+    ee.setOnMouseEnter(c,function(sender,e){
+        sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="underline";
     });
-    ee.setOnMouseLeave(c, function(sender,e) {
-        sender.style.webkitFilter="brightness(100%)";
-        sender.style.filter="brightness(100%)";
+    ee.setOnMouseLeave(c,function(sender,e){
+        sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="";
+    });
+}
+
+//v_text
+c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
+root.v_text = c;
+if (mode.charAt(2) == "x") {
+    addText(c, "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 16, "000000", "normal");
+} else {
+    addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
+}
+//eb.setFontSizeAuto(c, 25);
+eb.setDock(c,"disabled","disabled");
+eb.processDock();
+var rect = eb.getDivRect(c.label);
+ee.setRect(c, null, null, null, rect.h);
+rect = eb.getDivRect(c);
+cy = rect.y + rect.h + 1;
+
+//photo1
+if (photo1 != "") {
+    c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, mainWidth, parseInt(w*0.474645030425964));
+    c.style.borderRadius = "15px";
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(204,214,221)";
+    c.style.borderStyle = "solid";
+    
+    cy += w*0.474645030425964 + w*0.03;
+    //c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
+    if (photo1.substr(0,4) == "?YTB") {
+        c.innerHTML = "<iframe width='" + mainWidth + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
+            photo1.substr(4, photo1.length) + 
+            "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+        cy -= w*0.03;
+        c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, mainWidth, w*0.054);
+        cy += w*0.054 + w*0.03;
+        temp = "https://www.youtube.com/watch?v=" + photo1.substr(4, photo1.length);
+        addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
+        c.style.cursor = "pointer";
+        ee.setOnClick(c,function(sender,event) {
+            window.open(temp);
+        });
+    } else {
+        c.imgUrl = "url:" + g5.imgUrl + photo1;
+        //ee.setImage(c,c.imgUrl,"trim","","");
+        g5.setImage(c,c.imgUrl,"trim","","",400);
+        ee.setOnClick(c,function(sender,event) {
+            ee.setVisible(ee.getControl("panel112"), true);
+            ee.showAni(ee.getControl("panel142"), 0);
+            ee.setImage(ee.getControl("panel145"),sender.imgUrl,"fill","","");
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+        });
+    }
+}
+                   
+if (uplinkType == "F") {
+    var p1ratio = 2.64;
+    c = createPanel($g(hd+"panel12"), hd+"panel2", "", 75, cy, mainWidth-2, 100);
+    c.style.borderRadius = "15px";
+    c.style.cursor = "pointer"; 
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(204,214,221)";
+    c.style.borderStyle = "solid";
+    ee.setOnMouseEnter(c, function(sender,e){
+        sender.style.backgroundColor = "rgb(237,240,242)";
+    });
+    ee.setOnMouseLeave(c, function(sender,e){
+        sender.style.backgroundColor = "";
+    });
+    c.v_uplinkId = uplinkId
+    ee.setOnClick(c,function(sender,event) {
+        showTopic.topicId = sender.v_uplinkId;
+        showTopic.needRefresh = true;
+        showTopic();
+        g5.changeP2(-1);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     
-    var mainWidth = parseInt((w-75)*0.97);
-        
-    //v_titleText
-    c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, 6, mainWidth, 26);
-    root.v_titleText = c;
-    var temp = "";
-    temp = "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username;
-    if (mode.charAt(2) != "x") {
-        temp+=" · " + times;
+    var p1w = eb.getDivRect(c).w;
+    var p1h = p1w / p1ratio;
+    c = createPanel($g(hd+"panel2"), hd+"panel6", "", 0, 0, p1w, 100);
+    eb.setDock(c,"disabled","disabled");
+    //rePhoto
+    c = createPanel($g(hd+"panel6"), hd+"panel8", "", 16, 12, 20, 20);
+    if (rePhoto == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + rePhoto,"trim","","")
     }
-    temp+="</font>";    
-    addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
-    c.v_username = username;
+    c.style.borderRadius = "50%";
+    c.v_username = reUserName;
+    c.style.cursor="pointer";
+    ee.setOnClick(c,function(sender,event) {
+        showUserPage.userName=sender.v_username;
+        showUserPage();
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    //reUserName,reNickName,reTime
+    c = createPanel($g(hd+"panel6"), hd+"panel11", "", 45, 8, p1w*0.833734939759036, 28);
+    addText(c, "<b>" + reNickName + "</b> <font color='#808080' style='font-size:12pt'>@" + reUserName + " · " + reTimes + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+    c.v_username = reUserName;
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
         showUserPage.userName=sender.v_username;
@@ -5549,119 +5466,26 @@ if (g5.titleBg == "") {
     ee.setOnMouseLeave(c,function(sender,e){
         sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="";
     });
-    
-    //button
-    if (username==g5.userName) {
-    c = createPanel(root,hd+"button1", "", w-45, 6, 30, 30);
-    ee.setImage(c,"url:/res/empty.png","stretch","","")
-    c = createPanel($g(hd+"button1"), hd+"button1status1", "", 22, 20, 40, 39);
-    addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
-    eb.setDock(c,"fill","fill");
-    c=$g(hd+"button1");
-    c.status1=$g(hd+"button1status1");
-    c.status1.button=c;
-    c = createPanel($g(hd+"button1"), hd+"button1status2", "", 22, 20, 40, 39);
-    addSkin(c, "/twitterG/skins/LRBtn12.png","LR3x",65,50,24,0,17,50,1,3,63,43);
-    addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
-    eb.setDock(c,"fill","fill");
-    c=$g(hd+"button1");
-    c.status2=$g(hd+"button1status2");
-    c.status2.button=c;
-    c = createPanel($g(hd+"button1"), hd+"button1status3", "", 22, 20, 40, 39);
-    addSkin(c, "/twitterG/skins/twitterG008.png","LR3x",65,50,24,0,17,50,24,3,17,43);
-    addText(c, "<", "center", "middle", "微软雅黑", 14, "0000C0", "bold");
-    eb.setDock(c,"fill","fill");
-    c=$g(hd+"button1");
-    c.status3=$g(hd+"button1status3");
-    c.status3.button=c;
-    c = createPanel($g(hd+"button1"), hd+"button1clickLayer", "", 22, 20, 40, 39);
-    ee.setImage(c,"url:/res/empty.png","stretch","","")
-    eb.setDock(c,"fill","fill");
-    ee.setOnClick(c,function(sender,event) {
-        ee.setVisible(ee.getControl("panel40"), true);
-        var e = event || window.event;
-        ee.setRect(ee.getControl("panel149"), e.clientX - eb.getDivRect(ee.getControl("panel149")).w +20, e.clientY - 20, null, null);
-        ee.showAni(ee.getControl("panel149"), 0);
-        delTwitter.contentId = sender.parentNode.parentNode.v_contentId;
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });
-    c=$g(hd+"button1");
-    c.clickLayer=$g(hd+"button1clickLayer");
-    c.clickLayer.button=c;
-    eb.initButton(c);
-    c.downX=1;
-    c.downY=2;
-    c=$g(hd+"button1");
-    c.onCreate=function(sender) {
-        initLButton(sender,"",-6,"<g><path d=\"M20.207 8.147c-.39-.39-1.023-.39-1.414 0L12 14.94 5.207 8.147c-.39-.39-1.023-.39-1.414 0-.39.39-.39 1.023 0 1.414l7.5 7.5c.195.196.45.294.707.294s.512-.098.707-.293l7.5-7.5c.39-.39.39-1.022 0-1.413z\"></path></g>","48 48",-6);
-    };
-    c.onCreate(c);    
-    }
-    
-    //reUsername
-    var cy = 26;
-    if (uplinkType == "R") {
-        c = createPanel(root, hd+"pareUsername01nel17", "", 75, cy, mainWidth, 22);
-        cy += 22;
-        addText(c, "<font color='#808080'>回复 </font><font color='#1b95e0'>@" + reUserName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
-        c.style.cursor="pointer";
-        c.v_username = reUserName;
-        ee.setOnClick(c,function(sender,event) {
-            showUserPage.userName=sender.v_username;
-            showUserPage();
-            window.event? window.event.cancelBubble = true : event.stopPropagation();
-        });
-        ee.setOnMouseEnter(c,function(sender,e){
-            sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c,function(sender,e){
-            sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="";
-        });
-    }
-    
-    //v_text
-    c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
-    root.v_text = c;
-    if (mode.charAt(2) == "x") {
-        addText(c, "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 16, "000000", "normal");
-    } else {
-        addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
-    }
+    //reContent
+    c = createPanel($g(hd+"panel6"), hd+"panel25", "", 16, 36, p1w*0.927710843373494, 10);
+    addText(c, g5.showCommonText(reContent), "left", "top", "微软雅黑", 12, "000000", "normal");
     //eb.setFontSizeAuto(c, 25);
     eb.setDock(c,"disabled","disabled");
     eb.processDock();
-    var rect = eb.getDivRect(c.label);
+    rect = eb.getDivRect(c.label);
     ee.setRect(c, null, null, null, rect.h);
     rect = eb.getDivRect(c);
-    cy = rect.y + rect.h + 1;
-    
-    //photo1
-    if (photo1 != "") {
-        c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, mainWidth, parseInt(w*0.474645030425964));
-        c.style.borderRadius = "15px";
-        c.style.borderWidth = "1px";
-        c.style.borderColor = "rgb(204,214,221)";
-        c.style.borderStyle = "solid";
-        
-        cy += w*0.474645030425964 + w*0.03;
-        //c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
-        if (photo1.substr(0,4) == "?YTB") {
-            c.innerHTML = "<iframe width='" + mainWidth + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
-                photo1.substr(4, photo1.length) + 
+    var p1y = rect.y + rect.h + p1h * 0.05;
+    //rePhoto1
+    if (rePhoto1 != "") {
+        c = createPanel($g(hd+"panel6"), hd+"panel26", "", 0, p1y, p1w, parseInt(p1w*0.7));
+        if (rePhoto1.substr(0,4) == "?YTB") {
+            c.innerHTML = "<iframe width='" + parseInt(p1w) + "' height='" + parseInt(p1w*0.7) + "' src='https://www.youtube.com/embed/" +
+                rePhoto1.substr(4, rePhoto1.length) + 
                 "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-            cy -= w*0.03;
-            c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, mainWidth, w*0.054);
-            cy += w*0.054 + w*0.03;
-            temp = "https://www.youtube.com/watch?v=" + photo1.substr(4, photo1.length);
-            addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
-            c.style.cursor = "pointer";
-            ee.setOnClick(c,function(sender,event) {
-                window.open(temp);
-            });
         } else {
-            c.imgUrl = "url:" + g5.imgUrl + photo1;
-            //ee.setImage(c,c.imgUrl,"trim","","");
-            g5.setImage(c,c.imgUrl,"trim","","",400);
+            c.imgUrl = "url:" + g5.imgUrl + rePhoto1;
+            ee.setImage(c,c.imgUrl,"trim","","");
             ee.setOnClick(c,function(sender,event) {
                 ee.setVisible(ee.getControl("panel112"), true);
                 ee.showAni(ee.getControl("panel142"), 0);
@@ -5669,298 +5493,211 @@ if (g5.titleBg == "") {
                 window.event? window.event.cancelBubble = true : event.stopPropagation();
             });
         }
-    }
-                       
-    if (uplinkType == "F") {
-        var p1ratio = 2.64;
-        c = createPanel($g(hd+"panel12"), hd+"panel2", "", 75, cy, mainWidth-2, 100);
-        c.style.borderRadius = "15px";
-        c.style.cursor = "pointer"; 
-        c.style.borderWidth = "1px";
-        c.style.borderColor = "rgb(204,214,221)";
-        c.style.borderStyle = "solid";
-        ee.setOnMouseEnter(c, function(sender,e){
-            sender.style.backgroundColor = "rgb(237,240,242)";
-        });
-        ee.setOnMouseLeave(c, function(sender,e){
-            sender.style.backgroundColor = "";
-        });
-        c.v_uplinkId = uplinkId
-        ee.setOnClick(c,function(sender,event) {
-            showTopic.topicId = sender.v_uplinkId;
-            showTopic.needRefresh = true;
-            showTopic();
-            g5.changeP2(-1);
-            window.event? window.event.cancelBubble = true : event.stopPropagation();
-        });
-        
-        var p1w = eb.getDivRect(c).w;
-        var p1h = p1w / p1ratio;
-        c = createPanel($g(hd+"panel2"), hd+"panel6", "", 0, 0, p1w, 100);
         eb.setDock(c,"disabled","disabled");
-        //rePhoto
-        c = createPanel($g(hd+"panel6"), hd+"panel8", "", 16, 12, 20, 20);
-        if (rePhoto == "") {
-            ee.setImage(c,"/twitterG/main/user.png","trim","","")
-        } else {
-            ee.setImage(c,"url:" + g5.imgUrl + rePhoto,"trim","","")
-        }
-        c.style.borderRadius = "50%";
-        c.v_username = reUserName;
-        c.style.cursor="pointer";
-        ee.setOnClick(c,function(sender,event) {
-            showUserPage.userName=sender.v_username;
-            showUserPage();
-            window.event? window.event.cancelBubble = true : event.stopPropagation();
-        });
-        //reUserName,reNickName,reTime
-        c = createPanel($g(hd+"panel6"), hd+"panel11", "", 45, 8, p1w*0.833734939759036, 28);
-        addText(c, "<b>" + reNickName + "</b> <font color='#808080' style='font-size:12pt'>@" + reUserName + " · " + reTimes + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
-        c.v_username = reUserName;
-        c.style.cursor="pointer";
-        ee.setOnClick(c,function(sender,event) {
-            showUserPage.userName=sender.v_username;
-            showUserPage();
-            window.event? window.event.cancelBubble = true : event.stopPropagation();
-        });
-        ee.setOnMouseEnter(c,function(sender,e){
-            sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c,function(sender,e){
-            sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="";
-        });
-        //reContent
-        c = createPanel($g(hd+"panel6"), hd+"panel25", "", 16, 36, p1w*0.927710843373494, 10);
-        addText(c, g5.showCommonText(reContent), "left", "top", "微软雅黑", 12, "000000", "normal");
-        //eb.setFontSizeAuto(c, 25);
-        eb.setDock(c,"disabled","disabled");
-        eb.processDock();
-        rect = eb.getDivRect(c.label);
-        ee.setRect(c, null, null, null, rect.h);
-        rect = eb.getDivRect(c);
-        var p1y = rect.y + rect.h + p1h * 0.05;
-        //rePhoto1
-        if (rePhoto1 != "") {
-            c = createPanel($g(hd+"panel6"), hd+"panel26", "", 0, p1y, p1w, parseInt(p1w*0.7));
-            if (rePhoto1.substr(0,4) == "?YTB") {
-                c.innerHTML = "<iframe width='" + parseInt(p1w) + "' height='" + parseInt(p1w*0.7) + "' src='https://www.youtube.com/embed/" +
-                    rePhoto1.substr(4, rePhoto1.length) + 
-                    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-            } else {
-                c.imgUrl = "url:" + g5.imgUrl + rePhoto1;
-                ee.setImage(c,c.imgUrl,"trim","","");
-                ee.setOnClick(c,function(sender,event) {
-                    ee.setVisible(ee.getControl("panel112"), true);
-                    ee.showAni(ee.getControl("panel142"), 0);
-                    ee.setImage(ee.getControl("panel145"),sender.imgUrl,"fill","","");
-                    window.event? window.event.cancelBubble = true : event.stopPropagation();
-                });
-            }
-            eb.setDock(c,"disabled","disabled");
-            p1y += eb.getDivRect(c).h;
-        }
-        
-        //c = createPanel($g(hd+"panel2"), hd+"panel7", "", 0, 0, p1w, p1y);
-        //addSkin(c, "/twitterG/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
-        //c.style.pointerEvents = "none";
-        c = $g(hd+"panel2");
-        ee.setRect(c, null, null, null, p1y);
-        c = $g(hd+"panel6");
-        ee.setRect(c, null, null, null, p1y);
-        cy += p1y + w*0.03;
-        if (rePhoto1 != "") {
-            if (rePhoto1.substr(0,4) == "?YTB") {
-                cy -= w*0.03;
-                c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, mainWidth, w*0.054);
-                cy += w*0.054 + w*0.03;
-                temp = "https://www.youtube.com/watch?v=" + rePhoto1.substr(4, rePhoto1.length);
-                addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
-                c.style.cursor = "pointer";
-                ee.setOnClick(c,function(sender,event) {
-                    window.open(temp);
-                });
-            }
-        }
-    }    
-    
-    if (mode.charAt(2) == "x") {
-        c = createPanel(root, hd+"bottom01", "", 16, cy, mainWidth, 26); cy+=33;
-        addText(c, times, "left", "middle", "微软雅黑", 12, "808080", "normal");
-        c = createPanel(root, hd+"btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
-        if ((label1!="0") || (label2!="0")) {
-            c = createPanel(root, hd+"bottom02", "", 16, cy-6, mainWidth, 22); cy+=33;
-            temp = "";
-            if (label1!="0") {
-                temp += "<font color='#000000'><b>"+label1+"</b></font>回复    ";
-            }
-            if (label2!="0") {
-                temp += "<font color='#000000'><b>"+label2+"</b></font>转推    ";
-            }
-            addText(c, temp, "left", "middle", "微软雅黑", 12, "808080", "normal");
-            c = createPanel(root, hd+"btnline02", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
-        }
+        p1y += eb.getDivRect(c).h;
     }
     
-    //4 button
-    cy-=11;
-    var b1=76;
-    var b2=76+parseInt((w-76*2-20)/3);
-    var b3=76+parseInt((w-76*2-20)/3*2);
-    var b4=76+parseInt((w-76*2-20)/3*3);
-    c = createPanel(root, hd+"sbutton01", "", b1, cy, 36, 36);
-    c.style.cursor="pointer";
-    c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.632.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.04-3.97 3.043-6.312v-.017c-.006-4.367-3.43-7.787-7.8-7.788zm3.787 12.972c-1.134.96-4.862 3.405-6.772 4.643V16.67c0-.414-.335-.75-.75-.75h-.396c-3.66 0-6.318-2.476-6.318-5.886 0-3.534 2.768-6.302 6.3-6.302l4.147.01h.002c3.532 0 6.3 2.766 6.302 6.296-.003 1.91-.942 3.844-2.514 5.176z\"></path></g></svg>";
-    c.style.borderRadius = "50%";
-    ee.setOnMouseEnter(c, function(sender,event) {
-        sender.style.backgroundColor = "#dfeffa";
-        sender.childNodes[0].style.color = "rgb(29,161,242)";
-    });    
-    ee.setOnMouseLeave(c, function(sender,event) {
-        sender.style.backgroundColor = "";
-        sender.childNodes[0].style.color = "rgb(101,119,134)";
-    });
-    root.v_btn1 = c;
-    ee.setOnClick(c,function(sender,event) {
-        g5.newPhoto1 = "";
-        ee.setEditText(ee.getControl("edit1"), "");
-        ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
-        ee.setText(ee.getControl("panel45"), "回复");
-        g5.uplinkType = "R";
-        g5.uplinkId = sender.parentNode.v_contentId;
-        ee.showAni(ee.getControl("panel42"), 0);
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });
-    c = createPanel(root, hd+"sbutton02", "", b2, cy, 36, 36);
-    c.style.cursor="pointer";
-    c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g></svg>"
-    c.style.borderRadius = "50%";
-    ee.setOnMouseEnter(c, function(sender,event) {
-        sender.style.backgroundColor = "#def2eb";
-        sender.childNodes[0].style.color = "#17bf63";
-    });    
-    ee.setOnMouseLeave(c, function(sender,event) {
-        sender.style.backgroundColor = "";
-        sender.childNodes[0].style.color = "rgb(101,119,134)";
-    });
-    root.v_btn2 = c;
-    ee.setOnClick(c,function(sender,event) {
-        g5.newPhoto1 = "";
-        ee.setEditText(ee.getControl("edit1"), "");
-        ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
-        ee.setText(ee.getControl("panel45"), "转发");
-        g5.uplinkType = "F";
-        g5.uplinkId = sender.parentNode.v_contentId;
-        ee.showAni(ee.getControl("panel42"), 0);
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });
-    c = createPanel(root, hd+"sbutton03", "", b3, cy, 36, 36);
-    c.style.cursor="pointer";
-    c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z\"></path></g></svg>";
-    c.style.borderRadius = "50%";
-    ee.setOnMouseEnter(c, function(sender,event) {
-        sender.style.backgroundColor = "#f3e3eb";
-        sender.childNodes[0].style.color = "#e23c70";
-    });    
-    ee.setOnMouseLeave(c, function(sender,event) {
-        sender.style.backgroundColor = "";
-        sender.childNodes[0].style.color = "rgb(101,119,134)";
-    });
-    root.v_btn3 = c;
-    c = createPanel(root, hd+"sbutton04", "", b4, cy, 36, 36);
-    c.style.cursor="pointer";
-    c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z\"></path><path d=\"M19.708 21.944H4.292C3.028 21.944 2 20.916 2 19.652V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 .437.355.792.792.792h15.416c.437 0 .792-.355.792-.792V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 1.264-1.028 2.292-2.292 2.292z\"></path></g></svg>";
-    c.style.borderRadius = "50%";
-    ee.setOnMouseEnter(c, function(sender,event) {
-        sender.style.backgroundColor = "#dfeffa";
-        sender.childNodes[0].style.color = "rgb(29,161,242)";
-    });    
-    ee.setOnMouseLeave(c, function(sender,event) {
-        sender.style.backgroundColor = "";
-        sender.childNodes[0].style.color = "rgb(101,119,134)";
-    });
-    root.v_btn4 = c;
+    //c = createPanel($g(hd+"panel2"), hd+"panel7", "", 0, 0, p1w, p1y);
+    //addSkin(c, "/twitterG/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
+    //c.style.pointerEvents = "none";
+    c = $g(hd+"panel2");
+    ee.setRect(c, null, null, null, p1y);
+    c = $g(hd+"panel6");
+    ee.setRect(c, null, null, null, p1y);
+    cy += p1y + w*0.03;
+    if (rePhoto1 != "") {
+        if (rePhoto1.substr(0,4) == "?YTB") {
+            cy -= w*0.03;
+            c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, mainWidth, w*0.054);
+            cy += w*0.054 + w*0.03;
+            temp = "https://www.youtube.com/watch?v=" + rePhoto1.substr(4, rePhoto1.length);
+            addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
+            c.style.cursor = "pointer";
+            ee.setOnClick(c,function(sender,event) {
+                window.open(temp);
+            });
+        }
+    }
+}    
 
-    //3 label
-    if (mode.charAt(2) != "x") {
-        if (label1=="0") label1="";
-        if (label2=="0") label2="";
-        if (label3=="0") label3="";
-        c = createPanel(root, hd+"panel3", "", b1+35, cy+7, 40, 22);
-        root.v_label1 = c;
-        addText(c, label1, "left", "middle", "Arial", 12, "657786", "bold");
-        c = createPanel(root, hd+"panel4", "", b2+35, cy+7, 40, 22);
-        root.v_label2 = c;
-        addText(c, label2, "left", "middle", "Arial", 12, "657786", "bold");
-        c = createPanel(root, hd+"panel5", "", b3+35, cy+7, 40, 22);
-        root.v_label3 = c;
-        addText(c, label3, "left", "middle", "Arial", 12, "657786", "bold");
+if (mode.charAt(2) == "x") {
+    c = createPanel(root, hd+"bottom01", "", 16, cy, mainWidth, 26); cy+=33;
+    addText(c, times, "left", "middle", "微软雅黑", 12, "808080", "normal");
+    c = createPanel(root, hd+"btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
+    if ((label1!="0") || (label2!="0")) {
+        c = createPanel(root, hd+"bottom02", "", 16, cy-6, mainWidth, 22); cy+=33;
+        temp = "";
+        if (label1!="0") {
+            temp += "<font color='#000000'><b>"+label1+"</b></font>回复    ";
+        }
+        if (label2!="0") {
+            temp += "<font color='#000000'><b>"+label2+"</b></font>转推    ";
+        }
+        addText(c, temp, "left", "middle", "微软雅黑", 12, "808080", "normal");
+        c = createPanel(root, hd+"btnline02", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
     }
-    //set total height
-    rect = eb.getDivRect(root.v_btn1);
-    eb.setDivRect(root, null, null, null, rect.y + rect.h + 7);
-    eb.processDock()
-    return root;]]></functionCode>
+}
+
+//4 button
+cy-=11;
+var b1=76;
+var b2=76+parseInt((w-76*2-20)/3);
+var b3=76+parseInt((w-76*2-20)/3*2);
+var b4=76+parseInt((w-76*2-20)/3*3);
+c = createPanel(root, hd+"sbutton01", "", b1, cy, 36, 36);
+c.style.cursor="pointer";
+c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.632.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.04-3.97 3.043-6.312v-.017c-.006-4.367-3.43-7.787-7.8-7.788zm3.787 12.972c-1.134.96-4.862 3.405-6.772 4.643V16.67c0-.414-.335-.75-.75-.75h-.396c-3.66 0-6.318-2.476-6.318-5.886 0-3.534 2.768-6.302 6.3-6.302l4.147.01h.002c3.532 0 6.3 2.766 6.302 6.296-.003 1.91-.942 3.844-2.514 5.176z\"></path></g></svg>";
+c.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+    sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+root.v_btn1 = c;
+ee.setOnClick(c,function(sender,event) {
+    g5.newPhoto1 = "";
+    ee.setEditText(ee.getControl("edit1"), "");
+    ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
+    ee.setText(ee.getControl("panel45"), "回复");
+    g5.uplinkType = "R";
+    g5.uplinkId = sender.parentNode.v_contentId;
+    ee.showAni(ee.getControl("panel42"), 0);
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
+c = createPanel(root, hd+"sbutton02", "", b2, cy, 36, 36);
+c.style.cursor="pointer";
+c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g></svg>"
+c.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#def2eb";
+    sender.childNodes[0].style.color = "#17bf63";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+root.v_btn2 = c;
+ee.setOnClick(c,function(sender,event) {
+    g5.newPhoto1 = "";
+    ee.setEditText(ee.getControl("edit1"), "");
+    ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
+    ee.setText(ee.getControl("panel45"), "转发");
+    g5.uplinkType = "F";
+    g5.uplinkId = sender.parentNode.v_contentId;
+    ee.showAni(ee.getControl("panel42"), 0);
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
+c = createPanel(root, hd+"sbutton03", "", b3, cy, 36, 36);
+c.style.cursor="pointer";
+c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z\"></path></g></svg>";
+c.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#f3e3eb";
+    sender.childNodes[0].style.color = "#e23c70";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+root.v_btn3 = c;
+c = createPanel(root, hd+"sbutton04", "", b4, cy, 36, 36);
+c.style.cursor="pointer";
+c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z\"></path><path d=\"M19.708 21.944H4.292C3.028 21.944 2 20.916 2 19.652V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 .437.355.792.792.792h15.416c.437 0 .792-.355.792-.792V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 1.264-1.028 2.292-2.292 2.292z\"></path></g></svg>";
+c.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+    sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+root.v_btn4 = c;
+
+//3 label
+if (mode.charAt(2) != "x") {
+    if (label1=="0") label1="";
+    if (label2=="0") label2="";
+    if (label3=="0") label3="";
+    c = createPanel(root, hd+"panel3", "", b1+35, cy+7, 40, 22);
+    root.v_label1 = c;
+    addText(c, label1, "left", "middle", "Arial", 12, "657786", "bold");
+    c = createPanel(root, hd+"panel4", "", b2+35, cy+7, 40, 22);
+    root.v_label2 = c;
+    addText(c, label2, "left", "middle", "Arial", 12, "657786", "bold");
+    c = createPanel(root, hd+"panel5", "", b3+35, cy+7, 40, 22);
+    root.v_label3 = c;
+    addText(c, label3, "left", "middle", "Arial", 12, "657786", "bold");
+}
+//set total height
+rect = eb.getDivRect(root.v_btn1);
+eb.setDivRect(root, null, null, null, rect.y + rect.h + 7);
+eb.processDock()
+return root;]]></functionCode>
     </item>
     <item name="appendItemPage2" type="20">
       <varValue />
       <functionParam>parent, username, nickname, userPhoto</functionParam>
-      <functionCode><![CDATA[    //v_username
-    //c_userphoto, c_label
-    var hd = "f" + g5.itemsPage2.length + "_";
-    if (eb.isEmpty(userPhoto)) userPhoto = "";
-    var w = eb.getDivRect(parent).w;
-    var h = eb.getDivRect(parent).h;
-    var y = 0;
-    if (g5.itemsPage2.length > 0) {
-        y = eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).y + eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).h;
-    }
-    y += 0; //v-space
-    
-    c = createPanel(parent, hd+"panel12", "FFFFFF", 0, y, w, parseInt(w/5.4875));
-    var root = c;
-    ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.v_username;
-        showUserPage();
-    });
-    g5.itemsPage2.push(root);
-    root.v_username = username;
-    eb.setDock(c,"disabled","disabled");
-    c = createPanel($g(hd+"panel12"), hd+"panel13", "", 13, 10, 57, 59);
-    eb.setDock(c,"ratio","ratio");
-    c.leftRatio=0.0296127562642369;
-    c.widthRatio=0.129840546697039;
-    c.topRatio=0.125;
-    c.heightRatio=0.7375;
-    c = createPanel($g(hd+"panel13"), hd+"panel14", "", 0, 0, 57, 59);
-    root.c_userphoto = c;
-    if (userPhoto == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
-    } else {
-        ee.setImage(c,"url:" + g5.imgUrl + userPhoto,"trim","","")
-    }
-    eb.setDock(c,"fill","fill");
-    eb.setOuter(c,1,1,1,1);
-    c = createPanel($g(hd+"panel13"), hd+"panel15", "", 0, 0, 57, 59);
-    ee.setImage(c,"/twitterG/main/page2/cirMask.png","trim","","")
-    eb.setDock(c,"fill","fill");
-    c = createPanel($g(hd+"panel12"), hd+"panel16", "", 86, 18, 347, 43);
-    root.c_label = c;
-    addText(c, "<b>" + nickname + "</b>@" + username, "left", "middle", "Helvetica", 14, "000000", "normal");
-    //eb.setFontSizeAuto(c, 20);
-    eb.setDock(c,"ratio","ratio");
-    c.leftRatio=0.195899772209567;
-    c.widthRatio=0.790432801822323;
-    c.topRatio=0.225;
-    c.heightRatio=0.5375;
-    c = createPanel($g(hd+"panel12"), hd+"panel611","C0C0C0", 0, 0, w, 1);
-    eb.setDock(c,"fill","bottom");    
-    
-    eb.processDock();
-    if (g5.itemsPage2.length > 0) {
-        y = eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).y + eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).h;
-    }
-    y += 0; //v-space
-    return y;]]></functionCode>
+      <functionCode><![CDATA[//v_username
+//c_userphoto, c_label
+var hd = "f" + g5.itemsPage2.length + "_";
+if (eb.isEmpty(userPhoto)) userPhoto = "";
+var w = eb.getDivRect(parent).w;
+var h = eb.getDivRect(parent).h;
+var y = 0;
+if (g5.itemsPage2.length > 0) {
+    y = eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).y + eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).h;
+}
+y += 0; //v-space
+
+c = createPanel(parent, hd+"panel12", "FFFFFF", 0, y, w, parseInt(w/5.4875));
+var root = c;
+ee.setOnClick(c,function(sender,event) {
+    showUserPage.userName=sender.v_username;
+    showUserPage();
+});
+g5.itemsPage2.push(root);
+root.v_username = username;
+eb.setDock(c,"disabled","disabled");
+c = createPanel($g(hd+"panel12"), hd+"panel13", "", 13, 10, 57, 59);
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.0296127562642369;
+c.widthRatio=0.129840546697039;
+c.topRatio=0.125;
+c.heightRatio=0.7375;
+c = createPanel($g(hd+"panel13"), hd+"panel14", "", 0, 0, 57, 59);
+root.c_userphoto = c;
+if (userPhoto == "") {
+    ee.setImage(c,"/twitterG/main/user.png","trim","","")
+} else {
+    ee.setImage(c,"url:" + g5.imgUrl + userPhoto,"trim","","")
+}
+eb.setDock(c,"fill","fill");
+eb.setOuter(c,1,1,1,1);
+c = createPanel($g(hd+"panel13"), hd+"panel15", "", 0, 0, 57, 59);
+ee.setImage(c,"/twitterG/main/page2/cirMask.png","trim","","")
+eb.setDock(c,"fill","fill");
+c = createPanel($g(hd+"panel12"), hd+"panel16", "", 86, 18, 347, 43);
+root.c_label = c;
+addText(c, "<b>" + nickname + "</b>@" + username, "left", "middle", "Helvetica", 14, "000000", "normal");
+//eb.setFontSizeAuto(c, 20);
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.195899772209567;
+c.widthRatio=0.790432801822323;
+c.topRatio=0.225;
+c.heightRatio=0.5375;
+c = createPanel($g(hd+"panel12"), hd+"panel611","C0C0C0", 0, 0, w, 1);
+eb.setDock(c,"fill","bottom");    
+
+eb.processDock();
+if (g5.itemsPage2.length > 0) {
+    y = eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).y + eb.getDivRect(g5.itemsPage2[g5.itemsPage2.length-1]).h;
+}
+y += 0; //v-space
+return y;]]></functionCode>
     </item>
     <item name="getMins" type="20">
       <varValue />
@@ -5984,66 +5721,87 @@ if (mins<60) {
     </item>
     <item name="refreshPage1" type="20">
       <varValue />
-      <functionParam />
-      <functionCode><![CDATA[    if (eb.isEmpty(g5.datasetHome)) return;
-    var i, item;
-    var root = ee.getControl("panel41"); 
-    //new user ?
-    if (g5.datasetHome.rowCount <= 0) {
-        g5.newUser = true;
-        ee.showAni(ee.getControl("layouty4"), 0);
-        searchUser();
-        return;    
+      <functionParam>mode</functionParam>
+      <functionCode><![CDATA[if (eb.isEmpty(mode)) mode = "";
+
+if (eb.isEmpty(updateHomepage.data)) return;
+var i, item;
+var root = ee.getControl("panel41"); 
+//new user ?
+if (updateHomepage.data.rowCount <= 0) {
+    g5.newUser = true;
+    ee.showAni(ee.getControl("layouty4"), 0);
+    searchUser();
+    return;    
+}
+g5.newUser = false;
+
+var cy = eb.getDivRect(g5.p4).h;
+ee.setRect(ee.getControl("panel1"), null, cy, null,null);
+cy+=eb.getDivRect(ee.getControl("panel1")).h;
+if (mode == "N") {
+} else if (updateHomepage.needRefresh) {
+    for (i=0; i<g5.itemsHome.length; i++) ee.removeControl(g5.itemsHome[i]);
+    g5.itemsHome = new Array();
+} else {
+    if (g5.itemsHome.length>0) {
+        var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
+        cy = 0 + rect.y + rect.h;
     }
-    g5.newUser = false;
-    
-    var cy = eb.getDivRect(g5.p4).h;
-    if (updateHomepage.needRefresh) {
-        for (i=0; i<g5.itemsHome.length; i++) ee.removeControl(g5.itemsHome[i]);
-        g5.itemsHome = new Array();
+}
+var dy = 0;
+for (i=0; i< updateHomepage.data.rowCount; i++) {
+    //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
+    //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId(20)"
+    if (updateHomepage.data.getData(18,i) == "DEL") continue;
+    item = g5.appendItem(
+        root,
+        cy, "page1_" + g5.itemsHome.length + "_",
+        "",
+        updateHomepage.data.getData(8,i),
+        updateHomepage.data.getData(9,i),
+        g5.getMins(updateHomepage.data.getData(1,i)),
+        updateHomepage.data.getData(0,i),
+        updateHomepage.data.getData(10,i),
+        updateHomepage.data.getData(4,i),
+        updateHomepage.data.getData(3,i),
+        updateHomepage.data.getData(5,i),
+        updateHomepage.data.getData(6,i),
+        updateHomepage.data.getData(7,i),
+        updateHomepage.data.getData(20,i),
+        g5.getMins(updateHomepage.data.getData(11,i)),
+        updateHomepage.data.getData(12,i),
+        updateHomepage.data.getData(13,i),
+        updateHomepage.data.getData(14,i),
+        updateHomepage.data.getData(15,i),
+        updateHomepage.data.getData(16,i),
+        updateHomepage.data.getData(17,i),
+        updateHomepage.data.getData(18,i),
+        updateHomepage.data.getData(19,i),
+        );
+    if (mode == "N") {
+        g5.itemsHome.splice(i, 0, item);
     } else {
-        if (g5.itemsHome.length>0) {
-            var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
-            cy = 0 + rect.y + rect.h;
+        g5.itemsHome.push(item);
+    }
+    cy += 0 + eb.getDivRect(item).h;
+    dy += 0 + eb.getDivRect(item).h;    
+}
+if (mode == "N") {
+    if (updateHomepage.data.rowCount>0) {
+        for (var i=updateHomepage.data.rowCount; i<g5.itemsHome.length; i++) {
+            g5.homepageMoveY(i,dy);
         }
     }
-    for (i=0; i< g5.datasetHome.rowCount; i++) {
-        //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
-        //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId(20)"
-        if (g5.datasetHome.getData(18,i) == "DEL") continue;
-        item = g5.appendItem(
-            root,
-            cy, "page1_" + g5.itemsHome.length + "_",
-            "",
-            g5.datasetHome.getData(8,i),
-            g5.datasetHome.getData(9,i),
-            g5.getMins(g5.datasetHome.getData(1,i)),
-            g5.datasetHome.getData(0,i),
-            g5.datasetHome.getData(10,i),
-            g5.datasetHome.getData(4,i),
-            g5.datasetHome.getData(3,i),
-            g5.datasetHome.getData(5,i),
-            g5.datasetHome.getData(6,i),
-            g5.datasetHome.getData(7,i),
-            g5.datasetHome.getData(20,i),
-            g5.getMins(g5.datasetHome.getData(11,i)),
-            g5.datasetHome.getData(12,i),
-            g5.datasetHome.getData(13,i),
-            g5.datasetHome.getData(14,i),
-            g5.datasetHome.getData(15,i),
-            g5.datasetHome.getData(16,i),
-            g5.datasetHome.getData(17,i),
-            g5.datasetHome.getData(18,i),
-            g5.datasetHome.getData(19,i),
-            );
-        g5.itemsHome.push(item);
-        cy += 0 + eb.getDivRect(item).h;    
-    }
-    if (g5.currentPageIndex == 0) {
-        eb.setDivRect(ee.getControl("panel135"),null,null,null,cy);
-    }
-    eb.setDivRect(ee.getControl("panel41"),null,null,null,cy);
-    eb.processDock();]]></functionCode>
+    var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
+    cy = rect.y + rect.h;
+}
+
+if (g5.currentPageIndex == 0) {
+    eb.setDivRect(ee.getControl("panel135"),null,null,null,cy);
+}
+eb.setDivRect(ee.getControl("panel41"),null,null,null,cy);
+eb.processDock();]]></functionCode>
     </item>
     <item name="refreshPage2" type="20">
       <varValue />
@@ -6067,6 +5825,59 @@ for (i=0; i< g5.datasetPage2.rowCount; i++) {
         g5.datasetPage2.getData(3,i));
 }    
 ee.setRect(root,null,null,null,cy);]]></functionCode>
+    </item>
+    <item name="changeP3" type="20">
+      <varValue />
+      <functionParam>pageIndex</functionParam>
+      <functionCode><![CDATA[if ((pageIndex<0) || (pageIndex>=2)) return false;
+ee.setVisible(ee.getControl("panel132"), false);
+ee.setVisible(ee.getControl("panel133"), false);
+ee.setVisible(ee.getControl("panel128"), false);
+ee.setVisible(ee.getControl("panel129"), false);
+ee.setTextColor(ee.getControl("layoutxitem15"), "#808080");
+ee.setTextColor(ee.getControl("layoutxitem16"), "#808080");
+if (pageIndex == 0) {
+    ee.setVisible(ee.getControl("panel132"), true);
+    ee.setVisible(ee.getControl("panel128"), true);
+    ee.setTextColor(ee.getControl("layoutxitem15"), "#1C94E0");
+} else if (pageIndex == 1) {
+    ee.setVisible(ee.getControl("panel133"), true);
+    ee.setVisible(ee.getControl("panel129"), true);
+    ee.setTextColor(ee.getControl("layoutxitem16"), "#1C94E0");
+}]]></functionCode>
+    </item>
+    <item name="deletePage1" type="20">
+      <varValue />
+      <functionParam>item</functionParam>
+      <functionCode><![CDATA[var i=0;
+for (i=0; i<g5.itemsHome.length; i++) {
+    if (g5.itemsHome[i]==item) {
+        break;
+    }
+}
+if (i>=g5.itemsHome.length) return;
+var pos = i;
+var dh = eb.getDivRect(g5.itemsHome[pos]).h;
+ee.removeControl(g5.itemsHome[pos]);
+g5.itemsHome.slice(pos,1);
+for (i=pos; i<g5.itemsHome.length; i++) {
+    ee.setRect(g5.itemsHome[i],null,eb.getDivRect(g5.itemsHome[i]).y-dh,null,null);
+}
+if (g5.itemsHome.length>0) {
+    var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
+    eb.setDivRect(ee.getControl("panel41"),null,null,null,rect.y+rect.h);
+}]]></functionCode>
+    </item>
+    <item name="homepageMoveY" type="20">
+      <varValue />
+      <functionParam>index,dy</functionParam>
+      <functionCode><![CDATA[for (var i=index; i<g5.itemsHome.length; i++) {
+    ee.setRect(g5.itemsHome[i],null,eb.getDivRect(g5.itemsHome[i]).y+dy,null,null);
+}
+if (g5.itemsHome.length>0) {
+    var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
+    eb.setDivRect(ee.getControl("panel41"),null,null,null,rect.y+rect.h);
+}]]></functionCode>
     </item>
   </g5Items>
 </page>
