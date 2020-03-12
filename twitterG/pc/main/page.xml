@@ -3644,7 +3644,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="14">
+  <taskSet count="15">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 
@@ -5174,8 +5174,9 @@ while (showForwardList.items.length>0) {
 var cy = 0;
 for (var i=0; i<showForwardList.data.rowCount; i++) {
     //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
+    if (showForwardList.data.getData(1,i)==g5.userName) continue;
     var item = g5.appendUserBar(
-        root, cy, "fwlist1_" + g5.itemsHome.length + "_", "",
+        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
         showForwardList.data.getData(0,i),
         showForwardList.data.getData(1,i),
         showForwardList.data.getData(2,i),
@@ -5187,9 +5188,68 @@ for (var i=0; i<showForwardList.data.rowCount; i++) {
     showForwardList.items.push(item);
 }
 
+eb.processDock();
 ee.setVisible(ee.getControl("panel112"),true);
 ee.showAni(ee.getControl("panel10"),0);
 ]]></script3>
+    </taskSetItem>
+    <taskSetItem name="followV2">
+      <script1>if (followV2.follow) {
+    eio.appendString16("T");
+} else {
+    eio.appendString16("F");
+}
+eio.appendString16(g5.token);
+eio.appendString16(followV2.userId);
+
+
+
+</script1>
+      <script2><![CDATA[var follow = eio.readString16();
+var token = eio.readString16();
+var userId = eio.readString16();
+var sql,sqlResult; 
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+}
+var myUserId = db.getString(sqlResult,"id");
+if (myUserId == userId) {
+    eio.appendString8("F");
+    eio.appendString8("关注自己就没意思了吧？");
+    return;
+}
+
+sql = "delete follow where userId = " + myUserId + " and followId = " + userId + "; ";
+if (follow == "T") {
+} else {
+    sql += "insert into follow (userId, followId) values (" + myUserId + "," + userId + "); ";
+}
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(follow);
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert(eio.readString8());
+    return;
+}
+</script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
@@ -5862,8 +5922,8 @@ if (mode.charAt(2) == "x") {
         }
         addText(c, temp, "left", "middle", "微软雅黑", 12, "808080", "normal");
         temp = $g(hd+"fw01");
-        temp.v_contentId = root.v_contentId;
         if (temp!=null) {
+            temp.v_contentId = root.v_contentId;
             temp.style.cursor="pointer";
             ee.setOnClick(temp,function(sender,event) {
                 showForwardList.contentId=sender.v_contentId;
@@ -6058,8 +6118,11 @@ root.style.borderWidth = "1px";
 root.style.borderColor = "rgb(230,236,240)";
 root.style.borderStyle = "solid";
 root.style.borderTop = "";
+root.style.cursor = "pointer";
 ee.setOnClick(root,function(sender,event) {
-    //
+    showUserPage.userName=sender.v_userName;
+    showUserPage();
+    ee.showAni(ee.getControl("panel10"), 1);    
 });
 ee.setOnMouseEnter(root, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -6114,404 +6177,117 @@ ee.setRect(c, null, null, null, rect.h);
 cy += rect.h;
 
 //button
-
-
-cy+=10;
-eb.setDivRect(root,null,null,null,cy);
-return root;
-
-
-
-
-
-
-
-
-
-var mainWidth = parseInt((w-75)*0.97);
-    
-//v_titleText
-c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, 6, mainWidth, 26);
-root.v_titleText = c;
-var temp = "";
-temp = "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username;
-if (mode.charAt(2) != "x") {
-    temp+=" · <font>" + g5.getMins(times) + "</font>";
-}
-temp+="</font>";    
-addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
-if (mode.charAt(2) != "x") {
-    root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2].childNodes[1]; 
-    root.v_startTime = parseInt((new Date()).getTime()/1000)-times;
-}
-c.v_username = username;
+c = createPanel(root, hd+"button01", "", 470, 12, 88, 32);
+root.button1 = c;
 c.style.cursor="pointer";
-ee.setOnClick(c,function(sender,event) {
-    showUserPage.userName=sender.v_username;
-    showUserPage();
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
-});
-ee.setOnMouseEnter(c,function(sender,e){
-    sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="underline";
-});
-ee.setOnMouseLeave(c,function(sender,e){
-    sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="";
-});
-
-//button
-if (username==g5.userName) {
-c = createPanel(root,hd+"button1", "", w-45, 6, 30, 30);
 ee.setImage(c,"url:/res/empty.png","stretch","","")
-c = createPanel($g(hd+"button1"), hd+"button1status1", "", 22, 20, 40, 39);
-addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
+c = createPanel($g(hd+"button01"), hd+"button01status1", "", 0, 0, 98, 32);
+c.style.cursor="pointer";
+addSkin(c, "/twitterG/skins/LRBtn10.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
 eb.setDock(c,"fill","fill");
-c=$g(hd+"button1");
-c.status1=$g(hd+"button1status1");
+c=$g(hd+"button01");
+c.status1=$g(hd+"button01status1");
 c.status1.button=c;
-c = createPanel($g(hd+"button1"), hd+"button1status2", "", 22, 20, 40, 39);
-addSkin(c, "/twitterG/skins/LRBtn12.png","LR3x",65,50,24,0,17,50,1,3,63,43);
-addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
+c = createPanel($g(hd+"button01"), hd+"button01status2", "", 26, 226, 78, 32);
+c.style.cursor="pointer";
+addSkin(c, "/twitterG/skins/LRBtn11.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
 eb.setDock(c,"fill","fill");
-c=$g(hd+"button1");
-c.status2=$g(hd+"button1status2");
+c=$g(hd+"button01");
+c.status2=$g(hd+"button01status2");
 c.status2.button=c;
-c = createPanel($g(hd+"button1"), hd+"button1status3", "", 22, 20, 40, 39);
-addSkin(c, "/twitterG/skins/twitterG008.png","LR3x",65,50,24,0,17,50,24,3,17,43);
-addText(c, "<", "center", "middle", "微软雅黑", 14, "0000C0", "bold");
+c = createPanel($g(hd+"button01"), hd+"button01status3", "", 26, 226, 78, 32);
+c.style.cursor="pointer";
+addSkin(c, "/twitterG/skins/twitterG007.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
 eb.setDock(c,"fill","fill");
-c=$g(hd+"button1");
-c.status3=$g(hd+"button1status3");
+c=$g(hd+"button01");
+c.status3=$g(hd+"button01status3");
 c.status3.button=c;
-c = createPanel($g(hd+"button1"), hd+"button1clickLayer", "", 22, 20, 40, 39);
+c = createPanel($g(hd+"button01"), hd+"button01clickLayer", "", 26, 226, 78, 32);
+c.style.cursor="pointer";
 ee.setImage(c,"url:/res/empty.png","stretch","","")
 eb.setDock(c,"fill","fill");
 ee.setOnClick(c,function(sender,event) {
-    ee.setVisible(ee.getControl("panel40"), true);
-    var e = event || window.event;
-    ee.setRect(ee.getControl("panel149"), e.clientX - eb.getDivRect(ee.getControl("panel149")).w +20, e.clientY - 20, null, null);
-    ee.showAni(ee.getControl("panel149"), 0);
-    delTwitter.contentId = sender.parentNode.parentNode.v_contentId;
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    ee.setVisible(sender.parentNode.parentNode.button2, true);
+    ee.setVisible(sender.parentNode, false);
+    followV2.userId=sender.parentNode.parentNode.v_userId;
+    followV2.follow=false;
+    followV2();
+    window.event? window.event.cancelBubble = true : event.stopPropagation();    
 });
-c=$g(hd+"button1");
-c.clickLayer=$g(hd+"button1clickLayer");
+c=$g(hd+"button01");
+c.clickLayer=$g(hd+"button01clickLayer");
 c.clickLayer.button=c;
 eb.initButton(c);
 c.downX=1;
 c.downY=2;
-c=$g(hd+"button1");
-c.onCreate=function(sender) {
-    initLButton(sender,"",-6,"<g><path d=\"M20.207 8.147c-.39-.39-1.023-.39-1.414 0L12 14.94 5.207 8.147c-.39-.39-1.023-.39-1.414 0-.39.39-.39 1.023 0 1.414l7.5 7.5c.195.196.45.294.707.294s.512-.098.707-.293l7.5-7.5c.39-.39.39-1.022 0-1.413z\"></path></g>","48 48",-6);
-};
-c.onCreate(c);    
-}
-
-//reUsername
-var cy = 26;
-if (uplinkType == "R") {
-    c = createPanel(root, hd+"pareUsername01nel17", "", 75, cy, mainWidth, 22);
-    cy += 22;
-    addText(c, "<font color='#808080'>回复 </font><font color='#1b95e0'>@" + reUserName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
-    c.style.cursor="pointer";
-    c.v_username = reUserName;
-    ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.v_username;
-        showUserPage();
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });
-    ee.setOnMouseEnter(c,function(sender,e){
-        sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="underline";
-    });
-    ee.setOnMouseLeave(c,function(sender,e){
-        sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="";
-    });
-}
-
-//v_text
-c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
-root.v_text = c;
-if (mode.charAt(2) == "x") {
-    addText(c, "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 16, "000000", "normal");
-} else {
-    addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
-}
-//eb.setFontSizeAuto(c, 25);
-eb.setDock(c,"disabled","disabled");
-eb.processDock();
-var rect = eb.getDivRect(c.label);
-ee.setRect(c, null, null, null, rect.h);
-rect = eb.getDivRect(c);
-cy = rect.y + rect.h + 1;
-
-//photo1
-if (photo1 != "") {
-    c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, mainWidth, parseInt(w*0.474645030425964));
-    c.style.borderRadius = "15px";
-    c.style.borderWidth = "1px";
-    c.style.borderColor = "rgb(204,214,221)";
-    c.style.borderStyle = "solid";
-    
-    cy += w*0.474645030425964 + w*0.03;
-    //c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
-    if (photo1.substr(0,4) == "?YTB") {
-        c.innerHTML = "<iframe width='" + mainWidth + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
-            photo1.substr(4, photo1.length) + 
-            "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-        cy -= w*0.03;
-        c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, mainWidth, w*0.054);
-        cy += w*0.054 + w*0.03;
-        temp = "https://www.youtube.com/watch?v=" + photo1.substr(4, photo1.length);
-        addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
-        c.style.cursor = "pointer";
-        ee.setOnClick(c,function(sender,event) {
-            window.open(temp);
-        });
-    } else {
-        c.imgUrl = "url:" + g5.imgUrl + photo1;
-        //ee.setImage(c,c.imgUrl,"trim","","");
-        g5.setImage(c,c.imgUrl,"trim","","",400);
-        ee.setOnClick(c,function(sender,event) {
-            ee.setVisible(ee.getControl("panel112"), true);
-            ee.showAni(ee.getControl("panel142"), 0);
-            ee.setImage(ee.getControl("panel145"),sender.imgUrl,"fill","","");
-            window.event? window.event.cancelBubble = true : event.stopPropagation();
-        });
-    }
-} else {
-    cy +=10;
-}
-                   
-if (uplinkType == "F") {
-    var p1ratio = 2.64;
-    c = createPanel($g(hd+"panel12"), hd+"panel2", "", 75, cy, mainWidth-2, 100);
-    c.style.borderRadius = "15px";
-    c.style.cursor = "pointer"; 
-    c.style.borderWidth = "1px";
-    c.style.borderColor = "rgb(204,214,221)";
-    c.style.borderStyle = "solid";
-    ee.setOnMouseEnter(c, function(sender,e){
-        sender.style.backgroundColor = "rgb(237,240,242)";
-    });
-    ee.setOnMouseLeave(c, function(sender,e){
-        sender.style.backgroundColor = "";
-    });
-    c.v_uplinkId = uplinkId
-    ee.setOnClick(c,function(sender,event) {
-        showTopic.topicId = sender.v_uplinkId;
-        showTopic.needRefresh = true;
-        showTopic();
-        g5.changeP2(-1);
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });
-    
-    var p1w = eb.getDivRect(c).w;
-    var p1h = p1w / p1ratio;
-    c = createPanel($g(hd+"panel2"), hd+"panel6", "", 0, 0, p1w, 100);
-    eb.setDock(c,"disabled","disabled");
-    //rePhoto
-    c = createPanel($g(hd+"panel6"), hd+"panel8", "", 16, 12, 20, 20);
-    if (rePhoto == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
-    } else {
-        ee.setImage(c,"url:" + g5.imgUrl + rePhoto,"trim","","")
-    }
-    c.style.borderRadius = "50%";
-    c.v_username = reUserName;
-    c.style.cursor="pointer";
-    ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.v_username;
-        showUserPage();
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });
-    //reUserName,reNickName,reTime
-    c = createPanel($g(hd+"panel6"), hd+"panel11", "", 45, 8, p1w*0.833734939759036, 28);
-    addText(c, "<b>" + reNickName + "</b> <font color='#808080' style='font-size:12pt'>@" + reUserName + " · " + g5.getMins(reTimes) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
-    c.v_username = reUserName;
-    c.style.cursor="pointer";
-    ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.v_username;
-        showUserPage();
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });
-    ee.setOnMouseEnter(c,function(sender,e){
-        sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="underline";
-    });
-    ee.setOnMouseLeave(c,function(sender,e){
-        sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="";
-    });
-    //reContent
-    c = createPanel($g(hd+"panel6"), hd+"panel25", "", 16, 36, p1w*0.927710843373494, 10);
-    addText(c, g5.showCommonText(reContent), "left", "top", "微软雅黑", 12, "000000", "normal");
-    //eb.setFontSizeAuto(c, 25);
-    eb.setDock(c,"disabled","disabled");
-    eb.processDock();
-    rect = eb.getDivRect(c.label);
-    ee.setRect(c, null, null, null, rect.h);
-    rect = eb.getDivRect(c);
-    var p1y = rect.y + rect.h + p1h * 0.05;
-    //rePhoto1
-    if (rePhoto1 != "") {
-        c = createPanel($g(hd+"panel6"), hd+"panel26", "", 0, p1y, p1w, parseInt(p1w*0.7));
-        if (rePhoto1.substr(0,4) == "?YTB") {
-            c.innerHTML = "<iframe width='" + parseInt(p1w) + "' height='" + parseInt(p1w*0.7) + "' src='https://www.youtube.com/embed/" +
-                rePhoto1.substr(4, rePhoto1.length) + 
-                "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-        } else {
-            c.imgUrl = "url:" + g5.imgUrl + rePhoto1;
-            ee.setImage(c,c.imgUrl,"trim","","");
-            ee.setOnClick(c,function(sender,event) {
-                ee.setVisible(ee.getControl("panel112"), true);
-                ee.showAni(ee.getControl("panel142"), 0);
-                ee.setImage(ee.getControl("panel145"),sender.imgUrl,"fill","","");
-                window.event? window.event.cancelBubble = true : event.stopPropagation();
-            });
-        }
-        eb.setDock(c,"disabled","disabled");
-        p1y += eb.getDivRect(c).h;
-    }
-    
-    //c = createPanel($g(hd+"panel2"), hd+"panel7", "", 0, 0, p1w, p1y);
-    //addSkin(c, "/twitterG/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
-    //c.style.pointerEvents = "none";
-    c = $g(hd+"panel2");
-    ee.setRect(c, null, null, null, p1y);
-    c = $g(hd+"panel6");
-    ee.setRect(c, null, null, null, p1y);
-    cy += p1y + w*0.03;
-    if (rePhoto1 != "") {
-        if (rePhoto1.substr(0,4) == "?YTB") {
-            cy -= w*0.03;
-            c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, mainWidth, w*0.054);
-            cy += w*0.054 + w*0.03;
-            temp = "https://www.youtube.com/watch?v=" + rePhoto1.substr(4, rePhoto1.length);
-            addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
-            c.style.cursor = "pointer";
-            ee.setOnClick(c,function(sender,event) {
-                window.open(temp);
-            });
-        }
-    }
-}    
-
-if (mode.charAt(2) == "x") {
-    c = createPanel(root, hd+"bottom01", "", 16, cy, mainWidth, 26); cy+=33;
-    addText(c, g5.getMins(times), "left", "middle", "微软雅黑", 12, "808080", "normal");
-    root.v_timeLabel = c.label.rows[0].cells[0]; 
-    root.v_startTime = parseInt((new Date()).getTime()/1000)-times;
-    c = createPanel(root, hd+"btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
-    if ((label1!="0") || (label2!="0")) {
-        c = createPanel(root, hd+"bottom02", "", 16, cy-6, mainWidth, 22); cy+=33;
-        temp = "";
-        if (label1!="0") {
-            temp += "<font color='#000000'><b>"+label1+"</b></font>回复    ";
-        }
-        if (label2!="0") {
-            temp += "<font color='#000000'><b>"+label2+"</b></font>转推    ";
-        }
-        addText(c, temp, "left", "middle", "微软雅黑", 12, "808080", "normal");
-        c = createPanel(root, hd+"btnline02", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
-    }
-}
-
-//4 button
-cy-=11;
-var b1=76;
-var b2=76+parseInt((w-76*2-20)/3);
-var b3=76+parseInt((w-76*2-20)/3*2);
-var b4=76+parseInt((w-76*2-20)/3*3);
-c = createPanel(root, hd+"sbutton01", "", b1, cy, 36, 36);
+//button2
+c = createPanel(root, hd+"button02", "", 440, 12, 120, 32);
+root.button2 = c;
 c.style.cursor="pointer";
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.632.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.04-3.97 3.043-6.312v-.017c-.006-4.367-3.43-7.787-7.8-7.788zm3.787 12.972c-1.134.96-4.862 3.405-6.772 4.643V16.67c0-.414-.335-.75-.75-.75h-.396c-3.66 0-6.318-2.476-6.318-5.886 0-3.534 2.768-6.302 6.3-6.302l4.147.01h.002c3.532 0 6.3 2.766 6.302 6.296-.003 1.91-.942 3.844-2.514 5.176z\"></path></g></svg>";
-c.style.borderRadius = "50%";
-ee.setOnMouseEnter(c, function(sender,event) {
-    sender.style.backgroundColor = "#dfeffa";
-    sender.childNodes[0].style.color = "rgb(29,161,242)";
-});    
-ee.setOnMouseLeave(c, function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = "rgb(101,119,134)";
-});
-root.v_btn1 = c;
+ee.setImage(c,"url:/res/empty.png","stretch","","")
+c = createPanel($g(hd+"button02"), hd+"button02status1", "", 0, 0, 98, 32);
+c.style.cursor="pointer";
+addSkin(c, "/twitterG/skins/LRBtn9.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+addText(c, "正在关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
+eb.setDock(c,"fill","fill");
+c=$g(hd+"button02");
+c.status1=$g(hd+"button02status1");
+c.status1.button=c;
+c = createPanel($g(hd+"button02"), hd+"button02status2", "", 26, 226, 78, 32);
+c.style.cursor="pointer";
+addSkin(c, "/twitterG/skins/twitterG004.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+addText(c, "取消关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
+eb.setDock(c,"fill","fill");
+c=$g(hd+"button02");
+c.status2=$g(hd+"button02status2");
+c.status2.button=c;
+c = createPanel($g(hd+"button02"), hd+"button02status3", "", 26, 226, 78, 32);
+c.style.cursor="pointer";
+addSkin(c, "/twitterG/skins/twitterG006.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+addText(c, "取消关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
+eb.setDock(c,"fill","fill");
+c=$g(hd+"button02");
+c.status3=$g(hd+"button02status3");
+c.status3.button=c;
+c = createPanel($g(hd+"button02"), hd+"button02clickLayer", "", 26, 226, 78, 32);
+c.style.cursor="pointer";
+ee.setImage(c,"url:/res/empty.png","stretch","","")
+eb.setDock(c,"fill","fill");
 ee.setOnClick(c,function(sender,event) {
-    g5.newPhoto1 = "";
-    ee.setEditText(ee.getControl("edit1"), "");
-    ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
-    ee.setText(ee.getControl("panel45"), "回复");
-    g5.uplinkType = "R";
-    g5.uplinkId = sender.parentNode.v_contentId;
-    ee.showAni(ee.getControl("panel42"), 0);
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    ee.setVisible(sender.parentNode.parentNode.button1, true);
+    ee.setVisible(sender.parentNode, false);
+    followV2.userId=sender.parentNode.parentNode.v_userId;
+    followV2.follow=true;
+    followV2();
+    window.event? window.event.cancelBubble = true : event.stopPropagation();    
 });
-c = createPanel(root, hd+"sbutton02", "", b2, cy, 36, 36);
-c.style.cursor="pointer";
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g></svg>"
-c.style.borderRadius = "50%";
-ee.setOnMouseEnter(c, function(sender,event) {
-    sender.style.backgroundColor = "#def2eb";
-    sender.childNodes[0].style.color = "#17bf63";
-});    
-ee.setOnMouseLeave(c, function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = "rgb(101,119,134)";
-});
-root.v_btn2 = c;
-ee.setOnClick(c,function(sender,event) {
-    g5.newPhoto1 = "";
-    ee.setEditText(ee.getControl("edit1"), "");
-    ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
-    ee.setText(ee.getControl("panel45"), "转发");
-    g5.uplinkType = "F";
-    g5.uplinkId = sender.parentNode.v_contentId;
-    ee.showAni(ee.getControl("panel42"), 0);
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
-});
-c = createPanel(root, hd+"sbutton03", "", b3, cy, 36, 36);
-c.style.cursor="pointer";
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z\"></path></g></svg>";
-c.style.borderRadius = "50%";
-ee.setOnMouseEnter(c, function(sender,event) {
-    sender.style.backgroundColor = "#f3e3eb";
-    sender.childNodes[0].style.color = "#e23c70";
-});    
-ee.setOnMouseLeave(c, function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = "rgb(101,119,134)";
-});
-root.v_btn3 = c;
-c = createPanel(root, hd+"sbutton04", "", b4, cy, 36, 36);
-c.style.cursor="pointer";
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z\"></path><path d=\"M19.708 21.944H4.292C3.028 21.944 2 20.916 2 19.652V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 .437.355.792.792.792h15.416c.437 0 .792-.355.792-.792V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 1.264-1.028 2.292-2.292 2.292z\"></path></g></svg>";
-c.style.borderRadius = "50%";
-ee.setOnMouseEnter(c, function(sender,event) {
-    sender.style.backgroundColor = "#dfeffa";
-    sender.childNodes[0].style.color = "rgb(29,161,242)";
-});    
-ee.setOnMouseLeave(c, function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = "rgb(101,119,134)";
-});
-root.v_btn4 = c;
-
-//3 label
-if (mode.charAt(2) != "x") {
-    if (label1=="0") label1="";
-    if (label2=="0") label2="";
-    if (label3=="0") label3="";
-    c = createPanel(root, hd+"panel3", "", b1+35, cy+7, 40, 22);
-    root.v_label1 = c;
-    addText(c, label1, "left", "middle", "Arial", 12, "657786", "bold");
-    c = createPanel(root, hd+"panel4", "", b2+35, cy+7, 40, 22);
-    root.v_label2 = c;
-    addText(c, label2, "left", "middle", "Arial", 12, "657786", "bold");
-    c = createPanel(root, hd+"panel5", "", b3+35, cy+7, 40, 22);
-    root.v_label3 = c;
-    addText(c, label3, "left", "middle", "Arial", 12, "657786", "bold");
+c=$g(hd+"button02");
+c.clickLayer=$g(hd+"button02clickLayer");
+c.clickLayer.button=c;
+eb.initButton(c);
+c.downX=1;
+c.downY=2;
+          
+ee.setVisible(root.button1, false);
+ee.setVisible(root.button2, false);
+if (isFollow=="0") {
+    ee.setVisible(root.button1, true);
+} else {
+    ee.setVisible(root.button2, true);
 }
-//set total height
-rect = eb.getDivRect(root.v_btn1);
-eb.setDivRect(root, null, null, null, rect.y + rect.h + 7);
-eb.processDock()
-return root;]]></functionCode>
+
+
+cy+=10;
+eb.setDivRect(root,null,null,null,cy);
+return root; 
+
+
+
+
+]]></functionCode>
     </item>
     <item name="getMins" type="20">
       <varValue />
