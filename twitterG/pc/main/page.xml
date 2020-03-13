@@ -1,5 +1,5 @@
 <page>
-  <controls count="196">
+  <controls count="199">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -26,7 +26,7 @@
     g5.lastScrollY = viewPortY
     var p3h = eb.getDivRect(g5.p3).h;
     p3y = eb.getDivRect(g5.p3).y;
-    eb.setDivRect(g5.p1,null,viewPortY,null,null);
+    //eb.setDivRect(g5.p1,null,viewPortY,null,null);
     eb.setDivRect(g5.p4,null,viewPortY,null,null);
     if (p3h<=viewPortH) {
         eb.setDivRect(g5.p3,null,viewPortY,null,null);
@@ -92,10 +92,32 @@ setInterval(function() {g5.refreshMain();}, 100);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
+      <onCreate>g5.scrollFunc = function (e) {
+    return;
+    var direct = 0;
+    ee = e || window.event;
+    var t1 = document.getElementById("wheelDelta");
+    var t2 = document.getElementById("detail");
+    if (e.wheelDelta) {//IE/Opera/Chrome  
+        t1.value = e.wheelDelta;
+    } else if (e.detail) {//Firefox  
+        t2.value = e.detail;
+    }
+    
+    //ScrollText(direct);
+}
+    //注册事件
+if (document.addEventListener) {
+    document.addEventListener("DOMMouseScroll", g5.scrollFunc, false);
+}//W3C  
+window.onmousewheel = document.onmousewheel = g5.scrollFunc; //IE/Opera/Chrome/Safari  
+
+</onCreate>
       <scrollPosX>5</scrollPosX>
       <scrollPosY>-1</scrollPosY>
       <sizeRatio>0.638331996792302</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00125628140703518</topRatio>
       <width>1247</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -317,8 +339,8 @@ sender._input.style.resize = "none";</onCreate>
 if (ee.getControl("panel7").style.visibility=="hidden") {
     newTwitter.photo1 = "";
 }
-g5.uplinkType = "N";
-g5.uplinkId = 0;
+newTwitter.uplinkType = "N";
+newTwitter.uplinkId = 0;
 newTwitter();
 </onClick>
       <outerBottom>18</outerBottom>
@@ -2063,6 +2085,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <heightRatio>0.807788944723618</heightRatio>
       <left>0</left>
       <note>P1</note>
+      <onCreate>sender.style.position="fixed";</onCreate>
       <sizeRatio>2.14333333333333</sizeRatio>
       <text>P1</text>
       <top>-2</top>
@@ -2117,8 +2140,8 @@ ee.showAni(ee.getControl("panel27"), 0);
 ee.setEditText(ee.getControl("edit1"), "");
 ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
 ee.setText(ee.getControl("panel45"), "发推");
-g5.uplinkType = "N";
-g5.uplinkId = 0;
+newTwitter.uplinkType = "N";
+newTwitter.uplinkId = 0;
 ee.showAni(ee.getControl("panel42"), 0);</onClick>
       <sizeRatio>0.207207207207207</sizeRatio>
       <text>发推</text>
@@ -2972,12 +2995,16 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick>ee.showAni(ee.getControl("panel149"), 1);</onClick>
+      <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
+    if (sender.eeChildren[i].style.visibility != "hidden") {
+        ee.showAni(sender.eeChildren[i], 1);
+    }
+}]]></onClick>
       <onCreate>sender.style.zIndex=100;</onCreate>
       <sizeRatio>0.638331996792302</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00125628140703518</topRatio>
       <width>1247</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -3050,6 +3077,78 @@ ee.showAni(ee.getControl("panel117"), 0);
       <width>216</width>
       <widthRatio>1</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel124">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>103</height>
+      <heightRatio>0.129396984924623</heightRatio>
+      <layerName><![CDATA[Root->主界面弹窗->B转推菜单]]></layerName>
+      <left>374</left>
+      <leftRatio>0.299919807538091</leftRatio>
+      <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
+      <onCreate>sender.style.borderRadius = "6px";
+/*
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+  */
+sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
+</onCreate>
+      <sizeRatio>0.605882352941176</sizeRatio>
+      <top>336</top>
+      <topRatio>0.422110552763819</topRatio>
+      <width>170</width>
+      <widthRatio>0.136327185244587</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel124/panel125">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.485436893203884</heightRatio>
+      <left>0</left>
+      <onClick>ee.showAni(ee.getControl("panel117"), 0);
+newTwitter.content="";
+newTwitter.photo1="";
+newTwitter.uplinkType="L";
+newTwitter();
+
+</onClick>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg> 转推");]]></onCreate>
+      <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
+      <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
+      <sizeRatio>0.231481481481481</sizeRatio>
+      <text>   X   转推</text>
+      <top>0</top>
+      <width>170</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel124/panel126">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.485436893203884</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> 带评论转推");]]></onCreate>
+      <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
+      <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
+      <sizeRatio>0.231481481481481</sizeRatio>
+      <text>   X   带评论转推</text>
+      <top>52</top>
+      <topRatio>0.504854368932039</topRatio>
+      <width>170</width>
+      <widthRatio>1</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel112">
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImg>dark1.png</backgroundImg>
@@ -3059,6 +3158,7 @@ ee.showAni(ee.getControl("panel117"), 0);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -3544,6 +3644,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <height>650</height>
       <heightRatio>0.816582914572864</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色->转发用户列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>323</left>
       <leftRatio>0.259021651964715</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);</onAni2End>
@@ -3637,6 +3738,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <height>575</height>
       <heightRatio>0.92</heightRatio>
       <left>0</left>
+      <onCreate>sender.style.overflowX = "hidden";</onCreate>
       <sizeRatio>0.98458904109589</sizeRatio>
       <top>50</top>
       <topRatio>0.08</topRatio>
@@ -3800,17 +3902,20 @@ getUserInfo();
 if (g5.currentPageIndex == 1) showUserPage();</script3>
     </taskSetItem>
     <taskSetItem name="newTwitter">
-      <script1><![CDATA[var text = newTwitter.content;
-if ((text.length<=0) &amp;&amp; (newTwitter.photo1.length<=0)) {
-    alert("推文内容不能为空");
-    return;
+      <script1><![CDATA[//content,photo1,uplinkType,uplinkId
+var text = newTwitter.content;
+if (newTwitter.uplinkType!="L") {
+    if ((text.length<=0) &amp;&amp; (newTwitter.photo1.length<=0)) {
+        alert("推文内容不能为空");
+        return;
+    }
 }
 
 eio.appendString16(g5.token);
 eio.appendString16(text);
 eio.appendString16(newTwitter.photo1);
-eio.appendString16(g5.uplinkType);
-eio.appendString16(g5.uplinkId+"");
+eio.appendString16(newTwitter.uplinkType);
+eio.appendString16(newTwitter.uplinkId+"");
 
 
 
@@ -3960,7 +4065,7 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount,reFwCount", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     updateHomepage.busy = false;
@@ -4315,7 +4420,7 @@ sql =
     "                dbo.tContent ON dbo.userInfo.id = dbo.tContent.userId LEFT OUTER JOIN " + 
     "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " + 
     "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " + 
-    "WHERE (dbo.tContent.uplinkId = " + topicId + ") OR (dbo.tContent.id = " + topicId + ") " +
+    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") OR (dbo.tContent.id = " + topicId + ")) AND dbo.tContent.uplinkType<>'F' AND dbo.tContent.uplinkType<>'L' " +
     "ORDER BY dbo.tContent.id ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -5143,9 +5248,9 @@ sql =
     "                dbo.userInfo.titleBg, dbo.userInfo.homePage, CASE WHEN dbo.follow.userId IS NULL  " +
     "                THEN 0 ELSE 1 END AS isFollow " +
     "FROM      dbo.tContent LEFT OUTER JOIN " +
-    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.follow.userId = "+myUserId+" AND dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id " +
-    "WHERE   (dbo.tContent.uplinkId = "+contentId+") AND (dbo.tContent.uplinkType = 'F') AND (dbo.follow.userId = "+myUserId+")     ";
+    "WHERE   (dbo.tContent.uplinkId = "+contentId+") AND (dbo.tContent.uplinkType = 'F') ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -5253,7 +5358,7 @@ eio.appendString8(follow);
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="28">
+  <g5Items count="29">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -5563,16 +5668,14 @@ if (g5.titleBg == "") {
     </item>
     <item name="appendItem" type="20">
       <varValue />
-      <functionParam>parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto, status, uplinkType</functionParam>
-      <functionCode><![CDATA[if (eb.isEmpty(userPhoto)) userPhoto = "";
+      <functionParam>parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto, status, uplinkType,reReCount,reFwCount</functionParam>
+      <functionCode><![CDATA[//g5.appendItem(parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto, status, uplinkType,reReCount,reFwCount)
+if (eb.isEmpty(userPhoto)) userPhoto = "";
 if (eb.isEmpty(photo1)) photo1 = "";
 var w = eb.getDivRect(parent).w;
 if (eb.isEmpty(startY)) startY = 0;
 y = startY + 0; //v-space
 
-//16,9,50x50
-//root:v_userPhoto,v_titleText,v_text,v_btn1,v_btn2,v_btn3,v_btn4,v_label1,v_label2,v_label3
-//v_contentId
 var c;
 c = createPanel(parent, hd+"panel12", "FFFFFF", 0, y, w, 100);
 var root = c;
@@ -5615,8 +5718,46 @@ if (mode.charAt(1) == "T") {
     c = createPanel(root, hd+"downlink01", "ccd6dd", 40, 64, 2, 1000);
 }
 
+var cy = 9;
+if (uplinkType == "L") {
+    //direct forward
+    c = createPanel(root, hd+"forward01", "", 50, cy, 400, 19); cy+=22;
+    var sTemp = "<svg viewBox=\"0 -2 34 34\" style='height: 1.25rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg>";
+    sTemp += " <div id='"+hd+"fwL01' style='display:inline;'>";
+    if (g5.userName==username) {
+        sTemp += "你";
+    } else {
+        sTemp += nickname + " ";
+    }
+    sTemp += "转推了</div>";    
+    addText(c, sTemp, "left", "middle", "微软雅黑", 10, "#657786", "normal");
+    c.fw=$g(hd+"fwL01");
+    c.userName = username;
+    ee.setOnClick(c,function(sender,event) {
+        showUserPage.userName=sender.userName
+        showUserPage();
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    ee.setOnMouseEnter(c,function(sender,e){
+        sender.fw.style.textDecoration="underline";
+    });
+    ee.setOnMouseLeave(c,function(sender,e){
+        sender.fw.style.textDecoration="";
+    });
+    username = reUserName;
+    nickname = reNickName;
+    times = reTimes;
+    contentId = uplinkId;
+    userPhoto = rePhoto;
+    photo1 = rePhoto1;
+    text = reContent;
+    label1 = reReCount;
+    label2 = reFwCount;
+    root.v_contentId = contentId;
+}
+
 //avata image box
-c = createPanel($g(hd+"panel12"), hd+"panel13", "", 16, 9, 50, 50);
+c = createPanel($g(hd+"panel12"), hd+"panel13", "", 16, cy, 50, 50);
 root.v_userPhoto = c;
 if (userPhoto == "") {
     ee.setImage(c,"/twitterG/main/user.png","trim","","")
@@ -5643,7 +5784,7 @@ ee.setOnMouseLeave(c, function(sender,e) {
 var mainWidth = parseInt((w-75)*0.97);
     
 //v_titleText
-c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, 6, mainWidth, 26);
+c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, cy-3, mainWidth, 26);
 root.v_titleText = c;
 var temp = "";
 temp = "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username;
@@ -5672,7 +5813,7 @@ ee.setOnMouseLeave(c,function(sender,e){
 
 //button
 if (username==g5.userName) {
-c = createPanel(root,hd+"button1", "", w-45, 6, 30, 30);
+c = createPanel(root,hd+"button1", "", w-45, cy-3, 30, 30);
 ee.setImage(c,"url:/res/empty.png","stretch","","")
 c = createPanel($g(hd+"button1"), hd+"button1status1", "", 22, 20, 40, 39);
 addText(c, "<", "center", "middle", "微软雅黑", 14, "000000", "bold");
@@ -5719,7 +5860,7 @@ c.onCreate(c);
 }
 
 //reUsername
-var cy = 26;
+cy+=17;
 if (uplinkType == "R") {
     c = createPanel(root, hd+"pareUsername01nel17", "", 75, cy, mainWidth, 22);
     cy += 22;
@@ -5918,7 +6059,7 @@ if (mode.charAt(2) == "x") {
             temp += "<font color='#000000'><b>"+label1+"</b></font> 回复      ";
         }
         if (label2!="0") {
-            temp += "<div id='"+hd+"fw01'><font color='#000000'><b>"+label2+"</b></font> 转推</div>      ";
+            temp += "<div id='"+hd+"fw01' style='display:inline;'><font color='#000000'><b>"+label2+"</b></font> 转推</div>      ";
         }
         addText(c, temp, "left", "middle", "微软雅黑", 12, "808080", "normal");
         temp = $g(hd+"fw01");
@@ -5965,14 +6106,14 @@ ee.setOnClick(c,function(sender,event) {
     ee.setEditText(ee.getControl("edit1"), "");
     ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
     ee.setText(ee.getControl("panel45"), "回复");
-    g5.uplinkType = "R";
-    g5.uplinkId = sender.parentNode.v_contentId;
+    newTwitter.uplinkType = "R";
+    newTwitter.uplinkId = sender.parentNode.v_contentId;
     ee.showAni(ee.getControl("panel42"), 0);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 c = createPanel(root, hd+"sbutton02", "", b2, cy, 36, 36);
 c.style.cursor="pointer";
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g></svg>"
+c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">"+g5.iconForward+"</svg>"
 c.style.borderRadius = "50%";
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#def2eb";
@@ -5984,13 +6125,11 @@ ee.setOnMouseLeave(c, function(sender,event) {
 });
 root.v_btn2 = c;
 ee.setOnClick(c,function(sender,event) {
-    g5.newPhoto1 = "";
-    ee.setEditText(ee.getControl("edit1"), "");
-    ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
-    ee.setText(ee.getControl("panel45"), "转发");
-    g5.uplinkType = "F";
-    g5.uplinkId = sender.parentNode.v_contentId;
-    ee.showAni(ee.getControl("panel42"), 0);
+    ee.setVisible(ee.getControl("panel40"), true);
+    var e = event || window.event;
+    ee.setRect(ee.getControl("panel124"), e.clientX - eb.getDivRect(ee.getControl("panel124")).w +20, e.clientY - 20, null, null);
+    ee.showAni(ee.getControl("panel124"), 0);
+    newTwitter.uplinkId = sender.parentNode.v_contentId;
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 c = createPanel(root, hd+"sbutton03", "", b3, cy, 36, 36);
@@ -6340,7 +6479,7 @@ if (mode == "N") {
 }
 for (i=0; i< updateHomepage.data.rowCount; i++) {
     //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName,nickName,photo" +
-    //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId(20)"
+    //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId(20),reReCount,reFwCount"
     if (updateHomepage.data.getData(18,i) == "DEL") continue;
     item = g5.appendItem(
         root,
@@ -6366,6 +6505,8 @@ for (i=0; i< updateHomepage.data.rowCount; i++) {
         updateHomepage.data.getData(17,i),
         updateHomepage.data.getData(18,i),
         updateHomepage.data.getData(19,i),
+        updateHomepage.data.getData(21,i),
+        updateHomepage.data.getData(22,i)
         );
     if (mode == "N") {
         g5.itemsHome.splice(i, 0, item);
@@ -6464,6 +6605,11 @@ if (g5.itemsHome.length>0) {
     var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
     eb.setDivRect(ee.getControl("panel41"),null,null,null,rect.y+rect.h);
 }]]></functionCode>
+    </item>
+    <item name="iconForward" type="10">
+      <varValue><![CDATA["<g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g>";]]></varValue>
+      <functionParam />
+      <functionCode />
     </item>
   </g5Items>
 </page>
