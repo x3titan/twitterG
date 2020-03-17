@@ -11,12 +11,10 @@
     var viewPortH = $g("divRoot").offsetHeight;
 
     var p2h = eb.getDivRect(ee.getControl("panel135")).h;
-    if (p2h>viewPortH) {
-        if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
-            if (!eb.isEmpty(updateHomepage.data)) {
-                if (updateHomepage.data.rowCount>0) {
-                    updateHomepage();
-                }
+    if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
+        if (!eb.isEmpty(updateHomepage.data)) {
+            if (updateHomepage.data.rowCount>0) {
+                updateHomepage();
             }
         }
     }
@@ -27,7 +25,7 @@
     var p3h = eb.getDivRect(g5.p3).h;
     p3y = eb.getDivRect(g5.p3).y;
     //eb.setDivRect(g5.p1,null,viewPortY,null,null);
-    eb.setDivRect(g5.p4,null,viewPortY,null,null);
+    //eb.setDivRect(g5.p4,null,viewPortY,null,null);
     if (p3h<=viewPortH) {
         eb.setDivRect(g5.p3,null,viewPortY,null,null);
         return;
@@ -2444,6 +2442,7 @@ showChatList();</onClick>
       <left>306</left>
       <leftRatio>0.245388933440257</leftRatio>
       <note>P4</note>
+      <onCreate>sender.style.position="fixed";</onCreate>
       <sizeRatio>0.204545454545455</sizeRatio>
       <top>-2</top>
       <topRatio>-0.00251256281407035</topRatio>
@@ -3141,6 +3140,12 @@ newTwitter();
       <height>50</height>
       <heightRatio>0.485436893203884</heightRatio>
       <left>0</left>
+      <onClick>g5.newPhoto1 = "";
+ee.setEditText(ee.getControl("edit1"), "");
+ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
+ee.setText(ee.getControl("panel45"), "转推");
+newTwitter.uplinkType = "F";
+ee.showAni(ee.getControl("panel42"), 0);</onClick>
       <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> 带评论转推");]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
@@ -3748,7 +3753,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="15">
+  <taskSet count="17">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 
@@ -3904,7 +3909,7 @@ getUserInfo();
 if (g5.currentPageIndex == 1) showUserPage();</script3>
     </taskSetItem>
     <taskSetItem name="newTwitter">
-      <script1><![CDATA[//content,photo1,uplinkType,uplinkId,displayItem,busy
+      <script1><![CDATA[//content,photo1,uplinkType,uplinkId,busy
 if (eb.isEmpty(newTwitter.busy)) newTwitter.busy = false;
 if (newTwitter.busy) return;
 
@@ -3988,6 +3993,7 @@ ee.setRect(ee.getControl("edit7"),null,null,null,79);
 eb.processDock();
 if (newTwitter.userPage=="x") {
     showUserPage();
+    g5.syncTwitter(newTwitter.uplinkId);
 } else if (newTwitter.uplinkType=="L") {
     g5.syncTwitter(newTwitter.uplinkId);
 } else {
@@ -4012,11 +4018,18 @@ if (updateHomepage.needRefresh) {
     eio.appendString16("0");
 } else if (updateHomepage.getNews) {
     eio.appendString16("N");
-    if (eb.isEmpty(updateHomepage.data)) return;
-    eio.appendString16(updateHomepage.data.getData(0,0));
+    if (g5.itemsHome.length>0) {
+        eio.appendString16(g5.itemsHome[0].v_contentId);
+    } else {
+        eio.appendString16("0");
+    }
 } else {
     eio.appendString16("F");
-    eio.appendString16(updateHomepage.lastId);
+    if (g5.itemsHome.length>0) {
+        eio.appendString16(g5.itemsHome[g5.itemsHome.length-1].v_contentId);
+    } else {
+        eio.appendString16("9999999");
+    }
 }
 
 
@@ -4200,9 +4213,9 @@ sql =
     "                userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto, CASE WHEN forwardLink.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS isForward, CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward " +
     "FROM      dbo.tContent LEFT OUTER JOIN " +
-    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = 5 LEFT OUTER JOIN " +
+    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.forwardLink AS forwardLink_1 ON dbo.tContent.uplinkId = forwardLink_1.contentId AND  " +
-    "                forwardLink_1.userId = 5 LEFT OUTER JOIN " +
+    "                forwardLink_1.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " +
     "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " +
@@ -4312,7 +4325,37 @@ cy += vspace + eb.getDivRect(ee.getControl("layoutx7")).h;
 
 eb.setDivRect(ee.getControl("panel72"),null,cy,null,null);
 ee.setVisible(ee.getControl("panel72"), true);
-ee.setText(ee.getControl("panel72"), "正在关注"+countFollow+"人     拥有粉丝" + countFans+"人");
+ee.setText(ee.getControl("panel72"), "<div id='userPageLink01' style='display:inline;'>正在关注"+countFollow+"人</div>" +
+    "     <div id='userPageLink02' style='display:inline;'>拥有粉丝" + countFans+"人</div>");
+var c = ee.getControl("panel72"); 
+c.link01=$g("userPageLink01");
+c.link02=$g("userPageLink02");
+if (countFollow>0) {
+    c.link01.style.cursor = "pointer";
+    ee.setOnMouseEnter(c.link01,function(sender,e){
+        sender.style.textDecoration="underline";
+    });
+    ee.setOnMouseLeave(c.link01,function(sender,e){
+        sender.style.textDecoration="";
+    });
+    ee.setOnClick(c.link01, function(sender, event) {
+        showFollowList.userName = showUserPage.userName;
+        showFollowList();
+    });
+}
+if (countFans>0) {
+    c.link02.style.cursor = "pointer";
+    ee.setOnMouseEnter(c.link02,function(sender,e){
+        sender.style.textDecoration="underline";
+    });
+    ee.setOnMouseLeave(c.link02,function(sender,e){
+        sender.style.textDecoration="";
+    });
+    ee.setOnClick(c.link02, function(sender, event) {
+        showFansList.userName = showUserPage.userName;
+        showFansList();
+    });
+}
 cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
 
 eb.setDivRect(ee.getControl("panel73"),null,cy,null,null);
@@ -5247,85 +5290,6 @@ for (i=0; i<g5.itemsHome.length; i++) {
 if (i>=g5.itemsHome.length) return;
 ee.showAni(g5.itemsHome[i],1);]]></script3>
     </taskSetItem>
-    <taskSetItem name="showForwardList">
-      <script1>eio.appendString16(g5.token);
-eio.appendString16(showForwardList.contentId);
-</script1>
-      <script2><![CDATA[var token = eio.readString16();
-var contentId = parseInt(eio.readString16());
-var sql,sqlResult;  
-
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-db.read(sqlResult);
-if (db.getString(sqlResult, "sessionId").length < 5) {
-    eio.appendString8("F");
-    eio.appendString8("上次登录时间太久或者您更换了系统");
-    es.logCommon("用户token登录失败,token=" + token);
-    return;
-} 
-var myUserId = parseInt(db.getString(sqlResult,"id"));
-
-sql =
-    "SELECT   dbo.tContent.userId, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo, " + 
-    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, CASE WHEN dbo.follow.userId IS NULL  " +
-    "                THEN 0 ELSE 1 END AS isFollow " +
-    "FROM      dbo.tContent LEFT OUTER JOIN " +
-    "                dbo.follow ON dbo.follow.userId = "+myUserId+" AND dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
-    "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id " +
-    "WHERE   (dbo.tContent.uplinkId = "+contentId+") AND (dbo.tContent.uplinkType = 'F') ";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-eio.appendString8("T");
-eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
-
-
-
-
-]]></script2>
-      <script3><![CDATA[if (eio.readString8()!="T") {
-    alert(eio.readString8());
-    return;
-}
-showForwardList.data = eio.readDataSet();
-
-var root = ee.getControl("layoutyitem2");
-if (eb.isEmpty(showForwardList.items)) showForwardList.items = new Array();
-while (showForwardList.items.length>0) {
-    ee.removeControl(showForwardList.items[0]);
-    showForwardList.items.splice(0,1);
-}
-var cy = 0;
-for (var i=0; i<showForwardList.data.rowCount; i++) {
-    //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
-    if (showForwardList.data.getData(1,i)==g5.userName) continue;
-    var item = g5.appendUserBar(
-        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
-        showForwardList.data.getData(0,i),
-        showForwardList.data.getData(1,i),
-        showForwardList.data.getData(2,i),
-        showForwardList.data.getData(4,i),
-        showForwardList.data.getData(3,i),
-        showForwardList.data.getData(7,i)
-    );
-    cy += eb.getDivRect(item).h;
-    showForwardList.items.push(item);
-}
-
-eb.processDock();
-ee.setVisible(ee.getControl("panel112"),true);
-ee.showAni(ee.getControl("panel10"),0);
-]]></script3>
-    </taskSetItem>
     <taskSetItem name="followV2">
       <script1>if (followV2.follow) {
     eio.appendString16("T");
@@ -5383,6 +5347,250 @@ eio.appendString8(follow);
     return;
 }
 </script3>
+    </taskSetItem>
+    <taskSetItem name="showForwardList">
+      <script1>eio.appendString16(g5.token);
+eio.appendString16(showForwardList.contentId);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var contentId = parseInt(eio.readString16());
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "SELECT   dbo.tContent.userId, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo, " + 
+    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, CASE WHEN dbo.follow.userId IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isFollow " +
+    "FROM      dbo.tContent LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.follow.userId = "+myUserId+" AND dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
+    "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id " +
+    "WHERE   (dbo.tContent.uplinkId = "+contentId+") AND (dbo.tContent.uplinkType = 'F') ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
+
+
+
+
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    alert(eio.readString8());
+    return;
+}
+showForwardList.data = eio.readDataSet();
+
+var root = ee.getControl("layoutyitem2");
+if (eb.isEmpty(showForwardList.items)) showForwardList.items = new Array();
+while (showForwardList.items.length>0) {
+    ee.removeControl(showForwardList.items[0]);
+    showForwardList.items.splice(0,1);
+}
+ee.setText(ee.getControl("panel123"), "转推者");
+var cy = 0;
+for (var i=0; i<showForwardList.data.rowCount; i++) {
+    //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
+    var item = g5.appendUserBar(
+        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
+        showForwardList.data.getData(0,i),
+        showForwardList.data.getData(1,i),
+        showForwardList.data.getData(2,i),
+        showForwardList.data.getData(4,i),
+        showForwardList.data.getData(3,i),
+        showForwardList.data.getData(1,i)==g5.userName ? "x":showForwardList.data.getData(7,i)
+    );
+    cy += eb.getDivRect(item).h;
+    showForwardList.items.push(item);
+}
+
+eb.processDock();
+ee.setVisible(ee.getControl("panel112"),true);
+ee.showAni(ee.getControl("panel10"),0);
+]]></script3>
+    </taskSetItem>
+    <taskSetItem name="showFollowList">
+      <script1>//params: userName
+eio.appendString16(g5.token);
+eio.appendString16(showFollowList.userName);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userName = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "SELECT   TOP (100) PERCENT dbo.userInfo.id AS userId, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.note, " + 
+    "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, 1 AS isFollow " +
+    "FROM      dbo.follow INNER JOIN " +
+    "                dbo.userInfo ON dbo.follow.followId = dbo.userInfo.id INNER JOIN " +
+    "                dbo.userInfo AS userInfo_1 ON dbo.follow.userId = userInfo_1.id " +
+    "WHERE   (userInfo_1.userName = '" + db.encode(userName) + "') " +
+    "ORDER BY dbo.follow.id DESC ";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
+
+
+
+
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    alert(eio.readString8());
+    return;
+}
+showForwardList.data = eio.readDataSet();
+
+var root = ee.getControl("layoutyitem2");
+if (eb.isEmpty(showForwardList.items)) showForwardList.items = new Array();
+while (showForwardList.items.length>0) {
+    ee.removeControl(showForwardList.items[0]);
+    showForwardList.items.splice(0,1);
+}
+ee.setText(ee.getControl("panel123"), "关注的用户");
+var cy = 0;
+for (var i=0; i<showForwardList.data.rowCount; i++) {
+    //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
+    var item = g5.appendUserBar(
+        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
+        showForwardList.data.getData(0,i),
+        showForwardList.data.getData(1,i),
+        showForwardList.data.getData(2,i),
+        showForwardList.data.getData(4,i),
+        showForwardList.data.getData(3,i),
+        showForwardList.data.getData(1,i)==g5.userName ? "x":showForwardList.data.getData(7,i)
+    );
+    cy += eb.getDivRect(item).h;
+    showForwardList.items.push(item);
+}
+
+eb.processDock();
+ee.setVisible(ee.getControl("panel112"),true);
+ee.showAni(ee.getControl("panel10"),0);
+]]></script3>
+    </taskSetItem>
+    <taskSetItem name="showFansList">
+      <script1>//params: userName
+eio.appendString16(g5.token);
+eio.appendString16(showFansList.userName);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userName = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "SELECT   TOP (100) PERCENT userInfo_1.id AS userId, userInfo_1.userName, userInfo_1.nickName, userInfo_1.note, " + 
+    "                userInfo_1.photo, userInfo_1.titleBg, userInfo_1.homePage, CASE WHEN follow_1.userId IS NULL " + 
+    "                THEN 0 ELSE 1 END AS isFollow " +
+    "FROM      dbo.follow INNER JOIN " +
+    "                dbo.userInfo ON dbo.follow.followId = dbo.userInfo.id INNER JOIN " +
+    "                dbo.userInfo AS userInfo_1 ON dbo.follow.userId = userInfo_1.id LEFT OUTER JOIN " +
+    "                dbo.follow AS follow_1 ON dbo.follow.userId = follow_1.followId AND follow_1.userId = "+myUserId+" " +
+    "WHERE   (dbo.userInfo.userName = '" + db.encode(userName) + "') " +
+    "ORDER BY dbo.follow.id DESC ";
+
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
+
+
+
+
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    alert(eio.readString8());
+    return;
+}
+showForwardList.data = eio.readDataSet();
+
+var root = ee.getControl("layoutyitem2");
+if (eb.isEmpty(showForwardList.items)) showForwardList.items = new Array();
+while (showForwardList.items.length>0) {
+    ee.removeControl(showForwardList.items[0]);
+    showForwardList.items.splice(0,1);
+}
+ee.setText(ee.getControl("panel123"), "拥有的粉丝");
+var cy = 0;
+for (var i=0; i<showForwardList.data.rowCount; i++) {
+    //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
+    var item = g5.appendUserBar(
+        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
+        showForwardList.data.getData(0,i),
+        showForwardList.data.getData(1,i),
+        showForwardList.data.getData(2,i),
+        showForwardList.data.getData(4,i),
+        showForwardList.data.getData(3,i),
+        showForwardList.data.getData(1,i)==g5.userName ? "x":showForwardList.data.getData(7,i)
+    );
+    cy += eb.getDivRect(item).h;
+    showForwardList.items.push(item);
+}
+
+eb.processDock();
+ee.setVisible(ee.getControl("panel112"),true);
+ee.showAni(ee.getControl("panel10"),0);
+]]></script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
@@ -5934,6 +6142,7 @@ if (photo1 != "") {
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(204,214,221)";
     c.style.borderStyle = "solid";
+    c.style.cursor="pointer";
     
     cy += w*0.474645030425964 + w*0.03;
     //c = createPanel($g(hd+"panel18"), hd+"panel19", "", 0, 0, 415, 234);
@@ -6193,7 +6402,6 @@ ee.setOnClick(c,function(sender,event) {
     ee.getControl("panel124").setMode(sender.parentNode.v_isForward);
     ee.showAni(ee.getControl("panel124"), 0);
     newTwitter.uplinkId = sender.parentNode.v_contentId;
-    newTwitter.displayItem = sender.parentNode;
     newTwitter.userPage = sender.userPage;
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
@@ -6483,7 +6691,7 @@ ee.setVisible(root.button1, false);
 ee.setVisible(root.button2, false);
 if (isFollow=="0") {
     ee.setVisible(root.button1, true);
-} else {
+} else if (isFollow=="1") {
     ee.setVisible(root.button2, true);
 }
 
