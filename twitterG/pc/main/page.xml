@@ -145,7 +145,6 @@ window.onmousewheel = document.onmousewheel = g5.scrollFunc; //IE/Opera/Chrome/S
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.32879045996593</sizeRatio>
       <top>-4</top>
@@ -2995,6 +2994,7 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -3086,20 +3086,22 @@ ee.showAni(ee.getControl("panel117"), 0);
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->B转推菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>374</left>
       <leftRatio>0.299919807538091</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
       <onCreate>sender.style.borderRadius = "6px";
-/*
-sender.style.borderWidth = "1px";
-sender.style.borderColor = "rgb(230,236,240)";
-sender.style.borderStyle = "solid";
-  */
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
-</onCreate>
+sender.setMode=function(mode) {
+    if (mode=="0") {
+        $g("panel125label").innerHTML = "转推";
+    } else if (mode=="1") {
+        $g("panel125label").innerHTML = "取消转推";
+    }
+}</onCreate>
       <sizeRatio>0.605882352941176</sizeRatio>
-      <top>336</top>
-      <topRatio>0.422110552763819</topRatio>
+      <top>335</top>
+      <topRatio>0.420854271356784</topRatio>
       <width>170</width>
       <widthRatio>0.136327185244587</widthRatio>
     </control>
@@ -3113,14 +3115,14 @@ sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 13
       <height>50</height>
       <heightRatio>0.485436893203884</heightRatio>
       <left>0</left>
-      <onClick>ee.showAni(ee.getControl("panel117"), 0);
+      <onClick>ee.showAni(ee.getControl("panel124"), 1);
 newTwitter.content="";
 newTwitter.photo1="";
 newTwitter.uplinkType="L";
 newTwitter();
 
 </onClick>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg> 转推");]]></onCreate>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg> <div id='panel125label' style='display:inline;'>转推</div>");]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.231481481481481</sizeRatio>
@@ -3902,7 +3904,10 @@ getUserInfo();
 if (g5.currentPageIndex == 1) showUserPage();</script3>
     </taskSetItem>
     <taskSetItem name="newTwitter">
-      <script1><![CDATA[//content,photo1,uplinkType,uplinkId
+      <script1><![CDATA[//content,photo1,uplinkType,uplinkId,displayItem,busy
+if (eb.isEmpty(newTwitter.busy)) newTwitter.busy = false;
+if (newTwitter.busy) return;
+
 var text = newTwitter.content;
 if (newTwitter.uplinkType!="L") {
     if ((text.length<=0) &amp;&amp; (newTwitter.photo1.length<=0)) {
@@ -3910,6 +3915,7 @@ if (newTwitter.uplinkType!="L") {
         return;
     }
 }
+newTwitter.busy = true;
 
 eio.appendString16(g5.token);
 eio.appendString16(text);
@@ -3965,7 +3971,8 @@ if (!db.executeNoneQuery("DB", sql)) {
 }                      
 
 ]]></script2>
-      <script3>if (eio.readString8() == "F") {
+      <script3>newTwitter.busy = false;
+if (eio.readString8() == "F") {
     alert(eio.readString8());
     return;
 }
@@ -3979,14 +3986,19 @@ ee.setEditText(ee.getControl("edit7"), "");
 ee.setRect(ee.getControl("panel1"),null,null,null,140);
 ee.setRect(ee.getControl("edit7"),null,null,null,79);
 eb.processDock();
-
-
-updateHomepage.getNews = true;
-updateHomepage();</script3>
+if (newTwitter.userPage=="x") {
+    showUserPage();
+} else if (newTwitter.uplinkType=="L") {
+    g5.syncTwitter(newTwitter.uplinkId);
+} else {
+    updateHomepage.getNews = true;
+    updateHomepage();
+}</script3>
     </taskSetItem>
     <taskSetItem name="updateHomepage">
       <script1><![CDATA[if (eb.isEmpty(updateHomepage.getNews)) updateHomepage.getNews=false;
 if (eb.isEmpty(updateHomepage.busy)) updateHomepage.busy = false;
+if (eb.isEmpty(updateHomepage.lastId)) updateHomepage.lastId = 0;
 
 if (updateHomepage.busy) return;
 updateHomepage.busy = true;
@@ -4039,23 +4051,28 @@ if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
 }
 
 sql =
-    "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +  
-    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
-    "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
-    "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
-    "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
-    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " + 
-    "                tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount, tContent_1.reCount AS reReCount,  " + 
-    "                tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " + 
-    "                userInfo_1.photo AS rePhoto " + 
-    "FROM      dbo.userInfo RIGHT OUTER JOIN " + 
-    "                dbo.tContent RIGHT OUTER JOIN " + 
-    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId ON dbo.userInfo.id = dbo.tContent.userId LEFT OUTER JOIN " + 
-    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " + 
-    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " + 
-    "WHERE   (dbo.follow.userId = " + userId + ") " + sql1 +
-    "ORDER BY dbo.tContent.id DESC     ";
+    "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " + 
+    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " +
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " +
+    "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " +
+    "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " +
+    "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " +
+    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " +
+    "                tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount, tContent_1.reCount AS reReCount,  " +
+    "                tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " +
+    "                userInfo_1.photo AS rePhoto, CASE WHEN forwardLink.id IS NULL THEN 0 ELSE 1 END AS isForward,  " +
+    "                CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward " +
+    "FROM      dbo.tContent LEFT OUTER JOIN " +
+    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink AS forwardLink_1 ON dbo.tContent.uplinkId = forwardLink_1.contentId AND  " +
+    "                forwardLink_1.userId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
+    "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " +
+    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " +
+    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " +
+    "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
+    "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) " + sql1 +
+    "ORDER BY dbo.tContent.id DESC ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -4065,17 +4082,16 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount,reFwCount", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount," +
+    "reFwCount,isForward,reIsForward", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     updateHomepage.busy = false;
     return;
 }
 updateHomepage.data = eio.readDataSet();
-if (updateHomepage.data.rowCount >= 0) {
+if (updateHomepage.data.rowCount > 0) {
     updateHomepage.lastId = updateHomepage.data.getData(0, updateHomepage.data.rowCount - 1);
-} else {
-    updateHomepage.lastId = "0";
 }
 
 if (updateHomepage.getNews) {
@@ -4172,22 +4188,26 @@ if (db.read(sqlResult)) {
 
 //query twitter
 sql = 
-    "SELECT   TOP (30) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " + 
-    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
-    "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
-    "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
-    "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
-    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " + 
-    "                tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount, tContent_1.reCount AS reReCount,  " + 
-    "                tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " + 
-    "                userInfo_1.photo AS rePhoto " + 
-    "FROM      dbo.userInfo RIGHT OUTER JOIN " + 
-    "                dbo.tContent ON dbo.userInfo.id = dbo.tContent.userId LEFT OUTER JOIN " + 
-    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " + 
-    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " + 
-    "WHERE (dbo.tContent.userId = " + userId + ") " +
-    "ORDER BY dbo.tContent.id DESC";
+    "SELECT   TOP (30) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " + 
+    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " +
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType,  " +
+    "                dbo.tContent.likeCount, dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
+    "                dbo.userInfo.photo, DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds,  " +
+    "                tContent_1.userId AS reUserId, tContent_1.status AS reStatus, tContent_1.[content] AS reContent,  " +
+    "                tContent_1.photoCount AS rePhotoCount, tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2,  " +
+    "                tContent_1.photo3 AS rePhoto3, tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount,  " +
+    "                tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName,  " +
+    "                userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto, CASE WHEN forwardLink.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isForward, CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward " +
+    "FROM      dbo.tContent LEFT OUTER JOIN " +
+    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = 5 LEFT OUTER JOIN " +
+    "                dbo.forwardLink AS forwardLink_1 ON dbo.tContent.uplinkId = forwardLink_1.contentId AND  " +
+    "                forwardLink_1.userId = 5 LEFT OUTER JOIN " +
+    "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " +
+    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " +
+    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " +
+    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") " +
+    "ORDER BY dbo.tContent.id DESC ";
     
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -4196,7 +4216,8 @@ if (sqlResult == null) {
     return;
 }
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
+    ",reReCount,reFwCount,isForward,reIsForward", 0, 99999); 
 
 sql = 
     "SELECT COUNT(*) AS FollowCount FROM dbo.follow WHERE   (userId = "+userId+"); " +
@@ -4302,25 +4323,13 @@ var i, item;
 var root = ee.getControl("panel16"); 
 //g5.itemsPageUser  
 for (i=0; i< g5.datasetPageUser.rowCount; i++) {
-    /*
+    //"id,mins,userId,content,photo1,replyCount,forwardCount,likeCount,userName(8),nickName,photo" +
+    //",reMins(11),reContent,rePhoto1,reUserId,reUserName(15),reNickName,rePhoto,status,uplinkType,uplinkId(20),reReCount,reFwCount"
+    //if ((g5.datasetPageUser.getData(8,i)==g5.datasetPageUser.getData(15,i)) &amp;&amp; (g5.datasetPageUser.getData(19,i)=="L")) continue;
     item = g5.appendItem(
         root,
-        cy, "puser" + i + "_",
-        userName, nickName,
-        g5.getMins(g5.datasetPageUser.getData(1,i)),
-        g5.datasetPageUser.getData(0,i),
-        photo,
-        g5.datasetPageUser.getData(4,i),
-        g5.datasetPageUser.getData(3,i),
-        g5.datasetPageUser.getData(5,i),
-        g5.datasetPageUser.getData(6,i),
-        g5.datasetPageUser.getData(7,i)
-        );
-    */
-    item = g5.appendItem(
-        root,
-        cy, "puser" + i + "_",
-        "",
+        cy, "puser" + g5.datasetPageUser.getData(0,i) + "_",
+        "   x",
         g5.datasetPageUser.getData(8,i),
         g5.datasetPageUser.getData(9,i),
         g5.datasetPageUser.getData(1,i),
@@ -4340,9 +4349,13 @@ for (i=0; i< g5.datasetPageUser.rowCount; i++) {
         g5.datasetPageUser.getData(16,i),
         g5.datasetPageUser.getData(17,i),
         g5.datasetPageUser.getData(18,i),
-        g5.datasetPageUser.getData(19,i)
+        g5.datasetPageUser.getData(19,i),
+        g5.datasetPageUser.getData(21,i),
+        g5.datasetPageUser.getData(22,i),
+        g5.datasetPageUser.getData(23,i),
+        g5.datasetPageUser.getData(24,i)
     );        
-        
+    
     g5.itemsPageUser.push(item);
     cy += 0 + eb.getDivRect(item).h;
     item.style.borderLeft="";    
@@ -4406,21 +4419,25 @@ if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
 }
 
 sql =
-    "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " + 
+    "SELECT   TOP (20) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +  
     "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " + 
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType, dbo.tContent.likeCount,  " + 
-    "                dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.photo,  " + 
-    "                DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.userId AS reUserId,  " + 
-    "                tContent_1.status AS reStatus, tContent_1.[content] AS reContent, tContent_1.photoCount AS rePhotoCount,  " + 
-    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " + 
-    "                tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount, tContent_1.reCount AS reReCount,  " + 
-    "                tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName, userInfo_1.nickName AS reNickName,  " + 
-    "                userInfo_1.photo AS rePhoto " + 
-    "FROM      dbo.userInfo RIGHT OUTER JOIN " + 
-    "                dbo.tContent ON dbo.userInfo.id = dbo.tContent.userId LEFT OUTER JOIN " + 
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType,  " + 
+    "                dbo.tContent.likeCount, dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName,  " + 
+    "                dbo.userInfo.photo, DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds,  " + 
+    "                tContent_1.userId AS reUserId, tContent_1.status AS reStatus, tContent_1.[content] AS reContent,  " + 
+    "                tContent_1.photoCount AS rePhotoCount, tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2,  " + 
+    "                tContent_1.photo3 AS rePhoto3, tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount,  " + 
+    "                tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName,  " + 
+    "                userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto, CASE WHEN forwardLink.id IS NULL  " + 
+    "                THEN 0 ELSE 1 END AS isForward, CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward " + 
+    "FROM      dbo.tContent LEFT OUTER JOIN " + 
+    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = "+userId+" LEFT OUTER JOIN " + 
+    "                dbo.forwardLink AS forwardLink_1 ON dbo.tContent.uplinkId = forwardLink_1.contentId AND  " + 
+    "                forwardLink_1.userId = "+userId+" LEFT OUTER JOIN " + 
+    "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " +   
     "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " + 
     "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " + 
-    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") OR (dbo.tContent.id = " + topicId + ")) AND dbo.tContent.uplinkType<>'F' AND dbo.tContent.uplinkType<>'L' " +
+    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType<>'F' AND dbo.tContent.uplinkType<>'L') OR (dbo.tContent.id = " + topicId + ") " +
     "ORDER BY dbo.tContent.id ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -4431,7 +4448,8 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
+    ",reReCount,reFwCount,isForward,reIsForward", 0, 99999); 
 
 sql = "exec [twitterSource] " + userId + "," + topicId;
 sqlResult = db.executeQuery("DB", sql);
@@ -4439,10 +4457,12 @@ if (sqlResult == null) {
     return;
 }
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
+    ",reReCount,reFwCount,isForward,reIsForward", 0, 99999); 
 while (db.nextResult(sqlResult)) {
-    eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-        ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId", 0, 99999); 
+eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
+    ",reReCount,reFwCount,isForward,reIsForward", 0, 99999); 
 }]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     showTopic.busy = false;
@@ -4483,7 +4503,7 @@ while (true) {
         dType = "T";
         item = g5.appendItem(
             root,
-            cy, "page8_" + showTopic.items.length + "_",
+            cy, "page8_" + showTopic.backTrace.getData(0,i) + "_",
             uType + dType,
             showTopic.backTrace.getData(8,i),
             showTopic.backTrace.getData(9,i),
@@ -4504,7 +4524,11 @@ while (true) {
             showTopic.backTrace.getData(16,i),
             showTopic.backTrace.getData(17,i),
             showTopic.backTrace.getData(18,i),
-            showTopic.backTrace.getData(19,i)
+            showTopic.backTrace.getData(19,i),
+            showTopic.backTrace.getData(21,i),
+            showTopic.backTrace.getData(22,i),
+            showTopic.backTrace.getData(23,i),
+            showTopic.backTrace.getData(24,i)
             );
         showTopic.items.push(item);
         cy += 0 + eb.getDivRect(item).h;    
@@ -4520,7 +4544,7 @@ while (true) {
         if (i==0) dType += "x";
         item = g5.appendItem(
             root,
-            cy, "page8_" + showTopic.items.length + "_",
+            cy, "page8_" + showTopic.data.getData(0,i) + "_",
             uType + dType,
             showTopic.data.getData(8,i),
             showTopic.data.getData(9,i),
@@ -4541,7 +4565,11 @@ while (true) {
             showTopic.data.getData(16,i),
             showTopic.data.getData(17,i),
             showTopic.data.getData(18,i),
-            showTopic.data.getData(19,i)
+            showTopic.data.getData(19,i),
+            showTopic.data.getData(21,i),
+            showTopic.data.getData(22,i),
+            showTopic.data.getData(23,i),
+            showTopic.data.getData(24,i)
             );
         showTopic.items.push(item);
         cy += 0 + eb.getDivRect(item).h;    
@@ -5358,7 +5386,7 @@ eio.appendString8(follow);
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="29">
+  <g5Items count="30">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -5668,8 +5696,10 @@ if (g5.titleBg == "") {
     </item>
     <item name="appendItem" type="20">
       <varValue />
-      <functionParam>parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto, status, uplinkType,reReCount,reFwCount</functionParam>
-      <functionCode><![CDATA[//g5.appendItem(parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto, status, uplinkType,reReCount,reFwCount)
+      <functionParam>parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, text, label1, label2, label3, uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, rePhoto, status, uplinkType,reReCount,reFwCount,isForward,reIsForward</functionParam>
+      <functionCode><![CDATA[//g5.appendItem(parent, startY, hd, mode, username, nickname, times, contentId, userPhoto, photo1, 
+//text, label1, label2, label3, uplinkId, reTimes, reContent, rePhoto1, reUserId, reUserName, reNickName, 
+//rePhoto, status, uplinkType,reReCount,reFwCount,isForward,reIsForward)
 if (eb.isEmpty(userPhoto)) userPhoto = "";
 if (eb.isEmpty(photo1)) photo1 = "";
 var w = eb.getDivRect(parent).w;
@@ -5677,7 +5707,7 @@ if (eb.isEmpty(startY)) startY = 0;
 y = startY + 0; //v-space
 
 var c;
-c = createPanel(parent, hd+"panel12", "FFFFFF", 0, y, w, 100);
+c = createPanel(parent, hd+"root", "FFFFFF", 0, y, w, 100);
 var root = c;
 root.v_contentId = contentId;
 root.style.boxSizing="border-box";
@@ -5753,11 +5783,12 @@ if (uplinkType == "L") {
     text = reContent;
     label1 = reReCount;
     label2 = reFwCount;
+    isForward = reIsForward;
     root.v_contentId = contentId;
 }
 
 //avata image box
-c = createPanel($g(hd+"panel12"), hd+"panel13", "", 16, cy, 50, 50);
+c = createPanel(root, hd+"panel13", "", 16, cy, 50, 50);
 root.v_userPhoto = c;
 if (userPhoto == "") {
     ee.setImage(c,"/twitterG/main/user.png","trim","","")
@@ -5784,7 +5815,7 @@ ee.setOnMouseLeave(c, function(sender,e) {
 var mainWidth = parseInt((w-75)*0.97);
     
 //v_titleText
-c = createPanel($g(hd+"panel12"), hd+"panel16", "", 75, cy-3, mainWidth, 26);
+c = createPanel(root, hd+"panel16", "", 75, cy-3, mainWidth, 26);
 root.v_titleText = c;
 var temp = "";
 temp = "<b>" + nickname + "</b> <font color='#808080' style='font-size:12pt'>@" + username;
@@ -5881,7 +5912,7 @@ if (uplinkType == "R") {
 }
 
 //v_text
-c = createPanel($g(hd+"panel12"), hd+"panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
+c = createPanel(root, hd+"panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
 root.v_text = c;
 if (mode.charAt(2) == "x") {
     addText(c, "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(text) + "</font>", "left", "top", "微软雅黑", 16, "000000", "normal");
@@ -5898,7 +5929,7 @@ cy = rect.y + rect.h + 1;
 
 //photo1
 if (photo1 != "") {
-    c = createPanel($g(hd+"panel12"), hd+"panel18", "", 75, cy, mainWidth, parseInt(w*0.474645030425964));
+    c = createPanel(root, hd+"panel18", "", 75, cy, mainWidth, parseInt(w*0.474645030425964));
     c.style.borderRadius = "15px";
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(204,214,221)";
@@ -5911,7 +5942,7 @@ if (photo1 != "") {
             photo1.substr(4, photo1.length) + 
             "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
         cy -= w*0.03;
-        c = createPanel($g(hd+"panel12"), hd+"panel181", "", 75, cy, mainWidth, w*0.054);
+        c = createPanel(root, hd+"panel181", "", 75, cy, mainWidth, w*0.054);
         cy += w*0.054 + w*0.03;
         temp = "https://www.youtube.com/watch?v=" + photo1.substr(4, photo1.length);
         addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
@@ -5936,7 +5967,7 @@ if (photo1 != "") {
                    
 if (uplinkType == "F") {
     var p1ratio = 2.64;
-    c = createPanel($g(hd+"panel12"), hd+"panel2", "", 75, cy, mainWidth-2, 100);
+    c = createPanel(root, hd+"panel2", "", 75, cy, mainWidth-2, 100);
     c.style.borderRadius = "15px";
     c.style.cursor = "pointer"; 
     c.style.borderWidth = "1px";
@@ -6034,7 +6065,7 @@ if (uplinkType == "F") {
     if (rePhoto1 != "") {
         if (rePhoto1.substr(0,4) == "?YTB") {
             cy -= w*0.03;
-            c = createPanel($g(hd+"panel12"), hd+"panel182", "", 75, cy, mainWidth, w*0.054);
+            c = createPanel(root, hd+"panel182", "", 75, cy, mainWidth, w*0.054);
             cy += w*0.054 + w*0.03;
             temp = "https://www.youtube.com/watch?v=" + rePhoto1.substr(4, rePhoto1.length);
             addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
@@ -6113,23 +6144,57 @@ ee.setOnClick(c,function(sender,event) {
 });
 c = createPanel(root, hd+"sbutton02", "", b2, cy, 36, 36);
 c.style.cursor="pointer";
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">"+g5.iconForward+"</svg>"
+var initColor = "rgb(101,119,134)";
+root.v_isForward = isForward;
+root.changeButton2 = function() {
+    if (this.v_isForward=="0") {
+        this.v_isForward="1";
+        this.v_btn2.initColor="#17bf63";
+        this.v_btn2.childNodes[0].style.color=this.v_btn2.initColor;
+        var sTemp = ee.getText(this.v_label2);
+        if (sTemp.length<=0) {
+            sTemp="1";
+        } else sTemp=parseInt(sTemp)+1;
+        ee.setText(this.v_label2,sTemp);
+        ee.setTextColor(this.v_label2, this.v_btn2.initColor);
+    } else if (this.v_isForward=="1") {
+        this.v_isForward="0";
+        this.v_btn2.initColor="rgb(101,119,134)";
+        this.v_btn2.childNodes[0].style.color=this.v_btn2.initColor;
+        var sTemp = ee.getText(this.v_label2);
+        if (sTemp.length<=0) {
+            sTemp="";
+        } else sTemp=parseInt(sTemp)-1;
+        if (sTemp==0) sTemp = "";
+        ee.setText(this.v_label2,sTemp);
+        ee.setTextColor(this.v_label2, this.v_btn2.initColor);
+    }
+}
+if (isForward=="1") {
+    initColor = "#17bf63";
+}
+c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:"+initColor+";fill: currentcolor;vertical-align:middle;\">"+g5.iconForward+"</svg>"
 c.style.borderRadius = "50%";
+c.initColor=initColor;
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#def2eb";
     sender.childNodes[0].style.color = "#17bf63";
 });    
 ee.setOnMouseLeave(c, function(sender,event) {
     sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = "rgb(101,119,134)";
+    sender.childNodes[0].style.color = sender.initColor;
 });
 root.v_btn2 = c;
+c.userPage=mode.charAt(3);
 ee.setOnClick(c,function(sender,event) {
     ee.setVisible(ee.getControl("panel40"), true);
     var e = event || window.event;
     ee.setRect(ee.getControl("panel124"), e.clientX - eb.getDivRect(ee.getControl("panel124")).w +20, e.clientY - 20, null, null);
+    ee.getControl("panel124").setMode(sender.parentNode.v_isForward);
     ee.showAni(ee.getControl("panel124"), 0);
     newTwitter.uplinkId = sender.parentNode.v_contentId;
+    newTwitter.displayItem = sender.parentNode;
+    newTwitter.userPage = sender.userPage;
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 c = createPanel(root, hd+"sbutton03", "", b3, cy, 36, 36);
@@ -6169,7 +6234,11 @@ if (mode.charAt(2) != "x") {
     addText(c, label1, "left", "middle", "Arial", 12, "657786", "bold");
     c = createPanel(root, hd+"panel4", "", b2+35, cy+7, 40, 22);
     root.v_label2 = c;
-    addText(c, label2, "left", "middle", "Arial", 12, "657786", "bold");
+    if (isForward=="1") {
+        addText(c, label2, "left", "middle", "Arial", 12, "17bf63", "bold");
+    } else {
+        addText(c, label2, "left", "middle", "Arial", 12, "657786", "bold");
+    }
     c = createPanel(root, hd+"panel5", "", b3+35, cy+7, 40, 22);
     root.v_label3 = c;
     addText(c, label3, "left", "middle", "Arial", 12, "657786", "bold");
@@ -6455,7 +6524,9 @@ if (seconds<60*60) {
 if (eb.isEmpty(updateHomepage.data)) return;
 var i, item;
 var root = ee.getControl("panel41"); 
+
 //new user ?
+/*
 if (updateHomepage.data.rowCount <= 0) {
     g5.newUser = true;
     ee.showAni(ee.getControl("layouty4"), 0);
@@ -6463,6 +6534,7 @@ if (updateHomepage.data.rowCount <= 0) {
     return;    
 }
 g5.newUser = false;
+*/
 
 var cy = eb.getDivRect(g5.p4).h;
 ee.setRect(ee.getControl("panel1"), null, cy, null,null);
@@ -6483,7 +6555,7 @@ for (i=0; i< updateHomepage.data.rowCount; i++) {
     if (updateHomepage.data.getData(18,i) == "DEL") continue;
     item = g5.appendItem(
         root,
-        cy, "page1_" + g5.itemsHome.length + "_",
+        cy, "page1_" + updateHomepage.data.getData(0,i) + "_",
         "",
         updateHomepage.data.getData(8,i),
         updateHomepage.data.getData(9,i),
@@ -6506,7 +6578,9 @@ for (i=0; i< updateHomepage.data.rowCount; i++) {
         updateHomepage.data.getData(18,i),
         updateHomepage.data.getData(19,i),
         updateHomepage.data.getData(21,i),
-        updateHomepage.data.getData(22,i)
+        updateHomepage.data.getData(22,i),
+        updateHomepage.data.getData(23,i),
+        updateHomepage.data.getData(24,i)
         );
     if (mode == "N") {
         g5.itemsHome.splice(i, 0, item);
@@ -6610,6 +6684,19 @@ if (g5.itemsHome.length>0) {
       <varValue><![CDATA["<g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g>";]]></varValue>
       <functionParam />
       <functionCode />
+    </item>
+    <item name="syncTwitter" type="20">
+      <varValue />
+      <functionParam>contentId</functionParam>
+      <functionCode>var item;
+item = $g("page1_"+contentId+"_root");
+if (!eb.isEmpty(item)) item.changeButton2();
+item = $g("puser"+contentId+"_root");
+if (!eb.isEmpty(item)) item.changeButton2();
+item = $g("page8_"+contentId+"_root");
+if (!eb.isEmpty(item)) item.changeButton2();
+
+</functionCode>
     </item>
   </g5Items>
 </page>
