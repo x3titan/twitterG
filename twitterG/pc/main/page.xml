@@ -1,5 +1,5 @@
 <page>
-  <controls count="261">
+  <controls count="268">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -147,6 +147,7 @@ window.onmousewheel = document.onmousewheel = g5.scrollFunc; //IE/Opera/Chrome/S
       <height>643</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>2.14333333333333</sizeRatio>
       <top>0</top>
@@ -3903,7 +3904,6 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>780</height>
       <heightRatio>1.0803324099723</heightRatio>
       <layerName><![CDATA[P3->5->隐私和安全]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniStart>sender.reset();</onAniStart>
       <onCreate><![CDATA[sender.style.boxSizing="border-box";
@@ -3939,6 +3939,7 @@ sender.setSelected = function(item) {
 }]]></onCreate>
       <sizeRatio>2.54071661237785</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00138504155124654</topRatio>
       <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -4084,8 +4085,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>45</height>
       <heightRatio>0.0576923076923077</heightRatio>
       <left>0</left>
-      <onClick>g5.changeP3(6);
-sender.parentNode.setSelected(sender);</onClick>
+      <onClick>sender.parentNode.setSelected(sender);
+showBlockList();</onClick>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "0 0 1px 0";
 sender.style.borderColor = "#e6ecf0";
@@ -4979,14 +4980,14 @@ ee.showAni(ee.getControl("panel42"), 0);</onClick>
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>fill</backgroundImgMode>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>103</height>
-      <heightRatio>0.129396984924623</heightRatio>
+      <height>205</height>
+      <heightRatio>0.257537688442211</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->C其他人选项]]></layerName>
       <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.241269841269841</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
-      <onCreate>sender.style.borderRadius = "6px";
+      <onCreate><![CDATA[sender.style.borderRadius = "6px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
 sender.setMode=function(mode) {
     if (mode=="0") {
@@ -4994,37 +4995,52 @@ sender.setMode=function(mode) {
     } else if (mode=="1") {
         $g("panel125label").innerHTML = "取消转推";
     }
-}</onCreate>
-      <sizeRatio>0.438297872340426</sizeRatio>
+}
+sender.show = function() {
+    if (getOtherUserInfo.isFollow=="0") {
+        ee.setText(ee.getControl("panel214"),"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+            "<g><path d=\"M23.152 3.483h-2.675V.81c0-.415-.336-.75-.75-.75s-.75.335-.75.75v2.674H16.3c-.413 0-.75.336-.75.75s.337.75.75.75h2.677V7.66c0 .413.336.75.75.75s.75-.337.75-.75V4.982h2.675c.414 0 .75-.336.75-.75s-.336-.75-.75-.75zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.646-4.513S4.15 3.342 3.77 6.168c-.27 2.025-.007 3.462.807 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-.54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z\"></path></g>" +
+            "</svg> <div style='display:inline;'>关注 @"+sender.v_root.v_userName+"</div>");    
+    } else if (getOtherUserInfo.isFollow=="1") {
+        ee.setText(ee.getControl("panel214"),"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+            "<g><path d=\"M20.083 6.173l2.323 2.323c.293.293.768.293 1.06 0s.294-.768 0-1.06l-2.32-2.326 2.322-2.323c.293-.294.293-.77 0-1.062s-.768-.293-1.06 0L20.082 4.05 17.76 1.73c-.293-.293-.768-.293-1.06 0-.147.146-.22.338-.22.53s.072.384.22.53l2.32 2.32-2.32 2.325c-.147.146-.22.338-.22.53s.072.384.22.53c.292.293.767.293 1.06 0l2.323-2.32zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.645-4.513-2.53 0-4.267 1.687-4.646 4.513-.273 2.025-.01 3.462.805 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-" +
+            ".54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z\"></path></g>" +
+            "</svg> <div style='display:inline;'>取消关注 @"+sender.v_root.v_userName+"</div>");    
+    } else return;
+    ee.setText(ee.getControl("panel215"),"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+        "<g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g><g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g>" +
+        "</svg> <div style='display:inline;'>屏蔽 @"+sender.v_root.v_userName+"</div>");    
+    ee.setVisible(this.parentNode, true);
+    ee.showAni(this, 0);
+}]]></onCreate>
+      <sizeRatio>0.621212121212121</sizeRatio>
       <top>175</top>
       <topRatio>0.219849246231156</topRatio>
-      <width>235</width>
-      <widthRatio>0.186507936507937</widthRatio>
+      <width>330</width>
+      <widthRatio>0.261904761904762</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40/panel213/panel214">
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
+      <dockY>top</dockY>
       <fontColor>14171A</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>50</height>
-      <heightRatio>0.485436893203884</heightRatio>
+      <heightRatio>0.273224043715847</heightRatio>
       <left>0</left>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-    "<g><path d=\"M20.083 6.173l2.323 2.323c.293.293.768.293 1.06 0s.294-.768 0-1.06l-2.32-2.326 2.322-2.323c.293-.294.293-.77 0-1.062s-.768-.293-1.06 0L20.082 4.05 17.76 1.73c-.293-.293-.768-.293-1.06 0-.147.146-.22.338-.22.53s.072.384.22.53l2.32 2.32-2.32 2.325c-.147.146-.22.338-.22.53s.072.384.22.53c.292.293.767.293 1.06 0l2.323-2.32zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.645-4.513-2.53 0-4.267 1.687-4.646 4.513-.273 2.025-.01 3.462.805 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-" +
-    ".54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z\"></path></g>" +
-    "</svg> <div style='display:inline;'>取消关注</div>");
-    ]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
-      <sizeRatio>0.212765957446809</sizeRatio>
-      <text>   X   取消关注</text>
+      <sizeRatio>0.161290322580645</sizeRatio>
+      <text>   X   取消关注/关注 @xxx</text>
       <top>0</top>
-      <width>235</width>
+      <width>330</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40/panel213/panel215">
+      <bindControl>panel214</bindControl>
+      <bindTop>bottom</bindTop>
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
       <fontColor>14171A</fontColor>
@@ -5032,16 +5048,67 @@ sender.setMode=function(mode) {
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>50</height>
-      <heightRatio>0.485436893203884</heightRatio>
+      <heightRatio>0.273224043715847</heightRatio>
       <left>0</left>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> 带评论转推");]]></onCreate>
+      <onClick>ee.getControl("panel217").v_root = sender.parentNode.v_root;
+ee.getControl("panel217").show();
+</onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
-      <sizeRatio>0.212765957446809</sizeRatio>
-      <text>   X   带评论转推</text>
-      <top>52</top>
-      <topRatio>0.504854368932039</topRatio>
-      <width>235</width>
+      <sizeRatio>0.161290322580645</sizeRatio>
+      <text>   X   屏蔽 @xxx</text>
+      <top>50</top>
+      <topRatio>0.273224043715847</topRatio>
+      <width>330</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel213/panel143">
+      <bindControl>panel215</bindControl>
+      <bindTop>bottom</bindTop>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.24390243902439</heightRatio>
+      <left>0</left>
+      <leftRatio>-0.00303030303030303</leftRatio>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+    "<g><path d=\"M23.074 3.35H20.65V.927c0-.414-.337-.75-.75-.75s-.75.336-.75.75V3.35h-2.426c-.414 0-.75.337-.75.75s.336.75.75.75h2.425v2.426c0 .414.335.75.75.75s.75-.336.75-.75V4.85h2.424c.414 0 .75-.335.75-.75s-.336-.75-.75-.75zM19.9 10.744c-.415 0-.75.336-.75.75v9.782l-6.71-4.883c-.13-.095-.285-.143-.44-.143s-.31.048-.44.144l-6.71 4.883V5.6c0-.412.337-.75.75-.75h6.902c.414 0 .75-.335.75-.75s-.336-.75-.75-.75h-6.9c-1.242 0-2.25 1.01-2.25 2.25v17.15c0 .282.157.54.41.668.25.13.553.104.78-.062L12 17.928l7.458 5.43c.13.094.286.143.44.143.117 0 .234-.026.34-.08.252-.13.41-.387.41-.67V11.495c0-.414-.335-.75-.75-.75z\"></path></g>" +
+    "</svg> <div style='display:inline;'>添加推文到书签</div>");    
+]]></onCreate>
+      <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
+      <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
+      <sizeRatio>0.151515151515152</sizeRatio>
+      <text>   X   添加推文到书签</text>
+      <topRatio>0.541463414634146</topRatio>
+      <width>330</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel213/panel216">
+      <bindControl>panel143</bindControl>
+      <bindTop>bottom</bindTop>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.24390243902439</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+    "<g><path d=\"M11.96 14.945c-.067 0-.136-.01-.203-.027-1.13-.318-2.097-.986-2.795-1.932-.832-1.125-1.176-2.508-.968-3.893s.942-2.605 2.068-3.438l3.53-2.608c2.322-1.716 5.61-1.224 7.33 1.1.83 1.127 1.175 2.51.967 3.895s-.943 2.605-2.07 3.438l-1.48 1.094c-.333.246-.804.175-1.05-.158-.246-.334-.176-.804.158-1.05l1.48-1.095c.803-.592 1.327-1.463 1.476-2.45.148-.988-.098-1.975-.69-2.778-1.225-1.656-3.572-2.01-5.23-.784l-3.53 2.608c-.802.593-1.326 1.464-1.475 2.45-.15.99.097 1.975.69 2.778.498.675 1.187 1.15 1.992 1.377.4.114.633.528.52.928-.092.33-.394.547-.722.547z\"></path><path d=\"M7.27 22.054c-1.61 0-3.197-.735-4.225-2.125-.832-1.127-1.176-2.51-.968-3.894s.943-2.605 2.07-3.438l1.478-1.094c.334-.245.805-.175 1.05.158s.177.804-.157 1.05l-1.48 1.095c-.803.593-1.326 1.464-1.475 2.45-.148.99.097 1.975.69 2.778 1.225 1.657 3.57 2.01 5.23.785l3.528-2.608c1.658-1.225 2.01-3.57.785-5.23-.498-.674-1.187-1.15-1.992-1.376-.4-.113-.633-.527-.52-.927.112-.4.528-.63.926-.522 1.13.318 2.096.986 2.794 1.932 1.717 2.324 1.224 5.612-1.1 7.33l-3.53 2.608c-.933.693-2.023 1.026-3.105 1.026z\"></path></g>" +
+    "</svg> <div style='display:inline;'>复制推文链接</div>");    ]]></onCreate>
+      <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
+      <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
+      <sizeRatio>0.151515151515152</sizeRatio>
+      <text>   X   复制推文链接</text>
+      <top>150</top>
+      <topRatio>0.731707317073171</topRatio>
+      <width>330</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112">
@@ -5638,8 +5705,116 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <width>584</width>
       <widthRatio>1</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel217">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <ani2Size>pointDisappear:收缩消失成点</ani2Size>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundSkin>body5</backgroundSkin>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>228</height>
+      <heightRatio>0.28643216080402</heightRatio>
+      <layerName><![CDATA[Root->主界面弹窗黑色->屏蔽确认]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>457</left>
+      <leftRatio>0.362698412698413</leftRatio>
+      <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
+      <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
+</onClick>
+      <onCreate>//v_root
+sender.formResult = false;
+sender.show = function() {
+    ee.setText(ee.getControl("panel219"), "屏蔽 @" + this.v_root.v_userName);
+    ee.setText(ee.getControl("panel218"), "该用户将无法关注你或查看你的推文，你也不会看到来自 @"+this.v_root.v_userName+" 的推文或通知。");
+    ee.setVisible(this.parentNode, true);
+    ee.showAni(this, 0);
+}</onCreate>
+      <sizeRatio>0.658959537572254</sizeRatio>
+      <top>284</top>
+      <topRatio>0.355527638190955</topRatio>
+      <width>346</width>
+      <widthRatio>0.274603174603175</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel217/panel218">
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>76</height>
+      <heightRatio>0.333333333333333</heightRatio>
+      <left>31</left>
+      <leftRatio>0.0895953757225433</leftRatio>
+      <sizeRatio>0.268551236749117</sizeRatio>
+      <text>该用户将无法关注你或查看你的推文，你也不会看到来自@xxx的推文或通知。</text>
+      <top>62</top>
+      <topRatio>0.271929824561404</topRatio>
+      <width>283</width>
+      <widthRatio>0.817919075144509</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel217/panel219">
+      <fontBold>true</fontBold>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>16</fontSize>
+      <height>39</height>
+      <heightRatio>0.171052631578947</heightRatio>
+      <left>16</left>
+      <leftRatio>0.046242774566474</leftRatio>
+      <sizeRatio>0.12540192926045</sizeRatio>
+      <text>屏蔽</text>
+      <top>18</top>
+      <topRatio>0.0789473684210526</topRatio>
+      <width>311</width>
+      <widthRatio>0.898843930635838</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel112/panel217/button2">
+      <backgroundSkin>LRBtn12</backgroundSkin>
+      <backgroundSkin1>twitterG008</backgroundSkin1>
+      <backgroundSkin2>twitterG009</backgroundSkin2>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>38</height>
+      <heightRatio>0.166666666666667</heightRatio>
+      <left>30</left>
+      <leftRatio>0.0867052023121387</leftRatio>
+      <onClick>ee.showAni(sender.parentNode.parentNode, 1);</onClick>
+      <sizeRatio>0.277372262773723</sizeRatio>
+      <text>取消</text>
+      <top>157</top>
+      <topRatio>0.68859649122807</topRatio>
+      <width>137</width>
+      <widthRatio>0.395953757225434</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel112/panel217/button3">
+      <backgroundSkin>LRBtn13</backgroundSkin>
+      <backgroundSkin1>twitterG010</backgroundSkin1>
+      <backgroundSkin2>twitterG011</backgroundSkin2>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontColor1>FFFFFF</fontColor1>
+      <fontColor2>FFFFFF</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>38</height>
+      <heightRatio>0.166666666666667</heightRatio>
+      <left>182</left>
+      <leftRatio>0.526011560693642</leftRatio>
+      <onClick>blockUser.userId = sender.parentNode.parentNode.v_root.v_userId;
+blockUser();
+ee.showAni(sender.parentNode.parentNode, 1);</onClick>
+      <sizeRatio>0.277372262773723</sizeRatio>
+      <text>屏蔽</text>
+      <top>157</top>
+      <topRatio>0.68859649122807</topRatio>
+      <width>137</width>
+      <widthRatio>0.395953757225434</widthRatio>
+    </control>
   </controls>
-  <taskSet count="19">
+  <taskSet count="22">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 
@@ -5798,6 +5973,108 @@ if (!db.executeNoneQuery("DB", sql)) {
 ee.showAni(ee.getControl("panel54"), 1);
 getUserInfo();
 if (g5.currentPageIndex == 1) showUserPage();</script3>
+    </taskSetItem>
+    <taskSetItem name="getOtherUserInfo">
+      <script1>//userName,onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(getOtherUserInfo.userName);
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userName = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName =db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
+
+sql =
+    "SELECT   dbo.userInfo.id, dbo.userInfo.status, dbo.userInfo.regDatetime, dbo.userInfo.userName, dbo.userInfo.nickName, " + 
+    "                dbo.userInfo.mobile, dbo.userInfo.note, dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage,  " +
+    "                CASE WHEN follow.id IS NULL THEN 0 ELSE 1 END AS isFollow " +
+    "FROM      dbo.userInfo LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.userInfo.id = dbo.follow.followId AND dbo.follow.userId = " + myUserId + " " +
+    "WHERE userInfo.userName='" + db.encode(userName) + "' " +
+    "GROUP BY dbo.userInfo.id, dbo.userInfo.status, dbo.userInfo.regDatetime, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
+    "                dbo.userInfo.mobile, dbo.userInfo.note, dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.follow.id; " +
+    
+    "SELECT   dbo.userInfo.id, dbo.userInfo.userName, COUNT(dbo.follow.followId) AS followCount " +
+    "FROM      dbo.userInfo LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.userInfo.id = dbo.follow.userId " +
+    "WHERE userInfo.userName='" + db.encode(userName) + "' " +
+    "GROUP BY dbo.userInfo.id, dbo.userInfo.userName; " +
+    
+    "SELECT   dbo.userInfo.id, dbo.userInfo.userName, COUNT(dbo.follow.userId) AS fansCount " +
+    "FROM      dbo.userInfo LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.userInfo.id = dbo.follow.followId " +
+    "GROUP BY dbo.userInfo.id, dbo.userInfo.userName; ";
+    
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    es.logWarning("用户不存在, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendString16(db.getString(sqlResult,"id"));
+eio.appendString16(db.getString(sqlResult,"status"));
+eio.appendString16(db.getString(sqlResult,"regDatetime"));
+eio.appendString16(db.getString(sqlResult,"userName"));
+eio.appendString16(db.getString(sqlResult,"nickName"));
+eio.appendString16(db.getString(sqlResult,"mobile"));
+eio.appendString16(db.getString(sqlResult,"note"));
+eio.appendString16(db.getString(sqlResult,"photo"));
+eio.appendString16(db.getString(sqlResult,"titleBg"));
+eio.appendString16(db.getString(sqlResult,"homePage"));
+eio.appendString16(db.getString(sqlResult,"isFollow"));
+db.nextResult(sqlResult);
+db.read(sqlResult);
+eio.appendString16(db.getString(sqlResult,"followCount"));
+db.nextResult(sqlResult);
+db.read(sqlResult);
+eio.appendString16(db.getString(sqlResult,"fansCount"));
+
+                ]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    return;
+}
+getOtherUserInfo.id = eio.readString16();
+getOtherUserInfo.status = eio.readString16();
+getOtherUserInfo.regDatetime = eio.readString16();
+getOtherUserInfo.userName = eio.readString16();
+getOtherUserInfo.nickName = eio.readString16();
+getOtherUserInfo.mobile = eio.readString16();
+getOtherUserInfo.note = eio.readString16();
+getOtherUserInfo.photo = eio.readString16();
+getOtherUserInfo.titleBg = eio.readString16();
+getOtherUserInfo.homePage = eio.readString16();
+getOtherUserInfo.isFollow = eio.readString16();
+getOtherUserInfo.followCount = eio.readString16();
+getOtherUserInfo.fansCount = eio.readString16();
+getOtherUserInfo.onComplete();
+
+
+
+                        
+</script3>
     </taskSetItem>
     <taskSetItem name="newTwitter">
       <script1><![CDATA[//content,photo1,uplinkType,uplinkId,busy
@@ -6454,7 +6731,7 @@ while (true) {
 
 var i, item;
 var root = ee.getControl("panel22"); 
-var cy = eb.getDivRect(g5.p4).h;
+var cy = eb.getDivRect(g5.p4).h-3;
 if (showTopic.needRefresh) {
     for (i=0; i<showTopic.items.length; i++) ee.removeControl(showTopic.items[i]);
     showTopic.items = new Array();
@@ -7172,6 +7449,61 @@ for (i=0; i<g5.itemsHome.length; i++) {
 if (i>=g5.itemsHome.length) return;
 ee.showAni(g5.itemsHome[i],1);]]></script3>
     </taskSetItem>
+    <taskSetItem name="blockUser">
+      <script1>//userId
+eio.appendString16(g5.token);
+eio.appendString16(blockUser.userId + "");
+
+
+
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var blockUserId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能删除推文内容，您如果需要使用这个功能请注册正式用户。");
+    return;
+}
+
+sql = "exec blockUser " +
+    myUserId + 
+    "," + blockUserId;
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}                      
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+</script3>
+    </taskSetItem>
     <taskSetItem name="followV2">
       <script1>if (followV2.follow) {
     eio.appendString16("T");
@@ -7560,6 +7892,81 @@ ee.setVisible(ee.getControl("panel112"),true);
 ee.showAni(ee.getControl("panel10"),0);
 ]]></script3>
     </taskSetItem>
+    <taskSetItem name="showBlockList">
+      <script1>//userId
+eio.appendString16(g5.token);</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql = 
+    "SELECT   dbo.userInfo.id, dbo.userInfo.status, dbo.userInfo.regDatetime, dbo.userInfo.userName, dbo.userInfo.nickName, " +
+    "                dbo.userInfo.note, dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage " +
+    "FROM      dbo.blockList INNER JOIN " +
+    "                dbo.userInfo ON dbo.blockList.blockUserId = dbo.userInfo.id " +
+    "WHERE blockList.userId = " + myUserId + " " +
+    "order by blockList.regDatetime DESC ";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"id,userName,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
+
+
+
+
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    alert(eio.readString8());
+    return;
+}
+showBlockList.data = eio.readDataSet();
+
+var root = ee.getControl("panel212");
+if (eb.isEmpty(showBlockList.items)) showBlockList.items = new Array();
+while (showBlockList.items.length>0) {
+    ee.removeControl(showBlockList.items[0]);
+    showBlockList.items.splice(0,1);
+}
+var cy = 0;
+for (var i=0; i<showBlockList.data.rowCount; i++) {
+    var item = g5.appendUserBar(
+        root, cy, "blkl_" + showBlockList.items.length + "_", "",
+        showBlockList.data.getData(0,i),
+        showBlockList.data.getData(1,i),
+        showBlockList.data.getData(2,i),
+        showBlockList.data.getData(4,i),
+        showBlockList.data.getData(3,i),
+        showBlockList.data.getData(1,i)==g5.userName ? "x":showBlockList.data.getData(7,i)
+    );
+    cy += eb.getDivRect(item).h;
+    showBlockList.items.push(item);
+}
+
+eb.processDock();
+g5.changeP3(6);
+
+]]></script3>
+    </taskSetItem>
     <taskSetItem name="likeContent">
       <script1>//contentId
 likeContent.busy = true;
@@ -7884,31 +8291,34 @@ ee.setOnMouseLeave(c, function(sender,e) {
 var mainWidth = parseInt((w-75)*0.97);
     
 //v_titleText
-c = createPanel(root, root.id+"_panel16", "", 75, cy-3, mainWidth-200, 26);
+c = createPanel(root, root.id+"_panel16", "", 75, cy-3, mainWidth-80, 26);
 root.v_titleText = c;
 var temp = "";
-temp = "<b>" + root.v_nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userName;
+temp = "<div style='display:inline'><b>" + root.v_nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userName + "</font></div>";
 if (root.v_mode.charAt(2) != "x") {
     temp+=" · <font>" + g5.getMins(root.v_times) + "</font>";
 }
-temp+="</font>";    
+//temp+="</font>";
 addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
 if (root.v_mode.charAt(2) != "x") {
-    root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2].childNodes[1]; 
+    root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
     root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_times
 }
 c.v_username = root.v_userName;
+root.c_titleText = c.label.rows[0].cells[0].childNodes[0];
+root.c_titleText.id = root.id + "_titleText";
+root.c_titleText.v_userName = root.v_userName;
 c.style.cursor="pointer";
-ee.setOnClick(c,function(sender,event) {
-    showUserPage.userName=sender.v_username;
+ee.setOnClick(root.c_titleText,function(sender,event) {
+    showUserPage.userName=sender.v_userName;
     showUserPage();
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
-ee.setOnMouseEnter(c,function(sender,e){
-    sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="underline";
+ee.setOnMouseEnter(root.c_titleText,function(sender,e){
+    sender.childNodes[0].style.textDecoration="underline";
 });
-ee.setOnMouseLeave(c,function(sender,e){
-    sender.label.rows[0].cells[0].childNodes[0].style.textDecoration="";
+ee.setOnMouseLeave(root.c_titleText,function(sender,e){
+    sender.childNodes[0].style.textDecoration="";
 });
 
 //right corner button
@@ -7933,11 +8343,14 @@ ee.setOnClick(c,function(sender,event) {
         ee.showAni(ee.getControl("panel149"), 0);
         delTwitter.contentId = sender.parentNode.parentNode.v_contentId;
     } else {
-        ee.setVisible(ee.getControl("panel40"), true);
         var e = event || window.event;
-        ee.setRect(ee.getControl("panel213"), e.clientX - eb.getDivRect(ee.getControl("panel149")).w +20, e.clientY - 20, null, null);
-        ee.showAni(ee.getControl("panel213"), 0);
-        delTwitter.contentId = sender.parentNode.parentNode.v_contentId;
+        ee.setRect(ee.getControl("panel213"), e.clientX - eb.getDivRect(ee.getControl("panel213")).w +20, e.clientY - 20, null, null);
+        ee.getControl("panel213").v_root = sender.parentNode;
+        getOtherUserInfo.userName = sender.parentNode.v_userName;
+        getOtherUserInfo.onComplete = function() {
+            ee.getControl("panel213").show();        
+        }
+        getOtherUserInfo();
     }
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
@@ -7945,21 +8358,23 @@ ee.setOnClick(c,function(sender,event) {
 //reUsername
 cy+=17;
 if (root.v_uplinkType == "R") {
-    c = createPanel(root, root.id+"_pareUsername01nel17", "", 75, cy, mainWidth-200, 22);
+    c = createPanel(root, root.id+"_pareUsername01nel17", "", 75, cy, mainWidth-80, 22);
     cy += 22;
     addText(c, "<font color='#808080'>回复 </font><font color='#1b95e0'>@" + root.v_reUserName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     c.style.cursor="pointer";
     c.v_username = root.v_reUserName;
-    ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.v_username;
+    root.c_reUserName = c.label.rows[0].cells[0].childNodes[1];
+    root.c_reUserName.v_reUserName = root.v_reUserName
+    ee.setOnClick(root.c_reUserName,function(sender,event) {
+        showUserPage.userName=sender.v_reUserName
         showUserPage();
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
-    ee.setOnMouseEnter(c,function(sender,e){
-        sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="underline";
+    ee.setOnMouseEnter(root.c_reUserName,function(sender,e){
+        sender.style.textDecoration="underline";
     });
-    ee.setOnMouseLeave(c,function(sender,e){
-        sender.label.rows[0].cells[0].childNodes[1].style.textDecoration="";
+    ee.setOnMouseLeave(root.c_reUserName,function(sender,e){
+        sender.style.textDecoration="";
     });
 }
 
@@ -9038,8 +9453,10 @@ for (var i=0; i<task.length; i++) {
       <varValue />
       <functionParam>panel, dataset, index</functionParam>
       <functionCode>//"id,mins,userId,content,photo1,replyCount(5),forwardCount,likeCount,userName,nickName(9),photo" +
-//",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId(20),reReCount,reFwCount,isLike"
+//",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,
+//uplinkId(20),reReCount,reFwCount,isLike"
 panel.v_userName = dataset.getData(8,index);
+panel.v_userId = dataset.getData(2,index);
 panel.v_nickName = dataset.getData(9,index);
 panel.v_times = dataset.getData(1,index);
 panel.v_contentId = dataset.getData(0,index);
