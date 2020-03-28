@@ -3904,6 +3904,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>780</height>
       <heightRatio>1.0803324099723</heightRatio>
       <layerName><![CDATA[P3->5->隐私和安全]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniStart>sender.reset();</onAniStart>
       <onCreate><![CDATA[sender.style.boxSizing="border-box";
@@ -5120,7 +5121,6 @@ ee.getControl("panel217").show();
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -5717,7 +5717,6 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <height>228</height>
       <heightRatio>0.28643216080402</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色->屏蔽确认]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>457</left>
       <leftRatio>0.362698412698413</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -5804,6 +5803,7 @@ sender.show = function() {
       <left>182</left>
       <leftRatio>0.526011560693642</leftRatio>
       <onClick>blockUser.userId = sender.parentNode.parentNode.v_root.v_userId;
+blockUser.isBlock = 1;
 blockUser();
 ee.showAni(sender.parentNode.parentNode, 1);</onClick>
       <sizeRatio>0.277372262773723</sizeRatio>
@@ -7450,9 +7450,10 @@ if (i>=g5.itemsHome.length) return;
 ee.showAni(g5.itemsHome[i],1);]]></script3>
     </taskSetItem>
     <taskSetItem name="blockUser">
-      <script1>//userId
+      <script1>//userId, isBlock(0/1)
 eio.appendString16(g5.token);
 eio.appendString16(blockUser.userId + "");
+eio.appendString16(blockUser.isBlock + "");
 
 
 
@@ -7462,6 +7463,7 @@ eio.appendString16(blockUser.userId + "");
 </script1>
       <script2><![CDATA[var token = eio.readString16();
 var blockUserId = parseInt(eio.readString16());
+var isBlock = parseInt(eio.readString16());
 
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -7488,7 +7490,8 @@ if (db.getString(sqlResult,"userName")=="guest") {
 
 sql = "exec blockUser " +
     myUserId + 
-    "," + blockUserId;
+    "," + blockUserId +
+    "," + isBlock;
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
@@ -7627,17 +7630,12 @@ while (showForwardList.items.length>0) {
 }
 ee.setText(ee.getControl("panel123"), "转推者");
 var cy = 0;
+var itemWidth = eb.getDivRect(root).w;
 for (var i=0; i<showForwardList.data.rowCount; i++) {
-    //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
-    var item = g5.appendUserBar(
-        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
-        showForwardList.data.getData(0,i),
-        showForwardList.data.getData(1,i),
-        showForwardList.data.getData(2,i),
-        showForwardList.data.getData(4,i),
-        showForwardList.data.getData(3,i),
-        showForwardList.data.getData(1,i)==g5.userName ? "x":showForwardList.data.getData(7,i)
-    );
+    var item = createPanel(root, "fwdl_" + showForwardList.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    g5.loadUserRecord(item, showForwardList.data, i);
+    item.v_mode = "";
+    g5.renderUserBar(item);
     cy += eb.getDivRect(item).h;
     showForwardList.items.push(item);
 }
@@ -7708,17 +7706,12 @@ while (showForwardList.items.length>0) {
 }
 ee.setText(ee.getControl("panel123"), "关注的用户");
 var cy = 0;
+var itemWidth = eb.getDivRect(root).w;
 for (var i=0; i<showForwardList.data.rowCount; i++) {
-    //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
-    var item = g5.appendUserBar(
-        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
-        showForwardList.data.getData(0,i),
-        showForwardList.data.getData(1,i),
-        showForwardList.data.getData(2,i),
-        showForwardList.data.getData(4,i),
-        showForwardList.data.getData(3,i),
-        showForwardList.data.getData(1,i)==g5.userName ? "x":showForwardList.data.getData(7,i)
-    );
+    var item = createPanel(root, "flol_" + showForwardList.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    g5.loadUserRecord(item, showForwardList.data, i);
+    item.v_mode = "";
+    g5.renderUserBar(item);
     cy += eb.getDivRect(item).h;
     showForwardList.items.push(item);
 }
@@ -7792,17 +7785,12 @@ while (showForwardList.items.length>0) {
 }
 ee.setText(ee.getControl("panel123"), "拥有的粉丝");
 var cy = 0;
+var itemWidth = eb.getDivRect(root).w;
 for (var i=0; i<showForwardList.data.rowCount; i++) {
-    //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
-    var item = g5.appendUserBar(
-        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
-        showForwardList.data.getData(0,i),
-        showForwardList.data.getData(1,i),
-        showForwardList.data.getData(2,i),
-        showForwardList.data.getData(4,i),
-        showForwardList.data.getData(3,i),
-        showForwardList.data.getData(1,i)==g5.userName ? "x":showForwardList.data.getData(7,i)
-    );
+    var item = createPanel(root, "fanl_" + showForwardList.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    g5.loadUserRecord(item, showForwardList.data, i);
+    item.v_mode = "";
+    g5.renderUserBar(item);
     cy += eb.getDivRect(item).h;
     showForwardList.items.push(item);
 }
@@ -7872,17 +7860,12 @@ while (showForwardList.items.length>0) {
 }
 ee.setText(ee.getControl("panel123"), "点赞的用户");
 var cy = 0;
+var itemWidth = eb.getDivRect(root).w;
 for (var i=0; i<showForwardList.data.rowCount; i++) {
-    //userId,userName,nickName,note,photo,titleBg(5),homePage,isFollow
-    var item = g5.appendUserBar(
-        root, cy, "fwlist1_" + showForwardList.items.length + "_", "",
-        showForwardList.data.getData(0,i),
-        showForwardList.data.getData(1,i),
-        showForwardList.data.getData(2,i),
-        showForwardList.data.getData(4,i),
-        showForwardList.data.getData(3,i),
-        showForwardList.data.getData(1,i)==g5.userName ? "x":showForwardList.data.getData(7,i)
-    );
+    var item = createPanel(root, "likl_" + showForwardList.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    g5.loadUserRecord(item, showForwardList.data, i);
+    item.v_mode = "";
+    g5.renderUserBar(item);
     cy += eb.getDivRect(item).h;
     showForwardList.items.push(item);
 }
@@ -7948,16 +7931,12 @@ while (showBlockList.items.length>0) {
     showBlockList.items.splice(0,1);
 }
 var cy = 0;
+var itemWidth = eb.getDivRect(root).w;
 for (var i=0; i<showBlockList.data.rowCount; i++) {
-    var item = g5.appendUserBar(
-        root, cy, "blkl_" + showBlockList.items.length + "_", "",
-        showBlockList.data.getData(0,i),
-        showBlockList.data.getData(1,i),
-        showBlockList.data.getData(2,i),
-        showBlockList.data.getData(4,i),
-        showBlockList.data.getData(3,i),
-        showBlockList.data.getData(1,i)==g5.userName ? "x":showBlockList.data.getData(7,i)
-    );
+    var item = createPanel(root, "blkl_" + showBlockList.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    g5.loadUserRecord(item, showBlockList.data, i);
+    item.v_mode = "x";
+    g5.renderUserBar(item);
     cy += eb.getDivRect(item).h;
     showBlockList.items.push(item);
 }
@@ -8027,7 +8006,7 @@ g5.syncTwitter(likeContent.contentId,3);
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="40">
+  <g5Items count="41">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -8154,6 +8133,45 @@ g5.syncTwitter(likeContent.contentId,3);
       <varValue><![CDATA["<g><path d=\"M8.8 7.2H5.6V3.9c0-.4-.3-.8-.8-.8s-.7.4-.7.8v3.3H.8c-.4 0-.8.3-.8.8s.3.8.8.8h3.3v3.3c0 .4.3.8.8.8s.8-.3.8-.8V8.7H9c.4 0 .8-.3.8-.8s-.5-.7-1-.7zm15-4.9v-.1h-.1c-.1 0-9.2 1.2-14.4 11.7-3.8 7.6-3.6 9.9-3.3 9.9.3.1 3.4-6.5 6.7-9.2 5.2-1.1 6.6-3.6 6.6-3.6s-1.5.2-2.1.2c-.8 0-1.4-.2-1.7-.3 1.3-1.2 2.4-1.5 3.5-1.7.9-.2 1.8-.4 3-1.2 2.2-1.6 1.9-5.5 1.8-5.7z\"></path></g>";]]></varValue>
       <functionParam />
       <functionCode />
+    </item>
+    <item name="loadTwitterRecord" type="20">
+      <varValue />
+      <functionParam>panel, dataset, index</functionParam>
+      <functionCode>//"id,mins,userId,content,photo1,replyCount(5),forwardCount,likeCount,userName,nickName(9),photo" +
+//",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,
+//uplinkId(20),reReCount,reFwCount,isLike"
+panel.v_userName = dataset.getData(8,index);
+panel.v_userId = dataset.getData(2,index);
+panel.v_nickName = dataset.getData(9,index);
+panel.v_times = dataset.getData(1,index);
+panel.v_contentId = dataset.getData(0,index);
+panel.v_userPhoto = dataset.getData(10,index);
+panel.v_photo1 = dataset.getData(4,index);
+panel.v_content = dataset.getData(3,index);
+panel.v_label1 = dataset.getData(5,index);
+panel.v_label2 = dataset.getData(6,index);
+panel.v_label3 = dataset.getData(7,index);
+panel.v_uplinkId = dataset.getData(20,index);
+panel.v_reTimes = dataset.getData(11,index);
+panel.v_reContent = dataset.getData(12,index);
+panel.v_rePhoto1 = dataset.getData(13,index);
+panel.v_reUserId = dataset.getData(14,index);
+panel.v_reUserName = dataset.getData(15,index);
+panel.v_reNickName = dataset.getData(16,index);
+panel.v_rePhoto = dataset.getData(17,index);
+panel.v_status = dataset.getData(18,index);
+panel.v_uplinkType = dataset.getData(19,index);
+panel.v_reReCount = dataset.getData(21,index);
+panel.v_reFwCount = dataset.getData(22,index);
+panel.v_isForward = dataset.getData(23,index);
+panel.v_reIsForward = dataset.getData(24,index);
+panel.v_isLike = dataset.getData(25,index);
+panel.v_reIsLike = dataset.getData(26,index);
+panel.v_reLikeCount = dataset.getData(27,index);
+                                                                 
+
+
+</functionCode>
     </item>
     <item name="renderTwitter" type="20">
       <varValue />
@@ -8783,6 +8801,261 @@ eb.setDivRect(root, null, null, null, rect.y + rect.h + 7);
 eb.processDock()
 return root;]]></functionCode>
     </item>
+    <item name="loadUserRecord" type="20">
+      <varValue />
+      <functionParam>panel, dataset, index</functionParam>
+      <functionCode>//userId,userName,nickName(2),note,photo,titleBg,homePage(6),isFollow
+//root.v_userId,root.v_userName,root.v_userNickName,
+//root.v_photo,root.v_note,root.v_isFollow)
+panel.v_userId = dataset.getData(0,index);
+panel.v_userName = dataset.getData(1,index);
+panel.v_userNickName = dataset.getData(2,index);
+panel.v_photo = dataset.getData(4,index);
+panel.v_note = dataset.getData(3,index);
+panel.v_isFollow = dataset.getData(1,index)==g5.userName ? "x":dataset.getData(7,index);
+panel.v_titleBg = dataset.getData(5,index);
+panel.v_homePage = dataset.getData(6,index);
+
+
+</functionCode>
+    </item>
+    <item name="renderUserBar" type="20">
+      <varValue />
+      <functionParam>root</functionParam>
+      <functionCode><![CDATA[//root.v_mode, root.v_userId,root.v_userName,root.v_userNickName,
+//root.v_photo,root.v_note,root.v_isFollow)
+while (root.v_mode.length<5) root.v_mode += " ";
+var w = eb.getDivRect(root).w;
+var c,cy=10;
+
+root.style.boxSizing="border-box";
+root.style.borderWidth = "1px";
+root.style.borderColor = "rgb(230,236,240)";
+root.style.borderStyle = "solid";
+root.style.borderTop = "";
+root.style.cursor = "pointer";
+ee.setOnClick(root,function(sender,event) {
+    showUserPage.userName=sender.v_userName;
+    showUserPage();
+    ee.showAni(ee.getControl("panel10"), 1);    
+});
+ee.setOnMouseEnter(root, function(sender,e){
+    sender.style.backgroundColor = "rgb(245,248,250)";
+});
+ee.setOnMouseLeave(root, function(sender,e){
+    sender.style.backgroundColor = "#ffffff";
+});
+
+//user photo
+c = createPanel(root, root.id+"panel13", "", 15,cy,50,50);
+if (root.v_photo == "") {
+    ee.setImage(c,"/twitterG/main/user.png","trim","","")
+} else {
+    ee.setImage(c,"url:" + g5.imgUrl + root.v_photo,"trim","","")
+}
+c.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,e) {
+    sender.style.webkitFilter="brightness(80%)";
+    sender.style.filter="brightness(80%)";
+});
+ee.setOnMouseLeave(c, function(sender,e) {
+    sender.style.webkitFilter="brightness(100%)";
+    sender.style.filter="brightness(100%)";
+});
+
+//user nick name
+c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
+addText(c, root.v_userNickName, "left", "middle", "微软雅黑", 12, "14171a", "bold");
+c.style.cursor="pointer";
+//ee.setOnClick(c,function(sender,event) {
+//    showUserPage.userName=sender.v_username;
+//    showUserPage();
+//    window.event? window.event.cancelBubble = true : event.stopPropagation();
+//});
+ee.setOnMouseEnter(c,function(sender,e){
+    sender.label.rows[0].cells[0].style.textDecoration="underline";
+});
+ee.setOnMouseLeave(c,function(sender,e){
+    sender.label.rows[0].cells[0].style.textDecoration="";
+});
+
+//username
+c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
+addText(c, "@"+root.v_userName, "left", "middle", "微软雅黑", 12, "6e7f8d", "normal");
+
+//note
+c = createPanel(root, root.id+"panel16", "", 77, cy, 480, 22);
+addText(c, root.v_note, "left", "top", "微软雅黑", 12, "14171a", "normal");
+eb.processDock();
+var rect = eb.getDivRect(c.label);
+ee.setRect(c, null, null, null, rect.h);
+cy += rect.h;
+
+//button
+if (root.v_mode.charAt(0)=="x") {
+    c = createPanel(root, root.id+"button11", "", 505, 12, 80, 40);
+    addText(c, "已屏蔽", "center", "middle", "微软雅黑", 12, "ffffff", "bold");
+    c.style.borderRadius = "20px";
+    root.v_isBlock = false;
+    root.c_button11 = c;
+    root.changeButton = function() {
+        this.v_isBlock = !this.v_isBlock;    
+        if (this.v_isBlock) {
+            this.c_button11.style.backgroundColor = "#e0245e";
+            ee.setTextColor(this.c_button11, "#ffffff");
+            ee.setText(this.c_button11, "已屏蔽");
+            this.c_button11.style.borderWidth = "0px";
+            this.c_button11.style.borderStyle = "solid";
+        } else {
+            c.style.backgroundColor = "#ffffff";
+            ee.setTextColor(this.c_button11, "#e0245e");
+            ee.setText(this.c_button11, "屏蔽");
+            this.c_button11.style.borderWidth = "1px";
+            this.c_button11.style.borderStyle = "solid";
+            this.c_button11.style.borderColor = "#e0245e";
+        }
+    }
+    ee.setOnMouseEnter(c, function(sender,event) {
+        sender.style.backgroundColor = sender.parentNode.v_isBlock ? "#ca2055" : "#f3e3eb";
+    });
+    ee.setOnMouseLeave(c, function(sender,event) {
+        sender.style.backgroundColor = sender.parentNode.v_isBlock ? "#e0245e" : "#ffffff";
+    });
+    c.eeMouseDown = function(sender, event, x, y) {
+        sender.style.backgroundColor = sender.parentNode.v_isBlock ? "#b31d4b" : "#f1cddb";
+    }
+    c.eeMouseUp = function(sender, event, x, y) {
+        sender.style.backgroundColor = sender.parentNode.v_isBlock ? "#ca2055" : "#f3e3eb";
+    }
+    ee.setOnClick(c, function(sender, event) {
+        if (sender.parentNode.v_isBlock) {
+            blockUser.userId = sender.parentNode.v_userId;
+            blockUser.isBlock = 0;
+            blockUser();    
+        } else {
+            blockUser.userId = sender.parentNode.v_userId;
+            blockUser.isBlock = 1;
+            blockUser();    
+        }
+        sender.parentNode.changeButton();
+        window.event? window.event.cancelBubble = true : event.stopPropagation();    
+    });
+    eb.initMouseEvent(c);
+    root.changeButton();    
+} else {
+    c = createPanel(root, root.id+"button01", "", 470, 12, 88, 32);
+    root.button1 = c;
+    c.style.cursor="pointer";
+    ee.setImage(c,"url:/res/empty.png","stretch","","")
+    c = createPanel($g(root.id+"button01"), root.id+"button01status1", "", 0, 0, 98, 32);
+    c.style.cursor="pointer";
+    addSkin(c, "/twitterG/skins/LRBtn10.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+    addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(root.id+"button01");
+    c.status1=$g(root.id+"button01status1");
+    c.status1.button=c;
+    c = createPanel($g(root.id+"button01"), root.id+"button01status2", "", 26, 226, 78, 32);
+    c.style.cursor="pointer";
+    addSkin(c, "/twitterG/skins/LRBtn11.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+    addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(root.id+"button01");
+    c.status2=$g(root.id+"button01status2");
+    c.status2.button=c;
+    c = createPanel($g(root.id+"button01"), root.id+"button01status3", "", 26, 226, 78, 32);
+    c.style.cursor="pointer";
+    addSkin(c, "/twitterG/skins/twitterG007.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+    addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(root.id+"button01");
+    c.status3=$g(root.id+"button01status3");
+    c.status3.button=c;
+    c = createPanel($g(root.id+"button01"), root.id+"button01clickLayer", "", 26, 226, 78, 32);
+    c.style.cursor="pointer";
+    ee.setImage(c,"url:/res/empty.png","stretch","","")
+    eb.setDock(c,"fill","fill");
+    ee.setOnClick(c,function(sender,event) {
+        ee.setVisible(sender.parentNode.parentNode.button2, true);
+        ee.setVisible(sender.parentNode, false);
+        followV2.userId=sender.parentNode.parentNode.v_userId;
+        followV2.follow=false;
+        followV2();
+        window.event? window.event.cancelBubble = true : event.stopPropagation();    
+    });
+    c=$g(root.id+"button01");
+    c.clickLayer=$g(root.id+"button01clickLayer");
+    c.clickLayer.button=c;
+    eb.initButton(c);
+    c.downX=1;
+    c.downY=2;
+    //button2
+    c = createPanel(root, root.id+"button02", "", 440, 12, 120, 32);
+    root.button2 = c;
+    c.style.cursor="pointer";
+    ee.setImage(c,"url:/res/empty.png","stretch","","")
+    c = createPanel($g(root.id+"button02"), root.id+"button02status1", "", 0, 0, 98, 32);
+    c.style.cursor="pointer";
+    addSkin(c, "/twitterG/skins/LRBtn9.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+    addText(c, "正在关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(root.id+"button02");
+    c.status1=$g(root.id+"button02status1");
+    c.status1.button=c;
+    c = createPanel($g(root.id+"button02"), root.id+"button02status2", "", 26, 226, 78, 32);
+    c.style.cursor="pointer";
+    addSkin(c, "/twitterG/skins/twitterG004.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+    addText(c, "取消关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(root.id+"button02");
+    c.status2=$g(root.id+"button02status2");
+    c.status2.button=c;
+    c = createPanel($g(root.id+"button02"), root.id+"button02status3", "", 26, 226, 78, 32);
+    c.style.cursor="pointer";
+    addSkin(c, "/twitterG/skins/twitterG006.png","LR3x",65,50,24,0,17,50,24,3,17,43);
+    addText(c, "取消关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
+    eb.setDock(c,"fill","fill");
+    c=$g(root.id+"button02");
+    c.status3=$g(root.id+"button02status3");
+    c.status3.button=c;
+    c = createPanel($g(root.id+"button02"), root.id+"button02clickLayer", "", 26, 226, 78, 32);
+    c.style.cursor="pointer";
+    ee.setImage(c,"url:/res/empty.png","stretch","","")
+    eb.setDock(c,"fill","fill");
+    ee.setOnClick(c,function(sender,event) {
+        ee.setVisible(sender.parentNode.parentNode.button1, true);
+        ee.setVisible(sender.parentNode, false);
+        followV2.userId=sender.parentNode.parentNode.v_userId;
+        followV2.follow=true;
+        followV2();
+        window.event? window.event.cancelBubble = true : event.stopPropagation();    
+    });
+    c=$g(root.id+"button02");
+    c.clickLayer=$g(root.id+"button02clickLayer");
+    c.clickLayer.button=c;
+    eb.initButton(c);
+    c.downX=1;
+    c.downY=2;
+              
+    ee.setVisible(root.button1, false);
+    ee.setVisible(root.button2, false);
+    if (root.v_isFollow=="0") {
+        ee.setVisible(root.button1, true);
+    } else if (root.v_isFollow=="1") {
+        ee.setVisible(root.button2, true);
+    }
+
+}
+
+cy+=10;
+eb.setDivRect(root,null,null,null,cy);
+return root; 
+
+
+
+
+]]></functionCode>
+    </item>
     <item name="appendItemPage2" type="20">
       <varValue />
       <functionParam>parent, username, nickname, userPhoto</functionParam>
@@ -8843,193 +9116,6 @@ if (g5.itemsPage2.length > 0) {
 }
 y += 0; //v-space
 return y;]]></functionCode>
-    </item>
-    <item name="appendUserBar" type="20">
-      <varValue />
-      <functionParam>parent, startY, hd, mode, userId,userName,userNickName,photo,note,isFollow</functionParam>
-      <functionCode><![CDATA[//g5.appendUserBar(parent, startY, hd, mode, userId,userName,userNickName,photo,note,isFollow)
-while (mode.length<5) mode += " ";
-var w = eb.getDivRect(parent).w;
-var c,cy=10;
-c = createPanel(parent, hd+"root", "", 0, startY, w, 70);
-var root = c;
-root.v_userId = userId;
-root.v_userName = userName;
-root.style.boxSizing="border-box";
-root.style.borderWidth = "1px";
-root.style.borderColor = "rgb(230,236,240)";
-root.style.borderStyle = "solid";
-root.style.borderTop = "";
-root.style.cursor = "pointer";
-ee.setOnClick(root,function(sender,event) {
-    showUserPage.userName=sender.v_userName;
-    showUserPage();
-    ee.showAni(ee.getControl("panel10"), 1);    
-});
-ee.setOnMouseEnter(root, function(sender,e){
-    sender.style.backgroundColor = "rgb(245,248,250)";
-});
-ee.setOnMouseLeave(root, function(sender,e){
-    sender.style.backgroundColor = "#ffffff";
-});
-
-//user photo
-c = createPanel(root, hd+"panel13", "", 15,cy,50,50);
-if (photo == "") {
-    ee.setImage(c,"/twitterG/main/user.png","trim","","")
-} else {
-    ee.setImage(c,"url:" + g5.imgUrl + photo,"trim","","")
-}
-c.style.borderRadius = "50%";
-ee.setOnMouseEnter(c, function(sender,e) {
-    sender.style.webkitFilter="brightness(80%)";
-    sender.style.filter="brightness(80%)";
-});
-ee.setOnMouseLeave(c, function(sender,e) {
-    sender.style.webkitFilter="brightness(100%)";
-    sender.style.filter="brightness(100%)";
-});
-
-//user nick name
-c = createPanel(root, hd+"panel16", "", 77, cy, 415, 22); cy+=22;
-addText(c, userNickName, "left", "middle", "微软雅黑", 12, "14171a", "bold");
-c.style.cursor="pointer";
-//ee.setOnClick(c,function(sender,event) {
-//    showUserPage.userName=sender.v_username;
-//    showUserPage();
-//    window.event? window.event.cancelBubble = true : event.stopPropagation();
-//});
-ee.setOnMouseEnter(c,function(sender,e){
-    sender.label.rows[0].cells[0].style.textDecoration="underline";
-});
-ee.setOnMouseLeave(c,function(sender,e){
-    sender.label.rows[0].cells[0].style.textDecoration="";
-});
-
-//username
-c = createPanel(root, hd+"panel16", "", 77, cy, 415, 22); cy+=22;
-addText(c, "@"+userName, "left", "middle", "微软雅黑", 12, "6e7f8d", "normal");
-
-//note
-c = createPanel(root, hd+"panel16", "", 77, cy, 480, 22);
-addText(c, note, "left", "top", "微软雅黑", 12, "14171a", "normal");
-eb.processDock();
-var rect = eb.getDivRect(c.label);
-ee.setRect(c, null, null, null, rect.h);
-cy += rect.h;
-
-//button
-c = createPanel(root, hd+"button01", "", 470, 12, 88, 32);
-root.button1 = c;
-c.style.cursor="pointer";
-ee.setImage(c,"url:/res/empty.png","stretch","","")
-c = createPanel($g(hd+"button01"), hd+"button01status1", "", 0, 0, 98, 32);
-c.style.cursor="pointer";
-addSkin(c, "/twitterG/skins/LRBtn10.png","LR3x",65,50,24,0,17,50,24,3,17,43);
-addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
-eb.setDock(c,"fill","fill");
-c=$g(hd+"button01");
-c.status1=$g(hd+"button01status1");
-c.status1.button=c;
-c = createPanel($g(hd+"button01"), hd+"button01status2", "", 26, 226, 78, 32);
-c.style.cursor="pointer";
-addSkin(c, "/twitterG/skins/LRBtn11.png","LR3x",65,50,24,0,17,50,24,3,17,43);
-addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
-eb.setDock(c,"fill","fill");
-c=$g(hd+"button01");
-c.status2=$g(hd+"button01status2");
-c.status2.button=c;
-c = createPanel($g(hd+"button01"), hd+"button01status3", "", 26, 226, 78, 32);
-c.style.cursor="pointer";
-addSkin(c, "/twitterG/skins/twitterG007.png","LR3x",65,50,24,0,17,50,24,3,17,43);
-addText(c, "关注", "center", "middle", "微软雅黑", 11, "27a5f3", "bold");
-eb.setDock(c,"fill","fill");
-c=$g(hd+"button01");
-c.status3=$g(hd+"button01status3");
-c.status3.button=c;
-c = createPanel($g(hd+"button01"), hd+"button01clickLayer", "", 26, 226, 78, 32);
-c.style.cursor="pointer";
-ee.setImage(c,"url:/res/empty.png","stretch","","")
-eb.setDock(c,"fill","fill");
-ee.setOnClick(c,function(sender,event) {
-    ee.setVisible(sender.parentNode.parentNode.button2, true);
-    ee.setVisible(sender.parentNode, false);
-    followV2.userId=sender.parentNode.parentNode.v_userId;
-    followV2.follow=false;
-    followV2();
-    window.event? window.event.cancelBubble = true : event.stopPropagation();    
-});
-c=$g(hd+"button01");
-c.clickLayer=$g(hd+"button01clickLayer");
-c.clickLayer.button=c;
-eb.initButton(c);
-c.downX=1;
-c.downY=2;
-//button2
-c = createPanel(root, hd+"button02", "", 440, 12, 120, 32);
-root.button2 = c;
-c.style.cursor="pointer";
-ee.setImage(c,"url:/res/empty.png","stretch","","")
-c = createPanel($g(hd+"button02"), hd+"button02status1", "", 0, 0, 98, 32);
-c.style.cursor="pointer";
-addSkin(c, "/twitterG/skins/LRBtn9.png","LR3x",65,50,24,0,17,50,24,3,17,43);
-addText(c, "正在关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
-eb.setDock(c,"fill","fill");
-c=$g(hd+"button02");
-c.status1=$g(hd+"button02status1");
-c.status1.button=c;
-c = createPanel($g(hd+"button02"), hd+"button02status2", "", 26, 226, 78, 32);
-c.style.cursor="pointer";
-addSkin(c, "/twitterG/skins/twitterG004.png","LR3x",65,50,24,0,17,50,24,3,17,43);
-addText(c, "取消关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
-eb.setDock(c,"fill","fill");
-c=$g(hd+"button02");
-c.status2=$g(hd+"button02status2");
-c.status2.button=c;
-c = createPanel($g(hd+"button02"), hd+"button02status3", "", 26, 226, 78, 32);
-c.style.cursor="pointer";
-addSkin(c, "/twitterG/skins/twitterG006.png","LR3x",65,50,24,0,17,50,24,3,17,43);
-addText(c, "取消关注", "center", "middle", "微软雅黑", 11, "ffffff", "bold");
-eb.setDock(c,"fill","fill");
-c=$g(hd+"button02");
-c.status3=$g(hd+"button02status3");
-c.status3.button=c;
-c = createPanel($g(hd+"button02"), hd+"button02clickLayer", "", 26, 226, 78, 32);
-c.style.cursor="pointer";
-ee.setImage(c,"url:/res/empty.png","stretch","","")
-eb.setDock(c,"fill","fill");
-ee.setOnClick(c,function(sender,event) {
-    ee.setVisible(sender.parentNode.parentNode.button1, true);
-    ee.setVisible(sender.parentNode, false);
-    followV2.userId=sender.parentNode.parentNode.v_userId;
-    followV2.follow=true;
-    followV2();
-    window.event? window.event.cancelBubble = true : event.stopPropagation();    
-});
-c=$g(hd+"button02");
-c.clickLayer=$g(hd+"button02clickLayer");
-c.clickLayer.button=c;
-eb.initButton(c);
-c.downX=1;
-c.downY=2;
-          
-ee.setVisible(root.button1, false);
-ee.setVisible(root.button2, false);
-if (isFollow=="0") {
-    ee.setVisible(root.button1, true);
-} else if (isFollow=="1") {
-    ee.setVisible(root.button2, true);
-}
-
-
-cy+=10;
-eb.setDivRect(root,null,null,null,cy);
-return root; 
-
-
-
-
-]]></functionCode>
     </item>
     <item name="refreshMain" type="20">
       <varValue />
@@ -9448,45 +9534,6 @@ for (var i=0; i<task.length; i++) {
 
 
 ]]></functionCode>
-    </item>
-    <item name="loadTwitterRecord" type="20">
-      <varValue />
-      <functionParam>panel, dataset, index</functionParam>
-      <functionCode>//"id,mins,userId,content,photo1,replyCount(5),forwardCount,likeCount,userName,nickName(9),photo" +
-//",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,
-//uplinkId(20),reReCount,reFwCount,isLike"
-panel.v_userName = dataset.getData(8,index);
-panel.v_userId = dataset.getData(2,index);
-panel.v_nickName = dataset.getData(9,index);
-panel.v_times = dataset.getData(1,index);
-panel.v_contentId = dataset.getData(0,index);
-panel.v_userPhoto = dataset.getData(10,index);
-panel.v_photo1 = dataset.getData(4,index);
-panel.v_content = dataset.getData(3,index);
-panel.v_label1 = dataset.getData(5,index);
-panel.v_label2 = dataset.getData(6,index);
-panel.v_label3 = dataset.getData(7,index);
-panel.v_uplinkId = dataset.getData(20,index);
-panel.v_reTimes = dataset.getData(11,index);
-panel.v_reContent = dataset.getData(12,index);
-panel.v_rePhoto1 = dataset.getData(13,index);
-panel.v_reUserId = dataset.getData(14,index);
-panel.v_reUserName = dataset.getData(15,index);
-panel.v_reNickName = dataset.getData(16,index);
-panel.v_rePhoto = dataset.getData(17,index);
-panel.v_status = dataset.getData(18,index);
-panel.v_uplinkType = dataset.getData(19,index);
-panel.v_reReCount = dataset.getData(21,index);
-panel.v_reFwCount = dataset.getData(22,index);
-panel.v_isForward = dataset.getData(23,index);
-panel.v_reIsForward = dataset.getData(24,index);
-panel.v_isLike = dataset.getData(25,index);
-panel.v_reIsLike = dataset.getData(26,index);
-panel.v_reLikeCount = dataset.getData(27,index);
-                                                                 
-
-
-</functionCode>
     </item>
   </g5Items>
 </page>
