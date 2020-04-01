@@ -1,5 +1,5 @@
 <page>
-  <controls count="268">
+  <controls count="264">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -92,6 +92,7 @@ setInterval(function() {g5.refreshMain();}, 100);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
+      <note>mainDiv</note>
       <onCreate>g5.scrollFunc = function (e) {
     return;
     var direct = 0;
@@ -182,9 +183,7 @@ window.onmousewheel = document.onmousewheel = g5.scrollFunc; //IE/Opera/Chrome/S
       <heightRatio>0.0715396578538103</heightRatio>
       <left>46</left>
       <leftRatio>0.153333333333333</leftRatio>
-      <onClick>g5.newPhoto1 = "";
-ee.setEditText(ee.getControl("edit1"), "");
-ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
+      <onClick>ee.setEditText(ee.getControl("edit1"), "");
 ee.setText(ee.getControl("panel45"), "发推");
 newTwitter.uplinkType = "N";
 newTwitter.uplinkId = 0;
@@ -755,9 +754,7 @@ sender.style.borderRadius = "24px";
       <heightRatio>0.0777604976671851</heightRatio>
       <left>125</left>
       <leftRatio>0.416666666666667</leftRatio>
-      <onClick>g5.newPhoto1 = "";
-ee.setEditText(ee.getControl("edit1"), "");
-ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
+      <onClick>ee.setEditText(ee.getControl("edit1"), "");
 ee.setText(ee.getControl("panel45"), "发推");
 newTwitter.uplinkType = "N";
 newTwitter.uplinkId = 0;
@@ -1162,7 +1159,6 @@ sender.style.borderRadius = "50%";
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.32879045996593</sizeRatio>
       <top>-4</top>
@@ -1262,9 +1258,9 @@ ee.setOnMouseLeave(sender, function(sender,event) {
     //sender.childNodes[0].style.color = "rgb(101,119,134)";
 });
 </onCreate>
-      <onUploadCompleteC>newTwitter.photo1 = eio.readString16();
-ee.setImage(ee.getControl("panel7"), "url:" + g5.imgUrl + newTwitter.photo1, "trim", "", "");
-ee.setText(ee.getControl("panel7"), "");
+      <onUploadCompleteC><![CDATA[if (ee.getControl("panel7").v_photos.length>=4) return;
+ee.getControl("panel7").v_photos.push(eio.readString16());
+g5.refreshPhoto(ee.getControl("panel7"));
 if (ee.getControl("panel7").style.visibility=="hidden") {
     ee.setVisible(ee.getControl("panel7"), true);
     ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+462-140);
@@ -1277,18 +1273,22 @@ if (ee.getControl("panel7").style.visibility=="hidden") {
 
 
 
-</onUploadCompleteC>
+]]></onUploadCompleteC>
       <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
 var filename = newFileName.substring(pos+1);  
 eio.appendString16(filename);</onUploadCompleteS>
-      <onUploadStartC>fileExt = fileExt.toLowerCase();
+      <onUploadStartC><![CDATA[fileExt = fileExt.toLowerCase();
 if ((fileExt != ".bmp") &amp;&amp;
     (fileExt != ".jpg") &amp;&amp;
     (fileExt != ".jpeg") &amp;&amp;
     (fileExt != ".png") &amp;&amp;
     (fileExt != ".tif") &amp;&amp;
     (fileExt != ".tiff")) return;
-    </onUploadStartC>
+    
+if (ee.getControl("panel7").v_photos.length>=4) {
+    alert("对不起，您最多只能上传4张图片。");
+    return;
+} ]]></onUploadStartC>
       <onUploadStartS>var sql,sqlResult;  
 sql = "select next value for dbo.SEQImageSn as Sn";
 sqlResult = db.executeQuery("DB", sql);
@@ -1353,11 +1353,9 @@ sender._input.style.resize = "none";</onCreate>
       <left>476</left>
       <leftRatio>0.810902896081772</leftRatio>
       <onClick>newTwitter.content = ee.getEditText(ee.getControl("edit7"));
-if (ee.getControl("panel7").style.visibility=="hidden") {
-    newTwitter.photo1 = "";
-}
 newTwitter.uplinkType = "N";
 newTwitter.uplinkId = 0;
+newTwitter.photos = ee.getControl("panel7").v_photos;
 newTwitter();
 </onClick>
       <outerBottom>18</outerBottom>
@@ -1377,50 +1375,15 @@ newTwitter();
       <left>75</left>
       <leftRatio>0.127768313458262</leftRatio>
       <onCreate>sender.style.borderRadius = "15px";
-//sender.style.borderWidth = "1px";
-//sender.style.borderColor = "rgb(204,214,221)";
-//sender.style.borderStyle = "solid";</onCreate>
+sender.v_mode="x";
+sender.v_photos = new Array();
+</onCreate>
       <outerBottom>70</outerBottom>
       <sizeRatio>0.588594704684318</sizeRatio>
       <top>103</top>
       <topRatio>0.222943722943723</topRatio>
       <width>491</width>
       <widthRatio>0.836456558773424</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel7/panel8">
-      <cursor>pointer</cursor>
-      <height>36</height>
-      <heightRatio>0.124567474048443</heightRatio>
-      <left>437</left>
-      <leftRatio>0.890020366598778</leftRatio>
-      <onClick>ee.setVisible(ee.getControl("panel7"), false);
-ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h-(462-140));
-g5.homepageMoveY(0,-(462-140));
-eb.processDock();
-ee.setText(ee.getControl("panel7"), "");
-ee.setImage(ee.getControl("panel7"), "", "trim", "", "")   
-</onClick>
-      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgba(255,255,255,1);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M13.414 12l5.793-5.793c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0L12 10.586 6.207 4.793c-.39-.39-1.023-.39-1.414 0s-.39 1.023 0 1.414L10.586 12l-5.793 5.793c-.39.39-.39 1.023 0 1.414.195.195.45.293.707.293s.512-.098.707-.293L12 13.414l5.793 5.793c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L13.414 12z\"></path></g></svg>";
-sender.style.borderRadius = "50%";
-sender.style.backgroundColor = "rgba(0,0,0,0.8)";
-ee.setOnMouseEnter(sender, function(sender,event) {
-    sender.style.backgroundColor = "rgba(0,0,0,0.5)";
-    //sender.childNodes[0].style.color = "rgb(29,161,242)";
-});    
-ee.setOnMouseLeave(sender, function(sender,event) {
-    sender.style.backgroundColor = "rgba(0,0,0,0.8)";
-    //sender.childNodes[0].style.color = "rgb(101,119,134)";
-});
-sender.style.zIndex=100;
-
-
-]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>x</text>
-      <top>11</top>
-      <topRatio>0.0380622837370242</topRatio>
-      <width>36</width>
-      <widthRatio>0.0733197556008147</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel9">
       <backgroundImg>CPY0003.jpg</backgroundImg>
@@ -1431,34 +1394,33 @@ sender.style.zIndex=100;
       <heightRatio>0.0779220779220779</heightRatio>
       <left>130</left>
       <leftRatio>0.221465076660988</leftRatio>
-      <onClick><![CDATA[var url = prompt("请输入播放地址：", "");
+      <onClick><![CDATA[if (ee.getControl("panel7").v_photos.length>=4) {
+    alert("对不起，您最多上传4张照片或者视频");
+    return;
+}
+var url = prompt("请输入播放地址：", "");
 if (url == null) return;
 if (url.length<=0) return;
-newTwitter.photo1 = "";
+ytbVideo = "";
 var pos;
 if ((pos=url.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
     //https://www.youtube.com/watch?v=yJG3WMG1dak
-    newTwitter.photo1 = url.substr(pos + "youtube.com/watch?v=".length, url.length);
+    ytbVideo = url.substr(pos + "youtube.com/watch?v=".length, url.length);
 } else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
     //https://youtu.be/edESgyDUKDU
-    newTwitter.photo1 = url.substr(pos + "youtu.be/".length, url.length);
+    ytbVideo = url.substr(pos + "youtu.be/".length, url.length);
 } else {
     alert("您输入的视频地址不正确");
     return;
 }
-if ((newTwitter.photo1.length<=8)||(newTwitter.photo1.length>=14)) {
+if ((ytbVideo.length<=8)||(ytbVideo.length>=14)) {
     alert("您输入的视频地址不正确");
     return;
 }
-var rect = eb.getDivRect(ee.getControl("panel7"));
-url = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
-    newTwitter.photo1 + 
-    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-newTwitter.photo1 = "?YTB" + newTwitter.photo1;
-ee.setText(ee.getControl("panel7"), url);
-ee.setImage(ee.getControl("panel7"), "", "trim", "", "")   
-//ee.getControl("panel7").style.pointerEvents = "none";
-
+ytbVideo = "?YTB" + ytbVideo;
+ee.getControl("panel7").v_photos.push(ytbVideo);
+g5.refreshPhoto(ee.getControl("panel7"));
+    
 if (ee.getControl("panel7").style.visibility=="hidden") {
     ee.setVisible(ee.getControl("panel7"), true);
     ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+462-140);
@@ -3231,10 +3193,13 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>722</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <outerRight>1</outerRight>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";</onCreate>
       <sizeRatio>2.35947712418301</sizeRatio>
       <top>0</top>
-      <width>306</width>
+      <width>307</width>
       <widthRatio>0.996742671009772</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem11">
@@ -3246,7 +3211,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>0.169934640522876</sizeRatio>
       <top>0</top>
-      <width>306</width>
+      <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem11/panel118">
@@ -3280,50 +3245,34 @@ ee.showAni(ee.getControl("panel27"), 0);
       <sizeRatio>0.00326797385620915</sizeRatio>
       <top>51</top>
       <topRatio>0.980769230769231</topRatio>
-      <width>306</width>
+      <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12">
       <autoScroll>true</autoScroll>
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>609</height>
+      <height>617</height>
       <heightRatio>0.843490304709141</heightRatio>
       <left>0</left>
+      <onCreate>sender.style.overflowX = "hidden";</onCreate>
       <sizeRatio>1.99019607843137</sizeRatio>
       <top>52</top>
       <topRatio>0.07202216066482</topRatio>
-      <width>306</width>
+      <width>307</width>
       <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/panel122">
-      <backgroundImg>arrowR.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>38</height>
-      <heightRatio>0.0631578947368421</heightRatio>
-      <left>9</left>
-      <leftRatio>0.0296127562642369</leftRatio>
-      <onClick>sendChat();</onClick>
-      <sizeRatio>0.954545454545455</sizeRatio>
-      <top>15</top>
-      <topRatio>0.0240601503759399</topRatio>
-      <width>31</width>
-      <widthRatio>0.100227790432802</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem13">
       <backgroundColor>f0f0f0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
       <heavy>10</heavy>
-      <height>61</height>
-      <heightRatio>0.0844875346260388</heightRatio>
+      <heavyEnabled>false</heavyEnabled>
+      <height>53</height>
+      <heightRatio>0.0734072022160665</heightRatio>
       <left>0</left>
-      <sizeRatio>0.199346405228758</sizeRatio>
-      <top>661</top>
+      <sizeRatio>0.173202614379085</sizeRatio>
+      <top>669</top>
       <topRatio>0.915512465373961</topRatio>
-      <width>306</width>
+      <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem13/panel120">
@@ -3336,45 +3285,51 @@ ee.showAni(ee.getControl("panel27"), 0);
       <left>0</left>
       <sizeRatio>0.00326797385620915</sizeRatio>
       <top>0</top>
-      <width>306</width>
+      <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem13/edit6">
       <backgroundSkin>edit1</backgroundSkin>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
+      <dockX>fill</dockX>
+      <dockY>center</dockY>
       <fontColor>C0C0C0</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
-      <height>37</height>
-      <heightRatio>0.6</heightRatio>
+      <hAlign>left</hAlign>
+      <height>32</height>
+      <heightRatio>0.60377358490566</heightRatio>
       <inputFont>微软雅黑</inputFont>
       <inputFontSize>12</inputFontSize>
-      <left>11</left>
-      <leftRatio>0.0358306188925081</leftRatio>
-      <sizeRatio>0.145161290322581</sizeRatio>
-      <text>开始写私信</text>
-      <top>13</top>
-      <topRatio>0.216666666666667</topRatio>
-      <width>247</width>
-      <widthRatio>0.807817589576547</widthRatio>
+      <left>15</left>
+      <leftRatio>0.0488599348534202</leftRatio>
+      <multiLine>true</multiLine>
+      <onCreate>sender._input.style.resize = "none";</onCreate>
+      <outerLeft>15</outerLeft>
+      <outerRight>50</outerRight>
+      <sizeRatio>0.132231404958678</sizeRatio>
+      <text>创建一条私信</text>
+      <top>10</top>
+      <topRatio>0.188679245283019</topRatio>
+      <width>242</width>
+      <widthRatio>0.788273615635179</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem13/panel121">
       <backgroundImg>arrowR.png</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>40</height>
-      <heightRatio>0.651515151515151</heightRatio>
+      <dockX>right</dockX>
+      <dockY>center</dockY>
+      <height>35</height>
+      <heightRatio>0.660377358490566</heightRatio>
       <left>264</left>
-      <leftRatio>0.863325740318907</leftRatio>
+      <leftRatio>0.866449511400652</leftRatio>
       <onClick>sendChat();</onClick>
-      <sizeRatio>0.826923076923077</sizeRatio>
-      <top>11</top>
-      <topRatio>0.181818181818182</topRatio>
+      <outerRight>7</outerRight>
+      <sizeRatio>0.972222222222222</sizeRatio>
+      <top>9</top>
+      <topRatio>0.169811320754717</topRatio>
       <width>36</width>
-      <widthRatio>0.118451025056948</widthRatio>
+      <widthRatio>0.117263843648208</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/panel36">
       <backgroundColor>C0C0C0</backgroundColor>
@@ -3940,7 +3895,6 @@ sender.setSelected = function(item) {
 }]]></onCreate>
       <sizeRatio>2.54071661237785</sizeRatio>
       <top>0</top>
-      <topRatio>-0.00138504155124654</topRatio>
       <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -4186,7 +4140,6 @@ sender.setSelected = function(item) {
 }]]></onCreate>
       <sizeRatio>2.28664495114007</sizeRatio>
       <top>0</top>
-      <topRatio>-0.00138504155124654</topRatio>
       <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -4961,7 +4914,6 @@ newTwitter();
       <left>0</left>
       <onClick>g5.newPhoto1 = "";
 ee.setEditText(ee.getControl("edit1"), "");
-ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
 ee.setText(ee.getControl("panel45"), "转推");
 newTwitter.uplinkType = "F";
 ee.showAni(ee.getControl("panel42"), 0);</onClick>
@@ -5029,11 +4981,11 @@ sender.show = function() {
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>50</height>
-      <heightRatio>0.273224043715847</heightRatio>
+      <heightRatio>0.24390243902439</heightRatio>
       <left>0</left>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
-      <sizeRatio>0.161290322580645</sizeRatio>
+      <sizeRatio>0.151515151515152</sizeRatio>
       <text>   X   取消关注/关注 @xxx</text>
       <top>0</top>
       <width>330</width>
@@ -5049,17 +5001,17 @@ sender.show = function() {
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>50</height>
-      <heightRatio>0.273224043715847</heightRatio>
+      <heightRatio>0.24390243902439</heightRatio>
       <left>0</left>
       <onClick>ee.getControl("panel217").v_root = sender.parentNode.v_root;
 ee.getControl("panel217").show();
 </onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
-      <sizeRatio>0.161290322580645</sizeRatio>
+      <sizeRatio>0.151515151515152</sizeRatio>
       <text>   X   屏蔽 @xxx</text>
       <top>50</top>
-      <topRatio>0.273224043715847</topRatio>
+      <topRatio>0.24390243902439</topRatio>
       <width>330</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -5075,7 +5027,6 @@ ee.getControl("panel217").show();
       <height>50</height>
       <heightRatio>0.24390243902439</heightRatio>
       <left>0</left>
-      <leftRatio>-0.00303030303030303</leftRatio>
       <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
     "<g><path d=\"M23.074 3.35H20.65V.927c0-.414-.337-.75-.75-.75s-.75.336-.75.75V3.35h-2.426c-.414 0-.75.337-.75.75s.336.75.75.75h2.425v2.426c0 .414.335.75.75.75s.75-.336.75-.75V4.85h2.424c.414 0 .75-.335.75-.75s-.336-.75-.75-.75zM19.9 10.744c-.415 0-.75.336-.75.75v9.782l-6.71-4.883c-.13-.095-.285-.143-.44-.143s-.31.048-.44.144l-6.71 4.883V5.6c0-.412.337-.75.75-.75h6.902c.414 0 .75-.335.75-.75s-.336-.75-.75-.75h-6.9c-1.242 0-2.25 1.01-2.25 2.25v17.15c0 .282.157.54.41.668.25.13.553.104.78-.062L12 17.928l7.458 5.43c.13.094.286.143.44.143.117 0 .234-.026.34-.08.252-.13.41-.387.41-.67V11.495c0-.414-.335-.75-.75-.75z\"></path></g>" +
     "</svg> <div style='display:inline;'>添加推文到书签</div>");    
@@ -5084,7 +5035,7 @@ ee.getControl("panel217").show();
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.151515151515152</sizeRatio>
       <text>   X   添加推文到书签</text>
-      <topRatio>0.541463414634146</topRatio>
+      <topRatio>0.48780487804878</topRatio>
       <width>330</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -5121,6 +5072,7 @@ ee.getControl("panel217").show();
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -5324,7 +5276,9 @@ ee.showAni(ee.getControl("panel117"), 1);
       <left>364</left>
       <leftRatio>0.288888888888889</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);</onAni2End>
-      <onAniStart>ee.setVisible(ee.getControl("panel112"), true);</onAniStart>
+      <onAniStart>ee.setVisible(ee.getControl("panel112"), true);
+ee.getControl("panel51").v_photos = new Array();
+g5.refreshPhoto(ee.getControl("panel51"));</onAniStart>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <sizeRatio>1.07330827067669</sizeRatio>
       <top>112</top>
@@ -5356,8 +5310,7 @@ ee.showAni(ee.getControl("panel117"), 1);
       <heightRatio>0.0823117338003503</heightRatio>
       <left>18</left>
       <leftRatio>0.0338345864661654</leftRatio>
-      <onClick>ee.setText(ee.getControl("panel52"), " ");
-ee.showAni(ee.getControl("panel42"), 1);</onClick>
+      <onClick>ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <sizeRatio>0.734375</sizeRatio>
       <top>11</top>
       <topRatio>0.0192644483362522</topRatio>
@@ -5377,6 +5330,7 @@ ee.showAni(ee.getControl("panel42"), 1);</onClick>
       <left>342</left>
       <leftRatio>0.642857142857143</leftRatio>
       <onClick>newTwitter.content = ee.getEditText(ee.getControl("edit1"));
+newTwitter.photos = ee.getControl("panel51").v_photos;
 newTwitter();</onClick>
       <sizeRatio>0.226993865030675</sizeRatio>
       <text>发推</text>
@@ -5436,6 +5390,7 @@ newTwitter();</onClick>
       <left>116</left>
       <leftRatio>0.218045112781955</leftRatio>
       <multiLine>true</multiLine>
+      <onCreate>sender._input.style.resize = "none";</onCreate>
       <sizeRatio>0.398963730569948</sizeRatio>
       <top>83</top>
       <topRatio>0.145359019264448</topRatio>
@@ -5477,26 +5432,31 @@ newTwitter();</onClick>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <onCreate>eb.setAlpha(sender, 1);</onCreate>
-      <onUploadCompleteC>newTwitter.photo1 = eio.readString16();
-ee.setText(ee.getControl("panel52"), " ");
-ee.setImage(ee.getControl("panel52"), "url:" + g5.imgUrl + newTwitter.photo1, "trim", "", "");
+      <onUploadCompleteC><![CDATA[if (ee.getControl("panel51").v_photos.length>=4) return;
+ee.getControl("panel51").v_photos.push(eio.readString16());
+g5.refreshPhoto(ee.getControl("panel51"));
 
 
 
 
 
-</onUploadCompleteC>
+]]></onUploadCompleteC>
       <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
 var filename = newFileName.substring(pos+1);  
 eio.appendString16(filename);</onUploadCompleteS>
-      <onUploadStartC>fileExt = fileExt.toLowerCase();
+      <onUploadStartC><![CDATA[fileExt = fileExt.toLowerCase();
 if ((fileExt != ".bmp") &amp;&amp;
     (fileExt != ".jpg") &amp;&amp;
     (fileExt != ".jpeg") &amp;&amp;
     (fileExt != ".png") &amp;&amp;
     (fileExt != ".tif") &amp;&amp;
     (fileExt != ".tiff")) return;
-    </onUploadStartC>
+
+if (ee.getControl("panel51").v_photos.length>=4) {
+    alert("对不起，您最多只能上传4张图片。");
+    return;
+} 
+    ]]></onUploadStartC>
       <onUploadStartS>var sql,sqlResult;  
 sql = "select next value for dbo.SEQImageSn as Sn";
 sqlResult = db.executeQuery("DB", sql);
@@ -5516,37 +5476,19 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <heightRatio>0.51138353765324</heightRatio>
       <left>26</left>
       <leftRatio>0.0488721804511278</leftRatio>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = "15px";
+sender.v_mode = "x";
+sender.v_photos = new Array();
+</onCreate>
       <sizeRatio>0.613445378151261</sizeRatio>
-      <top>255</top>
-      <topRatio>0.446584938704028</topRatio>
+      <top>254</top>
+      <topRatio>0.444833625218914</topRatio>
       <width>476</width>
       <widthRatio>0.894736842105263</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel112/panel42/panel51/panel52">
-      <backgroundColor>F4F4F4</backgroundColor>
-      <backgroundImg>empty.png</backgroundImg>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>292</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.613445378151261</sizeRatio>
-      <top>0</top>
-      <width>476</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel112/panel42/panel51/panel53">
-      <backgroundSkin>bodyMask</backgroundSkin>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>292</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.613445378151261</sizeRatio>
-      <top>0</top>
-      <width>476</width>
-      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel42/panel105">
       <backgroundImg>CPY0003.jpg</backgroundImg>
@@ -5555,32 +5497,32 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <heightRatio>0.0525394045534151</heightRatio>
       <left>17</left>
       <leftRatio>0.0319548872180451</leftRatio>
-      <onClick><![CDATA[var url = prompt("请输入播放地址：", "");
+      <onClick><![CDATA[if (ee.getControl("panel51").v_photos.length>=4) {
+    alert("对不起，您最多上传4张照片或者视频");
+    return;
+}
+var url = prompt("请输入播放地址：", "");
 if (url == null) return;
 if (url.length<=0) return;
-newTwitter.photo1 = "";
+var ytbVideo = "";
 var pos;
 if ((pos=url.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
     //https://www.youtube.com/watch?v=yJG3WMG1dak
-    newTwitter.photo1 = url.substr(pos + "youtube.com/watch?v=".length, url.length);
+    ytbVideo = url.substr(pos + "youtube.com/watch?v=".length, url.length);
 } else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
     //https://youtu.be/edESgyDUKDU
-    newTwitter.photo1 = url.substr(pos + "youtu.be/".length, url.length);
+    ytbVideo = url.substr(pos + "youtu.be/".length, url.length);
 } else {
     alert("您输入的视频地址不正确");
     return;
 }
-if ((newTwitter.photo1.length<=8)||(newTwitter.photo1.length>=14)) {
+if ((ytbVideo.length<=8)||(ytbVideo.length>=14)) {
     alert("您输入的视频地址不正确");
     return;
 }
-var rect = eb.getDivRect(ee.getControl("panel52"));
-url = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
-    newTwitter.photo1 + 
-    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-newTwitter.photo1 = "?YTB" + newTwitter.photo1;
-ee.setText(ee.getControl("panel52"), url);   
-ee.getControl("panel53").style.pointerEvents = "none";
+ytbVideo = "?YTB" + ytbVideo;
+ee.getControl("panel51").v_photos.push(ytbVideo);
+g5.refreshPhoto(ee.getControl("panel51"));
     
     
 
@@ -5717,6 +5659,7 @@ ee.getControl("panel53").style.pointerEvents = "none";
       <height>228</height>
       <heightRatio>0.28643216080402</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色->屏蔽确认]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>457</left>
       <leftRatio>0.362698412698413</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -5732,7 +5675,7 @@ sender.show = function() {
 }</onCreate>
       <sizeRatio>0.658959537572254</sizeRatio>
       <top>284</top>
-      <topRatio>0.355527638190955</topRatio>
+      <topRatio>0.35678391959799</topRatio>
       <width>346</width>
       <widthRatio>0.274603174603175</widthRatio>
     </control>
@@ -6078,6 +6021,7 @@ getOtherUserInfo.onComplete();
     </taskSetItem>
     <taskSetItem name="newTwitter">
       <script1><![CDATA[//content,photo1,uplinkType,uplinkId,busy
+//photos(array)
 if (eb.isEmpty(newTwitter.busy)) newTwitter.busy = false;
 if (newTwitter.busy) return;
 
@@ -6092,10 +6036,10 @@ newTwitter.busy = true;
 
 eio.appendString16(g5.token);
 eio.appendString16(text);
-eio.appendString16(newTwitter.photo1);
 eio.appendString16(newTwitter.uplinkType);
 eio.appendString16(newTwitter.uplinkId+"");
-
+eio.appendInt32(newTwitter.photos.length);
+for (var i=0; i<newTwitter.photos.length; i++) eio.appendString16(newTwitter.photos[i]);
 
 
 
@@ -6105,9 +6049,15 @@ eio.appendString16(newTwitter.uplinkId+"");
 ]]></script1>
       <script2><![CDATA[var token = eio.readString16();
 var text = eio.readString16();
-var photo1 = eio.readString16();
 var uplinkType = eio.readString16();
 var uplinkId = eio.readString16();
+var count = Math.min(eio.readInt32(),4);
+var photos = new Array();
+for (var i=0; i<count; i++) {
+    photos.push(eio.readString16());
+}
+while (photos.length<4) photos.push("");
+
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
@@ -6135,10 +6085,10 @@ sql = "exec twitterNew " +
     userId + 
     ",'" + db.encode(text) + "'" +
     ",1" +
-    ",'" + db.encode(photo1) + "'" +
-    ",''" +
-    ",''" +
-    ",''" +
+    ",'" + db.encode(photos[0]) + "'" +
+    ",'" + db.encode(photos[1]) + "'" +
+    ",'" + db.encode(photos[2]) + "'" +
+    ",'" + db.encode(photos[3]) + "'" +
     ",'" + db.encode(uplinkType) + "'" +
     "," + db.encode(uplinkId);
 if (!db.executeNoneQuery("DB", sql)) {
@@ -6154,11 +6104,12 @@ if (eio.readString8() == "F") {
     alert(eio.readString8());
     return;
 }
-ee.setText(ee.getControl("panel52"), " ");
 ee.showAni(ee.getControl("panel42"), 1);
 
 if (ee.getControl("panel7").style.visibility!="hidden") {
     ee.setVisible(ee.getControl("panel7"), false);
+    ee.getControl("panel7").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel7"));
 }
 ee.setEditText(ee.getControl("edit7"), "");
 ee.setRect(ee.getControl("panel1"),null,null,null,140);
@@ -6274,7 +6225,7 @@ if (sqlResult == null) {
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount," +
-    "reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount", 0, 99999); 
+    "reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     updateHomepage.busy = false;
@@ -6458,7 +6409,7 @@ if (sqlResult == null) {
 }
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount", 0, 99999); 
+    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 
 sql = 
     "SELECT COUNT(*) AS FollowCount FROM dbo.follow WHERE   (userId = "+userId+"); " +
@@ -6696,7 +6647,7 @@ if (sqlResult == null) {
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount", 0, 99999); 
+    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 
 sql = "exec [twitterSource] " + userId + "," + topicId;
 sqlResult = db.executeQuery("DB", sql);
@@ -6705,11 +6656,11 @@ if (sqlResult == null) {
 }
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount", 0, 99999); 
+    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 while (db.nextResult(sqlResult)) {
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount", 0, 99999); 
+    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 }]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     showTopic.busy = false;
@@ -6908,7 +6859,7 @@ if (sqlResult == null) {
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount," +
-    "reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount", 0, 99999); 
+    "reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     return;
@@ -7028,16 +6979,9 @@ if (f == "T") {
 </script3>
     </taskSetItem>
     <taskSetItem name="showChat">
-      <script1><![CDATA[var c;
-if (showChat.chatId == 0) {
-    c = ee.getControl("layoutyitem12");
-    while (c.eeChildren.length>0) ee.removeControl(c.eeChildren[0]);
-    c.scrollTop = "0px";
-}
-
+      <script1>//chatUserId
 eio.appendString16(g5.token);
-eio.appendString16(showChat.userName);
-eio.appendString16(showChat.chatId + "");
+eio.appendString16(showChat.chatUserId + "");
 
 
 
@@ -7047,10 +6991,9 @@ eio.appendString16(showChat.chatId + "");
 
 
 
-]]></script1>
+</script1>
       <script2><![CDATA[var token = eio.readString16();
-var username = eio.readString16();
-var chatId = parseInt(eio.readString16());
+var chatUserId = parseInt(eio.readString16());
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -7068,45 +7011,35 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     return;
 } 
 var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "SELECT top(30)  dbo.chat.id, dbo.chat.regDatetime, DATEDIFF(second, dbo.chat.regDatetime, GETDATE()) AS seconds, dbo.chat.[content], " + 
+    "                dbo.chat.photo1, dbo.chat.sendUserId, dbo.userInfo.status AS sendUserStatus,  " +
+    "                dbo.userInfo.userName AS sendUserName, dbo.userInfo.nickName AS sendUserNickName,  " +
+    "                dbo.userInfo.note AS sendUserNote, dbo.userInfo.photo AS sendUserPhoto, dbo.userInfo.titleBg AS sendUserTitleBg,  " +
+    "                dbo.userInfo.homePage AS sendUserHomePage, dbo.chat.recvUserId, userInfo_1.status AS recvUserStatus,  " +
+    "                userInfo_1.userName AS recvUserName, userInfo_1.nickName AS recvUserNickName,  " +
+    "                userInfo_1.note AS recvUserNote, userInfo_1.photo AS recvUserPhoto, userInfo_1.titleBg AS recvUserTitleBg,  " +
+    "                userInfo_1.homePage AS recvUserHomePage " +
+    "FROM      dbo.chat INNER JOIN " +
+    "                dbo.userInfo ON dbo.chat.sendUserId = dbo.userInfo.id INNER JOIN " +
+    "                dbo.userInfo AS userInfo_1 ON dbo.chat.recvUserId = userInfo_1.id " +
+    "WHERE (chat.sendUserId=" + myUserId + " and chat.recvUserId=" + chatUserId + ") " +
+    " or (chat.sendUserId=" + chatUserId + " and chat.recvUserId=" + myUserId + ") " +
+    "ORDER BY chat.id DESC ";
+//if (chatId>0) {
+//    sql += " and id>" + chatId + " ";
+//}
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
 eio.appendString8("T");
-eio.appendString16(db.getString(sqlResult,"id"));
-eio.appendString16(db.getString(sqlResult,"nickName"));
-eio.appendString16(db.getString(sqlResult,"userName"));
-eio.appendString16(db.getString(sqlResult,"photo"));
-
-
-sql = "select * from userInfo where userName='" + db.encode(username) + "'"; 
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-if (!db.read(sqlResult)) {
-    eio.appendString8("F");
-    eio.appendString8("用户不存在");
-    return;
-}
-var userId = parseInt(db.getString(sqlResult, "id"));
-eio.appendString16(db.getString(sqlResult,"id"));
-eio.appendString16(db.getString(sqlResult,"nickName"));
-eio.appendString16(db.getString(sqlResult,"userName"));
-eio.appendString16(db.getString(sqlResult,"photo"));
-
-sql = "select top(30) * from chat where " +
-    "(sendUserId=" + myUserId + " and recvUserId=" + userId + ") " +
-    " or (sendUserId=" + userId + " and recvUserId=" + myUserId + ") ";
-if (chatId>0) {
-    sql += " and id>" + chatId + " ";
-}
-sql += " order by id";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-eio.appendDataSet(sqlResult,"id,regDatetime,sendUserId,recvUserId,content,photo1", 0, 99999);
+eio.appendDataSet(sqlResult,"id,regDatetime,seconds,content,photo1,"+
+    "sendUserId,sendUserStatus,sendUserName,sendUserNickName,sendUserNote,sendUserPhoto,sendUserTitleBg,sendUserHomePage,"+
+    "recvUserId,recvUserStatus,recvUserName,recvUserNickName,recvUserNote,recvUserPhoto,recvUserTitleBg,recvUserHomePage", 0, 99999);
  
     
 
@@ -7119,115 +7052,67 @@ eio.appendDataSet(sqlResult,"id,regDatetime,sendUserId,recvUserId,content,photo1
     return;
 }
 
-showChat.myUserId = eio.readString16();
-showChat.myNickName = eio.readString16();
-showChat.myUserName = eio.readString16();
-showChat.myphoto = eio.readString16();
-showChat.chatUserId = eio.readString16();
-showChat.chatNickName = eio.readString16();
-showChat.chatUserName = eio.readString16();
-showChat.chatPhoto = eio.readString16();
-showChat.dataset = eio.readDataSet();
+showChat.data = eio.readDataSet();
 
-ee.setText(ee.getControl("panel118"), 
-    "<b>" + showChat.chatNickName + "</b><br>" +
-    "<font color='#808080' style='font-size:9pt'>@" + showChat.chatUserName + "</font>"
-    );
+if (eb.isEmpty(showChat.items)) showChat.items = new Array();
+for (var i=0; i<showChat.items.length; i++) ee.removeControl(showChat.items[i]);
+showChat.items = new Array();
+if (showChat.data.rowCount<=0) {
+    eb.processDock();
+    return;
+}
+
+var fi = showChat.data.colCount;
+showChat.data.setColCount(fi+1);
+showChat.data.setData(fi,showChat.data.rowCount-1,1);
+for (var i = showChat.data.rowCount-2; i>=0; i--) {
+    if (showChat.data.getData(2,i+1)-showChat.data.getData(2,i)>300) {
+        showChat.data.setData(fi,i,1);    
+    } else if (showChat.data.getData(5,i+1)!=showChat.data.getData(5,i)) {
+        showChat.data.setData(fi,i,1);    
+    } else {
+        showChat.data.setData(fi,i,showChat.data.getData(fi,i+1)+1);    
+    }
+}
+var isBlock = false;
+for (var i=0; i<showChat.data.rowCount; i++) {
+    if (showChat.data.getData(fi,i)>=2) {
+        if (isBlock) {
+            showChat.data.setData(fi,i,3);
+        } else {
+            isBlock = true;
+            showChat.data.setData(fi,i,4);
+        }
+    } else {
+        if (isBlock) {
+            isBlock = false;
+            showChat.data.setData(fi,i,2);
+        } else {
+        }
+    }
+}
+
+for (var i=showChat.data.rowCount-1; i>=0; i--) {
+    showChat.data.setData(3,i,showChat.data.getData(fi,i) + " >" + showChat.data.getData(3,i));    
+}
 
 var root = ee.getControl("layoutyitem12");
-var y = 0;
+var cy = 0;
 var c;
 var rect;
-if (root.eeChildren.length>0) {
-    rect = eb.getDivRect(root.eeChildren[root.eeChildren.length-1]);
-    y = rect.h + rect.y;
+
+var itemWidth = eb.getDivRect(root).w;
+for (var i = showChat.data.rowCount-1; i>=0; i--) {
+    if (showChat.data.getData(18,i) == "DEL") continue;
+    var item = createPanel(root, "chat_" + showChat.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    g5.loadChatRecord(item, showChat.data, i);
+    item.v_mode = showChat.data.getData(fi,i);
+    g5.renderChatBar(item);
+    cy += eb.getDivRect(item).h;
+    showChat.items.push(item);
 }
-rect = eb.getDivRect(root);
-var rw = rect.w;
-var rh = rect.h;
-y += rh * 0.05;
-var hd = "pch_";
-for (var i = 0; i < showChat.dataset.rowCount; i++) {
-    var left = true;
-    if (parseInt(showChat.dataset.getData(2,i))==parseInt(showChat.myUserId)) {
-        left = false;
-    }
-    //user photo
-    var hd1 = "u" + showChat.dataset.getData(0,i);
-    if (left) {
-        c = createPanel(root, hd+hd1+"panel13", "", parseInt(rw*0.0296), y, parseInt(rw*0.1002),  parseInt(rw*0.1002));
-    } else {
-        c = createPanel(root, hd+hd1+"panel13", "", parseInt(rw*0.8405), y, parseInt(rw*0.1002),  parseInt(rw*0.1002));
-    }
-    eb.setDock(c,"disabled","disabled");
-    c = createPanel($g(hd+hd1+"panel13"), hd+hd1+"panel14", "", 0, 0, 79, 77);
-    var photo;
-    if (left) {
-        photo = showChat.chatPhoto;
-    } else {
-        photo = showChat.myphoto
-    }
-    if (photo == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
-    } else {
-        ee.setImage(c,"url:" + g5.imgUrl + photo,"trim","","")
-    }
-    eb.setDock(c,"fill","fill");
-    eb.setOuter(c,1,1,1,1);
-    c = createPanel($g(hd+hd1+"panel13"), hd+hd1+"panel15", "", 0, 0, 79, 77);
-    ee.setImage(c,"/twitterG/main/home/cirMask.png","trim","","")
-    eb.setDock(c,"fill","fill");
-    //content
-    c = createPanel(root, hd+hd1+"panel2", "", rw*0.1549, y+rw*0.01, parseInt(rw*0.55), 45);
-    if (left) {
-        addSkin(c, "/twitterG/skins/button1.png","9x",37,36,16,16,4,4,17,2,4,32);
-    } else {
-        addSkin(c, "/twitterG/skins/twitterG002.png","9x",37,36,16,16,4,4,17,2,4,32);
-    }
-    addText(c, "a", "left", "center", "微软雅黑", 12, "FFFFFF", "normal");
-    c.label.style.whiteSpace = "nowrap";
-    //eb.setFontSizeAuto(c, 24);
-    ee.setText(c, showChat.dataset.getData(4,i));
-    eb.processDock();
-    eb.setDivRect(c.label, null, null, 10,10);
-    rect = eb.getDivRect(c.label);
-    if (rect.w > parseInt(rw*0.55)) {
-        c.label.style.whiteSpace = "pre-wrap";
-        eb.setDivRect(c.label, null, null, parseInt(rw*0.55),10);
-        rect = eb.getDivRect(c.label);
-    }
-    ee.setRect(c, null, null, rect.w + 32, rect.h + 32);
-    rect = eb.getDivRect(c);
-    if (!left) {
-        ee.setRect(c, rw*0.82 - rect.w, null, null, null)
-    }
-    y += rect.h + rw * 0.008;
-    
-    //time
-    c = createPanel(root, hd+hd1+"panel5", "", rw*0.15489, y, rw*0.65, rh*0.051127);
-    var s = showChat.dataset.getData(1,i);
-    s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日  " + s.substr(11,8);
-    if (left) {
-        addText(c,s, "left", "middle", "微软雅黑", 12, "808080", "bold");
-    } else {
-        addText(c,s, "right", "middle", "微软雅黑", 12, "808080", "bold");
-    }
-    //eb.setFontSizeAuto(c, 24);
-    
-    /*
-    c = createPanel($g("ee_layoutyitem12"), hd+hd1+"pl3", "", rw*0.713, y, rw * 0.8, rh * 0.0451);
-    addSkin(c, "/twitterG/skins/twitterG002.png","9x",37,36,16,16,4,4,17,2,4,32);
-    addText(c, "a", "left", "top", "黑体", 9, "FFFFFF", "normal");
-    eb.setFontSizeAuto(c, 24);
-    */
-        
-    rect = eb.getDivRect(c);
-    y += rect.h + rw * 0.03;
-
-
-}
-
-eb.processDock();]]></script3>
+eb.processDock();
+root.scrollTop = cy - eb.getDivRect(root).h;]]></script3>
     </taskSetItem>
     <taskSetItem name="sendChat">
       <script1><![CDATA[var content = ee.getEditText(ee.getControl("edit6"));
@@ -7345,11 +7230,16 @@ for (var i = 0; i < showChatList.dataset.rowCount; i++) {
     y += 75;
     c.style.cursor="pointer";
     c.userName = showChatList.dataset.getData(6,i);
+    c.nickName = showChatList.dataset.getData(5,i);
+    c.chatUserId = showChatList.dataset.getData(0,i);
     ee.setOnClick(c,function(sender,event) {
-        showChat.userName = sender.userName;
+        showChat.chatUserId = sender.chatUserId;
         showChat.chatId = 0;
         showChat();
-        //ee.showAni(ee.getControl("panel116"), 0);
+        ee.setText(ee.getControl("panel118"), 
+            "<b>" + sender.nickName + "</b><br>" +
+            "<font color='#808080' style='font-size:9pt'>@" + sender.userName + "</font>"
+            );
     });
     c = createPanel($g(hd+"panel4"), hd+"panel2", "C0C0C0", 0, 75, 439, 1);
     eb.setDock(c,"fill","bottom");
@@ -8006,7 +7896,7 @@ g5.syncTwitter(likeContent.contentId,3);
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="41">
+  <g5Items count="46">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -8134,12 +8024,18 @@ g5.syncTwitter(likeContent.contentId,3);
       <functionParam />
       <functionCode />
     </item>
+    <item name="iconClose" type="10">
+      <varValue><![CDATA["<g><path d=\"M13.414 12l5.793-5.793c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0L12 10.586 6.207 4.793c-.39-.39-1.023-.39-1.414 0s-.39 1.023 0 1.414L10.586 12l-5.793 5.793c-.39.39-.39 1.023 0 1.414.195.195.45.293.707.293s.512-.098.707-.293L12 13.414l5.793 5.793c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L13.414 12z\"></path></g>";]]></varValue>
+      <functionParam />
+      <functionCode />
+    </item>
     <item name="loadTwitterRecord" type="20">
       <varValue />
       <functionParam>panel, dataset, index</functionParam>
-      <functionCode>//"id,mins,userId,content,photo1,replyCount(5),forwardCount,likeCount,userName,nickName(9),photo" +
+      <functionCode><![CDATA[//"id,mins,userId,content,photo1,replyCount(5),forwardCount,likeCount,userName,nickName(9),photo" +
 //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,
-//uplinkId(20),reReCount,reFwCount,isLike"
+//uplinkId(20),reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,
+//photo2(28),photo3,photo4,rePhoto2(31),rePhoto3,rePhoto4
 panel.v_userName = dataset.getData(8,index);
 panel.v_userId = dataset.getData(2,index);
 panel.v_nickName = dataset.getData(9,index);
@@ -8147,6 +8043,9 @@ panel.v_times = dataset.getData(1,index);
 panel.v_contentId = dataset.getData(0,index);
 panel.v_userPhoto = dataset.getData(10,index);
 panel.v_photo1 = dataset.getData(4,index);
+panel.v_photo2 = dataset.getData(28,index);
+panel.v_photo3 = dataset.getData(29,index);
+panel.v_photo4 = dataset.getData(30,index);
 panel.v_content = dataset.getData(3,index);
 panel.v_label1 = dataset.getData(5,index);
 panel.v_label2 = dataset.getData(6,index);
@@ -8155,6 +8054,9 @@ panel.v_uplinkId = dataset.getData(20,index);
 panel.v_reTimes = dataset.getData(11,index);
 panel.v_reContent = dataset.getData(12,index);
 panel.v_rePhoto1 = dataset.getData(13,index);
+panel.v_rePhoto2 = dataset.getData(31,index);
+panel.v_rePhoto3 = dataset.getData(32,index);
+panel.v_rePhoto4 = dataset.getData(33,index);
 panel.v_reUserId = dataset.getData(14,index);
 panel.v_reUserName = dataset.getData(15,index);
 panel.v_reNickName = dataset.getData(16,index);
@@ -8168,20 +8070,24 @@ panel.v_reIsForward = dataset.getData(24,index);
 panel.v_isLike = dataset.getData(25,index);
 panel.v_reIsLike = dataset.getData(26,index);
 panel.v_reLikeCount = dataset.getData(27,index);
-                                                                 
+panel.v_photos = new Array();
+if (panel.v_photo1.length>0) panel.v_photos.push(panel.v_photo1);                                                                 
+if (panel.v_photo2.length>0) panel.v_photos.push(panel.v_photo2);                                                                 
+if (panel.v_photo3.length>0) panel.v_photos.push(panel.v_photo3);                                                                 
+if (panel.v_photo4.length>0) panel.v_photos.push(panel.v_photo4);                                                                 
+panel.v_rePhotos = new Array();
+if (panel.v_rePhoto1.length>0) panel.v_rePhotos.push(panel.v_rePhoto1);                                                                 
+if (panel.v_rePhoto2.length>0) panel.v_rePhotos.push(panel.v_rePhoto2);                                                                 
+if (panel.v_rePhoto3.length>0) panel.v_rePhotos.push(panel.v_rePhoto3);                                                                 
+if (panel.v_rePhoto4.length>0) panel.v_rePhotos.push(panel.v_rePhoto4);                                                                 
 
 
-</functionCode>
+]]></functionCode>
     </item>
     <item name="renderTwitter" type="20">
       <varValue />
       <functionParam>root</functionParam>
-      <functionCode><![CDATA[//g5.appendItem(root.v_mode, root.v_userName, root.v_nickName, root.v_times, root.v_contentId, root.v_userPhoto, root.v_photo1, 
-//root.v_content, root.v_label1, root.v_label2, root.v_label3, root.v_uplinkId, root.v_reTimes, root.v_reContent,
-// root.v_rePhoto1, root.v_reUserId, root.v_reUserName, root.v_reNickName,   
-//root.v_rePhoto, root.v_status, root.v_uplinkType,root.v_reReCount,root.v_reFwCount,
-//root.v_isForward,root.v_reIsForward,root.v_isLike,root.v_reIsLike,root.v_reLikeCount)
-if (eb.isEmpty(root.v_userPhoto)) root.v_userPhoto = "";
+      <functionCode><![CDATA[if (eb.isEmpty(root.v_userPhoto)) root.v_userPhoto = "";
 if (eb.isEmpty(root.v_photo1)) root.v_photo1 = "";
 while (root.v_mode.length<5) root.v_mode += " ";
 
@@ -8412,41 +8318,18 @@ ee.setRect(c, null, null, null, rect.h);
 rect = eb.getDivRect(c);
 cy = rect.y + rect.h + 1;
 
-//photo1
-if (root.v_photo1 != "") {
+//photos
+if (root.v_photos.length>0) {
     c = createPanel(root, root.id+"_panel18", "", 75, cy, mainWidth, parseInt(w*0.474645030425964));
+    cy += w*0.474645030425964 + w*0.03;
     c.style.borderRadius = "15px";
-    c.style.borderWidth = "1px";
+    c.style.borderWidth = "0px";
     c.style.borderColor = "rgb(204,214,221)";
     c.style.borderStyle = "solid";
     c.style.cursor="pointer";
-    
-    cy += w*0.474645030425964 + w*0.03;
-    //c = createPanel($g(root.id+"_panel18"), root.id+"_panel19", "", 0, 0, 415, 234);
-    if (root.v_photo1.substr(0,4) == "?YTB") {
-        c.innerHTML = "<iframe width='" + mainWidth + "' height='" + parseInt(w*0.474645030425964) + "' src='https://www.youtube.com/embed/" +
-            root.v_photo1.substr(4, root.v_photo1.length) + 
-            "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-        cy -= w*0.03;
-        c = createPanel(root, root.id+"_panel181", "", 75, cy, mainWidth, w*0.054);
-        cy += w*0.054 + w*0.03;
-        temp = "https://www.youtube.com/watch?v=" + root.v_photo1.substr(4, root.v_photo1.length);
-        addText(c, temp, "left", "center", "arial", 9, "808080", "normal");
-        c.style.cursor = "pointer";
-        ee.setOnClick(c,function(sender,event) {
-            window.open(temp);
-        });
-    } else {
-        c.imgUrl = "url:" + g5.imgUrl + root.v_photo1;
-        //ee.setImage(c,c.imgUrl,"trim","","");
-        g5.setImage(c,c.imgUrl,"trim","","",400);
-        ee.setOnClick(c,function(sender,event) {
-            ee.setVisible(ee.getControl("panel112"), true);
-            ee.showAni(ee.getControl("panel142"), 0);
-            ee.setImage(ee.getControl("panel145"),sender.imgUrl,"fill","","");
-            window.event? window.event.cancelBubble = true : event.stopPropagation();
-        });
-    }
+    c.v_photos = root.v_photos;
+    c.v_mode = "";
+    g5.refreshPhoto(c);
 } else {
     cy +=10;
 }
@@ -8519,25 +8402,13 @@ if (root.v_uplinkType == "F") {
     ee.setRect(c, null, null, null, rect.h);
     rect = eb.getDivRect(c);
     var p1y = rect.y + rect.h + p1h * 0.05;
-    //rePhoto1
-    if (root.v_rePhoto1 != "") {
+    //rePhotos
+    if (root.v_rePhotos.length>0) {
         c = createPanel($g(root.id+"_panel6"), root.id+"_panel26", "", 0, p1y, p1w, parseInt(p1w*0.7));
-        if (root.v_rePhoto1.substr(0,4) == "?YTB") {
-            c.innerHTML = "<iframe width='" + parseInt(p1w) + "' height='" + parseInt(p1w*0.7) + "' src='https://www.youtube.com/embed/" +
-                root.v_rePhoto1.substr(4, root.v_rePhoto1.length) + 
-                "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-        } else {
-            c.imgUrl = "url:" + g5.imgUrl + root.v_rePhoto1;
-            ee.setImage(c,c.imgUrl,"trim","","");
-            ee.setOnClick(c,function(sender,event) {
-                ee.setVisible(ee.getControl("panel112"), true);
-                ee.showAni(ee.getControl("panel142"), 0);
-                ee.setImage(ee.getControl("panel145"),sender.imgUrl,"fill","","");
-                window.event? window.event.cancelBubble = true : event.stopPropagation();
-            });
-        }
-        eb.setDock(c,"disabled","disabled");
         p1y += eb.getDivRect(c).h;
+        c.v_photos = root.v_rePhotos;
+        c.v_mode = "";
+        g5.refreshPhoto(c);
     }
     
     //c = createPanel($g(root.id+"_panel2"), root.id+"_panel7", "", 0, 0, p1w, p1y);
@@ -8640,7 +8511,6 @@ root.v_btn1 = c;
 ee.setOnClick(c,function(sender,event) {
     g5.newPhoto1 = "";
     ee.setEditText(ee.getControl("edit1"), "");
-    ee.setImage(ee.getControl("panel52"), "/twitterG/main/empty.png");
     ee.setText(ee.getControl("panel45"), "回复");
     newTwitter.uplinkType = "R";
     newTwitter.uplinkId = sender.parentNode.v_contentId;
@@ -9056,6 +8926,139 @@ return root;
 
 ]]></functionCode>
     </item>
+    <item name="loadChatRecord" type="20">
+      <varValue />
+      <functionParam>panel, dataset, index</functionParam>
+      <functionCode>//id,regDatetime,seconds(2),content,photo1,"+
+//sendUserId(5),sendUserStatus,sendUserName,sendUserNickName,sendUserNote(9),sendUserPhoto,sendUserTitleBg(11),sendUserHomePage,
+//recvUserId(13),recvUserStatus,recvUserName,recvUserNickName,recvUserNote(17),recvUserPhoto,recvUserTitleBg(19),recvUserHomePage
+panel.v_id = dataset.getData(0,index);
+panel.v_regDatetime = dataset.getData(1,index);
+panel.v_seconds = dataset.getData(2,index);
+panel.v_content = dataset.getData(3,index);
+panel.v_photo1 = dataset.getData(4,index);
+panel.v_sendUserId = dataset.getData(5,index);
+panel.v_sendUserStatus = dataset.getData(6,index);
+panel.v_sendUserName = dataset.getData(7,index);
+panel.v_sendUserNickName = dataset.getData(8,index);
+panel.v_sendUserNote = dataset.getData(9,index);
+panel.v_sendUserPhoto = dataset.getData(10,index);
+panel.v_sendUserTitleBg = dataset.getData(11,index);
+panel.v_sendUserHomePage = dataset.getData(12,index);
+panel.v_recvUserId = dataset.getData(13,index);
+panel.v_recvUserStatus = dataset.getData(14,index);
+panel.v_recvUserName = dataset.getData(15,index);
+panel.v_recvUserNickName = dataset.getData(16,index);
+panel.v_recvUserNote = dataset.getData(17,index);
+panel.v_recvUserPhoto = dataset.getData(18,index);
+panel.v_recvUserTitleBg = dataset.getData(19,index);
+panel.v_recvUserHomePage = dataset.getData(20,index);
+
+
+
+</functionCode>
+    </item>
+    <item name="renderChatBar" type="20">
+      <varValue />
+      <functionParam>root</functionParam>
+      <functionCode><![CDATA[var mode = parseInt(root.v_mode);
+var w = eb.getDivRect(root).w;
+var cy = 0;
+var left = true;
+if (root.v_sendUserName==g5.userName) {
+    left = false;
+}
+//user photo
+if (left) {
+    c = createPanel(root, root.id+"_panel13", "", 16, cy, 40, 40);
+    c.style.borderRadius = "50%";
+} else {
+}
+var photo;
+if (left &amp;&amp; ((mode==1)||(mode==4))) {
+    photo = root.v_sendUserPhoto;
+    if (photo == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + photo,"trim","","")
+    }
+}
+
+//content
+if (left) {
+    c = createPanel(root, root.id+"_panel2", "", 65, cy, 350, 40);
+    c.style.backgroundColor = "#e6ecf0";
+    switch (mode) {
+        case 1: c.style.borderRadius = "20px 20px 20px 0px"; break;
+        case 2: c.style.borderRadius = "20px 20px 20px 0px"; break;
+        case 3: c.style.borderRadius = "0px 20px 20px 0px"; break;
+        case 4: c.style.borderRadius = "0px 20px 20px 0px"; break;
+        default:
+    }
+    c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 0, 350-15*2, 40);
+    addText(c, "a", "left", "center", "微软雅黑", 12, "000000", "normal");
+} else {
+    c = createPanel(root, root.id+"_panel2", "", 65, cy, 390, 40);
+    switch (mode) {
+        case 1: c.style.borderRadius = "20px 20px 0px 20px"; break;
+        case 2: c.style.borderRadius = "20px 20px 0px 20px"; break;
+        case 3: c.style.borderRadius = "20px 0px 0px 20px"; break;
+        case 4: c.style.borderRadius = "20px 0px 0px 20px"; break;
+        default:
+    }
+    c.style.backgroundColor = "#1da1f2";
+    c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 0, 390-15*2, 40);
+    addText(c, "a", "left", "center", "微软雅黑", 12, "FFFFFF", "normal");
+}
+c.label.style.whiteSpace = "nowrap";
+ee.setText(c, root.v_content);
+eb.processDock();
+eb.setDivRect(c.label, null, null, 10,10);
+rect = eb.getDivRect(c.label);
+if (left) {
+    if (rect.w > parseInt(350)) {
+        c.label.style.whiteSpace = "pre-wrap";
+        eb.setDivRect(c.label, null, null, parseInt(350),10);
+        rect = eb.getDivRect(c.label);
+    }
+} else {
+    if (rect.w > parseInt(390)) {
+        c.label.style.whiteSpace = "pre-wrap";
+        eb.setDivRect(c.label, null, null, parseInt(390),10);
+        rect = eb.getDivRect(c.label);
+    }
+}
+ee.setRect(c, null, null, rect.w, rect.h + 10);
+rect = eb.getDivRect(c);
+c = c.parentNode;
+ee.setRect(c,null,null,rect.w+15*2,rect.h);
+rect = eb.getDivRect(c);
+if (!left) {
+    ee.setRect(c, w-25-rect.w, null, null, null)
+}
+cy += rect.h + 4;
+
+//time
+if ((mode==1)||(mode==4)) {
+    c = createPanel(root, root.id+"_panel5", "", 65, cy-3, w-65-25, 20); cy+=20;
+    var s = root.v_regDatetime;
+    s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日  " + s.substr(11,8);
+    if (left) {
+        addText(c,s, "left", "top", "微软雅黑", 9, "808080", "");
+    } else {
+        addText(c,s, "right", "top", "微软雅黑", 9, "808080", "");
+        
+    }
+}
+
+eb.setDivRect(root,null,null,null,cy);
+return root; 
+
+
+
+
+]]></functionCode>
+    </item>
     <item name="appendItemPage2" type="20">
       <varValue />
       <functionParam>parent, username, nickname, userPhoto</functionParam>
@@ -9334,6 +9337,8 @@ if (pageIndex == 0) {
     g5.mainDiv.scrollTop = 0;
     g5.pageMode = 1;
     g5.refreshMain(true);
+    ee.setRect(g5.p3,null,null,null,eb.getDivRect(g5.mainDiv).h);
+    eb.processDock();
     ee.showAni(ee.getControl("layouty5"), 0);
     ee.showAni(ee.getControl("panel116"), 0);
 } else if (pageIndex == 7) {
@@ -9534,6 +9539,86 @@ for (var i=0; i<task.length; i++) {
 
 
 ]]></functionCode>
+    </item>
+    <item name="refreshPhoto" type="20">
+      <varValue />
+      <functionParam>root</functionParam>
+      <functionCode><![CDATA[if (eb.isEmpty(root.v_photos)) root.v_photos = new Array();
+if (eb.isEmpty(root.v_items)) root.v_items = new Array();
+var i;
+for (i=0; i<root.v_items.length; i++) {
+    ee.removeControl(root.v_items[i]);
+}
+root.v_items = new Array();
+var rect = eb.getDivRect(root);
+var item;
+if (root.v_photos.length==1) {
+    item = createPanel(root, root.id+"_photo1", "", 0, 0, rect.w, rect.h);
+    item.v_photo = root.v_photos[0]; item.v_index = 0;
+    g5.addPhoto(item); root.v_items.push(item);
+} else if (root.v_photos.length==2) {
+    item = createPanel(root, root.id+"_photo1", "", 0, 0, parseInt(rect.w/2)-2, rect.h);
+    item.v_photo = root.v_photos[0]; item.v_index = 0;
+    g5.addPhoto(item); root.v_items.push(item);
+    item = createPanel(root, root.id+"_photo2", "", parseInt(rect.w/2)+2, 0, parseInt(rect.w/2)-2, rect.h);
+    item.v_photo = root.v_photos[1]; item.v_index = 1;
+    g5.addPhoto(item); root.v_items.push(item);
+} else if (root.v_photos.length==3) {
+    item = createPanel(root, root.id+"_photo1", "", 0, 0, parseInt(rect.w/2)-2, rect.h);
+    item.v_photo = root.v_photos[0]; item.v_index = 0;
+    g5.addPhoto(item); root.v_items.push(item);
+    item = createPanel(root, root.id+"_photo2", "", parseInt(rect.w/2)+2, 0, parseInt(rect.w/2)-2, parseInt(rect.h/2)-2);
+    item.v_photo = root.v_photos[1]; item.v_index = 1;
+    g5.addPhoto(item); root.v_items.push(item);
+    item = createPanel(root, root.id+"_photo3", "", parseInt(rect.w/2)+2, parseInt(rect.h/2)+2, parseInt(rect.w/2)-2, parseInt(rect.h/2)-2);
+    item.v_photo = root.v_photos[2]; item.v_index = 2;
+    g5.addPhoto(item); root.v_items.push(item);
+} else if (root.v_photos.length==4) {
+    item = createPanel(root, root.id+"_photo1", "", 0, 0, parseInt(rect.w/2)-2, parseInt(rect.h/2)-2);
+    item.v_photo = root.v_photos[0]; item.v_index = 0;
+    g5.addPhoto(item); root.v_items.push(item);
+    item = createPanel(root, root.id+"_photo2", "", 0, parseInt(rect.h/2)+2, parseInt(rect.w/2)-2, parseInt(rect.h/2)-2);
+    item.v_photo = root.v_photos[1]; item.v_index = 1;
+    g5.addPhoto(item); root.v_items.push(item);
+    item = createPanel(root, root.id+"_photo3", "", parseInt(rect.w/2)+2, 0, parseInt(rect.w/2)-2, parseInt(rect.h/2)-2);
+    item.v_photo = root.v_photos[2]; item.v_index = 2;
+    g5.addPhoto(item); root.v_items.push(item);
+    item = createPanel(root, root.id+"_photo4", "", parseInt(rect.w/2)+2, parseInt(rect.h/2)+2, parseInt(rect.w/2)-2, parseInt(rect.h/2)-2);
+    item.v_photo = root.v_photos[3]; item.v_index = 3;
+    g5.addPhoto(item); root.v_items.push(item);
+}   ]]></functionCode>
+    </item>
+    <item name="addPhoto" type="20">
+      <varValue />
+      <functionParam>root</functionParam>
+      <functionCode><![CDATA[var rect = eb.getDivRect(root);
+if (root.v_photo.substr(0,4) == "?YTB") {
+    root.innerHTML = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
+        root.v_photo.substr(4, root.v_photo.length) + 
+        "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+} else {
+    root.imgUrl = "url:" + g5.imgUrl + root.v_photo
+    g5.setImage(root,root.imgUrl,"trim","","",400);
+}
+//ee.getControl("panel53").style.pointerEvents = "none";
+var c;
+if (root.parentNode.v_mode=="x") {
+    c = createPanel(root, root.id+"_close", "", rect.w-36-12, 12, 36, 36);
+    c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgba(255,255,255,1);fill: currentcolor;vertical-align:middle;\">" + g5.iconClose + "</svg>";
+    c.style.borderRadius = "50%";
+    c.style.backgroundColor = "rgba(0,0,0,0.8)";
+    c.style.zIndex=100;
+    ee.setOnMouseEnter(c, function(sender,event) {
+        sender.style.backgroundColor = "rgba(0,0,0,0.5)";
+    });    
+    ee.setOnMouseLeave(c, function(sender,event) {
+        sender.style.backgroundColor = "rgba(0,0,0,0.8)";
+    });
+    ee.setOnClick(c, function(sender, event) {
+        sender.parentNode.parentNode.v_photos.splice(sender.parentNode.v_index,1);
+        g5.refreshPhoto(sender.parentNode.parentNode);    
+    })
+}]]></functionCode>
     </item>
   </g5Items>
 </page>
