@@ -1,0 +1,62 @@
+<page>
+  <controls count="2">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>796</height>
+      <left>0</left>
+      <top>0</top>
+      <width>1212</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel53">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heightRatio>0.125628140703518</heightRatio>
+      <left>21</left>
+      <leftRatio>0.0173267326732673</leftRatio>
+      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
+sender.v_x = parseInt(eb.getDivRect(sender).w/2);
+sender.v_y = parseInt(eb.getDivRect(sender).h/2);
+sender.v_r = 9;
+sender.v_color = "#29a5f2";
+sender.v_bgColor = "#ecf0f3";
+sender.v_width = "4px";
+sender.v_progress = "0.0001";
+sender.refresh = function(progress) {
+    var path = this.childNodes[0].childNodes[0];
+    path.style.stroke=sender.v_bgColor;
+    path.style.strokeWidth=sender.v_width;
+    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
+    path.setAttribute("d", des.join(" "));
+    
+    if (!eb.isEmpty(progress)) this.v_progress = progress;
+    this.v_progress = Math.min(0.9999,this.v_progress);
+    this.v_progress = Math.max(0.0001,this.v_progress);
+    path = this.childNodes[0].childNodes[1];
+    var ag = 90+360-this.v_progress*360;  
+    var ag = ag*(Math.PI/180);
+    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
+    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
+    var opt = window.Number(this.v_progress>0.5);
+    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
+    path.style.stroke=sender.v_color;
+    path.style.strokeWidth=sender.v_width;
+    path.setAttribute("d", des.join(" "));
+}
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>圆形进度条</text>
+      <top>18</top>
+      <topRatio>0.0226130653266332</topRatio>
+      <widthRatio>0.0825082508250825</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+  <g5Items count="0" />
+</page>
