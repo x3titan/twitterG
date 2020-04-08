@@ -1,5 +1,5 @@
 <page>
-  <controls count="2">
+  <controls count="7">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -7,15 +7,55 @@
       <dockY>fill</dockY>
       <height>796</height>
       <left>0</left>
+      <onPageCreate>var tag = document.createElement("script");
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName("script")[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var player;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player("ee_panel3", {
+        height: "360",
+        width: "640",
+        videoId: "fEHqlXnVE8k",
+        events: {
+            "onReady": onPlayerReady,
+            "onStateChange": onPlayerStateChange
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    //event.target.playVideo();
+    event.target.mute();
+}
+
+var done = false;
+function onPlayerStateChange(event) {
+    //if (event.data == YT.PlayerState.PLAYING &amp;&amp; !done) {
+    //    setTimeout(stopVideo, 6000);
+    //    done = true;
+    //}
+}
+
+function stopVideo() {
+    player.stopVideo();
+}</onPageCreate>
       <top>0</top>
       <width>1212</width>
     </control>
-    <control type="Panel" pathname="/divRoot/panel53">
+    <control type="Panel" pathname="/divRoot/panel1">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <heightRatio>0.125628140703518</heightRatio>
-      <left>21</left>
-      <leftRatio>0.0173267326732673</leftRatio>
+      <left>28</left>
+      <leftRatio>0.0231023102310231</leftRatio>
+      <onClick><![CDATA[sender.v_progress+=0.1;
+sender.v_r = eb.getDivRect(sender).h / 2 - 10;
+sender.v_width = "10px";
+if (sender.v_progress>=1) sender.v_progress=0;
+sender.refresh();
+]]></onClick>
       <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
 sender.v_x = parseInt(eb.getDivRect(sender).w/2);
 sender.v_y = parseInt(eb.getDivRect(sender).h/2);
@@ -23,7 +63,7 @@ sender.v_r = 9;
 sender.v_color = "#29a5f2";
 sender.v_bgColor = "#ecf0f3";
 sender.v_width = "4px";
-sender.v_progress = "0.0001";
+sender.v_progress = 0.0001;
 sender.refresh = function(progress) {
     var path = this.childNodes[0].childNodes[0];
     path.style.stroke=sender.v_bgColor;
@@ -51,9 +91,129 @@ sender.refresh = function(progress) {
 ]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text>圆形进度条</text>
-      <top>18</top>
-      <topRatio>0.0226130653266332</topRatio>
+      <top>25</top>
+      <topRatio>0.0314070351758794</topRatio>
       <widthRatio>0.0825082508250825</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <backgroundSkin>skin1000</backgroundSkin>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>97</height>
+      <heightRatio>0.121859296482412</heightRatio>
+      <left>139</left>
+      <leftRatio>0.114686468646865</leftRatio>
+      <sizeRatio>0.389558232931727</sizeRatio>
+      <text>顶部可以拖动</text>
+      <top>24</top>
+      <topRatio>0.0301507537688442</topRatio>
+      <width>249</width>
+      <widthRatio>0.205445544554455</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel220">
+      <backgroundColor>00C0C0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>42</height>
+      <heightRatio>0.43298969072165</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.v_down = false;
+sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.168674698795181</sizeRatio>
+      <top>0</top>
+      <width>249</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>199</height>
+      <heightRatio>0.25</heightRatio>
+      <left>27</left>
+      <leftRatio>0.0222772277227723</leftRatio>
+      <onClick>player.unMute();</onClick>
+      <sizeRatio>0.56056338028169</sizeRatio>
+      <top>153</top>
+      <topRatio>0.192211055276382</topRatio>
+      <width>355</width>
+      <widthRatio>0.292904290429043</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel4">
+      <backgroundSkin>button1001</backgroundSkin>
+      <fontColor>FFFFFF</fontColor>
+      <height>39</height>
+      <heightRatio>0.0489949748743719</heightRatio>
+      <left>457</left>
+      <leftRatio>0.377062706270627</leftRatio>
+      <onClick>player = new YT.Player("ee_panel3", {
+    height: "360",
+    width: "640",
+    videoId: "fEHqlXnVE8k",
+    events: {
+        "onReady": onPlayerReady,
+        "onStateChange": onPlayerStateChange
+    }
+});</onClick>
+      <sizeRatio>0.188405797101449</sizeRatio>
+      <text>init</text>
+      <top>151</top>
+      <topRatio>0.189698492462312</topRatio>
+      <width>207</width>
+      <widthRatio>0.170792079207921</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5">
+      <backgroundSkin>button1001</backgroundSkin>
+      <fontColor>FFFFFF</fontColor>
+      <height>39</height>
+      <heightRatio>0.0489949748743719</heightRatio>
+      <left>457</left>
+      <leftRatio>0.377062706270627</leftRatio>
+      <onClick>player.playVideo();
+</onClick>
+      <sizeRatio>0.188405797101449</sizeRatio>
+      <text>play</text>
+      <top>204</top>
+      <topRatio>0.256281407035176</topRatio>
+      <width>207</width>
+      <widthRatio>0.170792079207921</widthRatio>
     </control>
   </controls>
   <taskSet count="0" />

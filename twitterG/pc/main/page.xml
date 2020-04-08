@@ -1,5 +1,5 @@
 <page>
-  <controls count="268">
+  <controls count="280">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -8,6 +8,7 @@
       <height>796</height>
       <left>0</left>
       <onControlLoad><![CDATA[ee.setAutoScroll($g("divRoot"), "hidden");
+document.body.style.backgroundColor = "#ffffff";
 
 eb.addEvent(g5.mainDiv, "scroll", function() {
     var viewPortH = $g("divRoot").offsetHeight;
@@ -53,7 +54,9 @@ getUserInfo();
 searchUser();
 eb.processDock();
 setInterval(function() {g5.refreshMain();}, 100);
-
+setInterval(function() {
+    g5.processVideo();
+}, 1000);
 
 
 
@@ -69,7 +72,12 @@ setInterval(function() {g5.refreshMain();}, 100);
 
 
                                             ]]></onControlLoad>
-      <onPageCreate><![CDATA[initLButton = function(button,text,dy,icon,size,dx) {
+      <onPageCreate><![CDATA[var tag = document.createElement("script");
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName("script")[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+initLButton = function(button,text,dy,icon,size,dx) {
     if (eb.isEmpty(size)) size = "24 24";
     if (eb.isEmpty(dx)) dx = "0";
     ee.setText(button.status1, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(0,0,0,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
@@ -393,7 +401,10 @@ for (var i=0; i<items.length; i++) {
     }
 }
 g5.mainDiv.scrollTop = 0;
-g5.changeP2(0);]]></onClick>
+g5.changeP2(0);
+updateHomepage.needRefresh = true;
+updateHomepage();
+]]></onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>"+
     " 主页");
@@ -422,8 +433,8 @@ sender.style.borderRadius = "24px";
 ]]></onCreate>
       <sizeRatio>0.446601941747573</sizeRatio>
       <text>主页</text>
-      <top>74</top>
-      <topRatio>0.158798283261803</topRatio>
+      <top>73</top>
+      <topRatio>0.156652360515021</topRatio>
       <width>103</width>
       <widthRatio>0.343333333333333</widthRatio>
     </control>
@@ -821,7 +832,9 @@ for (var i=0; i<items.length; i++) {
     }
 }
 g5.mainDiv.scrollTop = 0;
-g5.changeP2(0);]]></onClick>
+g5.changeP2(0);
+updateHomepage.needRefresh = true;
+updateHomepage();]]></onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -1159,10 +1172,11 @@ sender.style.borderRadius = "50%";
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.32879045996593</sizeRatio>
-      <top>-4</top>
-      <topRatio>-0.00512820512820513</topRatio>
+      <top>-5</top>
+      <topRatio>-0.00641025641025641</topRatio>
       <width>587</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -1438,7 +1452,20 @@ if ((ytbVideo.length<=8)||(ytbVideo.length>=14)) {
     return;
 }
 ytbVideo = "?YTB" + ytbVideo;
-ee.getControl("panel7").v_photos.push(ytbVideo);
+var i = 0;
+for (i=0; i<ee.getControl("panel7").v_photos.length; i++) {
+    var s = ee.getControl("panel7").v_photos[i];
+    if (s.length<4) continue;
+    if (s.substr(0,4)=="?YTB") {
+        break;
+    }
+}
+if (i>=ee.getControl("panel7").v_photos.length) {
+    ee.getControl("panel7").v_photos.push(ytbVideo);
+} else {
+    ee.getControl("panel7").v_photos.splice(i,1,ytbVideo);
+}
+
 g5.refreshPhoto(ee.getControl("panel7"));
     
 if (ee.getControl("panel7").style.visibility=="hidden") {
@@ -1514,12 +1541,8 @@ sender.refresh = function(progress) {
       <heightRatio>0.0844155844155844</heightRatio>
       <left>413</left>
       <leftRatio>0.703577512776831</leftRatio>
-      <onCreate>
-      </onCreate>
       <outerBottom>18</outerBottom>
       <sizeRatio>1</sizeRatio>
-      <text>
-      </text>
       <top>405</top>
       <topRatio>0.876623376623377</topRatio>
       <width>39</width>
@@ -4415,17 +4438,42 @@ sender.style.borderTop = "";
       <backgroundSkin>body5</backgroundSkin>
       <dockX>center</dockX>
       <dockY>center</dockY>
-      <height>668</height>
-      <heightRatio>0.839195979899497</heightRatio>
+      <height>645</height>
+      <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[Root->编辑个人信息]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>405</left>
-      <leftRatio>0.321428571428571</leftRatio>
-      <sizeRatio>1.48444444444444</sizeRatio>
-      <top>64</top>
-      <topRatio>0.0804020100502513</topRatio>
-      <width>450</width>
-      <widthRatio>0.357142857142857</widthRatio>
+      <left>330</left>
+      <leftRatio>0.261904761904762</leftRatio>
+      <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 50);
+sender.refreshProgress(ee.getControl("edit3"), ee.getControl("panel230"), 160);
+sender.refreshProgress(ee.getControl("edit4"), ee.getControl("panel233"), 100);
+</onAniStart>
+      <onCreate><![CDATA[sender.refreshProgress = function(edit, pdiv, maxValue) {
+    var text = ee.getEditText(edit);
+    if (text.length<maxValue-20) {
+        pdiv.v_color = "#29a5f2";
+        pdiv.v_r = "9";
+        pdiv.refresh(text.length/maxValue);
+        ee.setTextColor(pdiv.parentNode, "rgb(101, 119, 134)");
+    } else if (text.length<=maxValue) {
+        pdiv.v_color = "#ffad1f";
+        pdiv.v_r = "12";
+        pdiv.refresh(text.length/maxValue);    
+        ee.setTextColor(pdiv.parentNode, "#ffad1f");
+    } else {
+        pdiv.v_color = "#e0245e";
+        pdiv.v_r = "14";
+        pdiv.refresh((text.length-maxValue)/maxValue);    
+        ee.setTextColor(pdiv.parentNode, "#e0245e");
+    }
+    ee.setText(pdiv.parentNode, text.length + "/" + maxValue);    
+}
+]]></onCreate>
+      <sizeRatio>1.075</sizeRatio>
+      <top>75</top>
+      <topRatio>0.0942211055276382</topRatio>
+      <width>600</width>
+      <widthRatio>0.476190476190476</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel56">
       <backgroundImg>close.png</backgroundImg>
@@ -4433,15 +4481,15 @@ sender.style.borderTop = "";
       <cursor>pointer</cursor>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <height>40</height>
+      <height>39</height>
       <heightRatio>0.0598802395209581</heightRatio>
-      <left>10</left>
+      <left>13</left>
       <leftRatio>0.0219435736677116</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.689655172413793</sizeRatio>
       <top>10</top>
       <topRatio>0.0149700598802395</topRatio>
-      <width>41</width>
+      <width>55</width>
       <widthRatio>0.0909090909090909</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel57">
@@ -4452,49 +4500,48 @@ sender.style.borderTop = "";
       <dockY>ratio</dockY>
       <fontColor>FFFFFF</fontColor>
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>34</height>
+      <fontSize>12</fontSize>
+      <height>33</height>
       <heightRatio>0.0508982035928144</heightRatio>
-      <left>324</left>
-      <leftRatio>0.721003134796238</leftRatio>
+      <left>493</left>
+      <leftRatio>0.821666666666667</leftRatio>
       <onClick>updateUserInfo();</onClick>
-      <sizeRatio>0.2125</sizeRatio>
+      <sizeRatio>0.377777777777778</sizeRatio>
       <text>保存</text>
-      <top>15</top>
+      <top>14</top>
       <topRatio>0.0224550898203593</topRatio>
-      <width>113</width>
-      <widthRatio>0.250783699059561</widthRatio>
+      <width>90</width>
+      <widthRatio>0.15</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel58">
       <backgroundColor>0E5079</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
-      <dockY>ratio</dockY>
-      <height>173</height>
-      <heightRatio>0.258982035928144</heightRatio>
+      <height>171</height>
+      <heightRatio>0.265116279069767</heightRatio>
       <left>8</left>
-      <leftRatio>0.0125391849529781</leftRatio>
+      <leftRatio>0.0133333333333333</leftRatio>
       <outerLeft>8</outerLeft>
       <outerRight>8</outerRight>
-      <sizeRatio>0.274603174603175</sizeRatio>
-      <top>58</top>
-      <topRatio>0.0868263473053892</topRatio>
-      <width>434</width>
-      <widthRatio>0.987460815047022</widthRatio>
+      <sizeRatio>0.292808219178082</sizeRatio>
+      <top>55</top>
+      <topRatio>0.0852713178294574</topRatio>
+      <width>584</width>
+      <widthRatio>0.973333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel58/panel61">
       <backgroundImg>upload.png</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <height>52</height>
+      <height>51</height>
       <heightRatio>0.300970873786408</heightRatio>
-      <left>176</left>
+      <left>237</left>
       <leftRatio>0.405466970387244</leftRatio>
       <sizeRatio>0.849315068493151</sizeRatio>
-      <top>57</top>
+      <top>56</top>
       <topRatio>0.330097087378641</topRatio>
-      <width>72</width>
+      <width>97</width>
       <widthRatio>0.16628701594533</widthRatio>
     </control>
     <control type="FileUpload" pathname="/divRoot/panel54/panel58/panel61/fileupload3">
@@ -4502,7 +4549,7 @@ sender.style.borderTop = "";
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>52</height>
+      <height>51</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <onCreate>eb.setAlpha(sender, 1);</onCreate>
@@ -4544,76 +4591,45 @@ if (sqlResult == null) {
 db.read(sqlResult);
 var sn = db.getInt32(sqlResult, "Sn");
 newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
-      <sizeRatio>0.722222222222222</sizeRatio>
+      <sizeRatio>0.525773195876289</sizeRatio>
       <top>0</top>
-      <width>72</width>
+      <width>97</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel55">
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>60</height>
-      <heightRatio>0.0890840652446675</heightRatio>
-      <left>21</left>
-      <leftRatio>0.0318906605922551</leftRatio>
-      <lockRatio>true</lockRatio>
-      <sizeRatio>0.986111111111111</sizeRatio>
-      <top>241</top>
-      <topRatio>0.361355081555834</topRatio>
-      <width>60</width>
-      <widthRatio>0.164009111617312</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel55/panel59">
       <backgroundImg>user.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>58</height>
-      <heightRatio>0.966666666666667</heightRatio>
-      <left>1</left>
-      <leftRatio>0.0166666666666667</leftRatio>
-      <outerBottom>1</outerBottom>
-      <outerLeft>1</outerLeft>
-      <outerRight>1</outerRight>
-      <outerTop>1</outerTop>
+      <height>119</height>
+      <heightRatio>0.184496124031008</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0483333333333333</leftRatio>
+      <lockRatio>true</lockRatio>
+      <onCreate>sender.style.borderRadius = "50%";
+sender.style.borderWidth = "4px";
+sender.style.borderColor = "#ffffff";
+sender.style.borderStyle = "solid";</onCreate>
       <sizeRatio>1</sizeRatio>
-      <top>1</top>
-      <topRatio>0.0166666666666667</topRatio>
-      <width>58</width>
-      <widthRatio>0.966666666666667</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel55/panel60">
-      <backgroundImg>cirMask.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>60</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>1</sizeRatio>
-      <top>0</top>
-      <width>60</width>
-      <widthRatio>1</widthRatio>
+      <top>179</top>
+      <topRatio>0.277519379844961</topRatio>
+      <width>119</width>
+      <widthRatio>0.198333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel55/panel62">
       <backgroundImg>upload.png</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>36</height>
-      <heightRatio>0.605633802816901</heightRatio>
-      <left>12</left>
-      <leftRatio>0.194444444444444</leftRatio>
-      <sizeRatio>0.977272727272727</sizeRatio>
-      <top>13</top>
-      <topRatio>0.211267605633803</topRatio>
-      <width>37</width>
-      <widthRatio>0.611111111111111</widthRatio>
+      <height>44</height>
+      <heightRatio>0.369747899159664</heightRatio>
+      <left>37</left>
+      <leftRatio>0.310924369747899</leftRatio>
+      <sizeRatio>0.956521739130435</sizeRatio>
+      <top>37</top>
+      <topRatio>0.310924369747899</topRatio>
+      <width>46</width>
+      <widthRatio>0.38655462184874</widthRatio>
     </control>
     <control type="FileUpload" pathname="/divRoot/panel54/panel55/fileupload2">
       <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>60</height>
+      <height>119</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <onCreate>eb.setAlpha(sender, 1);</onCreate>
@@ -4655,175 +4671,7 @@ var sn = db.getInt32(sqlResult, "Sn");
 newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <sizeRatio>1</sizeRatio>
       <top>0</top>
-      <width>60</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel63">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>28</height>
-      <heightRatio>0.0419161676646707</heightRatio>
-      <left>18</left>
-      <leftRatio>0.0407523510971787</leftRatio>
-      <sizeRatio>0.0504504504504504</sizeRatio>
-      <text>昵称或姓名</text>
-      <top>317</top>
-      <topRatio>0.474550898203593</topRatio>
-      <width>391</width>
-      <widthRatio>0.869905956112853</widthRatio>
-    </control>
-    <control type="Edit" pathname="/divRoot/panel54/edit2">
-      <backgroundSkin>empty</backgroundSkin>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>41</height>
-      <heightRatio>0.061377245508982</heightRatio>
-      <inputFont>微软雅黑</inputFont>
-      <inputFontSize>14</inputFontSize>
-      <left>20</left>
-      <leftRatio>0.0444444444444444</leftRatio>
-      <sizeRatio>0.100490196078431</sizeRatio>
-      <top>342</top>
-      <topRatio>0.511976047904192</topRatio>
-      <width>408</width>
-      <widthRatio>0.906666666666667</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/edit2/panel64">
-      <backgroundColor>1DA1F2</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>3</height>
-      <heightRatio>0.0731707317073171</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00735294117647059</sizeRatio>
-      <top>38</top>
-      <topRatio>0.926829268292683</topRatio>
-      <width>408</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel65">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>28</height>
-      <heightRatio>0.0419161676646707</heightRatio>
-      <left>18</left>
-      <leftRatio>0.0407523510971787</leftRatio>
-      <sizeRatio>0.0504504504504504</sizeRatio>
-      <text>简介</text>
-      <top>394</top>
-      <topRatio>0.589820359281437</topRatio>
-      <width>391</width>
-      <widthRatio>0.869905956112853</widthRatio>
-    </control>
-    <control type="Edit" pathname="/divRoot/panel54/edit3">
-      <backgroundSkin>line1002</backgroundSkin>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>113</height>
-      <heightRatio>0.169161676646707</heightRatio>
-      <inputFont>微软雅黑</inputFont>
-      <left>20</left>
-      <leftRatio>0.0444444444444444</leftRatio>
-      <multiLine>true</multiLine>
-      <sizeRatio>0.276960784313726</sizeRatio>
-      <top>426</top>
-      <topRatio>0.637724550898204</topRatio>
-      <width>408</width>
-      <widthRatio>0.906666666666667</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/edit3/panel66">
-      <backgroundColor>1DA1F2</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>3</height>
-      <heightRatio>0.0265486725663717</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00735294117647059</sizeRatio>
-      <top>110</top>
-      <topRatio>0.973451327433628</topRatio>
-      <width>408</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel67">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>28</height>
-      <heightRatio>0.0419161676646707</heightRatio>
-      <left>18</left>
-      <leftRatio>0.0407523510971787</leftRatio>
-      <sizeRatio>0.0504504504504504</sizeRatio>
-      <text>网页</text>
-      <top>552</top>
-      <topRatio>0.826347305389222</topRatio>
-      <width>391</width>
-      <widthRatio>0.869905956112853</widthRatio>
-    </control>
-    <control type="Edit" pathname="/divRoot/panel54/edit4">
-      <backgroundSkin>empty</backgroundSkin>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>38</height>
-      <heightRatio>0.0568862275449102</heightRatio>
-      <inputFont>微软雅黑</inputFont>
-      <inputFontSize>14</inputFontSize>
-      <left>20</left>
-      <leftRatio>0.0444444444444444</leftRatio>
-      <sizeRatio>0.0931372549019608</sizeRatio>
-      <top>577</top>
-      <topRatio>0.86377245508982</topRatio>
-      <width>408</width>
-      <widthRatio>0.906666666666667</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/edit4/panel68">
-      <backgroundColor>1DA1F2</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>3</height>
-      <heightRatio>0.0789473684210526</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00735294117647059</sizeRatio>
-      <top>35</top>
-      <topRatio>0.921052631578947</topRatio>
-      <width>408</width>
+      <width>119</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel140">
@@ -4834,16 +4682,450 @@ newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
       <fontColor>404040</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>18</fontSize>
-      <height>35</height>
+      <height>34</height>
       <heightRatio>0.0523952095808383</heightRatio>
-      <left>49</left>
-      <leftRatio>0.109717868338558</leftRatio>
-      <sizeRatio>0.0923482849604222</sizeRatio>
+      <left>66</left>
+      <leftRatio>0.11</leftRatio>
+      <sizeRatio>0.0857843137254902</sizeRatio>
       <text>个人信息</text>
       <top>11</top>
       <topRatio>0.0164670658682635</topRatio>
-      <width>267</width>
-      <widthRatio>0.594043887147335</widthRatio>
+      <width>408</width>
+      <widthRatio>0.68</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel224">
+      <backgroundColor>00C0C0</backgroundColor>
+      <cursor>move</cursor>
+      <dockY>top</dockY>
+      <height>58</height>
+      <heightRatio>0.089922480620155</heightRatio>
+      <left>54</left>
+      <leftRatio>0.09</leftRatio>
+      <onCreate><![CDATA[sender.v_down = false;
+sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.21969696969697</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>0.44</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel59">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>66</height>
+      <heightRatio>0.102325581395349</heightRatio>
+      <left>28</left>
+      <leftRatio>0.0466666666666667</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";
+</onCreate>
+      <sizeRatio>0.121546961325967</sizeRatio>
+      <top>310</top>
+      <topRatio>0.48062015503876</topRatio>
+      <width>543</width>
+      <widthRatio>0.905</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel59/panel63">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.424242424242424</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0165745856353591</leftRatio>
+      <sizeRatio>0.142857142857143</sizeRatio>
+      <text>昵称</text>
+      <top>0</top>
+      <width>196</width>
+      <widthRatio>0.360957642725599</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel54/panel59/edit2">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>41</height>
+      <heightRatio>0.621212121212121</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>14</inputFontSize>
+      <left>0</left>
+      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 50);</onChange>
+      <sizeRatio>0.0755064456721915</sizeRatio>
+      <top>25</top>
+      <topRatio>0.378787878787879</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel59/edit2/panel64">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0487804878048781</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00368324125230203</sizeRatio>
+      <top>39</top>
+      <topRatio>0.951219512195122</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel59/panel60">
+      <fontColor>657786</fontColor>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>40</height>
+      <heightRatio>0.606060606060606</heightRatio>
+      <left>446</left>
+      <leftRatio>0.821362799263352</leftRatio>
+      <sizeRatio>0.465116279069767</sizeRatio>
+      <text>0/50</text>
+      <top>0</top>
+      <width>86</width>
+      <widthRatio>0.158379373848987</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel59/panel60/panel225">
+      <backgroundColor>EAEAF4</backgroundColor>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
+sender.v_x = parseInt(eb.getDivRect(sender).w/2);
+sender.v_y = parseInt(eb.getDivRect(sender).h/2);
+sender.v_r = 9;
+sender.v_color = "#29a5f2";
+sender.v_bgColor = "#ecf0f3";
+sender.v_width = "4px";
+sender.v_progress = "0.0001";
+sender.refresh = function(progress) {
+    var path = this.childNodes[0].childNodes[0];
+    path.style.stroke=sender.v_bgColor;
+    path.style.strokeWidth=sender.v_width;
+    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
+    path.setAttribute("d", des.join(" "));
+    
+    if (!eb.isEmpty(progress)) this.v_progress = progress;
+    this.v_progress = Math.min(0.9999,this.v_progress);
+    this.v_progress = Math.max(0.0001,this.v_progress);
+    path = this.childNodes[0].childNodes[1];
+    var ag = 90+360-this.v_progress*360;  
+    var ag = ag*(Math.PI/180);
+    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
+    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
+    var opt = window.Number(this.v_progress>0.5);
+    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
+    path.style.stroke=sender.v_color;
+    path.style.strokeWidth=sender.v_width;
+    path.setAttribute("d", des.join(" "));
+}
+
+
+
+]]></onCreate>
+      <sizeRatio>1.02564102564103</sizeRatio>
+      <text>圆形进度条</text>
+      <top>0</top>
+      <width>39</width>
+      <widthRatio>0.453488372093023</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel226">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>132</height>
+      <heightRatio>0.204651162790698</heightRatio>
+      <left>28</left>
+      <leftRatio>0.0466666666666667</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";</onCreate>
+      <sizeRatio>0.243093922651934</sizeRatio>
+      <top>394</top>
+      <topRatio>0.610852713178295</topRatio>
+      <width>543</width>
+      <widthRatio>0.905</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel226/panel229">
+      <fontColor>657786</fontColor>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>40</height>
+      <heightRatio>0.303030303030303</heightRatio>
+      <left>431</left>
+      <leftRatio>0.793738489871087</leftRatio>
+      <sizeRatio>0.396039603960396</sizeRatio>
+      <text>0/160</text>
+      <top>0</top>
+      <width>101</width>
+      <widthRatio>0.186003683241252</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel226/panel229/panel230">
+      <backgroundColor>EAEAF4</backgroundColor>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
+sender.v_x = parseInt(eb.getDivRect(sender).w/2);
+sender.v_y = parseInt(eb.getDivRect(sender).h/2);
+sender.v_r = 9;
+sender.v_color = "#29a5f2";
+sender.v_bgColor = "#ecf0f3";
+sender.v_width = "4px";
+sender.v_progress = "0.0001";
+sender.refresh = function(progress) {
+    var path = this.childNodes[0].childNodes[0];
+    path.style.stroke=sender.v_bgColor;
+    path.style.strokeWidth=sender.v_width;
+    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
+    path.setAttribute("d", des.join(" "));
+    
+    if (!eb.isEmpty(progress)) this.v_progress = progress;
+    this.v_progress = Math.min(0.9999,this.v_progress);
+    this.v_progress = Math.max(0.0001,this.v_progress);
+    path = this.childNodes[0].childNodes[1];
+    var ag = 90+360-this.v_progress*360;  
+    var ag = ag*(Math.PI/180);
+    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
+    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
+    var opt = window.Number(this.v_progress>0.5);
+    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
+    path.style.stroke=sender.v_color;
+    path.style.strokeWidth=sender.v_width;
+    path.setAttribute("d", des.join(" "));
+}
+
+
+
+]]></onCreate>
+      <sizeRatio>1.02564102564103</sizeRatio>
+      <text>圆形进度条</text>
+      <top>0</top>
+      <width>39</width>
+      <widthRatio>0.386138613861386</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel54/panel226/edit3">
+      <backgroundSkin>empty</backgroundSkin>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>103</height>
+      <heightRatio>0.78030303030303</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <left>0</left>
+      <multiLine>true</multiLine>
+      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit3"), ee.getControl("panel230"), 160);</onChange>
+      <onCreate>sender._input.style.resize = "none";</onCreate>
+      <sizeRatio>0.189686924493554</sizeRatio>
+      <text>添加你的简介</text>
+      <top>29</top>
+      <topRatio>0.21969696969697</topRatio>
+      <vAlign>top</vAlign>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel226/edit3/panel66">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0194174757281553</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00368324125230203</sizeRatio>
+      <top>101</top>
+      <topRatio>0.980582524271845</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel226/panel65">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.212121212121212</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0165745856353591</leftRatio>
+      <sizeRatio>0.168674698795181</sizeRatio>
+      <text>简介</text>
+      <top>0</top>
+      <width>166</width>
+      <widthRatio>0.305709023941068</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel227">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>73</height>
+      <heightRatio>0.113178294573643</heightRatio>
+      <left>28</left>
+      <leftRatio>0.0466666666666667</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";</onCreate>
+      <sizeRatio>0.134438305709024</sizeRatio>
+      <top>542</top>
+      <topRatio>0.84031007751938</topRatio>
+      <width>543</width>
+      <widthRatio>0.905</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel227/panel232">
+      <fontColor>657786</fontColor>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>40</height>
+      <heightRatio>0.547945205479452</heightRatio>
+      <left>433</left>
+      <leftRatio>0.797421731123389</leftRatio>
+      <sizeRatio>0.404040404040404</sizeRatio>
+      <text>0/100</text>
+      <top>0</top>
+      <width>99</width>
+      <widthRatio>0.18232044198895</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel227/panel232/panel233">
+      <backgroundColor>EAEAF4</backgroundColor>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
+sender.v_x = parseInt(eb.getDivRect(sender).w/2);
+sender.v_y = parseInt(eb.getDivRect(sender).h/2);
+sender.v_r = 9;
+sender.v_color = "#29a5f2";
+sender.v_bgColor = "#ecf0f3";
+sender.v_width = "4px";
+sender.v_progress = "0.0001";
+sender.refresh = function(progress) {
+    var path = this.childNodes[0].childNodes[0];
+    path.style.stroke=sender.v_bgColor;
+    path.style.strokeWidth=sender.v_width;
+    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
+    path.setAttribute("d", des.join(" "));
+    
+    if (!eb.isEmpty(progress)) this.v_progress = progress;
+    this.v_progress = Math.min(0.9999,this.v_progress);
+    this.v_progress = Math.max(0.0001,this.v_progress);
+    path = this.childNodes[0].childNodes[1];
+    var ag = 90+360-this.v_progress*360;  
+    var ag = ag*(Math.PI/180);
+    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
+    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
+    var opt = window.Number(this.v_progress>0.5);
+    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
+    path.style.stroke=sender.v_color;
+    path.style.strokeWidth=sender.v_width;
+    path.setAttribute("d", des.join(" "));
+}
+
+
+
+]]></onCreate>
+      <sizeRatio>1.02564102564103</sizeRatio>
+      <text>圆形进度条</text>
+      <top>0</top>
+      <width>39</width>
+      <widthRatio>0.393939393939394</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel227/panel67">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.383561643835616</heightRatio>
+      <left>11</left>
+      <leftRatio>0.0202578268876611</leftRatio>
+      <sizeRatio>0.106870229007634</sizeRatio>
+      <text>网站</text>
+      <top>0</top>
+      <width>262</width>
+      <widthRatio>0.482504604051565</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel54/panel227/edit4">
+      <backgroundSkin>empty</backgroundSkin>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>38</height>
+      <heightRatio>0.520547945205479</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>14</inputFontSize>
+      <left>0</left>
+      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit4"), ee.getControl("panel233"), 100);</onChange>
+      <sizeRatio>0.0699815837937385</sizeRatio>
+      <text>添加你的网站</text>
+      <top>35</top>
+      <topRatio>0.479452054794521</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel54/panel227/edit4/panel68">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0526315789473684</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00368324125230203</sizeRatio>
+      <top>36</top>
+      <topRatio>0.947368421052632</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -5159,7 +5441,6 @@ ee.getControl("panel217").show();
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -5280,6 +5561,58 @@ ee.showAni(ee.getControl("panel117"), 1);
       <width>137</width>
       <widthRatio>0.395953757225434</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel117/panel221">
+      <backgroundColor>00C0C0</backgroundColor>
+      <cursor>move</cursor>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>65</height>
+      <heightRatio>0.285087719298246</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.v_down = false;
+sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.187861271676301</sizeRatio>
+      <top>0</top>
+      <width>346</width>
+      <widthRatio>1</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
       <aniAlpha>appear:渐变出现</aniAlpha>
@@ -5288,7 +5621,6 @@ ee.showAni(ee.getControl("panel117"), 1);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 ee.setText(ee.getControl("panel145"), "");
@@ -5740,7 +6072,19 @@ if ((ytbVideo.length<=8)||(ytbVideo.length>=14)) {
     return;
 }
 ytbVideo = "?YTB" + ytbVideo;
-ee.getControl("panel51").v_photos.push(ytbVideo);
+var i = 0;
+for (i=0; i<ee.getControl("panel51").v_photos.length; i++) {
+    var s = ee.getControl("panel51").v_photos[i];
+    if (s.length<4) continue;
+    if (s.substr(0,4)=="?YTB") {
+        break;
+    }
+}
+if (i>=ee.getControl("panel51").v_photos.length) {
+    ee.getControl("panel51").v_photos.push(ytbVideo);
+} else {
+    ee.getControl("panel51").v_photos.splice(i,1,ytbVideo);
+}
 g5.refreshPhoto(ee.getControl("panel51"));
     
     
@@ -5752,6 +6096,58 @@ g5.refreshPhoto(ee.getControl("panel51"));
       <topRatio>0.287215411558669</topRatio>
       <width>79</width>
       <widthRatio>0.148496240601504</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel220">
+      <backgroundColor>00C0C0</backgroundColor>
+      <cursor>move</cursor>
+      <height>52</height>
+      <heightRatio>0.0910683012259194</heightRatio>
+      <left>87</left>
+      <leftRatio>0.163533834586466</leftRatio>
+      <onCreate><![CDATA[sender.v_down = false;
+sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.207171314741036</sizeRatio>
+      <top>8</top>
+      <topRatio>0.0140105078809107</topRatio>
+      <width>251</width>
+      <widthRatio>0.471804511278196</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel10">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -5866,6 +6262,58 @@ g5.refreshPhoto(ee.getControl("panel51"));
       <width>584</width>
       <widthRatio>1</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel10/panel222">
+      <backgroundColor>00C0C0</backgroundColor>
+      <cursor>move</cursor>
+      <dockY>top</dockY>
+      <height>56</height>
+      <heightRatio>0.0861538461538462</heightRatio>
+      <left>135</left>
+      <leftRatio>0.225</leftRatio>
+      <onCreate><![CDATA[sender.v_down = false;
+sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.12280701754386</sizeRatio>
+      <top>0</top>
+      <width>456</width>
+      <widthRatio>0.76</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel112/panel217">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
       <ani2Size>pointDisappear:收缩消失成点</ani2Size>
@@ -5975,6 +6423,58 @@ ee.showAni(sender.parentNode.parentNode, 1);</onClick>
       <width>137</width>
       <widthRatio>0.395953757225434</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel217/panel223">
+      <backgroundColor>00C0C0</backgroundColor>
+      <cursor>move</cursor>
+      <dockY>top</dockY>
+      <height>63</height>
+      <heightRatio>0.276315789473684</heightRatio>
+      <left>6</left>
+      <leftRatio>0.0173410404624277</leftRatio>
+      <onCreate><![CDATA[sender.v_down = false;
+sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.188059701492537</sizeRatio>
+      <top>0</top>
+      <width>335</width>
+      <widthRatio>0.968208092485549</widthRatio>
+    </control>
   </controls>
   <taskSet count="22">
     <taskSetItem name="getUserInfo">
@@ -6071,6 +6571,18 @@ var note = ee.getEditText(ee.getControl("edit3"));
 var homepage = ee.getEditText(ee.getControl("edit4"));
 if (nickName.length<3) {
     alert("昵称或者姓名不能少于3个英文字母或汉字");
+    return;
+}
+if (nickName.length>50) {
+    alert("昵称的长度不能大于50");
+    return;
+}
+if (note.length>160) {
+    alert("简介的长度不能大于160");
+    return;
+}
+if (homepage.length>100) {
+    alert("网站的长度不能大于100");
     return;
 }
 eio.appendString16(g5.token);
@@ -6241,6 +6753,7 @@ getOtherUserInfo.onComplete();
     <taskSetItem name="newTwitter">
       <script1><![CDATA[//content,uplinkType,uplinkId,busy,photos(array)
 if (eb.isEmpty(newTwitter.busy)) newTwitter.busy = false;
+if (eb.isEmpty(newTwitter.photos)) newTwitter.photos = new Array();
 if (newTwitter.busy) return;
 
 var text = newTwitter.content;
@@ -7710,7 +8223,9 @@ sql =
     "FROM      dbo.tContent LEFT OUTER JOIN " +
     "                dbo.follow ON dbo.follow.userId = "+myUserId+" AND dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id " +
-    "WHERE   (dbo.tContent.uplinkId = "+contentId+") AND (dbo.tContent.uplinkType = 'F' or dbo.tContent.uplinkType = 'L') ";
+    "WHERE   (dbo.tContent.uplinkId = "+contentId+") AND (dbo.tContent.uplinkType = 'F' or dbo.tContent.uplinkType = 'L') " +
+    "GROUP BY dbo.tContent.userId, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo, " + 
+    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.follow.userId ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -8114,7 +8629,7 @@ g5.syncTwitter(likeContent.contentId,3);
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="48">
+  <g5Items count="51">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -8188,6 +8703,20 @@ g5.syncTwitter(likeContent.contentId,3);
     <item name="hisTwitterPage" type="10">
       <varValue>new Array();
 </varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="player" type="10">
+      <varValue>{
+    currentPlayer: null,
+    currentDiv: null,
+    stop: function() {
+        if (this.currentPlayer!=null) {
+            this.currentPlayer.stopVideo();
+            //this.currentPlayer = null;
+        }
+    }
+}</varValue>
       <functionParam />
       <functionCode />
     </item>
@@ -8493,7 +9022,7 @@ ee.setOnClick(c,function(sender,event) {
         var e = event || window.event;
         ee.setRect(ee.getControl("panel149"), e.clientX - eb.getDivRect(ee.getControl("panel149")).w +20, e.clientY - 20, null, null);
         ee.showAni(ee.getControl("panel149"), 0);
-        delTwitter.contentId = sender.parentNode.parentNode.v_contentId;
+        delTwitter.contentId = sender.parentNode.v_contentId;
     } else {
         var e = event || window.event;
         ee.setRect(ee.getControl("panel213"), e.clientX - eb.getDivRect(ee.getControl("panel213")).w +20, e.clientY - 20, null, null);
@@ -8558,6 +9087,7 @@ if (root.v_photos.length>0) {
     c.v_photos = root.v_photos;
     c.v_mode = "";
     g5.refreshPhoto(c);
+    root.c_photos = c;
 } else {
     cy +=10;
 }
@@ -8579,6 +9109,12 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     c.v_uplinkId = root.v_uplinkId
     ee.setOnClick(c,function(sender,event) {
+        if (sender.parentNode.parentNode.id=="ee_panel22") {
+            g5.hisTwitterPage.push(root.v_contentId);
+        } else {
+            g5.hisTwitterPage = new Array();
+            g5.hisTwitterPage.push(root.v_contentId);
+        }
         showTopic.topicId = sender.v_uplinkId;
         showTopic.needRefresh = true;
         showTopic();
@@ -8628,8 +9164,8 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
         c.v_photos = root.v_rePhotos;
         c.v_mode = "";
         g5.refreshPhoto(c);
+        root.c_rePhotos = c;
     }
-    
 } else if (root.v_uplinkType == "F") {
     var p1ratio = 2.64;
     c = createPanel(root, root.id+"_panel2", "", 75, cy, mainWidth-2, 100);
@@ -8646,6 +9182,12 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     c.v_uplinkId = root.v_uplinkId
     ee.setOnClick(c,function(sender,event) {
+        if (sender.parentNode.parentNode.id=="ee_panel22") {
+            g5.hisTwitterPage.push(root.v_contentId);
+        } else {
+            g5.hisTwitterPage = new Array();
+            g5.hisTwitterPage.push(root.v_contentId);
+        }
         showTopic.topicId = sender.v_uplinkId;
         showTopic.needRefresh = true;
         showTopic();
@@ -8707,6 +9249,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
         c.v_photos = root.v_rePhotos;
         c.v_mode = "";
         g5.refreshPhoto(c);
+        root.c_rePhotos = c;
     }
     
     //c = createPanel($g(root.id+"_panel2"), root.id+"_panel7", "", 0, 0, p1w, p1y);
@@ -8953,7 +9496,20 @@ root.changeButton3(); root.changeButton3();
 //set total height
 rect = eb.getDivRect(root.v_btn1);
 eb.setDivRect(root, null, null, null, rect.y + rect.h + 7);
-eb.processDock()
+eb.processDock();
+if (!eb.isEmpty(root.c_photos)) {
+    if (!eb.isEmpty(root.c_photos.c_video)) {
+        root.c_photos.v_videoY = g5.getVideoY(root.parentNode, root.c_photos.c_video);
+        root.c_photos.v_videoH = eb.getDivRect(root.c_photos.c_video).h;
+    }
+}
+if (!eb.isEmpty(root.c_rePhotos)) {
+    if (!eb.isEmpty(root.c_rePhotos.c_video)) {
+        root.c_rePhotos.v_videoY = g5.getVideoY(root.parentNode, root.c_rePhotos.c_video);
+        root.c_rePhotos.v_videoH = eb.getDivRect(root.c_rePhotos.c_video).h;
+    }
+}
+
 return root;]]></functionCode>
     </item>
     <item name="loadUserRecord" type="20">
@@ -9701,14 +10257,14 @@ if (g5.photo == "") {
     ee.setImage(ee.getControl("panel2"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel29"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel47"), "/twitterG/main/user.png");
-    ee.setImage(ee.getControl("panel59"), "/twitterG/main/user.png");
+    ee.setImage(ee.getControl("panel55"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel14"), "/twitterG/main/user.png");
     //ee.setImage(ee.getControl("panel111"), "/twitterG/main/user.png");
 } else {
     ee.setImage(ee.getControl("panel2"), "url:" + g5.imgUrl + g5.photo);
     ee.setImage(ee.getControl("panel29"), "url:" + g5.imgUrl + g5.photo);
     ee.setImage(ee.getControl("panel47"), "url:" + g5.imgUrl + g5.photo);
-    ee.setImage(ee.getControl("panel59"), "url:" + g5.imgUrl + g5.photo);
+    ee.setImage(ee.getControl("panel55"), "url:" + g5.imgUrl + g5.photo);
     ee.setImage(ee.getControl("panel14"), "url:" + g5.imgUrl + g5.photo);
     //ee.setImage(ee.getControl("panel111"), "url:" + g5.imgUrl + g5.photo);
 }
@@ -9876,21 +10432,49 @@ if (root.v_photos.length==1) {
     <item name="addPhoto" type="20">
       <varValue />
       <functionParam>root</functionParam>
-      <functionCode><![CDATA[var rect = eb.getDivRect(root);
+      <functionCode><![CDATA[var c;
+var rect = eb.getDivRect(root);
 if (root.v_photo.substr(0,4) == "?YTB") {
-    root.innerHTML = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
-        root.v_photo.substr(4, root.v_photo.length) + 
-        "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+    root.innerHTML = "<div id='" + root.id + "_ytb'></div>";
+    root.parentNode.c_player = new YT.Player(root.id + "_ytb", {
+        height: rect.h,
+        width: rect.w,
+        videoId: root.v_photo.substr(4, root.v_photo.length),
+        events: {
+            "onReady": function onPlayerReady(event) {
+                if (event.target.v_mode=="") {
+                    event.target.mute();
+                }
+            },
+            "onStateChange": null
+        }
+    });
+    root.parentNode.c_video = root;
+    root.parentNode.c_player.v_mode = root.parentNode.v_mode;
+    if (root.parentNode.v_mode=="") {
+        var h = rect.h - 50;
+        if (h<0) h = rect.h;
+        c = createPanel(root, root.id+"_clk", "rgba(255,255,255,0.01)", 0,0,rect.w,h);
+        c.style.cursor = "pointer";
+        ee.setOnClick(c, function(sender, event) {
+            sender.parentNode.parentNode.c_player.unMute();
+            ee.setVisible(sender, false);
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+        });
+    }
+    //root.innerHTML = "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
+    //    root.v_photo.substr(4, root.v_photo.length) + 
+    //    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
 } else {
     root.imgUrl = "url:" + g5.imgUrl + root.v_photo
     g5.setImage(root,root.imgUrl,"trim","","",400);
     ee.setOnClick(root, function(sender, event) {
         ee.getControl("panel142").show(sender.parentNode.v_photos, sender.v_photo);
+        g5.player.stop();
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     }); 
 }
 //ee.getControl("panel53").style.pointerEvents = "none";
-var c;
 if (root.parentNode.v_mode=="x") {
     c = createPanel(root, root.id+"_close", "", rect.w-36-12, 12, 36, 36);
     c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgba(255,255,255,1);fill: currentcolor;vertical-align:middle;\">" + g5.iconClose + "</svg>";
@@ -9908,6 +10492,60 @@ if (root.parentNode.v_mode=="x") {
         g5.refreshPhoto(sender.parentNode.parentNode);    
     })
 }]]></functionCode>
+    </item>
+    <item name="processVideo" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode><![CDATA[var player = {};
+player.dy = 99999;
+var screenC = eb.getDivRect(ee.getControl("divRoot")).h/2;
+for (var i = 0; i < g5.itemsHome.length; i++) {
+    if (eb.isEmpty(g5.itemsHome[i].c_photos)) continue;
+    if (eb.isEmpty(g5.itemsHome[i].c_photos.c_player)) continue;
+    var dy = g5.itemsHome[i].c_photos.v_videoY - g5.mainDiv.scrollTop + g5.itemsHome[i].c_photos.v_videoH/2;
+    dy = Math.abs(dy - screenC);
+    if (player.dy>dy) {
+        player.player = g5.itemsHome[i].c_photos.c_player;
+        player.dy = dy;
+        player.c_control = g5.itemsHome[i].c_photos;
+    }
+}
+for (var i = 0; i < g5.itemsHome.length; i++) {
+    if (eb.isEmpty(g5.itemsHome[i].c_rePhotos)) continue;
+    if (eb.isEmpty(g5.itemsHome[i].c_rePhotos.c_player)) continue;
+    var dy = g5.itemsHome[i].c_rePhotos.v_videoY - g5.mainDiv.scrollTop + g5.itemsHome[i].c_rePhotos.v_videoH/2;
+    dy = Math.abs(dy - screenC);
+    if (player.dy>dy) {
+        player.player = g5.itemsHome[i].c_rePhotos.c_player;
+        player.dy = dy;
+        player.c_control = g5.itemsHome[i].c_rePhotos
+    }
+}
+if (eb.isEmpty(player.player)) return;
+var y = player.c_control.v_videoY-g5.mainDiv.scrollTop;
+var h = player.c_control.v_videoH;
+if (y+h<0) return;
+if (y>screenC*2) return;
+if (g5.player.currentPlayer==player.player) return;
+g5.player.stop();
+g5.player.currentPlayer = player.player;
+g5.player.currentDiv = player.c_control;
+g5.player.currentPlayer.playVideo();
+
+
+]]></functionCode>
+    </item>
+    <item name="getVideoY" type="20">
+      <varValue />
+      <functionParam>root,video</functionParam>
+      <functionCode>var result = 0;
+while (true) {
+    result += eb.getDivRect(video).y;
+    video = video.parentNode;
+    if (video == root) break;
+    if (eb.isEmpty(video)) break;
+}
+return result;</functionCode>
     </item>
   </g5Items>
 </page>
