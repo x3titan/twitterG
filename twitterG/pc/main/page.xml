@@ -8713,7 +8713,7 @@ g5.syncTwitter(likeContent.contentId,3);
     stop: function() {
         if (this.currentPlayer!=null) {
             this.currentPlayer.stopVideo();
-            //this.currentPlayer = null;
+            this.currentPlayer = null;
         }
     }
 }</varValue>
@@ -10105,10 +10105,12 @@ if (g5.currentPageIndex == 0) {
     ee.setVisible(g5.p4, false);
     ee.setVisible(ee.getControl("panel34"), false);
     ee.setVisible(ee.getControl("panel41"), false);
+    g5.player.stop();
     //ee.showAni(ee.getControl("panel41"), 1);
     g5.mainDiv.lastScrollTop = g5.mainDiv.scrollTop;
 } else if (g5.currentPageIndex == 1) {
     ee.setVisible(g5.p4, false);
+    g5.player.stop();
     ee.showAni(ee.getControl("panel16"), 1);
 } else if (g5.currentPageIndex == 2) {
     ee.setVisible(g5.p4, false);
@@ -10130,6 +10132,7 @@ if (g5.currentPageIndex == 0) {
     ee.setVisible(g5.p4, false);
     ee.setVisible(ee.getControl("panel38"), false);
     ee.setVisible(ee.getControl("panel22"), false);
+    g5.player.stop();
     //ee.showAni(ee.getControl("panel22"), 1);
 } else if (g5.currentPageIndex == 9) {
     ee.setVisible(g5.p4, false);
@@ -10441,7 +10444,7 @@ if (root.v_photo.substr(0,4) == "?YTB") {
         width: rect.w,
         videoId: root.v_photo.substr(4, root.v_photo.length),
         events: {
-            "onReady": function onPlayerReady(event) {
+            "onReady": function(event) {
                 if (event.target.v_mode=="") {
                     event.target.mute();
                 }
@@ -10496,41 +10499,55 @@ if (root.parentNode.v_mode=="x") {
     <item name="processVideo" type="20">
       <varValue />
       <functionParam />
-      <functionCode><![CDATA[var player = {};
+      <functionCode><![CDATA[if (ee.getControl("panel142").style.visibility != "hidden") return;
+var player = {};
 player.dy = 99999;
 var screenC = eb.getDivRect(ee.getControl("divRoot")).h/2;
-for (var i = 0; i < g5.itemsHome.length; i++) {
-    if (eb.isEmpty(g5.itemsHome[i].c_photos)) continue;
-    if (eb.isEmpty(g5.itemsHome[i].c_photos.c_player)) continue;
-    var dy = g5.itemsHome[i].c_photos.v_videoY - g5.mainDiv.scrollTop + g5.itemsHome[i].c_photos.v_videoH/2;
+var items;
+if (g5.currentPageIndex == 0) {
+    items = g5.itemsHome;
+} else if (g5.currentPageIndex == 1) {
+    items = g5.itemsPageUser;
+} else if (g5.currentPageIndex == 7) {
+    items = showTopic.items;
+} else return;
+for (var i = 0; i < items.length; i++) {
+    if (eb.isEmpty(items[i].c_photos)) continue;
+    if (eb.isEmpty(items[i].c_photos.c_player)) continue;
+    var dy = items[i].c_photos.v_videoY - g5.mainDiv.scrollTop + items[i].c_photos.v_videoH/2;
     dy = Math.abs(dy - screenC);
     if (player.dy>dy) {
-        player.player = g5.itemsHome[i].c_photos.c_player;
+        player.player = items[i].c_photos.c_player;
         player.dy = dy;
-        player.c_control = g5.itemsHome[i].c_photos;
+        player.c_control = items[i].c_photos;
     }
 }
-for (var i = 0; i < g5.itemsHome.length; i++) {
-    if (eb.isEmpty(g5.itemsHome[i].c_rePhotos)) continue;
-    if (eb.isEmpty(g5.itemsHome[i].c_rePhotos.c_player)) continue;
-    var dy = g5.itemsHome[i].c_rePhotos.v_videoY - g5.mainDiv.scrollTop + g5.itemsHome[i].c_rePhotos.v_videoH/2;
+for (var i = 0; i < items.length; i++) {
+    if (eb.isEmpty(items[i].c_rePhotos)) continue;
+    if (eb.isEmpty(items[i].c_rePhotos.c_player)) continue;
+    var dy = items[i].c_rePhotos.v_videoY - g5.mainDiv.scrollTop + items[i].c_rePhotos.v_videoH/2;
     dy = Math.abs(dy - screenC);
     if (player.dy>dy) {
-        player.player = g5.itemsHome[i].c_rePhotos.c_player;
+        player.player = items[i].c_rePhotos.c_player;
         player.dy = dy;
-        player.c_control = g5.itemsHome[i].c_rePhotos
+        player.c_control = items[i].c_rePhotos
     }
 }
 if (eb.isEmpty(player.player)) return;
 var y = player.c_control.v_videoY-g5.mainDiv.scrollTop;
 var h = player.c_control.v_videoH;
-if (y+h<0) return;
-if (y>screenC*2) return;
+if ((y+h<0) || (y>screenC*2)) {
+    g5.player.stop();
+    return;
+}
 if (g5.player.currentPlayer==player.player) return;
-g5.player.stop();
-g5.player.currentPlayer = player.player;
-g5.player.currentDiv = player.c_control;
-g5.player.currentPlayer.playVideo();
+if (eb.isEmpty(player.player.playVideo)) {
+} else {
+    g5.player.stop();
+    g5.player.currentPlayer = player.player;
+    g5.player.currentDiv = player.c_control;
+    g5.player.currentPlayer.playVideo();
+}
 
 
 ]]></functionCode>
