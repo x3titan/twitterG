@@ -12,6 +12,7 @@ document.body.style.backgroundColor = "#ffffff";
 
 eb.addEvent(g5.mainDiv, "scroll", function() {
     var viewPortH = $g("divRoot").offsetHeight;
+    g5.player.forceMode = false;
 
     var p2h = eb.getDivRect(ee.getControl("panel135")).h;
     if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
@@ -8710,6 +8711,7 @@ g5.syncTwitter(likeContent.contentId,3);
       <varValue>{
     currentPlayer: null,
     currentDiv: null,
+    forceMode: false,
     stop: function() {
         if (this.currentPlayer!=null) {
             this.currentPlayer.stopVideo();
@@ -10449,7 +10451,15 @@ if (root.v_photo.substr(0,4) == "?YTB") {
                     event.target.mute();
                 }
             },
-            "onStateChange": null
+            "onStateChange": function(event) {
+                if (event.data == YT.PlayerState.PLAYING) {
+                    if (event.target!=g5.player.currentPlayer) {
+                        g5.player.stop();
+                        g5.player.forceMode = true;
+                        g5.currentPlayer=event.target;
+                    }
+                }
+            }
         }
     });
     root.parentNode.c_video = root;
@@ -10462,6 +10472,9 @@ if (root.v_photo.substr(0,4) == "?YTB") {
         ee.setOnClick(c, function(sender, event) {
             sender.parentNode.parentNode.c_player.unMute();
             ee.setVisible(sender, false);
+            if (sender.parentNode.parentNode.c_player!=g5.player.currentPlayer) {
+                sender.parentNode.parentNode.c_player.playVideo();    
+            }
             window.event? window.event.cancelBubble = true : event.stopPropagation();
         });
     }
@@ -10500,6 +10513,7 @@ if (root.parentNode.v_mode=="x") {
       <varValue />
       <functionParam />
       <functionCode><![CDATA[if (ee.getControl("panel142").style.visibility != "hidden") return;
+if (g5.player.forceMode) return;
 var player = {};
 player.dy = 99999;
 var screenC = eb.getDivRect(ee.getControl("divRoot")).h/2;
