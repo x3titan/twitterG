@@ -1,5 +1,5 @@
 <page>
-  <controls count="8">
+  <controls count="9">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -181,8 +181,8 @@ sender.onpointermove = function(event) {
       <fontColor>FFFFFF</fontColor>
       <height>39</height>
       <heightRatio>0.0489949748743719</heightRatio>
-      <left>457</left>
-      <leftRatio>0.377062706270627</leftRatio>
+      <left>399</left>
+      <leftRatio>0.329207920792079</leftRatio>
       <onClick>player = new YT.Player("ee_panel3", {
     height: "360",
     width: "640",
@@ -192,28 +192,28 @@ sender.onpointermove = function(event) {
         "onStateChange": onPlayerStateChange
     }
 });</onClick>
-      <sizeRatio>0.188405797101449</sizeRatio>
+      <sizeRatio>0.345132743362832</sizeRatio>
       <text>init</text>
-      <top>151</top>
-      <topRatio>0.189698492462312</topRatio>
-      <width>207</width>
-      <widthRatio>0.170792079207921</widthRatio>
+      <top>155</top>
+      <topRatio>0.194723618090452</topRatio>
+      <width>113</width>
+      <widthRatio>0.0932343234323432</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel5">
       <backgroundSkin>button1001</backgroundSkin>
       <fontColor>FFFFFF</fontColor>
       <height>39</height>
       <heightRatio>0.0489949748743719</heightRatio>
-      <left>457</left>
-      <leftRatio>0.377062706270627</leftRatio>
+      <left>399</left>
+      <leftRatio>0.329207920792079</leftRatio>
       <onClick>player.playVideo();
 </onClick>
-      <sizeRatio>0.188405797101449</sizeRatio>
+      <sizeRatio>0.345132743362832</sizeRatio>
       <text>play</text>
-      <top>204</top>
-      <topRatio>0.256281407035176</topRatio>
-      <width>207</width>
-      <widthRatio>0.170792079207921</widthRatio>
+      <top>200</top>
+      <topRatio>0.251256281407035</topRatio>
+      <width>113</width>
+      <widthRatio>0.0932343234323432</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel256">
       <backgroundColor>8ED0F9</backgroundColor>
@@ -226,6 +226,8 @@ sender.onpointermove = function(event) {
       <heightRatio>0.050251256281407</heightRatio>
       <left>434</left>
       <leftRatio>0.358085808580858</leftRatio>
+      <onClick>sender.init((sender.v_index + 1) % sender.v_style.length);
+</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
     this.color1 = color1;
     this.color2 = color2
@@ -239,7 +241,10 @@ sender.onpointermove = function(event) {
     this.bdColor = bdColor;
 }
 sender.v_style = [
-    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")
+    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff",""),
+    new sender.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
+    new sender.BStyle("#1da1f2","#ca2055","#b31d4b","正在关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff",""),
+    new sender.BStyle("","#e8f5fe","#d2ecfc","编辑个人资料","编辑个人资料","编辑个人资料","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
 ];
 
 sender.init = function(index) {
@@ -299,6 +304,56 @@ sender.init(0);
       <topRatio>0.0540201005025126</topRatio>
       <width>132</width>
       <widthRatio>0.108910891089109</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/edit1">
+      <backgroundSkin>edit1</backgroundSkin>
+      <fontBold>true</fontBold>
+      <fontColor>C0C0C0</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>35</height>
+      <heightRatio>0.0439698492462312</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>12</inputFontSize>
+      <left>598</left>
+      <leftRatio>0.493399339933993</leftRatio>
+      <multiLine>true</multiLine>
+      <onChange><![CDATA[var edit = sender.parentNode;
+var text = ee.getEditText(edit);
+if (text.length > 0) {
+    if (text.charAt(text.length-1)=="\n") text+="a";
+}
+ee.setText(edit.c_tester, text);
+var h = eb.getDivRect(edit.c_tester.label).h;
+h = Math.max(edit.v_defaultH, h);
+var lastH = eb.getDivRectSetting(edit).h;
+if (h!=lastH) {
+    ee.setRect(edit, null, null, null, h);
+    if (!eb.isEmpty(edit.onHeightChange)) {
+        edit.onHeightChange(edit, lastH, h);
+    }
+}
+
+]]></onChange>
+      <onCreate>sender.onHeightChange = function(sender, oldHeight, newHeight) {
+    //insert your code heare
+}
+
+sender._input.style.resize = "none";
+var rect = eb.getDivRect(sender);
+sender.c_tester = createPanel(sender, sender.id+"_tester", "", rect.w+300, 0, rect.w, rect.h);
+sender.v_defaultH = rect.h;
+addText(sender.c_tester, "A", "left", "top", "Arial", 9, "ffffff", "");
+sender.c_tester.label.rows[0].cells[0].style.fontFamily = sender._input.style.fontFamily;
+sender.c_tester.label.rows[0].cells[0].style.fontSize = sender._input.style.fontSize;
+sender.c_tester.label.rows[0].cells[0].style.fontWeight = sender._input.style.fontWeight;
+</onCreate>
+      <sizeRatio>0.140562248995984</sizeRatio>
+      <text>自动高度Edit</text>
+      <top>46</top>
+      <topRatio>0.0577889447236181</topRatio>
+      <width>249</width>
+      <widthRatio>0.205445544554455</widthRatio>
     </control>
   </controls>
   <taskSet count="0" />
