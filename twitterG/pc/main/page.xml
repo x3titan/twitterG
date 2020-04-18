@@ -2099,7 +2099,7 @@ sender.style.borderTop = "";
       <left>0</left>
       <note>聊天root</note>
       <onCreate><![CDATA[sender.minRefreshTime = 3000;
-sender.maxRefreshTime = 30000;
+sender.maxRefreshTime = 50000;
 sender.running = false;
 sender.start = function(roomId) {
     this.v_roomId = roomId;
@@ -2118,7 +2118,8 @@ sender.stop = function() {
 sender.v_items = new Array();
 sender.currentRefreshTime = sender.minRefreshTime;
 sender.v_lastChatId = 0;
-sender.refresh = function() {
+sender.style.overflowX = "hidden";
+sender.refresh = function(force) {
     chatGet.roomId = this.v_roomId;
     chatGet.chatId = this.v_lastChatId;
     chatGet.isNew = 1;
@@ -2132,19 +2133,33 @@ sender.refresh = function() {
         }
         var itemWidth = eb.getDivRect(root).w;
         for (var i=0; i<dataset.rowCount; i++) {
-            var item = createPanel(root, "page1_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             root.loadData(item, dataset, i);
             root.renderMsg(item);
             cy += 0 + eb.getDivRect(item).h;
             root.v_items.push(item);
             root.v_lastChatId = dataset.getData(0,i);
+        }
+        if (dataset.rowCount>0) {
+            root.scrollTop = cy - eb.getDivRect(root).h;
+            root.currentRefreshTime = root.minRefreshTime;
         }    
     }
     chatGet();
-    if (sender.running) {
-        setTimeout(function() {
-            sender.refresh();
-        }, sender.currentRefreshTime);
+    if (this.running) {
+        if (eb.isEmpty(force)) {
+            if (sender.currentRefreshTime <= 12000) {
+                sender.currentRefreshTime += 1000;
+            } else {
+                sender.currentRefreshTime += parseInt(sender.currentRefreshTime*0.2);
+            }
+            sender.currentRefreshTime = Math.min(sender.currentRefreshTime, sender.maxRefreshTime); 
+            setTimeout(function() {
+                sender.refresh();
+            }, sender.currentRefreshTime);
+        } else {
+            sender.currentRefreshTime = sender.minRefreshTime;
+        }
     }
 }
 
@@ -2258,7 +2273,7 @@ if (h!=lastH) {
 }
 
 ]]></onChange>
-      <onCreate>sender.onHeightChange = function(sender, oldHeight, newHeight) {
+      <onCreate><![CDATA[sender.onHeightChange = function(sender, oldHeight, newHeight) {
     var dy = newHeight - oldHeight;
     if (dy==0) return;
     var rect = eb.getDivRect(ee.getControl("layoutyitem4"));
@@ -2275,7 +2290,24 @@ addText(sender.c_tester, "A", "left", "top", "Arial", 9, "ffffff", "");
 sender.c_tester.label.rows[0].cells[0].style.fontFamily = sender._input.style.fontFamily;
 sender.c_tester.label.rows[0].cells[0].style.fontSize = sender._input.style.fontSize;
 sender.c_tester.label.rows[0].cells[0].style.fontWeight = sender._input.style.fontWeight;
-</onCreate>
+
+sender._input.addEventListener("keydown", function(event) {
+    if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
+        var msgContent = ee.getEditText(ee.getControl("edit11"));
+        if (msgContent.length<=0) return;
+        if (msgContent.length>200) msgContent = msgContent.substr(0,200);
+        
+        chatSend.roomId = showUserPage.defaultChatRoomId;
+        chatSend.msgContent = msgContent;
+        chatSend.onComplete = function() {
+            ee.setEditText(ee.getControl("edit11"), "");
+            ee.getControl("layoutyitem3").refresh(true);
+        }
+        chatSend();        
+        event.preventDefault();
+        return false;
+    }
+});]]></onCreate>
       <sizeRatio>0.0583501006036217</sizeRatio>
       <text>有什么想说的？</text>
       <top>11</top>
@@ -2297,6 +2329,7 @@ chatSend.roomId = showUserPage.defaultChatRoomId;
 chatSend.msgContent = msgContent;
 chatSend.onComplete = function() {
     ee.setEditText(ee.getControl("edit11"), ""); 
+    ee.getControl("layoutyitem3").refresh(true);
 }
 chatSend();
 
@@ -8645,8 +8678,8 @@ cy += vspace + eb.getDivRect(ee.getControl("layoutx7")).h;
 
 eb.setDivRect(ee.getControl("panel72"),null,cy,null,null);
 ee.setVisible(ee.getControl("panel72"), true);
-ee.setText(ee.getControl("panel72"), "<div id='userPageLink01' style='display:inline;'>正在关注"+countFollow+"人</div>" +
-    "     <div id='userPageLink02' style='display:inline;'>拥有粉丝" + countFans+"人</div>");
+ee.setText(ee.getControl("panel72"), "<div id='userPageLink01' style='display:inline;'>"+countFollow+" 个关注</div>" +
+    "     <div id='userPageLink02' style='display:inline;'>" + countFans+"个粉丝</div>");
 var c = ee.getControl("panel72"); 
 c.link01=$g("userPageLink01");
 c.link02=$g("userPageLink02");
@@ -8682,7 +8715,7 @@ eb.setDivRect(ee.getControl("panel263"),null,cy,null,null);
 ee.setVisible(ee.getControl("panel263"), true);
 cy += eb.getDivRect(ee.getControl("panel263")).h;
 
-eb.setDivRect(ee.getControl("panel19"),null,cy,null,600);
+eb.setDivRect(ee.getControl("panel19"),null,cy,null,300);
 ee.setVisible(ee.getControl("panel19"), true);
 cy += eb.getDivRect(ee.getControl("panel19")).h;
 
@@ -10183,7 +10216,7 @@ sql =
     "                dbo.userInfo.homePage " +
     "FROM      dbo.chatRoomData LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.chatRoomData.userId = dbo.userInfo.id " +
-    "WHERE chatRoomData.roomId = " + roomId + " and chatRoomData.id" + (isNew==1?">":"<") + chatId + " "
+    "WHERE chatRoomData.roomId = " + roomId + " and chatRoomData.id" + (isNew==1?">":"<") + chatId + " " +
     "ORDER BY chatRoomData.id ";
 
 sqlResult = db.executeQuery("DB", sql);

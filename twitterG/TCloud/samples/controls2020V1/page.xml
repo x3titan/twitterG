@@ -1,5 +1,5 @@
 <page>
-  <controls count="9">
+  <controls count="10">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -352,6 +352,66 @@ sender.c_tester.label.rows[0].cells[0].style.fontWeight = sender._input.style.fo
       <text>自动高度Edit</text>
       <top>46</top>
       <topRatio>0.0577889447236181</topRatio>
+      <width>249</width>
+      <widthRatio>0.205445544554455</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/edit2">
+      <backgroundSkin>edit1</backgroundSkin>
+      <fontBold>true</fontBold>
+      <fontColor>C0C0C0</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>35</height>
+      <heightRatio>0.0439698492462312</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>12</inputFontSize>
+      <left>599</left>
+      <leftRatio>0.494224422442244</leftRatio>
+      <multiLine>true</multiLine>
+      <onChange><![CDATA[var edit = sender.parentNode;
+var text = ee.getEditText(edit);
+if (text.length > 0) {
+    if (text.charAt(text.length-1)=="\n") text+="a";
+}
+ee.setText(edit.c_tester, text);
+var h = eb.getDivRect(edit.c_tester.label).h;
+h = Math.max(edit.v_defaultH, h);
+var lastH = eb.getDivRectSetting(edit).h;
+if (h!=lastH) {
+    ee.setRect(edit, null, null, null, h);
+    if (!eb.isEmpty(edit.onHeightChange)) {
+        edit.onHeightChange(edit, lastH, h);
+    }
+}
+
+]]></onChange>
+      <onCreate>sender.onHeightChange = function(sender, oldHeight, newHeight) {
+    //insert your code heare
+}
+
+sender._input.style.resize = "none";
+var rect = eb.getDivRect(sender);
+sender.c_tester = createPanel(sender, sender.id+"_tester", "", rect.w+300, 0, rect.w, rect.h);
+sender.v_defaultH = rect.h;
+addText(sender.c_tester, "A", "left", "top", "Arial", 9, "ffffff", "");
+sender.c_tester.label.rows[0].cells[0].style.fontFamily = sender._input.style.fontFamily;
+sender.c_tester.label.rows[0].cells[0].style.fontSize = sender._input.style.fontSize;
+sender.c_tester.label.rows[0].cells[0].style.fontWeight = sender._input.style.fontWeight;
+
+sender._input.addEventListener("keydown", function(event) {
+    ee.setText(ee.getControl("panel4"), event.keyCode);
+    ee.setText(ee.getControl("panel5"), event.shiftKey ? "shift":"");
+    if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
+        event.preventDefault();
+        return false;
+    }
+});
+
+
+</onCreate>
+      <sizeRatio>0.140562248995984</sizeRatio>
+      <text>自动高度Edit</text>
+      <topRatio>0.125628140703518</topRatio>
       <width>249</width>
       <widthRatio>0.205445544554455</widthRatio>
     </control>
