@@ -2112,12 +2112,14 @@ sender.start = function(roomId) {
 }
 sender.stop = function() {
     this.running = false;
+    this.clearTimer();
 }
 
 //==implementation==//
 sender.v_items = new Array();
 sender.currentRefreshTime = sender.minRefreshTime;
 sender.v_lastChatId = 0;
+sender.v_timerId = null;
 sender.style.overflowX = "hidden";
 sender.refresh = function(force) {
     chatGet.roomId = this.v_roomId;
@@ -2148,18 +2150,26 @@ sender.refresh = function(force) {
     chatGet();
     if (this.running) {
         if (eb.isEmpty(force)) {
-            if (sender.currentRefreshTime <= 12000) {
-                sender.currentRefreshTime += 1000;
+            if (this.currentRefreshTime <= 12000) {
+                this.currentRefreshTime += 1000;
             } else {
-                sender.currentRefreshTime += parseInt(sender.currentRefreshTime*0.2);
+                this.currentRefreshTime += parseInt(this.currentRefreshTime*0.2);
             }
-            sender.currentRefreshTime = Math.min(sender.currentRefreshTime, sender.maxRefreshTime); 
-            setTimeout(function() {
-                sender.refresh();
-            }, sender.currentRefreshTime);
+            this.currentRefreshTime = Math.min(this.currentRefreshTime, this.maxRefreshTime); 
         } else {
-            sender.currentRefreshTime = sender.minRefreshTime;
+            this.currentRefreshTime = this.minRefreshTime;
         }
+        this.clearTimer();
+        this.v_timerId = setTimeout(function() {
+            sender.refresh();
+        }, this.currentRefreshTime);
+    }
+}
+
+sender.clearTimer = function() {
+    if (this.v_timerId!=null) {
+        clearTimeout(this.v_timerId);
+        this.v_timerId = null;
     }
 }
 
