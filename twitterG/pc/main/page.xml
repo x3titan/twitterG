@@ -1202,7 +1202,7 @@ ee.setVisible(ee.getControl("panel7"), false);
 
 sender.check = function() {
     ee.getControl("panel251").setEnabled(
-        (ee.getEditText(ee.getControl("edit7")).length>0) ||
+        (ee.getEditText(ee.getControl("edit7")).trim().length>0) ||
         ee.getControl("panel7").v_photos.length>0
     );    
 }
@@ -1360,7 +1360,7 @@ if (h!=lastH) {
 }
 
 ee.getControl("panel1").check();
-var text = ee.getEditText(sender.parentNode);
+var text = ee.getEditText(sender.parentNode).trim();
 var c = ee.getControl("panel53");
 if (text.length<180) {
     c.v_color = "#29a5f2";
@@ -1380,20 +1380,6 @@ if (text.length<180) {
     ee.setText(ee.getControl("panel122"), 200-text.length);
     ee.setTextColor(ee.getControl("panel122"), "#e0245e");
 }
-
-return;
-
-var dy = sender.scrollHeight - sender.lastHeight;
-//sender.style.height = backup;
-if (dy==0) return;
-sender.lastHeight = sender.scrollHeight;
-
-
-//adjust interface
-ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
-ee.setRect(ee.getControl("edit7"),null,null,null,eb.getDivRect(ee.getControl("edit7")).h + dy);
-g5.homepageMoveY(0,dy);
-eb.processDock();
 
 ]]></onChange>
       <onCreate>sender._input.style.resize = "none";
@@ -2108,11 +2094,16 @@ sender.start = function(roomId) {
     this.v_lastChatId = 0;
     for (var i=0; i<this.v_items.length; i++) ee.removeControl(this.v_items[i]);
     this.v_items = new Array();
+    this.v_nohis = false;
+    this.v_tfId = setInterval(function() {
+        sender.timeFragment();    
+    }, 500);
     this.refresh();        
 }
 sender.stop = function() {
     this.running = false;
     this.clearTimer();
+    clearInterval(this.v_tfId);
 }
 
 //==implementation==//
@@ -2120,7 +2111,9 @@ sender.v_items = new Array();
 sender.currentRefreshTime = sender.minRefreshTime;
 sender.v_lastChatId = 0;
 sender.v_timerId = null;
+sender.v_tfId = null;
 sender.style.overflowX = "hidden";
+sender.v_mouseDown = false;
 sender.refresh = function(force) {
     chatGet.roomId = this.v_roomId;
     chatGet.chatId = this.v_lastChatId;
@@ -2134,7 +2127,7 @@ sender.refresh = function(force) {
             cy = rect.y + rect.h;
         }
         var itemWidth = eb.getDivRect(root).w;
-        for (var i=0; i<dataset.rowCount; i++) {
+        for (var i=dataset.rowCount-1; i>=0; i--) {
             var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             root.loadData(item, dataset, i);
             root.renderMsg(item);
@@ -2215,6 +2208,74 @@ sender.loadData = function(panel,dataset,index) {
     panel.v_titleBg = dataset.getData(12,index);
     panel.v_homePage= dataset.getData(13,index);
 }
+
+sender.timeFragment = function() {
+    if (sender.v_mouseDown) return;
+    if (sender.v_nohis) return;
+    if (sender.v_items.length<=0) return;
+    var y = eb.getDivRect(sender.v_items[0]).y;
+    if (sender.scrollTop > y+50) return;
+
+    sender.v_nohis = false;
+    chatGet.roomId = sender.v_roomId;
+    chatGet.chatId = sender.v_items[0].v_id;
+    chatGet.isNew = 0;
+    chatGet.my = sender;
+    chatGet.onComplete = function(dataset) {
+        var cy = 0;
+        var root = chatGet.my;
+        if (root.v_items.length>0) {
+            var rect = eb.getDivRect(root.v_items[0]);
+            cy = rect.y;
+        }
+        var itemWidth = eb.getDivRect(root).w;
+        for (var i=0; i<dataset.rowCount; i++) {
+            var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy-100, itemWidth, 5);
+            root.loadData(item, dataset, i);
+            root.renderMsg(item);
+            cy -= eb.getDivRect(item).h;
+            ee.setRect(item,null,cy,null,null);
+            root.v_items.splice(0,0,item);
+        }
+        if (dataset.rowCount<=0) {
+            root.v_nohis = true;
+        }
+        cy = -cy;
+        root.move(cy);
+        sender.scrollTop += cy;    
+    }
+    chatGet();
+};
+
+sender.move = function(dy) {
+    if (dy==0) return;
+    for (var i=0; i<this.v_items.length; i++) {
+        ee.setRect(this.v_items[i], null,eb.getDivRect(this.v_items[i]).y+dy,null,null);
+    }
+}
+
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_mouseDown = true;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_mouseDown = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ]]></onCreate>
@@ -2303,14 +2364,17 @@ sender.c_tester.label.rows[0].cells[0].style.fontWeight = sender._input.style.fo
 
 sender._input.addEventListener("keydown", function(event) {
     if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
-        var msgContent = ee.getEditText(ee.getControl("edit11"));
-        if (msgContent.length<=0) return;
+        var msgContent = ee.getEditText(ee.getControl("edit11")).trim();
+        if (msgContent.length<=0) {
+            event.preventDefault();
+            return false;
+        }
         if (msgContent.length>200) msgContent = msgContent.substr(0,200);
         
+        ee.setEditText(ee.getControl("edit11"),"");
         chatSend.roomId = showUserPage.defaultChatRoomId;
         chatSend.msgContent = msgContent;
         chatSend.onComplete = function() {
-            ee.setEditText(ee.getControl("edit11"), "");
             ee.getControl("layoutyitem3").refresh(true);
         }
         chatSend();        
@@ -2331,14 +2395,17 @@ sender._input.addEventListener("keydown", function(event) {
       <heightRatio>0.725490196078431</heightRatio>
       <left>515</left>
       <leftRatio>0.916370106761566</leftRatio>
-      <onClick><![CDATA[var msgContent = ee.getEditText(ee.getControl("edit11"));
-if (msgContent.length<=0) return;
+      <onClick><![CDATA[var msgContent = ee.getEditText(ee.getControl("edit11")).trim();
+if (msgContent.length<=0) {
+    event.preventDefault();
+    return false;
+}
 if (msgContent.length>200) msgContent = msgContent.substr(0,200);
 
+ee.setEditText(ee.getControl("edit11"),"");
 chatSend.roomId = showUserPage.defaultChatRoomId;
 chatSend.msgContent = msgContent;
 chatSend.onComplete = function() {
-    ee.setEditText(ee.getControl("edit11"), ""); 
     ee.getControl("layoutyitem3").refresh(true);
 }
 chatSend();
@@ -8688,7 +8755,7 @@ cy += vspace + eb.getDivRect(ee.getControl("layoutx7")).h;
 
 eb.setDivRect(ee.getControl("panel72"),null,cy,null,null);
 ee.setVisible(ee.getControl("panel72"), true);
-ee.setText(ee.getControl("panel72"), "<div id='userPageLink01' style='display:inline;'>"+countFollow+" 个关注</div>" +
+ee.setText(ee.getControl("panel72"), "  <div id='userPageLink01' style='display:inline;'>"+countFollow+"个关注</div>" +
     "     <div id='userPageLink02' style='display:inline;'>" + countFans+"个粉丝</div>");
 var c = ee.getControl("panel72"); 
 c.link01=$g("userPageLink01");
@@ -10191,6 +10258,8 @@ changePassword.onComplete();
     <taskSetItem name="chatGet">
       <script1>//roomId, chatId, isNew(0,1), onComplete(dataset)
 //dataset
+if (chatGet.busy) return;
+chatGet.busy = true;
 eio.appendString16(g5.token);
 eio.appendString16(chatGet.roomId+"");
 eio.appendString16(chatGet.chatId+"");
@@ -10219,15 +10288,26 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserName = db.getString(sqlResult,"userName");
 var myUserId = db.getString(sqlResult,"id");
 
+var where = "";
+var top = "TOP (10)";
+if (isNew==1) {
+    if (chatId!=0) {
+        where = "and chatRoomData.id>" + chatId;
+        top = "";
+    }
+} else {
+    where = "and chatRoomData.id<" + chatId;
+}
+
 sql =
-    "SELECT   dbo.chatRoomData.id, dbo.chatRoomData.regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, " +
+    "SELECT  " + top + " dbo.chatRoomData.id, dbo.chatRoomData.regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, " +
     "                dbo.chatRoomData.msgContent, dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime, dbo.userInfo.userName,  " +
     "                dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo, dbo.userInfo.titleBg,  " +
     "                dbo.userInfo.homePage " +
     "FROM      dbo.chatRoomData LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.chatRoomData.userId = dbo.userInfo.id " +
-    "WHERE chatRoomData.roomId = " + roomId + " and chatRoomData.id" + (isNew==1?">":"<") + chatId + " " +
-    "ORDER BY chatRoomData.id ";
+    "WHERE chatRoomData.roomId = " + roomId + " " + where + " " +
+    "ORDER BY chatRoomData.id DESC";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -10241,6 +10321,7 @@ eio.appendDataSet(sqlResult,"id,regDatetime,roomId,userId,msgContent,status,user
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
     alert(eio.readString8());
+    chatGet.busy = false;
     return;
 }
 
@@ -10249,6 +10330,8 @@ if (!eb.isEmpty(chatGet.onComplete)) {
     chatGet.onComplete(chatGet.dataset);
     chatGet.onComplete = null;
 }
+chatGet.busy = false;
+
 
 
 
