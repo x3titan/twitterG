@@ -1631,7 +1631,6 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.32879045996593</sizeRatio>
       <top>-4</top>
@@ -2174,16 +2173,33 @@ sender.renderMsg = function(root) {
     //photo
     c = createPanel(root, root.id+"_img", "", 24, cy, 25, 25);
     c.style.borderRadius = "50%";
-    root.c_userPhoto = c;
-    if (root.v_photo == "") {
+    if (root.v_userInfo.photo == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
     } else {
-        ee.setImage(c,"url:" + g5.imgUrl + root.v_photo,"trim","","")
+        ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
     }
+    c.v_timer = null;
+    root.c_photo = c;
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+        if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+        sender.v_timer = setTimeout(function() {
+            ee.getControl("panel280").show(root.v_userInfo, root.c_photo);
+        }, 1000);
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
+    });
     //message
     c = createPanel(root, root.id+"_msg", "", 55, cy, mainWidth-60-24, 10);
     root.c_content = c;
-    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + g5.showCommonText(root.v_nickName) + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, "000000", "normal");
+    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + g5.showCommonText(root.v_userInfo.nickName) + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, "000000", "normal");
     eb.processDock();
     var rect = eb.getDivRect(c.label);
     ee.setRect(c, null, null, null, rect.h);
@@ -2197,17 +2213,9 @@ sender.loadData = function(panel,dataset,index) {
     panel.v_id = dataset.getData(0,index);
     panel.v_regDatetime = g5.getUtcTime(dataset.getData(1,index));
     panel.v_roomId = dataset.getData(2,index);
-    panel.v_userId = dataset.getData(3,index);
-    panel.v_msgContent = dataset.getData(4,index);
-    panel.v_status = dataset.getData(5,index);
-    panel.v_userRegDatetime = dataset.getData(6,index);
-    panel.v_userName = dataset.getData(7,index);
-    panel.v_mobile = dataset.getData(8,index);
-    panel.v_nickName = dataset.getData(9,index);
-    panel.v_note = dataset.getData(10,index);
-    panel.v_photo = dataset.getData(11,index);
-    panel.v_titleBg = dataset.getData(12,index);
-    panel.v_homePage= dataset.getData(13,index);
+    panel.v_msgContent = dataset.getData(3,index);
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset, 4, index);
 }
 
 sender.displayTime = function(time) {
@@ -7979,6 +7987,7 @@ sender.init(0);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -8000,6 +8009,7 @@ sender.init(0);
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>254</left>
       <leftRatio>0.201587301587302</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
@@ -10576,14 +10586,22 @@ if (isNew==1) {
 }
 
 sql =
-    "SELECT  " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120) as regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, " +
-    "                dbo.chatRoomData.msgContent, dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime, dbo.userInfo.userName,  " +
-    "                dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo, dbo.userInfo.titleBg,  " +
-    "                dbo.userInfo.homePage " +
+    "SELECT   " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120) " +
+    "                AS regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, dbo.chatRoomData.msgContent,  " +
+    "                dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime, dbo.userInfo.lastAccessTime,  " +
+    "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
+    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount,  " +
+    "                CASE WHEN dbo.follow.id IS NULL THEN 0 ELSE 1 END AS isFollow, CASE WHEN dbo.blockList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isBlock1, CASE WHEN blockList_1.id IS NULL THEN 0 ELSE 1 END AS isBlock2 " +
     "FROM      dbo.chatRoomData LEFT OUTER JOIN " +
+    "                dbo.blockList AS blockList_1 ON dbo.chatRoomData.userId = blockList_1.userId AND  " +
+    "                blockList_1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.blockList ON dbo.chatRoomData.userId = dbo.blockList.blockUserId AND dbo.blockList.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.chatRoomData.userId = dbo.follow.followId AND dbo.follow.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.chatRoomData.userId = dbo.userInfo.id " +
-    "WHERE chatRoomData.roomId = " + roomId + " " + where + " " +
-    "ORDER BY chatRoomData.id DESC";
+    "WHERE   dbo.chatRoomData.roomId = " + roomId + " " + where + " " +
+    "ORDER BY dbo.chatRoomData.id DESC";
+
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -10592,8 +10610,8 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,regDatetime,roomId,userId,msgContent,status,userRegDatetime,userName,mobile,nickName,note,photo,titleBg,homePage", 0, 99999);
-
+eio.appendDataSet(sqlResult,"id,regDatetime,roomId,msgContent," +
+    "userId,status,userRegDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 99999);
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
     alert(eio.readString8());
@@ -12714,8 +12732,8 @@ while (true) {
     if (eb.isEmpty(div)) break;
     if (div.id == "divRoot") break;
     rect = eb.getDivRect(div);
-    result.x+=rect.x;
-    result.y+=rect.y;
+    result.x+=rect.x-div.scrollLeft;
+    result.y+=rect.y-div.scrollTop;
 }
 return result;</functionCode>
     </item>
