@@ -1,5 +1,5 @@
 <page>
-  <controls count="321">
+  <controls count="329">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -570,7 +570,7 @@ for (var i=0; i<items.length; i++) {
     }
 }
 
-showUserPage.userName = g5.userName;
+showUserPage.userName = g5.myUserInfo.userName;
 showUserPage();
 
 ]]></onClick>
@@ -1000,7 +1000,7 @@ for (var i=0; i<items.length; i++) {
     }
 }
 
-showUserPage.userName = g5.userName;
+showUserPage.userName = g5.myUserInfo.userName;
 showUserPage();
 
 ]]></onClick>
@@ -1631,10 +1631,11 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.32879045996593</sizeRatio>
-      <top>-3</top>
-      <topRatio>-0.00384615384615385</topRatio>
+      <top>-4</top>
+      <topRatio>-0.00512820512820513</topRatio>
       <width>587</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2180,9 +2181,9 @@ sender.renderMsg = function(root) {
         ee.setImage(c,"url:" + g5.imgUrl + root.v_photo,"trim","","")
     }
     //message
-    c = createPanel(root, root.id+"_msg", "", 60, cy, mainWidth-60-24, 10);
+    c = createPanel(root, root.id+"_msg", "", 55, cy, mainWidth-60-24, 10);
     root.c_content = c;
-    addText(c, "<font color='#6e6e6e'>" + g5.showCommonText(root.v_nickName) + "("+root.v_regDatetime+")</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, "000000", "normal");
+    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + g5.showCommonText(root.v_nickName) + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, "000000", "normal");
     eb.processDock();
     var rect = eb.getDivRect(c.label);
     ee.setRect(c, null, null, null, rect.h);
@@ -2194,7 +2195,7 @@ sender.renderMsg = function(root) {
 
 sender.loadData = function(panel,dataset,index) {
     panel.v_id = dataset.getData(0,index);
-    panel.v_regDatetime = dataset.getData(1,index);
+    panel.v_regDatetime = g5.getUtcTime(dataset.getData(1,index));
     panel.v_roomId = dataset.getData(2,index);
     panel.v_userId = dataset.getData(3,index);
     panel.v_msgContent = dataset.getData(4,index);
@@ -2208,6 +2209,16 @@ sender.loadData = function(panel,dataset,index) {
     panel.v_titleBg = dataset.getData(12,index);
     panel.v_homePage= dataset.getData(13,index);
 }
+
+sender.displayTime = function(time) {
+    return (
+        //(time.getMonth()+1) + "月" +
+        //time.getDate() + "日 " +
+        (time.getHours()<10?"0":"") + time.getHours() + ":" +
+        (time.getMinutes()<10?"0":"") + time.getMinutes()
+    );
+}
+
 
 sender.timeFragment = function() {
     if (sender.v_mouseDown) return;
@@ -7960,6 +7971,315 @@ sender.init(0);
       <width>126</width>
       <widthRatio>0.364161849710983</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel268">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>796</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
+      <left>0</left>
+      <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
+    if (sender.eeChildren[i].style.visibility != "hidden") {
+        ee.showAni(sender.eeChildren[i], 1);
+    }
+}]]></onClick>
+      <onCreate>sender.style.zIndex=100;</onCreate>
+      <sizeRatio>0.631746031746032</sizeRatio>
+      <top>0</top>
+      <width>1260</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel268/panel280">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundSkin>body5</backgroundSkin>
+      <height>300</height>
+      <heightRatio>0.376884422110553</heightRatio>
+      <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
+      <left>254</left>
+      <leftRatio>0.201587301587302</leftRatio>
+      <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
+      <onCreate><![CDATA[sender.show = function(userInfo, refDiv) {
+    var rect = g5.getRectAbs(refDiv);
+    ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
+    this.v_userInfo = userInfo;
+    //photo
+    var c = ee.getControl("panel267");
+    if (sender.v_userInfo.photo == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + this.v_userInfo.photo,"trim","","")
+    }
+    //button
+    c = ee.getControl("panel269");
+    if (this.v_userInfo.id == g5.myUserInfo.id) {
+        c.init(3);
+    } else if (this.v_userInfo.block1 == 1) {
+        c.init(0);
+    } else if (this.v_userInfo.block2 == 1) {
+        //not support yet
+        c.init(0);
+    } else if (this.v_userInfo.follow == 1) {
+        c.init(2);
+    } else {
+        c.init(1);
+    }
+    //nickName
+    c = ee.getControl("panel271");
+    ee.setText(c, this.v_userInfo.nickName);
+    //userName    
+    c = ee.getControl("panel270");
+    ee.setText(c, "@" + this.v_userInfo.userName);
+    //userName    
+    c = ee.getControl("panel272");
+    c.setText(this.v_userInfo.note);
+    var cy = eb.getDivRect(c).y + eb.getDivRect(c).h + 5;
+    //followCount,fansCount        
+    c = ee.getControl("panel273");
+    ee.setRect(c, null, cy, null, null);
+    ee.setText(c, "<font color = '#000000'><b>"+ this.v_userInfo.followCount + "</b></font>关注   <font color = '#000000'><b>"+ this.v_userInfo.fansCount + "</b></font>粉丝");
+    cy += eb.getDivRect(c).h;
+    
+    //root
+    ee.setRect(this, null, null, null, cy + 20);
+    
+    ee.setVisible(this.parentNode, true);
+    ee.showAni(this, 0);
+}
+]]></onCreate>
+      <sizeRatio>0.813008130081301</sizeRatio>
+      <top>170</top>
+      <topRatio>0.21356783919598</topRatio>
+      <width>369</width>
+      <widthRatio>0.292857142857143</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel268/panel280/panel267">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>60</height>
+      <heightRatio>0.2</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0785907859078591</leftRatio>
+      <onCreate>ee.setText(sender, "");
+sender.style.backgroundColor = "";
+sender.style.borderRadius = "50%";
+</onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>photo</text>
+      <top>27</top>
+      <topRatio>0.09</topRatio>
+      <width>60</width>
+      <widthRatio>0.16260162601626</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel268/panel280/panel269">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>35</height>
+      <heightRatio>0.116666666666667</heightRatio>
+      <left>213</left>
+      <leftRatio>0.577235772357724</leftRatio>
+      <onClick>if (sender.v_index==0) {
+    //屏蔽
+    ee.getControl("panel257").show(
+        "取消屏蔽@"+showUserPage.userName+"？",
+        "该用户将能关注并查看你的推文",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            blockUser.userId= showUserPage.id;
+            blockUser.isBlock = 0;
+            blockUser();
+            blockUser.onComplete = function() {
+                ee.getControl("panel256").init(1);
+            }
+        }
+    );
+} else if (sender.v_index==1) {
+    //关注
+    follow.follow = 1;
+    follow.userId = showUserPage.id;
+    follow.onComplete = function() {
+        ee.getControl("panel256").init(2);
+    }
+    follow();
+} else if (sender.v_index==2) {
+    //正在关注
+    ee.getControl("panel257").show(
+        "取消关注@"+showUserPage.userName+"？",
+        "他们的推文将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的推文是受保护的。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            follow.follow = 0;
+            follow.userId = showUserPage.id;
+            follow.onComplete = function() {
+                ee.getControl("panel256").init(1);
+            }
+            follow();
+        }
+    );
+} else if (sender.v_index==3) {
+    //编辑个人资料
+    ee.showAni(ee.getControl("panel54"), 0);
+}
+</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff",""),
+    new sender.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
+    new sender.BStyle("#1da1f2","#ca2055","#b31d4b","正在关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff",""),
+    new sender.BStyle("","#e8f5fe","#d2ecfc","编辑个人资料","编辑个人资料","编辑个人资料","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.271317829457364</sizeRatio>
+      <text>主按钮</text>
+      <top>25</top>
+      <topRatio>0.0833333333333333</topRatio>
+      <width>129</width>
+      <widthRatio>0.349593495934959</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel268/panel280/panel270">
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>34</height>
+      <heightRatio>0.113333333333333</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0785907859078591</leftRatio>
+      <sizeRatio>0.129277566539924</sizeRatio>
+      <text>@用户名</text>
+      <top>114</top>
+      <topRatio>0.38</topRatio>
+      <width>263</width>
+      <widthRatio>0.712737127371274</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel268/panel280/panel271">
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>34</height>
+      <heightRatio>0.113333333333333</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0785907859078591</leftRatio>
+      <sizeRatio>0.129277566539924</sizeRatio>
+      <text>昵称nicheng</text>
+      <top>89</top>
+      <topRatio>0.296666666666667</topRatio>
+      <width>263</width>
+      <widthRatio>0.712737127371274</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel268/panel280/panel272">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontFamily>微软雅黑</fontFamily>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.0933333333333333</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0785907859078591</leftRatio>
+      <onCreate>sender.setText = function(text) {
+    ee.setRect(this,null,null,null,1);
+    ee.setText(this, text);
+    var h = eb.getDivRect(this.label).h;
+    ee.setRect(this,null,null,null,h);
+}
+</onCreate>
+      <sizeRatio>0.0894568690095847</sizeRatio>
+      <text>简介</text>
+      <top>147</top>
+      <topRatio>0.49</topRatio>
+      <vAlign>top</vAlign>
+      <width>313</width>
+      <widthRatio>0.848238482384824</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel268/panel280/panel273">
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.0933333333333333</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0785907859078591</leftRatio>
+      <sizeRatio>0.0894568690095847</sizeRatio>
+      <text>48正在关注     200关注者</text>
+      <top>179</top>
+      <topRatio>0.596666666666667</topRatio>
+      <width>313</width>
+      <widthRatio>0.848238482384824</widthRatio>
+    </control>
   </controls>
   <taskSet count="25">
     <taskSetItem name="getUserInfo">
@@ -7979,13 +8299,16 @@ eio.appendString16(g5.token);
       <script2><![CDATA[var token = eio.readString16();
 var sql,sqlResult;  
 
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sql = 
+    "exec getUserInfoBySession '" + db.encode(token) + "';" +
+    "exec getUserInfoBySession '" + db.encode(token) + "';";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
     return;
 }
+
 db.read(sqlResult);
 if (db.getString(sqlResult, "sessionId").length < 5) {
     eio.appendString8("F");
@@ -7993,35 +8316,18 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     es.logCommon("用户token登录失败,token=" + token);
     return;
 } 
-
 session.set("userName", db.getString(sqlResult,"userName"));
-var userId = db.getString(sqlResult,"id");
+var myUserId = db.getString(sqlResult,"id");
 
+db.nextResult(sqlResult);
 eio.appendString8("T");
 es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
     ",nickName=" + db.getString(sqlResult, "nickName"));
-eio.appendString8(db.getString(sqlResult,"userName"));
-eio.appendString16(db.getString(sqlResult,"nickName"));
-eio.appendString16(db.getString(sqlResult,"photo"));
-eio.appendString16(db.getString(sqlResult,"titleBg"));
-eio.appendString16(db.getString(sqlResult,"note"));
-eio.appendString16(db.getString(sqlResult,"homePage"));
+eio.appendDataSet(sqlResult,"id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount",0,1);
 
-sql = 
-    "exec createDefaultChatRoom " + userId + "; " +
-    "SELECT COUNT(*) AS FollowCount FROM dbo.follow WHERE   (userId = "+userId+"); " +
-    "select count(*) as FansCount from follow  where followId = "+userId+"; ";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-db.read(sqlResult);
-eio.appendString16(db.getString(sqlResult,"FollowCount"));
-db.nextResult(sqlResult);
-db.read(sqlResult);
-eio.appendString16(db.getString(sqlResult,"FansCount"));
+sql = "exec createDefaultChatRoom " + myUserId + "; ";
+db.executeNoneQuery("DB", sql);
+
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
     alert(eio.readString8());
@@ -8029,20 +8335,9 @@ eio.appendString16(db.getString(sqlResult,"FansCount"));
     return;
 }
 
-g5.userName = eio.readString8();
-g5.nickName = eio.readString16();
-g5.photo = eio.readString16();
-g5.titleBg = eio.readString16();
-g5.userNote = eio.readString16();
-g5.userHomepage = eio.readString16();
-g5.countFollow = eio.readString16();
-g5.countFans = eio.readString16();
+g5.myUserInfo = new g5.UserInfo();
+g5.myUserInfo.loadFromDataset(eio.readDataSet(),0,0);
 
-/*
-if (eio.readString16() == "F") {
-    g5.newUser = false;
-} else g5.newUser = true;
-*/
 g5.refreshUserInfo();
 updateHomepage();
                                
@@ -8569,6 +8864,8 @@ eio.appendString16(db.getString(sqlResult,"photo"));
 eio.appendString16(db.getString(sqlResult,"titleBg"));
 eio.appendString16(db.getString(sqlResult,"note"));
 eio.appendString16(db.getString(sqlResult,"homePage"));
+eio.appendString16(db.getString(sqlResult,"followCount"));
+eio.appendString16(db.getString(sqlResult,"fansCount"));
 
 //query follow status
 sql = "select * from follow where userId = " + myUserId + " and followId = " + userId;
@@ -8621,19 +8918,6 @@ eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,li
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
     ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 
-sql = 
-    "SELECT COUNT(*) AS FollowCount FROM dbo.follow WHERE   (userId = "+userId+"); " +
-    "select count(*) as FansCount from follow  where followId = "+userId+"; ";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    return;
-}
-db.read(sqlResult);
-eio.appendString16(db.getString(sqlResult,"FollowCount"));
-db.nextResult(sqlResult);
-db.read(sqlResult);
-eio.appendString16(db.getString(sqlResult,"FansCount"));
-
 sql = "select * from blockList where userId=" + myUserId + " and blockUserId=" + userId + "; " +
     "select * from blockList where userId=" + userId + " and blockUserId=" + myUserId + "; " +
     "select * from chatRoomInfo where creatorId = " + userId + " and roomType='DEF'; ";
@@ -8673,10 +8957,11 @@ var photo = eio.readString16();
 var titleBg = eio.readString16();
 var note = eio.readString16();
 var homePage = eio.readString16();
-var follow = eio.readString16();
-g5.datasetPageUser = eio.readDataSet();
 var countFollow = eio.readString16();
 var countFans = eio.readString16();
+var follow = eio.readString16();
+
+g5.datasetPageUser = eio.readDataSet();
 var block1 = eio.readString16();
 var block2 = eio.readString16();
 showUserPage.defaultChatRoomId = eio.readString16(); 
@@ -8705,7 +8990,7 @@ if (follow == "true") {
     ee.getControl("panel256").init(1);
 }
 
-if (userName == g5.userName) {
+if (userName == g5.myUserInfo.userName) {
     ee.getControl("panel256").init(3);
     ee.setVisible(ee.getControl("panel115"), false);
 } else {
@@ -9191,10 +9476,10 @@ eb.processDock();
     </taskSetItem>
     <taskSetItem name="follow">
       <script1>//userId, follow(0,1), onComplete()
-if (follow==0) {
-    eio.appendString16("T");
-} else {
+if (follow.follow==0) {
     eio.appendString16("F");
+} else {
+    eio.appendString16("T");
 }
 eio.appendString16(g5.token);
 eio.appendString16(follow.userId);
@@ -9233,11 +9518,7 @@ if (db.getString(sqlResult,"userName")=="guest") {
     return;
 }
 
-if (follow == "T") {
-    sql = "delete follow where userId = " + myUserId + " and followId = " + userId;
-} else {
-    sql = "insert into follow (userId, followId) values (" + myUserId + "," + userId + ")";
-}
+sql = "exec followUser " + myUserId + "," + userId + "," + (follow=="T"?"1":"0");
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
@@ -9696,7 +9977,7 @@ eio.appendString16(followV2.userId);
 </script1>
       <script2><![CDATA[var follow = eio.readString16();
 var token = eio.readString16();
-var userId = eio.readString16();
+var userId = parseInt(eio.readString16());
 var sql,sqlResult; 
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -9725,12 +10006,7 @@ if (db.getString(sqlResult,"userName")=="guest") {
     return;
 }
 
-
-sql = "delete follow where userId = " + myUserId + " and followId = " + userId + "; ";
-if (follow == "T") {
-} else {
-    sql += "insert into follow (userId, followId) values (" + myUserId + "," + userId + "); ";
-}
+sql = "exec followUser " + myUserId + "," + userId + "," + (follow=="T"?"1":"0");
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
@@ -9848,8 +10124,7 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserId = parseInt(db.getString(sqlResult,"id"));
 
 sql =
-    "SELECT   TOP (100) PERCENT dbo.userInfo.id AS userId, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.note, " + 
-    "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, 1 AS isFollow " +
+    "SELECT   TOP (100) PERCENT dbo.userInfo.*, 1 AS isFollow " +
     "FROM      dbo.follow INNER JOIN " +
     "                dbo.userInfo ON dbo.follow.followId = dbo.userInfo.id INNER JOIN " +
     "                dbo.userInfo AS userInfo_1 ON dbo.follow.userId = userInfo_1.id " +
@@ -9863,7 +10138,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
+eio.appendDataSet(sqlResult,"id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow", 0, 99999);
 
 
 
@@ -9885,6 +10160,7 @@ ee.setText(ee.getControl("panel123"), "关注的用户");
 var cy = 0;
 var itemWidth = eb.getDivRect(root).w;
 for (var i=0; i<showForwardList.data.rowCount; i++) {
+    if (g5.myUserInfo.id == showForwardList.data.getData(0,i)) continue;
     var item = createPanel(root, "flol_" + showForwardList.data.getData(0,i), "", 0, cy, itemWidth, 5);
     g5.loadUserRecord(item, showForwardList.data, i);
     item.v_mode = "";
@@ -10300,7 +10576,7 @@ if (isNew==1) {
 }
 
 sql =
-    "SELECT  " + top + " dbo.chatRoomData.id, dbo.chatRoomData.regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, " +
+    "SELECT  " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120) as regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, " +
     "                dbo.chatRoomData.msgContent, dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime, dbo.userInfo.userName,  " +
     "                dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo, dbo.userInfo.titleBg,  " +
     "                dbo.userInfo.homePage " +
@@ -10393,7 +10669,7 @@ if (!eb.isEmpty(chatSend.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="56">
+  <g5Items count="59">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -10492,6 +10768,32 @@ if (!eb.isEmpty(chatSend.onComplete)) {
         }
     }
 }</varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="UserInfo" type="10">
+      <varValue>function() {
+    this.loadFromDataset = function(ds, x, idx) {
+        this.id = ds.getData(x+0,idx);    
+        this.status = ds.getData(x+1,idx);    
+        this.regDatetime = ds.getData(x+2,idx);    
+        this.lastAccessTime = ds.getData(x+3,idx);    
+        this.userName = ds.getData(x+4,idx);    
+        this.mobile = ds.getData(x+5,idx);    
+        this.nickName = ds.getData(x+6,idx);    
+        this.note = ds.getData(x+7,idx);    
+        this.photo = ds.getData(x+8,idx);    
+        this.titleBg = ds.getData(x+9,idx);    
+        this.homePage = ds.getData(x+10,idx);    
+        this.followCount = ds.getData(x+11,idx);    
+        this.fansCount = ds.getData(x+12,idx);
+        this.follow = ds.getData(x+13,idx);
+        this.block1 = ds.getData(x+14,idx); //屏蔽别人
+        this.block2 = ds.getData(x+15,idx); //被别人屏蔽
+    }
+}
+
+</varValue>
       <functionParam />
       <functionCode />
     </item>
@@ -11311,17 +11613,9 @@ return root;]]></functionCode>
     <item name="loadUserRecord" type="20">
       <varValue />
       <functionParam>panel, dataset, index</functionParam>
-      <functionCode>//userId,userName,nickName(2),note,photo,titleBg,homePage(6),isFollow
-//root.v_userId,root.v_userName,root.v_userNickName,
-//root.v_photo,root.v_note,root.v_isFollow)
-panel.v_userId = dataset.getData(0,index);
-panel.v_userName = dataset.getData(1,index);
-panel.v_userNickName = dataset.getData(2,index);
-panel.v_photo = dataset.getData(4,index);
-panel.v_note = dataset.getData(3,index);
-panel.v_isFollow = dataset.getData(1,index)==g5.userName ? "x":dataset.getData(7,index);
-panel.v_titleBg = dataset.getData(5,index);
-panel.v_homePage = dataset.getData(6,index);
+      <functionCode>panel.v_userInfo = new g5.UserInfo();
+panel.v_userInfo.loadFromDataset(dataset,0,index);
+panel.v_isFollow = dataset.getData(13,index);
 
 
 </functionCode>
@@ -11329,9 +11623,7 @@ panel.v_homePage = dataset.getData(6,index);
     <item name="renderUserBar" type="20">
       <varValue />
       <functionParam>root</functionParam>
-      <functionCode><![CDATA[//root.v_mode, root.v_userId,root.v_userName,root.v_userNickName,
-//root.v_photo,root.v_note,root.v_isFollow)
-while (root.v_mode.length<5) root.v_mode += " ";
+      <functionCode><![CDATA[while (root.v_mode.length<5) root.v_mode += " ";
 var w = eb.getDivRect(root).w;
 var c,cy=10;
 
@@ -11342,7 +11634,7 @@ root.style.borderStyle = "solid";
 root.style.borderTop = "";
 root.style.cursor = "pointer";
 ee.setOnClick(root,function(sender,event) {
-    showUserPage.userName=sender.v_userName;
+    showUserPage.userName=sender.v_userInfo.userName;
     showUserPage();
     ee.showAni(ee.getControl("panel10"), 1);    
 });
@@ -11355,30 +11647,35 @@ ee.setOnMouseLeave(root, function(sender,e){
 
 //user photo
 c = createPanel(root, root.id+"panel13", "", 15,cy,50,50);
-if (root.v_photo == "") {
+if (root.v_userInfo.photo == "") {
     ee.setImage(c,"/twitterG/main/user.png","trim","","")
 } else {
-    ee.setImage(c,"url:" + g5.imgUrl + root.v_photo,"trim","","")
+    ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
 }
 c.style.borderRadius = "50%";
+c.v_timer = null;
+root.c_photo = c;
 ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.webkitFilter="brightness(80%)";
     sender.style.filter="brightness(80%)";
+    if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+    sender.v_timer = setTimeout(function() {
+        ee.getControl("panel280").show(root.v_userInfo, root.c_photo);
+    }, 1000);
 });
 ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.webkitFilter="brightness(100%)";
     sender.style.filter="brightness(100%)";
+    if (sender.v_timer!=null) {
+        clearTimeout(sender.v_timer);
+        sender.v_timer = null;
+    }
 });
 
 //user nick name
 c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
-addText(c, root.v_userNickName, "left", "middle", "微软雅黑", 12, "14171a", "bold");
+addText(c, root.v_userInfo.nickName, "left", "middle", "微软雅黑", 12, "14171a", "bold");
 c.style.cursor="pointer";
-//ee.setOnClick(c,function(sender,event) {
-//    showUserPage.userName=sender.v_username;
-//    showUserPage();
-//    window.event? window.event.cancelBubble = true : event.stopPropagation();
-//});
 ee.setOnMouseEnter(c,function(sender,e){
     sender.label.rows[0].cells[0].style.textDecoration="underline";
 });
@@ -11388,11 +11685,11 @@ ee.setOnMouseLeave(c,function(sender,e){
 
 //username
 c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
-addText(c, "@"+root.v_userName, "left", "middle", "微软雅黑", 12, "6e7f8d", "normal");
+addText(c, "@"+root.v_userInfo.userName, "left", "middle", "微软雅黑", 12, "6e7f8d", "normal");
 
 //note
 c = createPanel(root, root.id+"panel16", "", 77, cy, 480, 22);
-addText(c, root.v_note, "left", "top", "微软雅黑", 12, "14171a", "normal");
+addText(c, root.v_userInfo.note, "left", "top", "微软雅黑", 12, "14171a", "normal");
 eb.processDock();
 var rect = eb.getDivRect(c.label);
 ee.setRect(c, null, null, null, rect.h);
@@ -11436,11 +11733,11 @@ if (root.v_mode.charAt(0)=="x") {
     }
     ee.setOnClick(c, function(sender, event) {
         if (sender.parentNode.v_isBlock) {
-            blockUser.userId = sender.parentNode.v_userId;
+            blockUser.userId = sender.parentNode.v_userInfo.id;
             blockUser.isBlock = 0;
             blockUser();    
         } else {
-            blockUser.userId = sender.parentNode.v_userId;
+            blockUser.userId = sender.parentNode.v_userInfo.id;
             blockUser.isBlock = 1;
             blockUser();    
         }
@@ -11485,9 +11782,9 @@ if (root.v_mode.charAt(0)=="x") {
     ee.setOnClick(c,function(sender,event) {
         ee.setVisible(sender.parentNode.parentNode.button2, true);
         ee.setVisible(sender.parentNode, false);
-        followV2.userId=sender.parentNode.parentNode.v_userId;
-        followV2.follow=false;
-        followV2();
+        follow.userId=sender.parentNode.parentNode.v_userInfo.id;
+        follow.follow=1;
+        follow();
         window.event? window.event.cancelBubble = true : event.stopPropagation();    
     });
     c=$g(root.id+"button01");
@@ -11532,9 +11829,9 @@ if (root.v_mode.charAt(0)=="x") {
     ee.setOnClick(c,function(sender,event) {
         ee.setVisible(sender.parentNode.parentNode.button1, true);
         ee.setVisible(sender.parentNode, false);
-        followV2.userId=sender.parentNode.parentNode.v_userId;
-        followV2.follow=true;
-        followV2();
+        follow.userId=sender.parentNode.parentNode.v_userInfo.id;
+        follow.follow=0;
+        follow();
         window.event? window.event.cancelBubble = true : event.stopPropagation();    
     });
     c=$g(root.id+"button02");
@@ -12050,14 +12347,14 @@ this.currentIndex = pageIndex;</functionCode>
       <varValue />
       <functionParam />
       <functionCode><![CDATA[var s;
-if (eb.isEmpty(g5.userName)) return;
-s = "<b>" + g5.nickName + "</b><br/>";
-s += "@" + g5.userName;
+if (eb.isEmpty(g5.myUserInfo)) return;
+s = "<b>" + g5.myUserInfo.nickName + "</b><br/>";
+s += "@" + g5.myUserInfo.userName;
 ee.setText(ee.getControl("panel31"), s);
-ee.setText(ee.getControl("panel157"), "   " + g5.nickName + " @" + g5.userName);
-ee.setEditText(ee.getControl("edit2"), g5.nickName);
-ee.setEditText(ee.getControl("edit3"), g5.userNote);
-ee.setEditText(ee.getControl("edit4"), g5.userHomepage);
+ee.setText(ee.getControl("panel157"), "   " + g5.myUserInfo.nickName + " @" + g5.myUserInfo.userName);
+ee.setEditText(ee.getControl("edit2"), g5.myUserInfo.nickName);
+ee.setEditText(ee.getControl("edit3"), g5.myUserInfo.note);
+ee.setEditText(ee.getControl("edit4"), g5.myUserInfo.homePage);
 
 if (g5.photo == "") {
     ee.setImage(ee.getControl("panel2"), "/twitterG/main/user.png");
@@ -12067,17 +12364,17 @@ if (g5.photo == "") {
     ee.setImage(ee.getControl("panel14"), "/twitterG/main/user.png");
     //ee.setImage(ee.getControl("panel111"), "/twitterG/main/user.png");
 } else {
-    ee.setImage(ee.getControl("panel2"), "url:" + g5.imgUrl + g5.photo);
-    ee.setImage(ee.getControl("panel29"), "url:" + g5.imgUrl + g5.photo);
-    ee.setImage(ee.getControl("panel47"), "url:" + g5.imgUrl + g5.photo);
-    ee.setImage(ee.getControl("panel55"), "url:" + g5.imgUrl + g5.photo);
-    ee.setImage(ee.getControl("panel14"), "url:" + g5.imgUrl + g5.photo);
-    //ee.setImage(ee.getControl("panel111"), "url:" + g5.imgUrl + g5.photo);
+    ee.setImage(ee.getControl("panel2"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
+    ee.setImage(ee.getControl("panel29"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
+    ee.setImage(ee.getControl("panel47"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
+    ee.setImage(ee.getControl("panel55"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
+    ee.setImage(ee.getControl("panel14"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
+    //ee.setImage(ee.getControl("panel111"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
 }
-if (g5.titleBg == "") {
+if (g5.myUserInfo.titleBg == "") {
     ee.setImage(ee.getControl("panel58"));
 } else {
-    ee.setImage(ee.getControl("panel58"), "url:" + g5.imgUrl + g5.titleBg, "trim");
+    ee.setImage(ee.getControl("panel58"), "url:" + g5.imgUrl + g5.myUserInfo.titleBg, "trim");
 }
 
 
@@ -12392,6 +12689,35 @@ this.tColor1 = tColor1;
 this.tColor2 = tColor2;
 this.tColor3 = tColor3;
 this.bdColor = bdColor;</functionCode>
+    </item>
+    <item name="getUtcTime" type="20">
+      <varValue />
+      <functionParam>dbTime</functionParam>
+      <functionCode>//04 19 2020 10:35 UTC
+//yyyy-mm-dd hh:nn:ss
+//0123456789012345678
+if (dbTime.length!=19) return new Date();
+return new Date(
+    dbTime.substr(5,2) + " " +
+    dbTime.substr(8,2) + " " +
+    dbTime.substr(0,4) + " " +
+    dbTime.substr(11,8) + " UTC"
+);</functionCode>
+    </item>
+    <item name="getRectAbs" type="20">
+      <varValue />
+      <functionParam>div</functionParam>
+      <functionCode>var rect = eb.getDivRect(div);
+var result = eb.getDivRect(div);
+while (true) {
+    div = div.parentNode;
+    if (eb.isEmpty(div)) break;
+    if (div.id == "divRoot") break;
+    rect = eb.getDivRect(div);
+    result.x+=rect.x;
+    result.y+=rect.y;
+}
+return result;</functionCode>
     </item>
   </g5Items>
 </page>
