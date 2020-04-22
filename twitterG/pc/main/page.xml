@@ -8025,8 +8025,6 @@ sender.init(0);
 }
 
 sender.refresh = function() {
-    var rect = g5.getRectAbs(this.refDiv);
-    ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
     //photo
     var c = ee.getControl("panel267");
     if (sender.v_userInfo.photo == "") {
@@ -8067,6 +8065,13 @@ sender.refresh = function() {
     //root
     ee.setRect(this, null, null, null, cy + 20);
     
+    var rect = g5.getRectAbs(this.refDiv);
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        ee.setRect(this, rect.x - 50, rect.y - eb.getDivRect(this).h - 10, null, null);
+    } else {
+        ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
+    }
+
     ee.setVisible(this.parentNode, true);
     ee.showAni(this, 0);
 }
