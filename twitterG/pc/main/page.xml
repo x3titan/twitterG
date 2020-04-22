@@ -2185,8 +2185,8 @@ sender.renderMsg = function(root) {
         sender.style.filter="brightness(80%)";
         if (sender.v_timer!=null) clearTimeout(sender.v_timer);
         sender.v_timer = setTimeout(function() {
-            ee.getControl("panel280").show(root.v_userInfo, root.c_photo);
-        }, 1000);
+            ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+        }, 100);
     });
     ee.setOnMouseLeave(c, function(sender,e) {
         sender.style.webkitFilter="brightness(100%)";
@@ -8013,10 +8013,20 @@ sender.init(0);
       <left>254</left>
       <leftRatio>0.201587301587302</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
-      <onCreate><![CDATA[sender.show = function(userInfo, refDiv) {
-    var rect = g5.getRectAbs(refDiv);
+      <onCreate><![CDATA[sender.show = function(userId, refDiv) {
+    this.userId = userId;
+    this.refDiv = refDiv;
+    getUserInfo2.userId = userId;
+    getUserInfo2.onComplete = function(userInfo) {
+        sender.v_userInfo = userInfo;
+        sender.refresh();
+    }
+    getUserInfo2();
+}
+
+sender.refresh = function() {
+    var rect = g5.getRectAbs(this.refDiv);
     ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
-    this.v_userInfo = userInfo;
     //photo
     var c = ee.getControl("panel267");
     if (sender.v_userInfo.photo == "") {
@@ -8062,8 +8072,8 @@ sender.init(0);
 }
 ]]></onCreate>
       <sizeRatio>0.813008130081301</sizeRatio>
-      <top>170</top>
-      <topRatio>0.21356783919598</topRatio>
+      <top>169</top>
+      <topRatio>0.212311557788945</topRatio>
       <width>369</width>
       <widthRatio>0.292857142857143</widthRatio>
     </control>
@@ -8115,9 +8125,10 @@ sender.style.borderRadius = "50%";
 } else if (sender.v_index==1) {
     //关注
     follow.follow = 1;
-    follow.userId = showUserPage.id;
+    follow.userId = sender.parentNode.v_userInfo.id;
     follow.onComplete = function() {
-        ee.getControl("panel256").init(2);
+        sender.init(2);
+        sender.parentNode.v_userInfo.isFollow = 1;
     }
     follow();
 } else if (sender.v_index==2) {
@@ -8129,9 +8140,10 @@ sender.style.borderRadius = "50%";
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
         function() {
             follow.follow = 0;
-            follow.userId = showUserPage.id;
+            follow.userId = sender.parentNode.v_userInfo.id;
             follow.onComplete = function() {
-                ee.getControl("panel256").init(1);
+                sender.init(1);
+                sender.parentNode.v_userInfo.isFollow = 0;
             }
             follow();
         }
@@ -8139,6 +8151,7 @@ sender.style.borderRadius = "50%";
 } else if (sender.v_index==3) {
     //编辑个人资料
     ee.showAni(ee.getControl("panel54"), 0);
+    
 }
 </onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
@@ -8291,7 +8304,7 @@ eb.initMouseEvent(sender);
       <widthRatio>0.848238482384824</widthRatio>
     </control>
   </controls>
-  <taskSet count="25">
+  <taskSet count="26">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 
@@ -8354,6 +8367,81 @@ updateHomepage();
 
 
 
+</script3>
+    </taskSetItem>
+    <taskSetItem name="getUserInfo2">
+      <script1>//userId,onComplete(userInfo)
+eio.appendString16(g5.token);
+eio.appendString16(getUserInfo2.userId+"");
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userId = parseInt(eio.readString16());
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName =db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
+
+sql =
+    "select id from userInfo where id = " + userId + "; " +
+    "SELECT   TOP (100) PERCENT dbo.userInfo.id, dbo.userInfo.status, CONVERT(VARCHAR(50), dbo.userInfo.regDatetime, 120) " +
+    "                AS regDatetime, CONVERT(VARCHAR(50), dbo.userInfo.lastAccessTime, 120) AS lastAccessTime,  " +
+    "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
+    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount,  " +
+    "                CASE WHEN dbo.follow.id IS NULL THEN 0 ELSE 1 END AS isFollow, CASE WHEN dbo.blockList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isBlock1, CASE WHEN blockList_1.id IS NULL THEN 0 ELSE 1 END AS isBlock2 " +
+    "FROM      dbo.blockList RIGHT OUTER JOIN " +
+    "                dbo.userInfo LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.userInfo.id = dbo.follow.followId AND dbo.follow.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS blockList_1 ON dbo.userInfo.id = blockList_1.userId AND blockList_1.blockUserId = " + myUserId + " ON  " +
+    "                dbo.blockList.blockUserId = dbo.userInfo.id AND dbo.blockList.userId = " + myUserId + " " +
+    "WHERE dbo.userInfo.id = " + userId + ";";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    es.logWarning("用户不存在, sql=" + sql);
+    return;
+}
+db.nextResult(sqlResult);
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+    "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 1);
+              ]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    return;
+}
+getUserInfo2.dataset = eio.readDataSet()
+getUserInfo2.userInfo = new g5.UserInfo();
+getUserInfo2.userInfo.loadFromDataset(getUserInfo2.dataset, 0, 0);
+if (!eb.isEmpty(getUserInfo2.onComplete)) {
+    getUserInfo2.onComplete(getUserInfo2.userInfo);
+    getUserInfo2.onComplete = null;
+}
+
+
+
+                        
 </script3>
     </taskSetItem>
     <taskSetItem name="updateUserInfo">
@@ -10228,7 +10316,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
+eio.appendDataSet(sqlResult,"userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
 
 
 
@@ -10250,6 +10338,7 @@ ee.setText(ee.getControl("panel123"), "拥有的粉丝");
 var cy = 0;
 var itemWidth = eb.getDivRect(root).w;
 for (var i=0; i<showForwardList.data.rowCount; i++) {
+    if (g5.myUserInfo.id == showForwardList.data.getData(0,i)) continue;
     var item = createPanel(root, "fanl_" + showForwardList.data.getData(0,i), "", 0, cy, itemWidth, 5);
     g5.loadUserRecord(item, showForwardList.data, i);
     item.v_mode = "";
@@ -10586,21 +10675,15 @@ if (isNew==1) {
 }
 
 sql =
-    "SELECT   " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120) " +
+    "SELECT   " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120)  " +
     "                AS regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, dbo.chatRoomData.msgContent,  " +
     "                dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime, dbo.userInfo.lastAccessTime,  " +
     "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
-    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount,  " +
-    "                CASE WHEN dbo.follow.id IS NULL THEN 0 ELSE 1 END AS isFollow, CASE WHEN dbo.blockList.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS isBlock1, CASE WHEN blockList_1.id IS NULL THEN 0 ELSE 1 END AS isBlock2 " +
+    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount " +
     "FROM      dbo.chatRoomData LEFT OUTER JOIN " +
-    "                dbo.blockList AS blockList_1 ON dbo.chatRoomData.userId = blockList_1.userId AND  " +
-    "                blockList_1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
-    "                dbo.blockList ON dbo.chatRoomData.userId = dbo.blockList.blockUserId AND dbo.blockList.userId = " + myUserId + " LEFT OUTER JOIN " +
-    "                dbo.follow ON dbo.chatRoomData.userId = dbo.follow.followId AND dbo.follow.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.chatRoomData.userId = dbo.userInfo.id " +
     "WHERE   dbo.chatRoomData.roomId = " + roomId + " " + where + " " +
-    "ORDER BY dbo.chatRoomData.id DESC";
+    "ORDER BY dbo.chatRoomData.id DESC; ";
 
 
 sqlResult = db.executeQuery("DB", sql);
@@ -11055,6 +11138,8 @@ if (root.v_uplinkType == "L") {
 //avata image box
 c = createPanel(root, root.id+"_panel13", "", 16, cy, 50, 50);
 root.c_userPhoto = c;
+root.c_photo = c;
+c.v_timer = null;
 if (root.v_userPhoto == "") {
     ee.setImage(c,"/twitterG/main/user.png","trim","","")
 } else {
@@ -11070,10 +11155,18 @@ ee.setOnClick(c,function(sender,event) {
 ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.webkitFilter="brightness(80%)";
     sender.style.filter="brightness(80%)";
+    if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+    sender.v_timer = setTimeout(function() {
+        ee.getControl("panel280").show(root.v_userId, root.c_photo);
+    }, 200);
 });
 ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.webkitFilter="brightness(100%)";
     sender.style.filter="brightness(100%)";
+    if (sender.v_timer!=null) {
+        clearTimeout(sender.v_timer);
+        sender.v_timer = null;
+    }
 });
 
 var mainWidth = parseInt((w-75)*0.97);
@@ -11124,7 +11217,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
 });
 root.v_btn1 = c;
 ee.setOnClick(c,function(sender,event) {
-    if (sender.parentNode.v_userName==g5.userName) {
+    if (sender.parentNode.v_userId==g5.myUserInfo.id) {
         ee.setVisible(ee.getControl("panel40"), true);
         var e = event || window.event;
         ee.setRect(ee.getControl("panel149"), e.clientX - eb.getDivRect(ee.getControl("panel149")).w +20, e.clientY - 20, null, null);
@@ -11236,6 +11329,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     //rePhoto
     c = createPanel($g(root.id+"_panel2"), root.id+"_panel8", "", 11, 11, 20, 20);
+    c.style.cursor="pointer";
     if (root.v_rePhoto == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
     } else {
@@ -11248,6 +11342,24 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
         showUserPage.userName=sender.v_username;
         showUserPage();
         window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    root.c_rePhoto = c;
+    c.v_timer = null;
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+        if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+        sender.v_timer = setTimeout(function() {
+            ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
+        }, 200);
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
     });
     //reUserName,reNickName,reTime
     c = createPanel($g(root.id+"_panel2"), root.id+"_panel11", "", 35, 7, p1w*0.833734939759036, 25);
@@ -11329,6 +11441,24 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
         showUserPage.userName=sender.v_username;
         showUserPage();
         window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    root.c_rePhoto = c;
+    c.v_timer = null;
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+        if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+        sender.v_timer = setTimeout(function() {
+            ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
+        }, 200);
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
     });
     //reUserName,reNickName,reTime
     c = createPanel($g(root.id+"_panel6"), root.id+"_panel11", "", 45, 8, p1w*0.833734939759036, 28);
@@ -11678,8 +11808,8 @@ ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.filter="brightness(80%)";
     if (sender.v_timer!=null) clearTimeout(sender.v_timer);
     sender.v_timer = setTimeout(function() {
-        ee.getControl("panel280").show(root.v_userInfo, root.c_photo);
-    }, 1000);
+        ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+    }, 200);
 });
 ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.webkitFilter="brightness(100%)";
