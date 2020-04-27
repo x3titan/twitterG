@@ -8368,12 +8368,13 @@ sender.init(0);
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268/panel278">
-      <backgroundSkin>empty</backgroundSkin>
       <height>172</height>
       <heightRatio>0.21608040201005</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息(探测)]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>622</left>
       <leftRatio>0.493650793650794</leftRatio>
+      <onCreate>sender.style.backgroundColor = "rgba(255,255,255,0.01)";</onCreate>
       <onMouseLeave>if (!eb.isEmpty(sender.v_timer)) {
     clearTimeout(sender.v_timer);
 }
@@ -8397,7 +8398,6 @@ sender.v_timer = setTimeout(function() {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>254</left>
       <leftRatio>0.201587301587302</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
@@ -8422,6 +8422,20 @@ sender.refresh = function() {
     } else {
         ee.setImage(c,"url:" + g5.imgUrl + this.v_userInfo.photo,"trim","","")
     }
+    ee.setOnClick(c,function(sender,event) {
+        showUserPage.userName=sender.parentNode.v_userInfo.userName;
+        showUserPage();
+        ee.showAni(sender.parentNode, 1);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+    });
     //button
     c = ee.getControl("panel269");
     if (this.v_userInfo.id == g5.myUserInfo.id) {
