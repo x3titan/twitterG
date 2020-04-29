@@ -773,56 +773,62 @@ c.init(sender);
       <bgColorEnabled>true</bgColorEnabled>
       <fontBold>true</fontBold>
       <fontColor>FFFFFF</fontColor>
-      <fontFamily>Arial</fontFamily>
+      <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
-      <height>211</height>
-      <heightRatio>0.265075376884422</heightRatio>
-      <left>117</left>
-      <leftRatio>0.0965346534653465</leftRatio>
-      <onCreate><![CDATA[ee.setText(sender, 
+      <height>66</height>
+      <heightRatio>0.0829145728643216</heightRatio>
+      <left>34</left>
+      <leftRatio>0.0280528052805281</leftRatio>
+      <onClick>sender.c_file.click();</onClick>
+      <onCreate><![CDATA[/*
+ee.setText(sender, 
     "<form id='form1' name='form1' method='post' action=''>\n" +
-    "    <input type='file' name='fileToUpload' id='fileToUpload'/> <br />\n" +
+    "    <input type='file' name='fileToUpload' accept='image/*' id='fileToUpload' style='width:100px;height:100px;' /> <br />\n" +
     "    <input type='text' name='compressValue' id='compressValue' style='display:none;' /><br/>\n" +
     "    <input type='button' id='uploadBtn' value='上传' /><br/>\n" +
     "</form>\n"
     );
-    
-sender.form = $g("form1");
-$g("fileToUpload").onchange = function() {
-    sender.uploadBtnChange();
-}
+*/
+var c = document.createElement("input");
+c.setAttribute("type", "file");
+c.setAttribute("accept", "image/*");
+c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
+sender.insertBefore(c, sender.childNodes[0]);
+sender.c_file = c;
 
-sender.uploadBtnChange = function() {
-    var scope = this;
+c.onchange = function() {
     if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
-        //获取上传file
-        var filefield = document.getElementById("fileToUpload"),
-            file = filefield.files[0];
-        //获取用于存放压缩后图片base64编码
-        var compressValue = document.getElementById("compressValue");
-        sender.processfile(file,compressValue);
+        var file = sender.c_file.files[0];
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var blob = new Blob([event.target.result]); 
+            window.URL = window.URL || window.webkitURL;
+            var blobURL = window.URL.createObjectURL(blob); 
+            var image = new Image();
+            image.src = blobURL;
+            image.onload = function() {
+                sender.v_data = sender.resize(image);
+                if (sender.v_data) {
+                    //upload immediately
+                    uploadImage.data = sender.v_data;
+                    uploadImage.controlName = sender.id;
+                    uploadImage.onComplete = function() {
+                        //insert your code here
+                        return;
+                    }
+                    uploadImage();
+                    sender.v_data = "";
+                }
+            }
+        }
+        reader.readAsArrayBuffer(file);
     } else {
         alert("此浏览器不完全支持压缩上传图片");
     }
 }
 
-sender.processfile = function (file,compressValue) {
-    var reader = new FileReader();
-    reader.onload = function (event) {
-        var blob = new Blob([event.target.result]); 
-        window.URL = window.URL || window.webkitURL;
-        var blobURL = window.URL.createObjectURL(blob); 
-        var image = new Image();
-        image.src = blobURL;
-        image.onload = function() {
-            var resized = sender.resizeMe(image); 
-            compressValue.value = resized;
-        }
-    };
-    reader.readAsArrayBuffer(file);
-}
 
-sender.resizeMe = function (img) {
+sender.resize = function (img) {
     //压缩的大小
     var max_width = 1920; 
     var max_height = 1080; 
@@ -850,36 +856,34 @@ sender.resizeMe = function (img) {
     //压缩率
     return canvas.toDataURL("image/jpeg",0.92); 
 }
-
-$g("uploadBtn").onclick = function() {
-    var preview = document.getElementById("compressValue").value;
-    if(preview){
-        alert(preview);
-        //$.ajax({
-        //    url:"index.php",
-        //    type: "POST",
-        //    data:{'imgBase64':preview},
-        //    dataType:'json',
-        //    success:function(json) {
-        //        alert(json);
-        //   },
-        //   error:function(){
-        //       alert('操作失败，请跟技术联系');
-        //   } 
-        //});
-    }
-};
-
 ]]></onCreate>
-      <sizeRatio>0.65527950310559</sizeRatio>
-      <text>Fileupload</text>
-      <top>387</top>
-      <topRatio>0.486180904522613</topRatio>
-      <width>322</width>
-      <widthRatio>0.265676567656766</widthRatio>
+      <sizeRatio>0.290748898678414</sizeRatio>
+      <text>文件自动压缩及上传控件</text>
+      <top>378</top>
+      <topRatio>0.474874371859296</topRatio>
+      <width>227</width>
+      <widthRatio>0.187293729372937</widthRatio>
     </control>
   </controls>
-  <taskSet count="0" />
+  <taskSet count="1">
+    <taskSetItem name="uploadImage">
+      <script1>//data,controlName,onComplete
+eio.appendString16(uploadImage.controlName);
+eio.appendString32(uploadImage.data);</script1>
+      <script2><![CDATA[var buff = eio.readString32();
+var pos = buff.indexOf("base64,",0);
+if (pos<0) return;
+pos += "base64,".length;
+buff = buff.substr(pos, buff.length - pos);
+es.saveBase64AsFile("c:\\temp\\aa.jpg", buff);]]></script2>
+      <script3>
+
+if (!eb.isEmpty(uploadImage.onComplete)) {
+    uploadImage.onComplete();
+    uploadImage.onComplete = null;
+}</script3>
+    </taskSetItem>
+  </taskSet>
   <gridLines count="0" />
   <g5Items count="0" />
 </page>
