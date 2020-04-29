@@ -1,5 +1,5 @@
 <page>
-  <controls count="22">
+  <controls count="23">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -430,9 +430,9 @@ sender.onChange = function() {
       <backgroundColor>804040</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>28</height>
-      <heightRatio>0.0684596577017115</heightRatio>
+      <heightRatio>0.0681265206812652</heightRatio>
       <left>0</left>
-      <sizeRatio>1</sizeRatio>
+      <sizeRatio>1.75</sizeRatio>
       <top>0</top>
       <width>16</width>
       <widthRatio>1</widthRatio>
@@ -522,7 +522,7 @@ sender.init(0);
 
 
 </onCreate>
-      <sizeRatio>1</sizeRatio>
+      <sizeRatio>1.75</sizeRatio>
       <text>.</text>
       <top>0</top>
       <width>16</width>
@@ -532,7 +532,7 @@ sender.init(0);
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <height>354</height>
-      <heightRatio>0.366666666666667</heightRatio>
+      <heightRatio>0.861313868613139</heightRatio>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -541,9 +541,9 @@ sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderBottom = "";
 </onCreate>
-      <sizeRatio>0.717391304347826</sizeRatio>
+      <sizeRatio>22.125</sizeRatio>
       <top>28</top>
-      <topRatio>0.3</topRatio>
+      <topRatio>0.0681265206812652</topRatio>
       <width>16</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -552,7 +552,7 @@ sender.style.borderBottom = "";
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <height>17</height>
-      <heightRatio>0.515151515151515</heightRatio>
+      <heightRatio>0.0480225988700565</heightRatio>
       <left>0</left>
       <onCreate>sender.v_down = false;
 sender.onpointerdown = function(event) {
@@ -600,9 +600,9 @@ sender.style.borderStyle = "solid";
 sender.style.borderLeft = "";
 sender.style.borderRight = "";
 sender.style.backgroundColor = "#fafaff";</onCreate>
-      <sizeRatio>0.369565217391304</sizeRatio>
+      <sizeRatio>1.0625</sizeRatio>
       <top>6</top>
-      <topRatio>0.181818181818182</topRatio>
+      <topRatio>0.0169491525423729</topRatio>
       <width>16</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -610,11 +610,11 @@ sender.style.backgroundColor = "#fafaff";</onCreate>
       <backgroundColor>804040</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>29</height>
-      <heightRatio>0.0709046454767726</heightRatio>
+      <heightRatio>0.0705596107055961</heightRatio>
       <left>0</left>
-      <sizeRatio>2.9</sizeRatio>
+      <sizeRatio>1.8125</sizeRatio>
       <top>382</top>
-      <topRatio>0.929095354523227</topRatio>
+      <topRatio>0.929440389294404</topRatio>
       <width>16</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -628,9 +628,8 @@ sender.style.backgroundColor = "#fafaff";</onCreate>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>29</height>
-      <heightRatio>0.96551724137931</heightRatio>
+      <heightRatio>1</heightRatio>
       <left>0</left>
-      <leftRatio>0.5</leftRatio>
       <onClick>var div = sender.parentNode.parentNode.v_div;
 div.scrollTop += 20;
 var c = sender.parentNode.parentNode;
@@ -704,10 +703,9 @@ sender.init(0);
 
 
 </onCreate>
-      <sizeRatio>2.8</sizeRatio>
+      <sizeRatio>1.8125</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <topRatio>0.379310344827586</topRatio>
       <width>16</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -769,6 +767,116 @@ c.init(sender);
       <top>356</top>
       <topRatio>0.859903381642512</topRatio>
       <widthRatio>0.606060606060606</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel7">
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>Arial</fontFamily>
+      <fontSize>12</fontSize>
+      <height>211</height>
+      <heightRatio>0.265075376884422</heightRatio>
+      <left>117</left>
+      <leftRatio>0.0965346534653465</leftRatio>
+      <onCreate><![CDATA[ee.setText(sender, 
+    "<form id='form1' name='form1' method='post' action=''>\n" +
+    "    <input type='file' name='fileToUpload' id='fileToUpload'/> <br />\n" +
+    "    <input type='text' name='compressValue' id='compressValue' style='display:none;' /><br/>\n" +
+    "    <input type='button' id='uploadBtn' value='上传' /><br/>\n" +
+    "</form>\n"
+    );
+    
+sender.form = $g("form1");
+$g("fileToUpload").onchange = function() {
+    sender.uploadBtnChange();
+}
+
+sender.uploadBtnChange = function() {
+    var scope = this;
+    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
+        //获取上传file
+        var filefield = document.getElementById("fileToUpload"),
+            file = filefield.files[0];
+        //获取用于存放压缩后图片base64编码
+        var compressValue = document.getElementById("compressValue");
+        sender.processfile(file,compressValue);
+    } else {
+        alert("此浏览器不完全支持压缩上传图片");
+    }
+}
+
+sender.processfile = function (file,compressValue) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var blob = new Blob([event.target.result]); 
+        window.URL = window.URL || window.webkitURL;
+        var blobURL = window.URL.createObjectURL(blob); 
+        var image = new Image();
+        image.src = blobURL;
+        image.onload = function() {
+            var resized = sender.resizeMe(image); 
+            compressValue.value = resized;
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+sender.resizeMe = function (img) {
+    //压缩的大小
+    var max_width = 1920; 
+    var max_height = 1080; 
+
+    var canvas = document.createElement("canvas");
+    var width = img.width;
+    var height = img.height;
+    if(width > height) {
+        if(width > max_width) {
+            height = Math.round(height *= max_width / width);
+            width = max_width;
+        }
+    }else{
+        if(height > max_height) {
+            width = Math.round(width *= max_height / height);
+            height = max_height;
+        }
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+    //压缩率
+    return canvas.toDataURL("image/jpeg",0.92); 
+}
+
+$g("uploadBtn").onclick = function() {
+    var preview = document.getElementById("compressValue").value;
+    if(preview){
+        alert(preview);
+        //$.ajax({
+        //    url:"index.php",
+        //    type: "POST",
+        //    data:{'imgBase64':preview},
+        //    dataType:'json',
+        //    success:function(json) {
+        //        alert(json);
+        //   },
+        //   error:function(){
+        //       alert('操作失败，请跟技术联系');
+        //   } 
+        //});
+    }
+};
+
+]]></onCreate>
+      <sizeRatio>0.65527950310559</sizeRatio>
+      <text>Fileupload</text>
+      <top>387</top>
+      <topRatio>0.486180904522613</topRatio>
+      <width>322</width>
+      <widthRatio>0.265676567656766</widthRatio>
     </control>
   </controls>
   <taskSet count="0" />
