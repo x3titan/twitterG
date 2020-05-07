@@ -780,15 +780,12 @@ c.init(sender);
       <left>34</left>
       <leftRatio>0.0280528052805281</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[/*
-ee.setText(sender, 
-    "<form id='form1' name='form1' method='post' action=''>\n" +
-    "    <input type='file' name='fileToUpload' accept='image/*' id='fileToUpload' style='width:100px;height:100px;' /> <br />\n" +
-    "    <input type='text' name='compressValue' id='compressValue' style='display:none;' /><br/>\n" +
-    "    <input type='button' id='uploadBtn' value='上传' /><br/>\n" +
-    "</form>\n"
-    );
-*/
+      <onCreate><![CDATA[sender.maxWidth = 1920;
+sender.maxHeight = 1080;
+sender.compressRatio = 0.92;
+
+
+//implementation
 var c = document.createElement("input");
 c.setAttribute("type", "file");
 c.setAttribute("accept", "image/*");
@@ -827,34 +824,26 @@ c.onchange = function() {
     }
 }
 
-
 sender.resize = function (img) {
-    //压缩的大小
-    var max_width = 1920; 
-    var max_height = 1080; 
-
     var canvas = document.createElement("canvas");
     var width = img.width;
     var height = img.height;
     if(width > height) {
-        if(width > max_width) {
-            height = Math.round(height *= max_width / width);
-            width = max_width;
+        if(width > sender.maxWidth) {
+            height = Math.round(height *= sender.maxWidth / width);
+            width = sender.maxWidth
         }
     }else{
-        if(height > max_height) {
-            width = Math.round(width *= max_height / height);
-            height = max_height;
+        if(height > sender.maxHeight) {
+            width = Math.round(width *= sender.maxHeight / height);
+            height = sender.maxHeight
         }
     }
-
     canvas.width = width;
     canvas.height = height;
-
     var ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0, width, height);
-    //压缩率
-    return canvas.toDataURL("image/jpeg",0.92); 
+    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
 }
 ]]></onCreate>
       <sizeRatio>0.290748898678414</sizeRatio>
