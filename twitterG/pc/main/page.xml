@@ -1633,7 +1633,6 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.32879045996593</sizeRatio>
       <top>0</top>
@@ -1647,7 +1646,7 @@ eb.initMouseEvent(sender);
       <height>202</height>
       <heightRatio>0.258974358974359</heightRatio>
       <left>0</left>
-      <sizeRatio>0.34412265758092</sizeRatio>
+      <sizeRatio>0.336666666666667</sizeRatio>
       <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
@@ -2582,7 +2581,6 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[P2->2->1->综合]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>52</top>
@@ -3566,7 +3564,7 @@ ee.setEditText(ee.getControl("edit11"),"");
 chatSend.roomId = showUserPage.defaultChatRoomId;
 chatSend.msgContent = msgContent;
 chatSend.onComplete = function() {
-    ee.getControl("layoutyitem3").refresh(true);
+    ee.getControl("layoutxitem1").refresh(true);
 }
 chatSend();
 
@@ -6649,7 +6647,7 @@ sender.style.borderRadius = "0px 0px 5px 5px";
       <left>0</left>
       <note>聊天root</note>
       <onCreate><![CDATA[sender.minRefreshTime = 3000;
-sender.maxRefreshTime = 50000;
+sender.maxRefreshTime = 60000;
 sender.running = false;
 sender.start = function(roomId) {
     this.v_roomId = roomId;
@@ -6662,7 +6660,7 @@ sender.start = function(roomId) {
     this.v_tfId = setInterval(function() {
         sender.timeFragment();    
     }, 500);
-    ee.getControl("layouty8").init(sender);
+    ee.getControl("layouty10").init(sender);
     this.refresh();        
 }
 sender.stop = function() {
@@ -6680,13 +6678,13 @@ sender.v_tfId = null;
 //sender.style.overflowX = "hidden";
 sender.v_mouseDown = false;
 sender.refresh = function(force) {
-    chatGet.roomId = this.v_roomId;
-    chatGet.chatId = this.v_lastChatId;
-    chatGet.isNew = 1;
-    chatGet.my = this;
-    chatGet.onComplete = function(dataset) {
+    chatGetPv.roomId = this.v_roomId;
+    chatGetPv.chatId = this.v_lastChatId;
+    chatGetPv.isNew = 1;
+    chatGetPv.my = this;
+    chatGetPv.onComplete = function(dataset) {
         var cy = 0;
-        var root = chatGet.my;
+        var root = chatGetPv.my;
         if (root.v_items.length>0) {
             var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
             cy = rect.y + rect.h;
@@ -6705,7 +6703,7 @@ sender.refresh = function(force) {
             root.currentRefreshTime = root.minRefreshTime;
         }    
     }
-    chatGet();
+    chatGetPv();
     if (this.running) {
         if (eb.isEmpty(force)) {
             if (this.currentRefreshTime <= 12000) {
@@ -6801,13 +6799,13 @@ sender.timeFragment = function() {
     if (sender.scrollTop > y+50) return;
 
     sender.v_nohis = false;
-    chatGet.roomId = sender.v_roomId;
-    chatGet.chatId = sender.v_items[0].v_id;
-    chatGet.isNew = 0;
-    chatGet.my = sender;
-    chatGet.onComplete = function(dataset) {
+    chatGetPv.roomId = sender.v_roomId;
+    chatGetPv.chatId = sender.v_items[0].v_id;
+    chatGetPv.isNew = 0;
+    chatGetPv.my = sender;
+    chatGetPv.onComplete = function(dataset) {
         var cy = 0;
-        var root = chatGet.my;
+        var root = chatGetPv.my;
         if (root.v_items.length>0) {
             var rect = eb.getDivRect(root.v_items[0]);
             cy = rect.y;
@@ -6828,7 +6826,7 @@ sender.timeFragment = function() {
         root.move(cy);
         sender.scrollTop += cy;    
     }
-    chatGet();
+    chatGetPv();
 };
 
 sender.move = function(dy) {
@@ -7323,18 +7321,18 @@ sender._input.addEventListener("keydown", function(event) {
       <heightRatio>0.725490196078431</heightRatio>
       <left>255</left>
       <leftRatio>0.879478827361563</leftRatio>
-      <onClick><![CDATA[var msgContent = ee.getEditText(ee.getControl("edit11")).trim();
+      <onClick><![CDATA[var msgContent = ee.getEditText(ee.getControl("edit12")).trim();
 if (msgContent.length<=0) {
     event.preventDefault();
     return false;
 }
 if (msgContent.length>200) msgContent = msgContent.substr(0,200);
 
-ee.setEditText(ee.getControl("edit11"),"");
-chatSend.roomId = showUserPage.defaultChatRoomId;
+ee.setEditText(ee.getControl("edit12"),"");
+chatSend.roomId = showUserPage.privateChatRoomId;
 chatSend.msgContent = msgContent;
 chatSend.onComplete = function() {
-    ee.getControl("layoutyitem3").refresh(true);
+    ee.getControl("layoutxitem6").refresh(true);
 }
 chatSend();
 
@@ -10341,7 +10339,7 @@ sender.onpointermove = function(event) {
       <widthRatio>0.327913279132791</widthRatio>
     </control>
   </controls>
-  <taskSet count="28">
+  <taskSet count="30">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 
@@ -11004,7 +11002,8 @@ eio.appendString16(db.getString(sqlResult,"followCount"));
 eio.appendString16(db.getString(sqlResult,"fansCount"));
 
 //query follow status
-sql = "select * from follow where userId = " + myUserId + " and followId = " + userId;
+sql = "exec createDefaultPrivateChatRoom " + userId + "; " + 
+    "select * from follow where userId = " + myUserId + " and followId = " + userId + ";";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -11056,7 +11055,8 @@ eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,li
 
 sql = "select * from blockList where userId=" + myUserId + " and blockUserId=" + userId + "; " +
     "select * from blockList where userId=" + userId + " and blockUserId=" + myUserId + "; " +
-    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='DEF'; ";
+    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='DEF'; " +
+    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='PIV'; ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     return;
@@ -11071,6 +11071,10 @@ if (db.read(sqlResult)) {
     eio.appendString16("T");
 } else {
     eio.appendString16("F");
+}
+db.nextResult(sqlResult);
+if (db.read(sqlResult)) {
+    eio.appendString16(db.getString(sqlResult,"id"));
 }
 db.nextResult(sqlResult);
 if (db.read(sqlResult)) {
@@ -11102,6 +11106,7 @@ g5.datasetPageUser = eio.readDataSet();
 var block1 = eio.readString16();
 var block2 = eio.readString16();
 showUserPage.defaultChatRoomId = eio.readString16(); 
+showUserPage.privateChatRoomId = eio.readString16(); 
 
 ee.setVisible(ee.getControl("panel18"), false);
 ee.setVisible(ee.getControl("panel21"), false);
@@ -11254,8 +11259,8 @@ rect = eb.getDivRectSetting(root.parentNode);
 ee.setRect(root.parentNode.parentNode,null,null,null,rect.y + rect.h);
 
 
-
 ee.getControl("layoutxitem1").start(showUserPage.defaultChatRoomId);
+ee.getControl("layoutxitem6").start(showUserPage.privateChatRoomId);
 
 g5.tiledV(g5.p2PersonSub.p1,0);
 g5.changeP2(1);
@@ -12841,6 +12846,90 @@ chatGet.busy = false;
 
 </script3>
     </taskSetItem>
+    <taskSetItem name="chatGetPv">
+      <script1>//roomId, chatId, isNew(0,1), onComplete(dataset)
+//dataset
+if (chatGetPv.busy) return;
+chatGetPv.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(chatGetPv.roomId+"");
+eio.appendString16(chatGetPv.chatId+"");
+eio.appendString16(chatGetPv.isNew+"");  
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var roomId = parseInt(eio.readString16());
+var chatId = parseInt(eio.readString16());
+var isNew = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
+
+var where = "";
+var top = "TOP (10)";
+if (isNew==1) {
+    if (chatId!=0) {
+        where = "and chatRoomData.id>" + chatId;
+        top = "";
+    }
+} else {
+    where = "and chatRoomData.id<" + chatId;
+}
+
+sql =
+    "SELECT   " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120)  " +
+    "                AS regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, dbo.chatRoomData.msgContent,  " +
+    "                dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime, dbo.userInfo.lastAccessTime,  " +
+    "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
+    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount " +
+    "FROM      dbo.chatRoomData LEFT OUTER JOIN " +
+    "                dbo.userInfo ON dbo.chatRoomData.userId = dbo.userInfo.id " +
+    "WHERE   dbo.chatRoomData.roomId = " + roomId + " " + where + " " +
+    "ORDER BY dbo.chatRoomData.id DESC; ";
+
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"id,regDatetime,roomId,msgContent," +
+    "userId,status,userRegDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 99999);
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    chatGetPv.busy = false;
+    return;
+}
+
+chatGetPv.dataset = eio.readDataSet();
+if (!eb.isEmpty(chatGetPv.onComplete)) {
+    chatGetPv.onComplete(chatGetPv.dataset);
+    chatGetPv.onComplete = null;
+}
+chatGetPv.busy = false;
+
+
+
+
+</script3>
+    </taskSetItem>
     <taskSetItem name="chatSend">
       <script1>//roomId, msgContent, onComplete()
 //dataset
@@ -12895,6 +12984,56 @@ if (!eb.isEmpty(chatSend.onComplete)) {
 }
 </script3>
     </taskSetItem>
+    <taskSetItem name="chatPrvRequest">
+      <script1>//chatRoomId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(chatPrvRequest.chatRoomId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var chatRoomId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec requestJoinPrvChatRoom " +
+    chatRoomId + "," +
+    myUserId;
+    
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(chatPrvRequest.onComplete)) {
+    chatPrvRequest.onComplete();
+    chatPrvRequest.onComplete = null;
+}
+</script3>
+    </taskSetItem>
     <taskSetItem name="setChatRoomVideo">
       <script1>//videoUrl, onComplete
 if (setChatRoomVideo.busy) return;
@@ -12946,7 +13085,7 @@ setChatRoomVideo.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="62">
+  <g5Items count="63">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -14536,6 +14675,7 @@ if (g5.currentPageIndex == 0) {
     ee.setVisible(g5.p4, false);
     g5.player.stop();
     ee.getControl("layoutxitem1").stop();
+    ee.getControl("layoutxitem6").stop();
     ee.showAni(ee.getControl("panel16"), 1);
     g5.changeP3(-1);
 } else if (g5.currentPageIndex == 2) {
@@ -15088,6 +15228,25 @@ for (var i = 0; i < root.eeChildren.length; i++) {
 }
 ee.setRect(root, null, null, null, cy);
 ]]></functionCode>
+    </item>
+    <item name="chatPrvRequest" type="20">
+      <varValue />
+      <functionParam>userId,userNickName,userName,myUserId</functionParam>
+      <functionCode>ee.getControl("panel257").show(
+    "申请加入私有聊天室",
+    "申请加入" + userNickName + " @" + userName + "的私有聊天室吗？得到房主许可后，您才可以进入房主的私有聊天室。",
+    [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","申请","提交申请","提交申请","#ffffff","#ffffff","#ffffff","")],
+    function() {
+        follow.follow = 0;
+        follow.userId = showUserPage.id;
+        follow.onComplete = function() {
+            ee.getControl("panel256").init(1);
+        }
+        follow();
+    }
+);
+</functionCode>
     </item>
   </g5Items>
 </page>
