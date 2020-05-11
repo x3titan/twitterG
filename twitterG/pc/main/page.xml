@@ -88,6 +88,23 @@ initLButton = function(button,text,dy,icon,size,dx) {
     ee.setText(button.status3, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
+
+ee.changeParent = function(control, newParent, pos) {
+    var i;
+    for (i = 0; i < control.parentNode.eeChildren.length; i++) {
+        if (control.parentNode.eeChildren[i] == control) {
+            control.parentNode.eeChildren.splice(i, 1);
+            break;
+        }
+    }
+    if ((pos < 0) || (pos >= newParent.eeChildren.length)) {
+        newParent.eeChildren.push(control);
+        newParent.appendChild(control);
+    } else {
+        newParent.insertBefore(control, newParent.eeChildren[pos]);
+        newParent.eeChildren.splice(pos, 0, control);
+    }
+}
 ]]></onPageCreate>
       <top>0</top>
       <width>1260</width>
@@ -128,6 +145,7 @@ window.onmousewheel = document.onmousewheel = g5.scrollFunc; //IE/Opera/Chrome/S
       <scrollPosY>-1</scrollPosY>
       <sizeRatio>0.631746031746032</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00125628140703518</topRatio>
       <width>1260</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2143,25 +2161,7 @@ eb.initMouseEvent(sender);
       <heightRatio>0.47948717948718</heightRatio>
       <left>0</left>
       <note>p2PersonSub</note>
-      <onCreate><![CDATA[ee.changeParent = function(control, newParent, pos) {
-    if (control.parentNode == newParent) return;
-    var i;
-    for (i = 0; i < control.parentNode.eeChildren.length; i++) {
-        if (control.parentNode.eeChildren[i] == control) {
-            control.parentNode.eeChildren.splice(i, 1);
-            break;
-        }
-    }
-    if ((pos < 0) || (pos >= newParent.eeChildren.length)) {
-        newParent.eeChildren.push(control);
-        newParent.appendChild(control);
-    } else {
-        newParent.insertBefore(control, newParent.eeChildren[pos]);
-        newParent.eeChildren.splice(pos, 0, control);
-    }
-}
-
-sender.currentPageIndex = -1;
+      <onCreate><![CDATA[sender.currentPageIndex = -1;
 sender.button1 = ee.getControl("layoutxitem3");
 sender.button2 = ee.getControl("layoutxitem4");
 sender.button3 = ee.getControl("layoutxitem5");
@@ -2201,13 +2201,8 @@ sender.changePage = function(pageIndex) {
         ee.changeParent(this.chatVideo, this.p1, 1);
         g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.id == g5.myUserInfo.id);
         g5.tiledV(this.p1, 0);
-        div = this.p1;
-        for (var i=0; i<3; i++) {
-            rect = eb.getDivRectSetting(div);
-            div = div.parentNode;
-            ee.setRect(div,null,null,null, rect.y + rect.h);
-        }
         ee.setVisible(this.p1, true);
+        g5.resizeV(this.p1, 4);
     } else if (pageIndex == 2) {
         this.button2.init(1);
         this.button2.appendChild(this.buttonLine);
@@ -2216,28 +2211,19 @@ sender.changePage = function(pageIndex) {
         ee.changeParent(this.chatVideo, this.p2, 0);
         g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.id == g5.myUserInfo.id);
         g5.tiledV(this.p2,0);
-        div = this.p2;
-        for (var i=0; i<3; i++) {
-            rect = eb.getDivRectSetting(div);
-            div = div.parentNode;
-            ee.setRect(div,null,null,null, rect.y + rect.h);
-        }
         ee.setVisible(this.p2, true);
+        g5.resizeV(this.p2, 4);
     } else if (pageIndex == 3) {
         g5.player.stop();
         this.button3.init(1);
         this.button3.appendChild(this.buttonLine);
         if (this.p3Items.length<=0) {
             this.reloadPage3();
+            ee.setVisible(this.p3, true);
         } else {
-            div = this.p3;
-            for (var i=0; i<3; i++) {
-                rect = eb.getDivRectSetting(div);
-                div = div.parentNode;
-                ee.setRect(div,null,null,null, rect.y + rect.h);
-            }
+            ee.setVisible(this.p3, true);
+            g5.resizeV(this.p3, 4);
         }
-        ee.setVisible(this.p3, true);
     }
     this.currentPageIndex = pageIndex;
     eb.processDock();    
@@ -6546,8 +6532,133 @@ eb.initMouseEvent(sender);
       <heightRatio>0.71606648199446</heightRatio>
       <layerName><![CDATA[P3->8->私有聊天室]]></layerName>
       <left>0</left>
+      <onCreate><![CDATA[sender.init = function() {
+    if (!eb.isEmpty(showUserPage.joinPrvRequest)) {
+        if (!eb.isEmpty(this.joinRequest)) {
+            for (var i=0; i<this.joinRequest.length; i++) {
+                ee.removeControl(this.joinRequest[i]);
+            }
+        }
+        this.joinRequest = new Array();
+        var i, item;
+        var root = this;
+        var itemWidth = eb.getDivRectSetting(root).w;
+        for (i=0; i< showUserPage.joinPrvRequest.rowCount; i++) {
+            var item = createPanel(root, "prvreq_" + showUserPage.joinPrvRequest.getData(0,i), "", 10, cy, itemWidth-10, 5);
+            ee.changeParent(item, root, i+1);
+            this.loadJoinRecord(item, showUserPage.joinPrvRequest, i);
+            this.renderJoinRecord(item);
+            this.joinRequest.push(item);
+            cy += 0 + eb.getDivRect(item).h;
+        }
+        g5.tiledV(root,5);
+        g5.resizeV(root, 2);
+    }
+}
+
+sender.loadJoinRecord = function(panel, dataset, index) {
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,2,index);
+    panel.v_id = dataset.getData(0,index);
+    panel.v_reqeustDatetime = dataset.getData(1,index);
+}
+
+sender.renderJoinRecord = function(root) {
+    var w = eb.getDivRectSetting(root).w;
+    var c,cy=7;
+    
+    root.style.boxSizing="border-box";
+    root.style.borderWidth = "1px";
+    root.style.borderColor = "rgb(230,236,240)";
+    root.style.borderStyle = "solid";
+    root.style.borderRadius = "3px 25px 3px 3px";
+    root.style.cursor = "pointer";
+    var userName = root.v_userInfo.userName;
+    var nickName = root.v_userInfo.nickName;
+    ee.setOnClick(root,function(sender,event) {
+        ee.getControl("panel257").show(
+            "私有聊天室许可",
+            "您是否允许<b>" + nickName + "@" + userName + "</b>进入您的私有聊天室？",
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","拒绝","拒绝进入","拒绝进入","#ffffff","#ffffff","#ffffff","")],
+            [new g5.BStyle("#1da1f2","#1a91da","#1781c2","允许","允许进入","允许进入","#ffffff","#ffffff","#ffffff","")],
+            function() {
+                chatPrvPermit.chatRoomId = showUserPage.privateChatRoomId;
+                chatPrvPermit.userId = sender.v_userInfo.id;
+                chatPrvPermit.onComplete = function() {
+                    var p = sender.parentNode;
+                    ee.removeControl(sender);
+                    g5.tiledV(p, 5);
+                    g5.resizeV(p, 2);
+                }
+                chatPrvPermit()
+            },
+            function() {
+                chatPrvReject.chatRoomId = showUserPage.privateChatRoomId;
+                chatPrvReject.userId = sender.v_userInfo.id;
+                chatPrvReject.onComplete = function() {
+                    var p = sender.parentNode;
+                    ee.removeControl(sender);
+                    g5.tiledV(p, 5);
+                    g5.resizeV(p, 2);
+                }
+                chatPrvReject()
+            }
+        );
+    });
+    ee.setOnMouseEnter(root, function(sender,e){
+        sender.style.backgroundColor = "rgb(245,248,250)";
+    });
+    ee.setOnMouseLeave(root, function(sender,e){
+        sender.style.backgroundColor = "#ffffff";
+    });
+    
+    //user photo
+    c = createPanel(root, root.id+"panel13", "", 15,cy,38,38);
+    if (root.v_userInfo.photo == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
+    }
+    c.style.borderRadius = "50%";
+    c.v_timer = null;
+    root.c_photo = c;
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+        if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+        sender.v_timer = setTimeout(function() {
+            ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+        }, 200);
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
+    });
+    
+    //user nick name
+    c = createPanel(root, root.id+"panel16", "", 63, cy-1, 295, 40); cy+=22;
+    addText(c,
+        "<b>" + root.v_userInfo.nickName + "</b>" +
+        "<font color='#6e7f8d'>@" + root.v_userInfo.userName + "</font>" +
+        " 请求加入您的私有聊天室，您是否同意？",
+        "left", "middle", "微软雅黑", 9, "14171a", "");
+    
+    //cy+=10;
+    eb.setDivRect(root,null,null,null,38+7*2);
+    return root; 
+}
+
+
+
+
+]]></onCreate>
       <sizeRatio>1.68403908794788</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00138504155124654</topRatio>
       <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -6555,15 +6666,13 @@ eb.initMouseEvent(sender);
       <backgroundColor>FFC080</backgroundColor>
       <dockX>fill</dockX>
       <dockY>top</dockY>
-      <height>53</height>
-      <heightRatio>0.281914893617021</heightRatio>
+      <height>36</height>
+      <heightRatio>0.0696324951644101</heightRatio>
       <left>0</left>
-      <leftRatio>0.374501992031873</leftRatio>
-      <sizeRatio>0.172638436482085</sizeRatio>
+      <sizeRatio>0.117263843648208</sizeRatio>
       <top>0</top>
-      <topRatio>0.138297872340426</topRatio>
       <width>307</width>
-      <widthRatio>1.22310756972112</widthRatio>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel295/panel296/panel297">
       <cursor>pointer</cursor>
@@ -6573,7 +6682,7 @@ eb.initMouseEvent(sender);
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
-      <height>53</height>
+      <height>36</height>
       <heightRatio>1</heightRatio>
       <left>16</left>
       <leftRatio>0.0521172638436482</leftRatio>
@@ -6587,9 +6696,8 @@ eb.initMouseEvent(sender);
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel295/panel289">
       <backgroundColor>E0E0E0</backgroundColor>
       <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>464</height>
-      <heightRatio>1</heightRatio>
+      <height>404</height>
+      <heightRatio>0.781431334622824</heightRatio>
       <left>10</left>
       <leftRatio>0.0325732899022801</leftRatio>
       <onCreate>sender.style.boxSizing="border-box";
@@ -6599,9 +6707,9 @@ sender.style.borderStyle = "solid";
 sender.style.borderRadius = "0px 0px 5px 5px";
 </onCreate>
       <outerLeft>10</outerLeft>
-      <outerTop>53</outerTop>
-      <sizeRatio>1.74074074074074</sizeRatio>
-      <top>53</top>
+      <sizeRatio>1.36026936026936</sizeRatio>
+      <top>113</top>
+      <topRatio>0.218568665377176</topRatio>
       <width>297</width>
       <widthRatio>0.96742671009772</widthRatio>
     </control>
@@ -6609,7 +6717,7 @@ sender.style.borderRadius = "0px 0px 5px 5px";
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <fieldCount>2</fieldCount>
-      <height>464</height>
+      <height>404</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <sizeRatio>0.400651465798046</sizeRatio>
@@ -6620,7 +6728,7 @@ sender.style.borderRadius = "0px 0px 5px 5px";
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel295/panel289/layouty9/layoutyitem19">
       <backgroundColor>f0f0f0</backgroundColor>
-      <height>413</height>
+      <height>353</height>
       <heightRatio>0.638297872340426</heightRatio>
       <left>0</left>
       <sizeRatio>0.160142348754448</sizeRatio>
@@ -6632,7 +6740,7 @@ sender.style.borderRadius = "0px 0px 5px 5px";
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <fieldCount>2</fieldCount>
-      <height>413</height>
+      <height>353</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <sizeRatio>0.160142348754448</sizeRatio>
@@ -6642,7 +6750,7 @@ sender.style.borderRadius = "0px 0px 5px 5px";
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel137/panel295/panel289/layouty9/layoutyitem19/layoutx3/layoutxitem6">
       <backgroundColor>f0f0f0</backgroundColor>
-      <height>413</height>
+      <height>353</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <note>聊天root</note>
@@ -6869,7 +6977,7 @@ sender.onpointerup = function(event) {
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel137/panel295/panel289/layouty9/layoutyitem19/layoutx3/layoutxitem7">
       <backgroundColor>d0d0d0</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
-      <height>413</height>
+      <height>353</height>
       <heightRatio>1</heightRatio>
       <left>286</left>
       <leftRatio>0.980427046263345</leftRatio>
@@ -6881,7 +6989,7 @@ sender.onpointerup = function(event) {
     <control type="LayoutY" pathname="/divRoot/panel134/panel137/panel295/panel289/layouty9/layoutyitem19/layoutx3/layoutxitem7/layouty10">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>413</height>
+      <height>353</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <onCreate><![CDATA[sender.v_minValue = 0;
@@ -7029,7 +7137,7 @@ sender.init(0);
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel295/panel289/layouty9/layoutyitem19/layoutx3/layoutxitem7/layouty10/layoutyitem21">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>356</height>
+      <height>296</height>
       <heightRatio>0.366666666666667</heightRatio>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
@@ -7111,7 +7219,7 @@ sender.style.backgroundColor = "#fafaff";</onCreate>
       <heightRatio>0.322222222222222</heightRatio>
       <left>0</left>
       <sizeRatio>2.9</sizeRatio>
-      <top>384</top>
+      <top>324</top>
       <topRatio>0.677777777777778</topRatio>
       <width>10</width>
       <widthRatio>1</widthRatio>
@@ -7216,7 +7324,7 @@ sender.init(0);
       <left>0</left>
       <note>功能区root</note>
       <sizeRatio>0.171717171717172</sizeRatio>
-      <top>413</top>
+      <top>353</top>
       <topRatio>0.877697841726619</topRatio>
       <width>297</width>
       <widthRatio>1</widthRatio>
@@ -7287,18 +7395,18 @@ sender.c_tester.label.rows[0].cells[0].style.fontWeight = sender._input.style.fo
 
 sender._input.addEventListener("keydown", function(event) {
     if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
-        var msgContent = ee.getEditText(ee.getControl("edit11")).trim();
+        var msgContent = ee.getEditText(ee.getControl("edit12")).trim();
         if (msgContent.length<=0) {
             event.preventDefault();
             return false;
         }
         if (msgContent.length>200) msgContent = msgContent.substr(0,200);
         
-        ee.setEditText(ee.getControl("edit11"),"");
-        chatSend.roomId = showUserPage.defaultChatRoomId;
+        ee.setEditText(ee.getControl("edit12"),"");
+        chatSend.roomId = showUserPage.privateChatRoomId
         chatSend.msgContent = msgContent;
         chatSend.onComplete = function() {
-            ee.getControl("layoutyitem3").refresh(true);
+            ee.getControl("layoutxitem6").refresh(true);
         }
         chatSend();        
         event.preventDefault();
@@ -7321,7 +7429,20 @@ sender._input.addEventListener("keydown", function(event) {
       <heightRatio>0.725490196078431</heightRatio>
       <left>255</left>
       <leftRatio>0.879478827361563</leftRatio>
-      <onClick><![CDATA[var msgContent = ee.getEditText(ee.getControl("edit12")).trim();
+      <onClick><![CDATA[if (!showUserPage.privateChatRoomRights) {
+    ee.getControl("panel257").show(
+        "无权限",
+        "对不起，您还没有加入房主的聊天室，需要立即申请加入吗？",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","申请","立即申请","立即申请","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            g5.chatPrvRequest(showUserPage.privateChatRoomId,showUserPage.nickName,showUserPage.userName);
+        }
+    );
+    return;
+}
+
+var msgContent = ee.getEditText(ee.getControl("edit12")).trim();
 if (msgContent.length<=0) {
     event.preventDefault();
     return false;
@@ -9600,7 +9721,7 @@ if (sender.formResult) {
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
 </onClick>
-      <onCreate>sender.show = function(title,text,bStyle1,bStyle2,onComplete) {
+      <onCreate>sender.show = function(title,text,bStyle1,bStyle2,onComplete,onButton1) {
     ee.setText(ee.getControl("panel259"),title);
     ee.setText(ee.getControl("panel258"),text);
     ee.getControl("panel261").v_style = bStyle1;
@@ -9608,6 +9729,7 @@ if (sender.formResult) {
     ee.getControl("panel262").v_style = bStyle2;
     ee.getControl("panel262").init(0);
     this.onComplete = onComplete;
+    this.onButton1 = onButton1;
     ee.setVisible(this.parentNode, true);
     ee.showAni(this, 0);
 }
@@ -9714,7 +9836,12 @@ sender.onpointermove = function(event) {
       <heightRatio>0.175438596491228</heightRatio>
       <left>37</left>
       <leftRatio>0.106936416184971</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel257"), 1);</onClick>
+      <onClick>ee.showAni(ee.getControl("panel257"), 1);
+if (!eb.isEmpty(sender.parentNode.onButton1)) {
+    sender.parentNode.onButton1();
+    sender.parentNode.onButton1 = null;
+}
+</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
     this.color1 = color1;
     this.color2 = color2
@@ -10339,7 +10466,7 @@ sender.onpointermove = function(event) {
       <widthRatio>0.327913279132791</widthRatio>
     </control>
   </controls>
-  <taskSet count="30">
+  <taskSet count="32">
     <taskSetItem name="getUserInfo">
       <script1>g5.token = eb.getCookie("twitterGToken");
 
@@ -11077,11 +11204,42 @@ if (db.read(sqlResult)) {
     eio.appendString16(db.getString(sqlResult,"id"));
 }
 db.nextResult(sqlResult);
+var prvRoomId;
 if (db.read(sqlResult)) {
-    eio.appendString16(db.getString(sqlResult,"id"));
+    prvRoomId = db.getString(sqlResult,"id");
+    eio.appendString16(prvRoomId);
 }
 
-]]></script2>
+sql = "select * from chatPrivate where roomId=" + prvRoomId + " and permitUserId=" + myUserId + "; ";
+if (userId == myUserId) {
+    sql +=
+        "SELECT   dbo.chatPrvRequest.id, dbo.chatPrvRequest.chatRoomId, dbo.chatPrvRequest.appUserId, dbo.userInfo.status, " + 
+        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
+        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
+        "                dbo.userInfo.followCount, dbo.userInfo.fansCount, dbo.userInfo.regDatetime,  " +
+        "                dbo.chatPrvRequest.regDatetime AS requestDatetime " +
+        "FROM      dbo.chatPrvRequest INNER JOIN " +
+        "                dbo.userInfo ON dbo.chatPrvRequest.appUserId = dbo.userInfo.id " +
+        "WHERE chatPrvRequest.chatRoomId = " + prvRoomId + " " +
+        "ORDER BY chatPrvRequest.id DESC; ";
+}
+
+sqlResult = db.executeQuery("DB", sql);
+if (db.read(sqlResult)) {
+    eio.appendString16("T");
+} else {
+    eio.appendString16("F");
+}
+
+if (userId == myUserId) {
+    eio.appendString16("T");
+    db.nextResult(sqlResult);
+    eio.appendDataSet(sqlResult,
+        "id,requestDatetime,appUserId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
+} else {
+    eio.appendString16("F");
+}]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     ee.setVisible(ee.getControl("panel16"), false);
     return;
@@ -11092,6 +11250,7 @@ showUserPage.id = id;
 var userName = eio.readString16();
 showUserPage.userName = userName;
 var nickName = eio.readString16();
+showUserPage.nickName = nickName;
 var regDatetime = eio.readString16();
 var photo = eio.readString16();
 var titleBg = eio.readString16();
@@ -11107,6 +11266,15 @@ var block1 = eio.readString16();
 var block2 = eio.readString16();
 showUserPage.defaultChatRoomId = eio.readString16(); 
 showUserPage.privateChatRoomId = eio.readString16(); 
+showUserPage.privateChatRoomRights = eio.readString16() == "T";
+if (showUserPage.id == g5.myUserInfo.id) {
+    showUserPage.privateChatRoomRights = true;
+}
+if (eio.readString16() == "T") {
+    showUserPage.joinPrvRequest = eio.readDataSet();
+} else {
+    showUserPage.joinPrvRequest = null;
+}
 
 ee.setVisible(ee.getControl("panel18"), false);
 ee.setVisible(ee.getControl("panel21"), false);
@@ -11266,6 +11434,7 @@ g5.tiledV(g5.p2PersonSub.p1,0);
 g5.changeP2(1);
 g5.p2PersonSub.init();
 g5.p2PersonSub.changePage(1);
+ee.getControl("panel295").init();
 //eb.processDock();
 
 
@@ -13011,7 +13180,7 @@ var myUserName = db.getString(sqlResult,"userName");
 var myUserId = parseInt(db.getString(sqlResult,"id"));
 
 sql =
-    "exec requestJoinPrvChatRoom " +
+    "exec joinPrvChatRoomRequest " +
     chatRoomId + "," +
     myUserId;
     
@@ -13031,6 +13200,126 @@ eio.appendString8("T");
 if (!eb.isEmpty(chatPrvRequest.onComplete)) {
     chatPrvRequest.onComplete();
     chatPrvRequest.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="chatPrvPermit">
+      <script1>//chatRoomId, userId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(chatPrvPermit.chatRoomId+"");
+eio.appendString16(chatPrvPermit.userId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var chatRoomId = parseInt(eio.readString16());
+var userId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec joinPrvChatRoomPermit " +
+    myUserId + "," +
+    chatRoomId + "," +
+    userId;
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(chatPrvPermit.onComplete)) {
+    chatPrvPermit.onComplete();
+    chatPrvPermit.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="chatPrvReject">
+      <script1>//chatRoomId, userId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(chatPrvReject.chatRoomId+"");
+eio.appendString16(chatPrvReject.userId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var chatRoomId = parseInt(eio.readString16());
+var userId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec joinPrvChatRoomReject " +
+    myUserId + "," +
+    chatRoomId + "," +
+    userId;
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(chatPrvReject.onComplete)) {
+    chatPrvReject.onComplete();
+    chatPrvReject.onComplete = null;
 }
 </script3>
     </taskSetItem>
@@ -13085,7 +13374,7 @@ setChatRoomVideo.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="63">
+  <g5Items count="64">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -15231,22 +15520,44 @@ ee.setRect(root, null, null, null, cy);
     </item>
     <item name="chatPrvRequest" type="20">
       <varValue />
-      <functionParam>userId,userNickName,userName,myUserId</functionParam>
-      <functionCode>ee.getControl("panel257").show(
+      <functionParam>chatRoomId,userNickName,userName</functionParam>
+      <functionCode><![CDATA[ee.getControl("panel257").show(
     "申请加入私有聊天室",
-    "申请加入" + userNickName + " @" + userName + "的私有聊天室吗？得到房主许可后，您才可以进入房主的私有聊天室。",
+    "申请加入<b>" + userNickName + "@" + userName + "</b>的私有聊天室吗？得到房主许可后，您才可以进入房主的私有聊天室。",
     [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
     [new g5.BStyle("#1da1f2","#1a91da","#1781c2","申请","提交申请","提交申请","#ffffff","#ffffff","#ffffff","")],
     function() {
-        follow.follow = 0;
-        follow.userId = showUserPage.id;
-        follow.onComplete = function() {
-            ee.getControl("panel256").init(1);
+        chatPrvRequest.chatRoomId = chatRoomId;
+        chatPrvRequest.onComplete = function() {
+            alert("申请已经发送成功，请耐心等待房主同意。 ");
         }
-        follow();
+        chatPrvRequest();
     }
 );
-</functionCode>
+]]></functionCode>
+    </item>
+    <item name="resizeV" type="20">
+      <varValue />
+      <functionParam>div,level</functionParam>
+      <functionCode><![CDATA[var getMaxY = function(div,child) {
+    var result = 0;
+    var rect;
+    for (var i=0; i<div.eeChildren.length; i++) {
+        if ((div.eeChildren[i]!=child) &amp;&amp; (div.eeChildren[i].style.visibility == "hidden")) continue;
+        rect = eb.getDivRectSetting(div.eeChildren[i]);
+        if (rect.y + rect.h > result) result = rect.y + rect.h;
+    }
+    return result;
+}
+
+var child = null;
+for (var i=0; i<level; i++) {
+    var maxY = getMaxY(div, child);
+    ee.setRect(div, null, null, null, maxY);
+    child = div;
+    div = div.parentNode;
+}
+]]></functionCode>
     </item>
   </g5Items>
 </page>
