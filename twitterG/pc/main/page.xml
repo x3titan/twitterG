@@ -6533,13 +6533,13 @@ eb.initMouseEvent(sender);
       <layerName><![CDATA[P3->8->私有聊天室]]></layerName>
       <left>0</left>
       <onCreate><![CDATA[sender.init = function() {
-    if (!eb.isEmpty(showUserPage.joinPrvRequest)) {
-        if (!eb.isEmpty(this.joinRequest)) {
-            for (var i=0; i<this.joinRequest.length; i++) {
-                ee.removeControl(this.joinRequest[i]);
-            }
+    if (!eb.isEmpty(this.joinRequest)) {
+        for (var i=0; i<this.joinRequest.length; i++) {
+            ee.removeControl(this.joinRequest[i]);
         }
-        this.joinRequest = new Array();
+    }
+    this.joinRequest = new Array();
+    if (!eb.isEmpty(showUserPage.joinPrvRequest)) {
         var i, item;
         var root = this;
         var itemWidth = eb.getDivRectSetting(root).w;
@@ -6554,6 +6554,8 @@ eb.initMouseEvent(sender);
         g5.tiledV(root,5);
         g5.resizeV(root, 2);
     }
+    g5.tiledV(this, 5);
+    g5.resizeV(this, 2);
 }
 
 sender.loadJoinRecord = function(panel, dataset, index) {
