@@ -6945,16 +6945,20 @@ sender.init = function() {
         var root = ee.getControl("layoutxitem8");
         var itemWidth = eb.getDivRectSetting(root).w;
         for (i=0; i< showUserPage.permitUsers.rowCount; i++) {
-            var item = createPanel(root, "prvreq_" + showUserPage.permitUsers.getData(0,i), "", 0, cy, 80, 100);
+            var item = createPanel(root, "prvreq_" + showUserPage.permitUsers.getData(0,i), "", 0, cy, 65, 90);
             ee.changeParent(item, root, i+1);
             this.loadRecord(item, showUserPage.permitUsers, i);
             this.renderItem(item);
             this.v_items.push(item);
             cy += 0 + eb.getDivRect(item).h;
         }
-        this.arrange(root, 5, 4);
+        this.arrange(root, 0, 5);
         ee.setRect(ee.getControl("layoutxitem9"),null,null,null,30);
         g5.resizeV(root, 2);
+        var ch = eb.getDivRectSetting(this).h + 20;
+        if (ch>360) ch = 360;
+        ee.setRect(this,null,null,null,ch);
+        ee.getControl("layouty11").init(root);
     }
 } 
 
@@ -6981,9 +6985,11 @@ sender.renderItem = function(root) {
     var c,cy=7;
     
     root.style.cursor = "pointer";
+    root.style.borderRadius = "10px";
     var userName = root.v_userInfo.userName;
     var nickName = root.v_userInfo.nickName;
     ee.setOnClick(root,function(sender,event) {
+        return;
         ee.getControl("panel257").show(
             "私有聊天室许可",
             "<b>" + nickName + "@" + userName + "</b>",
@@ -7021,7 +7027,7 @@ sender.renderItem = function(root) {
     });
     
     //user photo
-    c = createPanel(root, root.id+"panel13", "", 11,11,59,59);
+    c = createPanel(root, root.id+"panel13", "", 5,5,55,55);
     if (root.v_userInfo.photo == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
     } else {
@@ -7048,7 +7054,7 @@ sender.renderItem = function(root) {
     });
     
     //user nick name
-    c = createPanel(root, root.id+"panel16", "", 0, 77, 80, 18);
+    c = createPanel(root, root.id+"panel16", "", 0, 60, 65, 18);
     addText(c,
         root.v_userInfo.nickName,
         "center", "middle", "微软雅黑", 9, "14171a", "");
