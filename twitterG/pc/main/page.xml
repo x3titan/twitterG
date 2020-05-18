@@ -1,5 +1,5 @@
 <page>
-  <controls count="389">
+  <controls count="390">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -103,6 +103,15 @@ ee.changeParent = function(control, newParent, pos) {
     } else {
         newParent.insertBefore(control, newParent.eeChildren[pos]);
         newParent.eeChildren.splice(pos, 0, control);
+    }
+}
+
+eb.arrayRemoveItem = function(arr, item) {
+    var i = 0;
+    while (i < arr.length) {
+        if (arr[i] == item) {
+            arr.splice(i, 1);
+        } else i++;
     }
 }
 ]]></onPageCreate>
@@ -1196,8 +1205,7 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.3</sizeRatio>
-      <top>-5</top>
-      <topRatio>-0.00641025641025641</topRatio>
+      <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2683,7 +2691,6 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[p2.p2.p1->综合]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>52</top>
@@ -3733,6 +3740,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[p2.p2.p2->聊天室]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.456666666666667</sizeRatio>
       <top>52</top>
@@ -6700,6 +6708,7 @@ sender.init = function() {
     g5.tiledV(this, 0);
     g5.resizeV(this, 3);
     this.c_buttons.init();
+    ee.getControl("panel302").click();
 }
 
 sender.loadJoinRecord = function(panel, dataset, index) {
@@ -6955,7 +6964,7 @@ sender.init = function() {
         this.arrange(root, 0, 5);
         ee.setRect(ee.getControl("layoutxitem9"),null,null,null,30);
         g5.resizeV(root, 2);
-        var ch = eb.getDivRectSetting(this).h + 20;
+        var ch = eb.getDivRectSetting(this).h + 10;
         if (ch>360) ch = 360;
         ee.setRect(this,null,null,null,ch);
         ee.getControl("layouty11").init(root);
@@ -6989,33 +6998,23 @@ sender.renderItem = function(root) {
     var userName = root.v_userInfo.userName;
     var nickName = root.v_userInfo.nickName;
     ee.setOnClick(root,function(sender,event) {
-        return;
         ee.getControl("panel257").show(
-            "私有聊天室许可",
-            "<b>" + nickName + "@" + userName + "</b>",
-            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","拒绝","拒绝进入","拒绝进入","#ffffff","#ffffff","#ffffff","")],
-            [new g5.BStyle("#1da1f2","#1a91da","#1781c2","允许","允许进入","允许进入","#ffffff","#ffffff","#ffffff","")],
+            "移出私有聊天室",
+            "是否将 <b>" + nickName + "@" + userName + "</b> 移出您的私有聊天室？该用户将不会看到私有聊天室的内容，再次进入需要重新提交申请。",
+            [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定移出","确定移出","#ffffff","#ffffff","#ffffff","")],
             function() {
-                chatPrvPermit.chatRoomId = showUserPage.privateChatRoomId;
-                chatPrvPermit.userId = sender.v_userInfo.id;
-                chatPrvPermit.onComplete = function() {
+                chatPrvDelete.chatRoomId = showUserPage.privateChatRoomId;
+                chatPrvDelete.userId = sender.v_userInfo.id;
+                chatPrvDelete.onComplete = function() {
                     var p = sender.parentNode;
                     ee.removeControl(sender);
-                    g5.tiledV(p, 0);
-                    g5.resizeV(p, 3);
+                    eb.arrayRemoveItem(p.parentNode.v_items, sender);
+                    p.parentNode.arrange(p, 0, 5);
                 }
-                chatPrvPermit();
+                chatPrvDelete();
             },
             function() {
-                chatPrvReject.chatRoomId = showUserPage.privateChatRoomId;
-                chatPrvReject.userId = sender.v_userInfo.id;
-                chatPrvReject.onComplete = function() {
-                    var p = sender.parentNode;
-                    ee.removeControl(sender);
-                    g5.tiledV(p, 0);
-                    g5.resizeV(p, 3);
-                }
-                chatPrvReject();
             }
         );
     });
@@ -7080,7 +7079,7 @@ sender.renderItem = function(root) {
       <height>64</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <note>聊天root</note>
+      <note>成员root</note>
       <sizeRatio>0.240601503759398</sizeRatio>
       <top>0</top>
       <width>266</width>
@@ -10450,12 +10449,12 @@ sender.onpointermove = function(event) {
       <backgroundSkin>body5</backgroundSkin>
       <dockX>center</dockX>
       <dockY>center</dockY>
-      <height>228</height>
-      <heightRatio>0.28643216080402</heightRatio>
+      <height>259</height>
+      <heightRatio>0.325376884422111</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗黑色->通用确认窗口]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>436</left>
-      <leftRatio>0.357670221493027</leftRatio>
+      <left>418</left>
+      <leftRatio>0.342904019688269</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 if (sender.formResult) {
     sender.formResult = false;
@@ -10478,26 +10477,26 @@ if (sender.formResult) {
 }
 
 </onCreate>
-      <sizeRatio>0.658959537572254</sizeRatio>
-      <top>284</top>
-      <topRatio>0.35678391959799</topRatio>
-      <width>346</width>
-      <widthRatio>0.283839212469237</widthRatio>
+      <sizeRatio>0.678010471204188</sizeRatio>
+      <top>268</top>
+      <topRatio>0.336683417085427</topRatio>
+      <width>382</width>
+      <widthRatio>0.313371616078753</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel258">
       <fontColor>657786</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
-      <height>76</height>
-      <heightRatio>0.333333333333333</heightRatio>
+      <height>116</height>
+      <heightRatio>0.447876447876448</heightRatio>
       <left>31</left>
-      <leftRatio>0.0895953757225433</leftRatio>
-      <sizeRatio>0.268551236749117</sizeRatio>
+      <leftRatio>0.081151832460733</leftRatio>
+      <sizeRatio>0.361370716510903</sizeRatio>
       <text>此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及 GET搜索结果中移除。</text>
-      <top>62</top>
-      <topRatio>0.271929824561404</topRatio>
-      <width>283</width>
-      <widthRatio>0.817919075144509</widthRatio>
+      <top>58</top>
+      <topRatio>0.223938223938224</topRatio>
+      <width>321</width>
+      <widthRatio>0.840314136125654</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel259">
       <dockX>center</dockX>
@@ -10507,7 +10506,7 @@ if (sender.formResult) {
       <fontSize>14</fontSize>
       <height>39</height>
       <heightRatio>0.171052631578947</heightRatio>
-      <left>18</left>
+      <left>36</left>
       <leftRatio>0.0520231213872832</leftRatio>
       <sizeRatio>0.12621359223301</sizeRatio>
       <text>删除推文</text>
@@ -10565,7 +10564,7 @@ sender.onpointermove = function(event) {
 ]]></onCreate>
       <sizeRatio>0.187861271676301</sizeRatio>
       <top>0</top>
-      <width>346</width>
+      <width>382</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel261">
@@ -10576,9 +10575,9 @@ sender.onpointermove = function(event) {
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>40</height>
-      <heightRatio>0.175438596491228</heightRatio>
-      <left>37</left>
-      <leftRatio>0.106936416184971</leftRatio>
+      <heightRatio>0.154440154440154</heightRatio>
+      <left>56</left>
+      <leftRatio>0.146596858638743</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel257"), 1);
 if (!eb.isEmpty(sender.parentNode.onButton1)) {
     sender.parentNode.onButton1();
@@ -10654,10 +10653,10 @@ sender.init(0);
 </onCreate>
       <sizeRatio>0.317460317460317</sizeRatio>
       <text>取消</text>
-      <top>153</top>
-      <topRatio>0.671052631578947</topRatio>
+      <top>183</top>
+      <topRatio>0.706563706563707</topRatio>
       <width>126</width>
-      <widthRatio>0.364161849710983</widthRatio>
+      <widthRatio>0.329842931937173</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel262">
       <backgroundColor>8ED0F9</backgroundColor>
@@ -10667,9 +10666,9 @@ sender.init(0);
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>40</height>
-      <heightRatio>0.175438596491228</heightRatio>
-      <left>186</left>
-      <leftRatio>0.53757225433526</leftRatio>
+      <heightRatio>0.154440154440154</heightRatio>
+      <left>205</left>
+      <leftRatio>0.536649214659686</leftRatio>
       <onClick>ee.showAni(ee.getControl("panel257"), 1);
 sender.parentNode.onComplete();</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
@@ -10741,10 +10740,37 @@ sender.init(0);
 </onCreate>
       <sizeRatio>0.317460317460317</sizeRatio>
       <text>确认</text>
-      <top>153</top>
-      <topRatio>0.671052631578947</topRatio>
+      <top>183</top>
+      <topRatio>0.706563706563707</topRatio>
       <width>126</width>
-      <widthRatio>0.364161849710983</widthRatio>
+      <widthRatio>0.329842931937173</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel257/panel306">
+      <dockX>right</dockX>
+      <dockY>top</dockY>
+      <height>36</height>
+      <heightRatio>0.138996138996139</heightRatio>
+      <left>328</left>
+      <leftRatio>0.871727748691099</leftRatio>
+      <onClick>ee.showAni(ee.getControl("panel257"), 1);</onClick>
+      <onCreate><![CDATA[ee.setText(sender,
+    "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.iconClose + "</svg>"
+);
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+]]></onCreate>
+      <outerRight>18</outerRight>
+      <outerTop>15</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>15</top>
+      <topRatio>0.88030888030888</topRatio>
+      <width>36</width>
+      <widthRatio>0.0942408376963351</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -11209,7 +11235,7 @@ sender.onpointermove = function(event) {
       <widthRatio>0.327913279132791</widthRatio>
     </control>
   </controls>
-  <taskSet count="33">
+  <taskSet count="34">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -14127,6 +14153,66 @@ eio.appendString8("T");
 if (!eb.isEmpty(chatPrvReject.onComplete)) {
     chatPrvReject.onComplete();
     chatPrvReject.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="chatPrvDelete">
+      <script1>//chatRoomId, userId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(chatPrvDelete.chatRoomId+"");
+eio.appendString16(chatPrvDelete.userId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var chatRoomId = parseInt(eio.readString16());
+var userId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec joinPrvChatRoomDelete " +
+    myUserId + "," +
+    chatRoomId + "," +
+    userId;
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(chatPrvDelete.onComplete)) {
+    chatPrvDelete.onComplete();
+    chatPrvDelete.onComplete = null;
 }
 </script3>
     </taskSetItem>
