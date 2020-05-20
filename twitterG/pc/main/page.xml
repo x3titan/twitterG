@@ -8568,9 +8568,32 @@ sender.style.borderRadius = "15px";
 sender.init = function() {
     this.c_video.init();
     this.c_edit.init();
+    this.clearAll();
     g5.tiledV(this, 0);
     g5.resizeV(this, 1);
 }
+
+sender.clearVideo = function() {
+    this.c_videoRoot.innerHTML = "";
+    this.c_videoRoot.v_photo = null; 
+}
+
+sender.clearAll = function() {
+    this.clearVideo();
+    ee.setEditText(this.c_edit, "");
+}
+
+sender.show = function(参数) {
+    ee.setVisible(this, true);
+    g5.tiledResizeV(this, 4);
+}
+
+sender.hide = function(参数) {
+    this.clearAll();
+    ee.setVisible(this, false);
+    g5.tiledResizeV(this, 4);
+}
+
 </onCreate>
       <outerLeft>10</outerLeft>
       <outerRight>10</outerRight>
@@ -8592,7 +8615,7 @@ sender.init = function() {
       <height>113</height>
       <heightRatio>0.743421052631579</heightRatio>
       <left>0</left>
-      <note>视频框</note>
+      <note><![CDATA[c_video->视频框]]></note>
       <onClick><![CDATA[var url = prompt("请输入播放地址：", "");
 if (url == null) return;
 if (url.length<=0) return;
@@ -8632,10 +8655,10 @@ g5.addPhoto(sender.parentNode.c_videoRoot);
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>113</height>
-      <heightRatio>0.970588235294118</heightRatio>
+      <heightRatio>1</heightRatio>
       <left>0</left>
-      <note>视频底</note>
-      <sizeRatio>0.256809338521401</sizeRatio>
+      <note><![CDATA[c_videoRoot->视频底]]></note>
+      <sizeRatio>0.439688715953307</sizeRatio>
       <top>0</top>
       <width>257</width>
       <widthRatio>1</widthRatio>
@@ -8647,7 +8670,7 @@ g5.addPhoto(sender.parentNode.c_videoRoot);
       <heightRatio>0.212389380530973</heightRatio>
       <left>197</left>
       <leftRatio>0.766536964980545</leftRatio>
-      <onClick>g5.p3.p8.p2.c_edit.c_videoRoot.innerHTML = "";
+      <onClick>g5.p3.p8.p2.c_edit.clearVideo();
 window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate>sender.v_style = [
     new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","清除","清除","清除","#000000","#1da1f2","#1da1f2","")
@@ -8711,6 +8734,24 @@ sender.init(0);</onCreate>
       <heightRatio>0.212389380530973</heightRatio>
       <left>197</left>
       <leftRatio>0.766536964980545</leftRatio>
+      <onClick>hostRecomdAppend.hostUserId = showUserPage.id;
+hostRecomdAppend.videoUrl = g5.p3.p8.p2.c_edit.c_videoRoot.v_photo;
+hostRecomdAppend.note = ee.getEditText(g5.p3.p8.p2.c_edit.c_edit);
+
+if (eb.isEmpty(hostRecomdAppend.videoUrl)) {
+    alert("您必须指定推荐的视频");
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    return;
+}
+
+hostRecomdAppend.onComplete = function() {
+    g5.p3.p8.p2.c_edit.hide();
+}
+hostRecomdAppend();
+
+window.event? window.event.cancelBubble = true : event.stopPropagation();
+
+</onClick>
       <onCreate>sender.v_style = [
     new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","确定","确定","确定","#000000","#1da1f2","#1da1f2","")
 ];
@@ -8773,12 +8814,7 @@ sender.init(0);</onCreate>
       <heightRatio>0.212389380530973</heightRatio>
       <left>197</left>
       <leftRatio>0.766536964980545</leftRatio>
-      <onClick>g5.p3.p8.p2.c_edit.c_videoRoot.innerHTML = "";
-ee.setEditText(g5.p3.p8.p2.c_edit.c_edit, "");
-
-ee.setVisible(g5.p3.p8.p2.c_edit, false);
-g5.tiledV(g5.p3.p8.p2, 0);
-g5.resizeV(g5.p3.p8.p2, 3);
+      <onClick>g5.p3.p8.p2.c_edit.hide();
 window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate>sender.v_style = [
     new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","取消","取消","取消","#000000","#1da1f2","#1da1f2","")
@@ -8845,6 +8881,7 @@ sender.init(0);</onCreate>
       <left>5</left>
       <leftRatio>0.0194552529182879</leftRatio>
       <multiLine>true</multiLine>
+      <note>c_edit</note>
       <onChange><![CDATA[var edit = sender.parentNode;
 var text = ee.getEditText(edit);
 if (text.length > 0) {
@@ -8910,9 +8947,7 @@ sender.init = function() {
       <left>0</left>
       <note>底部增加按钮</note>
       <onClick>sender.parentNode.c_edit.init();
-ee.setVisible(sender.parentNode.c_edit, true);
-g5.tiledV(sender.parentNode, 0);
-g5.resizeV(sender.parentNode, 3);
+sender.parentNode.c_edit.show();
 </onClick>
       <onCreate>sender.v_style = [
     new g5.BStyle("","#e8f5fe","#d2ecfc","+增加一条","+增加一条","+增加一条","#404040","#404040","#404040","")
@@ -11985,7 +12020,7 @@ sender.onpointermove = function(event) {
       <widthRatio>0.327913279132791</widthRatio>
     </control>
   </controls>
-  <taskSet count="34">
+  <taskSet count="35">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -15013,6 +15048,68 @@ if (!eb.isEmpty(setChatRoomVideo.onComplete)) {
     setChatRoomVideo.onComplete = null;
 }
 setChatRoomVideo.busy = false;
+</script3>
+    </taskSetItem>
+    <taskSetItem name="hostRecomdAppend">
+      <script1>//hostUserId, videoUrl, note, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(hostRecomdAppend.hostUserId+"");
+eio.appendString16(hostRecomdAppend.videoUrl);
+eio.appendString16(hostRecomdAppend.note);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var hostUserId = parseInt(eio.readString16());
+var videoUrl = eio.readString16();
+var note = eio.readString16();
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec hostRecomdAppend " +
+    hostUserId + "," +
+    "'" + db.encode(videoUrl) + "'," +
+    "'" + db.encode(note) + "';";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(hostRecomdAppend.onComplete)) {
+    hostRecomdAppend.onComplete();
+    hostRecomdAppend.onComplete = null;
+}
 </script3>
     </taskSetItem>
   </taskSet>
