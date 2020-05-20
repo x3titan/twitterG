@@ -1,5 +1,5 @@
 <page>
-  <controls count="402">
+  <controls count="406">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -8235,8 +8235,8 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
       <aniAlpha>appear:渐变出现</aniAlpha>
       <dockX>fill</dockX>
-      <height>220</height>
-      <heightRatio>0.353130016051364</heightRatio>
+      <height>256</height>
+      <heightRatio>0.41091492776886</heightRatio>
       <left>30</left>
       <leftRatio>0.0977198697068404</leftRatio>
       <note><![CDATA[p3.p8.p2->房主推荐]]></note>
@@ -8364,9 +8364,9 @@ sender.renderJoinRecord = function(root) {
 
 ]]></onCreate>
       <outerLeft>30</outerLeft>
-      <sizeRatio>0.794223826714801</sizeRatio>
-      <top>261</top>
-      <topRatio>0.418940609951846</topRatio>
+      <sizeRatio>0.924187725631769</sizeRatio>
+      <top>262</top>
+      <topRatio>0.420545746388443</topRatio>
       <width>277</width>
       <widthRatio>0.90228013029316</widthRatio>
     </control>
@@ -8551,12 +8551,13 @@ g5.resizeV(g5.p3.p8, 2);
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel298/panel307/panel311">
       <dockX>fill</dockX>
-      <height>108</height>
-      <heightRatio>0.490909090909091</heightRatio>
+      <height>152</height>
+      <heightRatio>0.59375</heightRatio>
       <left>10</left>
       <leftRatio>0.036101083032491</leftRatio>
       <note><![CDATA[c_edit->编辑框]]></note>
       <onCreate>sender.c_video = sender.eeChildren[0];
+sender.c_videoRoot = sender.c_video.eeChildren[0];
 sender.c_edit = sender.eeChildren[1];
 sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -8573,9 +8574,9 @@ sender.init = function() {
 </onCreate>
       <outerLeft>10</outerLeft>
       <outerRight>10</outerRight>
-      <sizeRatio>0.420233463035019</sizeRatio>
-      <top>65</top>
-      <topRatio>0.295454545454545</topRatio>
+      <sizeRatio>0.591439688715953</sizeRatio>
+      <top>64</top>
+      <topRatio>0.25</topRatio>
       <width>257</width>
       <widthRatio>0.927797833935018</widthRatio>
     </control>
@@ -8588,9 +8589,10 @@ sender.init = function() {
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
-      <height>58</height>
-      <heightRatio>0.537037037037037</heightRatio>
+      <height>113</height>
+      <heightRatio>0.743421052631579</heightRatio>
       <left>0</left>
+      <note>视频框</note>
       <onClick><![CDATA[var url = prompt("请输入播放地址：", "");
 if (url == null) return;
 if (url.length<=0) return;
@@ -8610,20 +8612,228 @@ if ((ytbVideo.length<=8)||(ytbVideo.length>=14)) {
 }
 ytbVideo = "?YTB" + ytbVideo;
 
-sender.parentNode.c_video.v_photo = ytbVideo;
-g5.addPhoto(sender.parentNode.c_video);
+sender.parentNode.c_videoRoot.v_photo = ytbVideo;
+g5.addPhoto(sender.parentNode.c_videoRoot);
     ]]></onClick>
       <onCreate>sender.init = function() {
     var rect = eb.getDivRectSetting(this.parentNode);
     ee.setRect(this, 0, null, rect.w, rect.w * 0.563);
+    eb.processDock();
 }
 </onCreate>
-      <sizeRatio>0.22568093385214</sizeRatio>
+      <sizeRatio>0.439688715953307</sizeRatio>
       <text>点击输入视频地址</text>
-      <top>2</top>
-      <topRatio>0.0185185185185185</topRatio>
+      <top>1</top>
+      <topRatio>0.00657894736842105</topRatio>
       <width>257</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel298/panel307/panel311/panel316/panel319">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>113</height>
+      <heightRatio>0.970588235294118</heightRatio>
+      <left>0</left>
+      <note>视频底</note>
+      <sizeRatio>0.256809338521401</sizeRatio>
+      <top>0</top>
+      <width>257</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel298/panel307/panel311/panel316/panel318">
+      <backgroundColor>FF0000</backgroundColor>
+      <dockX>right</dockX>
+      <height>24</height>
+      <heightRatio>0.212389380530973</heightRatio>
+      <left>197</left>
+      <leftRatio>0.766536964980545</leftRatio>
+      <onClick>g5.p3.p8.p2.c_edit.c_videoRoot.innerHTML = "";
+window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <onCreate>sender.v_style = [
+    new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","清除","清除","清除","#000000","#1da1f2","#1da1f2","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+    var r = parseInt(eb.getDivRect(this).h/2) + "px";
+    this.style.borderRadius = r+ " 0px 0px " + r;
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);</onCreate>
+      <sizeRatio>0.4</sizeRatio>
+      <text>清除</text>
+      <top>13</top>
+      <topRatio>0.115044247787611</topRatio>
+      <width>60</width>
+      <widthRatio>0.233463035019455</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel298/panel307/panel311/panel316/panel320">
+      <backgroundColor>FF0000</backgroundColor>
+      <dockX>right</dockX>
+      <height>24</height>
+      <heightRatio>0.212389380530973</heightRatio>
+      <left>197</left>
+      <leftRatio>0.766536964980545</leftRatio>
+      <onCreate>sender.v_style = [
+    new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","确定","确定","确定","#000000","#1da1f2","#1da1f2","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+    var r = parseInt(eb.getDivRect(this).h/2) + "px";
+    this.style.borderRadius = r+ " 0px 0px " + r;
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);</onCreate>
+      <sizeRatio>0.4</sizeRatio>
+      <text>确定</text>
+      <top>38</top>
+      <topRatio>0.336283185840708</topRatio>
+      <width>60</width>
+      <widthRatio>0.233463035019455</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel298/panel307/panel311/panel316/panel321">
+      <backgroundColor>FF0000</backgroundColor>
+      <dockX>right</dockX>
+      <height>24</height>
+      <heightRatio>0.212389380530973</heightRatio>
+      <left>197</left>
+      <leftRatio>0.766536964980545</leftRatio>
+      <onClick>g5.p3.p8.p2.c_edit.c_videoRoot.innerHTML = "";
+ee.setEditText(g5.p3.p8.p2.c_edit.c_edit, "");
+
+ee.setVisible(g5.p3.p8.p2.c_edit, false);
+g5.tiledV(g5.p3.p8.p2, 0);
+g5.resizeV(g5.p3.p8.p2, 3);
+window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <onCreate>sender.v_style = [
+    new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","取消","取消","取消","#000000","#1da1f2","#1da1f2","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+    var r = parseInt(eb.getDivRect(this).h/2) + "px";
+    this.style.borderRadius = r+ " 0px 0px " + r;
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);</onCreate>
+      <sizeRatio>0.4</sizeRatio>
+      <text>取消</text>
+      <top>63</top>
+      <topRatio>0.557522123893805</topRatio>
+      <width>60</width>
+      <widthRatio>0.233463035019455</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel134/panel137/panel298/panel307/panel311/edit13">
       <backgroundSkin>empty</backgroundSkin>
@@ -8631,9 +8841,9 @@ g5.addPhoto(sender.parentNode.c_video);
       <fontBold>true</fontBold>
       <fontColor>C0C0C0</fontColor>
       <height>25</height>
-      <heightRatio>0.231481481481481</heightRatio>
+      <heightRatio>0.164473684210526</heightRatio>
       <left>5</left>
-      <leftRatio>0.0272373540856031</leftRatio>
+      <leftRatio>0.0194552529182879</leftRatio>
       <multiLine>true</multiLine>
       <onChange><![CDATA[var edit = sender.parentNode;
 var text = ee.getEditText(edit);
@@ -8671,12 +8881,12 @@ sender.init = function() {
 </onCreate>
       <outerLeft>5</outerLeft>
       <outerRight>10</outerRight>
-      <sizeRatio>0.104166666666667</sizeRatio>
+      <sizeRatio>0.103305785123967</sizeRatio>
       <text>请输入视频说明文字</text>
-      <top>62</top>
-      <topRatio>0.574074074074074</topRatio>
+      <top>124</top>
+      <topRatio>0.815789473684211</topRatio>
       <width>242</width>
-      <widthRatio>0.933852140077821</widthRatio>
+      <widthRatio>0.941634241245136</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel298/panel307/panel311/panel317">
       <dockX>fill</dockX>
@@ -8684,8 +8894,8 @@ sender.init = function() {
       <heightRatio>0.0925925925925926</heightRatio>
       <left>0</left>
       <sizeRatio>0.0389105058365759</sizeRatio>
-      <top>92</top>
-      <topRatio>0.851851851851852</topRatio>
+      <top>151</top>
+      <topRatio>1.39814814814815</topRatio>
       <width>257</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -8696,7 +8906,7 @@ sender.init = function() {
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>33</height>
-      <heightRatio>0.15</heightRatio>
+      <heightRatio>0.12890625</heightRatio>
       <left>0</left>
       <note>底部增加按钮</note>
       <onClick>sender.parentNode.c_edit.init();
@@ -8754,8 +8964,8 @@ sender.init(0);
 </onCreate>
       <sizeRatio>0.11913357400722</sizeRatio>
       <text>+增加一条</text>
-      <top>178</top>
-      <topRatio>0.809090909090909</topRatio>
+      <top>220</top>
+      <topRatio>0.859375</topRatio>
       <width>277</width>
       <widthRatio>1</widthRatio>
     </control>
