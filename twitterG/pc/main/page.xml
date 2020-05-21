@@ -8253,11 +8253,11 @@ sender.c_edit = ee.getControl("panel311");
 sender.v_size = 0;
 
 sender.init = function() {
-    ee.setVisible(this.c_edit, false)
-    g5.tiledV(this, 0);
-    g5.resizeV(this, 3);
+    ee.setVisible(this.c_edit, false);
+    g5.tiledV(this, 10, 0, 0);
+    g5.tiledResizeV(this, 3);
     this.c_buttons.init();
-    //ee.getControl("panel302").click();
+    this.c_list.refresh(showUserPage.hostRecomd);
 }
 
 sender.loadJoinRecord = function(panel, dataset, index) {
@@ -8543,6 +8543,77 @@ g5.resizeV(g5.p3.p8, 2);
       <heightRatio>0.118181818181818</heightRatio>
       <left>0</left>
       <note><![CDATA[c_list->内容]]></note>
+      <onCreate><![CDATA[sender.refresh = function(dataset) {
+    if (!eb.isEmpty(this.v_items)) {
+        for (var i=0; i<this.v_items.length; i++) {
+            ee.removeControl(this.v_items[i]);
+        }
+    }
+    this.v_items = new Array();
+    var i, item;
+    var root = this;
+    var itemWidth = eb.getDivRectSetting(root).w;
+    for (i=0; i< dataset.rowCount; i++) {
+        var item = createPanel(root, "hRcmd_" + dataset.getData(0,i), "", 10, cy, itemWidth-20, 10);
+        this.loadRecord(item, dataset, i);
+        this.renderItem(item);
+        this.v_items.push(item);
+        cy += 0 + eb.getDivRect(item).h;
+    }
+    g5.tiledV(this, 10, 0, 0);
+    g5.tiledResizeV(this, 4);
+}
+
+sender.loadRecord = function(panel, dataset, index) {
+    //id,regDatetime,orderSn,hostUserId,videoUrl,note
+    panel.v_id = dataset.getData(0,index);
+    panel.v_regDatetime = dataset.getData(1,index);
+    panel.v_orderSn = dataset.getData(2,index);
+    panel.v_videoUrl = dataset.getData(4,index);
+    panel.v_note = dataset.getData(5,index);
+}
+
+sender.renderItem = function(root) {
+    var w = eb.getDivRectSetting(root).w;
+    var c,cy=7;
+    
+    root.style.boxSizing="border-box";
+    root.style.borderWidth = "1px";
+    root.style.borderColor = "rgb(230,236,240)";
+    root.style.borderStyle = "solid";
+    root.style.borderRadius = "15px";
+    
+    //user photo
+    cy = w * 0.563;
+    c = createPanel(root, root.id+"panel13", "", 0, 0, w, cy);
+    root.c_video = c;
+    c = createPanel(c, root.id+"panel13a", "", 0, 0, w, cy);
+    root.c_videoRoot = c;
+    c.v_photo = root.v_videoUrl;
+    g5.addPhoto(c);
+    
+    //note
+    c = createPanel(root, root.id+"panel16", "", 5, cy, w - 15, 10);
+    root.c_note = c;
+    addText(c,
+        g5.showCommonText(root.v_note),
+        "center", "middle", "微软雅黑", 9, "14171a", "");
+    eb.processDock();
+    var rect = eb.getDivRect(c.label);
+    ee.setRect(c, null, null, null, rect.h);
+    rect = eb.getDivRect(c);
+    cy = rect.y + rect.h;
+    
+    cy += 5;
+    eb.setDivRect(root,null,null,null,cy);
+    return root; 
+}
+
+
+
+
+
+]]></onCreate>
       <sizeRatio>0.0938628158844765</sizeRatio>
       <top>38</top>
       <topRatio>0.172727272727273</topRatio>
@@ -8569,7 +8640,7 @@ sender.init = function() {
     this.c_video.init();
     this.c_edit.init();
     this.clearAll();
-    g5.tiledV(this, 0);
+    g5.tiledV(this, 0, 0, 0);
     g5.resizeV(this, 1);
 }
 
@@ -8583,12 +8654,12 @@ sender.clearAll = function() {
     ee.setEditText(this.c_edit, "");
 }
 
-sender.show = function(参数) {
+sender.show = function() {
     ee.setVisible(this, true);
     g5.tiledResizeV(this, 4);
 }
 
-sender.hide = function(参数) {
+sender.hide = function() {
     this.clearAll();
     ee.setVisible(this, false);
     g5.tiledResizeV(this, 4);
@@ -12784,7 +12855,8 @@ eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,li
 sql = "select * from blockList where userId=" + myUserId + " and blockUserId=" + userId + "; " +
     "select * from blockList where userId=" + userId + " and blockUserId=" + myUserId + "; " +
     "select * from chatRoomInfo where creatorId = " + userId + " and roomType='DEF'; " +
-    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='PIV'; ";
+    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='PIV'; " +
+    "select * from hostRecomd where hostUserId = " + userId + " order by orderSn; ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     return;
@@ -12810,6 +12882,8 @@ if (db.read(sqlResult)) {
     prvRoomId = db.getString(sqlResult,"id");
     eio.appendString16(prvRoomId);
 }
+db.nextResult(sqlResult);
+eio.appendDataSet(sqlResult, "id,regDatetime,orderSn,hostUserId,videoUrl,note", 0, 9999);
 
 sql = "select * from chatPrivate where roomId=" + prvRoomId + " and permitUserId=" + myUserId + "; ";
 if (userId == myUserId) {
@@ -12879,7 +12953,9 @@ g5.datasetPageUser = eio.readDataSet();
 var block1 = eio.readString16();
 var block2 = eio.readString16();
 showUserPage.defaultChatRoomId = eio.readString16(); 
-showUserPage.privateChatRoomId = eio.readString16(); 
+showUserPage.privateChatRoomId = eio.readString16();
+showUserPage.hostRecomd = eio.readDataSet();
+  
 showUserPage.privateChatRoomRights = eio.readString16() == "T";
 if (showUserPage.id == g5.myUserInfo.id) {
     showUserPage.privateChatRoomRights = true;
@@ -17265,17 +17341,22 @@ ee.setText(c, ee.getText(c) + "<br/>" + text);]]></functionCode>
     </item>
     <item name="tiledV" type="20">
       <varValue />
-      <functionParam>root,space</functionParam>
-      <functionCode><![CDATA[var rect, cy = space;
+      <functionParam>root,space,spTop,spBottom</functionParam>
+      <functionCode><![CDATA[if (eb.isEmpty(spTop)) spTop = 1;
+if (eb.isEmpty(spBottom)) spBottom = 1;
+var rect, cy = parseInt(space * spTop);
 for (var i = 0; i < root.eeChildren.length; i++) {
     if (root.eeChildren[i].style.visibility == "hidden") continue;
+    if (i!=0) cy += space;
     ee.setRect(root.eeChildren[i], null, cy, null, null);
     rect = eb.getDivRectSetting(root.eeChildren[i]);
-    cy += space + rect.h;
+    cy += rect.h;
 }
+cy += parseInt(space * spBottom);
 ee.setRect(root, null, null, null, cy);
 root.v_tiledVSpace = space;
-]]></functionCode>
+root.v_tiledSpTop = spTop;
+root.v_tiledSpBottom = spBottom;]]></functionCode>
     </item>
     <item name="resizeV" type="20">
       <varValue />
@@ -17306,7 +17387,7 @@ for (var i=0; i<level; i++) {
       <functionCode><![CDATA[var child = null;
 for (var i=0; i<level; i++) {
     if (!eb.isEmpty(div.v_tiledVSpace)) {
-        g5.tiledV(div, div.v_tiledVSpace);
+        g5.tiledV(div, div.v_tiledVSpace, div.v_tiledSpTop, div.v_tiledSpBottom);
     } else {
         g5.resizeV(div, 1);
     }
