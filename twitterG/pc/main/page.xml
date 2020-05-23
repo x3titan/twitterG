@@ -1,5 +1,5 @@
 <page>
-  <controls count="406">
+  <controls count="407">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -8365,8 +8365,8 @@ sender.renderJoinRecord = function(root) {
 ]]></onCreate>
       <outerLeft>30</outerLeft>
       <sizeRatio>0.924187725631769</sizeRatio>
-      <top>262</top>
-      <topRatio>0.420545746388443</topRatio>
+      <top>261</top>
+      <topRatio>0.418940609951846</topRatio>
       <width>277</width>
       <widthRatio>0.90228013029316</widthRatio>
     </control>
@@ -8553,10 +8553,12 @@ g5.resizeV(g5.p3.p8, 2);
     var i, item;
     var root = this;
     var itemWidth = eb.getDivRectSetting(root).w;
-    for (i=0; i< dataset.rowCount; i++) {
+    for (i=0; i < dataset.rowCount; i++) {
         var item = createPanel(root, "hRcmd_" + dataset.getData(0,i), "", 10, cy, itemWidth-20, 10);
         this.loadRecord(item, dataset, i);
         this.renderItem(item);
+        if (i==0) ee.setVisible(item.c_button1, false);
+        if (i==dataset.rowCount-1) ee.setVisible(item.c_button3, false);
         this.v_items.push(item);
         cy += 0 + eb.getDivRect(item).h;
     }
@@ -8591,6 +8593,156 @@ sender.renderItem = function(root) {
     root.c_videoRoot = c;
     c.v_photo = root.v_videoUrl;
     g5.addPhoto(c);
+
+    //button1
+    var by = 13;    
+    c = createPanel(root, root.id+"button1", "", w-60, by, 60, 24); by+=25;
+    root.c_button1 = c;
+    c.style.cursor = "pointer";
+    c.v_style = new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","↑上移","↑上移","↑上移","#000000","#1da1f2","#1da1f2","");
+    addText(c, c.v_style.text1, "center", "middle", "宋体", 9, "ffffff", "");
+    c.style.backgroundColor = c.v_style.color1;
+    ee.setTextColor(c, c.v_style.tColor1);
+    var r = parseInt(eb.getDivRectSetting(c).h/2) + "px";
+    c.style.borderRadius = r+ " 0px 0px " + r;
+    ee.setOnClick(c,function(sender,event) {
+        hostRecomdMoveUp.videoId = sender.parentNode.v_id;
+        hostRecomdMoveUp.onComplete = function() {
+            refreshHostRecomd.userId = showUserPage.id;
+            refreshHostRecomd.onComplete = function() {
+                g5.p3.p8.p2.c_list.refresh(refreshHostRecomd.hostRecomd);
+            }
+            refreshHostRecomd();
+        }
+        hostRecomdMoveUp();
+    });
+    ee.setOnMouseEnter(c, function(sender,event) { 
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    });
+    ee.setOnMouseLeave(c, function(sender,event) { 
+        var s =sender.v_style;
+        sender. style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    });
+    sender.eeMouseDown = function(c,event,x,y) {
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color3;
+        ee.setText(sender, s.text3);
+        ee.setTextColor(sender, s.tColor3);
+    }
+    sender.eeMouseUp = function(c,event,x,y) {
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+    eb.initMouseEvent(c);
+
+    //button2
+    c = createPanel(root, root.id+"button2", "", w-60, by, 60, 24); by+=25;
+    root.c_button2 = c;
+    c.style.cursor = "pointer";
+    c.v_style = new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","×删除","×删除","×删除","#000000","#1da1f2","#1da1f2","");
+    addText(c, c.v_style.text1, "center", "middle", "宋体", 9, "ffffff", "");
+    c.style.backgroundColor = c.v_style.color1;
+    ee.setTextColor(c, c.v_style.tColor1);
+    var r = parseInt(eb.getDivRectSetting(c).h/2) + "px";
+    c.style.borderRadius = r+ " 0px 0px " + r;
+    ee.setOnClick(c,function(sender,event) {
+        ee.getControl("panel257").show(
+            "删除视频",
+            "确定删除这条房主推荐视频吗？删除后其他用户将不能看到此条推荐视频。",
+            [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+            function() {
+                hostRecomdDelete.videoId = sender.parentNode.v_id;
+                hostRecomdDelete.onComplete = function() {
+                    refreshHostRecomd.userId = showUserPage.id;
+                    refreshHostRecomd.onComplete = function() {
+                        g5.p3.p8.p2.c_list.refresh(refreshHostRecomd.hostRecomd);
+                    }
+                    refreshHostRecomd();
+                }
+                hostRecomdDelete();
+            }
+        );
+    });
+    ee.setOnMouseEnter(c, function(sender,event) { 
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    });
+    ee.setOnMouseLeave(c, function(sender,event) { 
+        var s =sender.v_style;
+        sender. style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    });
+    sender.eeMouseDown = function(c,event,x,y) {
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color3;
+        ee.setText(sender, s.text3);
+        ee.setTextColor(sender, s.tColor3);
+    }
+    sender.eeMouseUp = function(c,event,x,y) {
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+    eb.initMouseEvent(c);
+
+    //button3
+    c = createPanel(root, root.id+"button3", "", w-60, by, 60, 24); by+=25;
+    root.c_button3 = c;
+    c.style.cursor = "pointer";
+    c.v_style = new g5.BStyle("rgba(255,255,255,0.8)","#e8f5fe","#d2ecfc","↓下移","↓下移","↓下移","#000000","#1da1f2","#1da1f2","");
+    addText(c, c.v_style.text1, "center", "middle", "宋体", 9, "ffffff", "");
+    c.style.backgroundColor = c.v_style.color1;
+    ee.setTextColor(c, c.v_style.tColor1);
+    var r = parseInt(eb.getDivRectSetting(c).h/2) + "px";
+    c.style.borderRadius = r+ " 0px 0px " + r;
+    ee.setOnClick(c,function(sender,event) {
+        hostRecomdMoveDown.videoId = sender.parentNode.v_id;
+        hostRecomdMoveDown.onComplete = function() {
+            refreshHostRecomd.userId = showUserPage.id;
+            refreshHostRecomd.onComplete = function() {
+                g5.p3.p8.p2.c_list.refresh(refreshHostRecomd.hostRecomd);
+            }
+            refreshHostRecomd();
+        }
+        hostRecomdMoveDown();
+    });
+    ee.setOnMouseEnter(c, function(sender,event) { 
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    });
+    ee.setOnMouseLeave(c, function(sender,event) { 
+        var s =sender.v_style;
+        sender. style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    });
+    sender.eeMouseDown = function(c,event,x,y) {
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color3;
+        ee.setText(sender, s.text3);
+        ee.setTextColor(sender, s.tColor3);
+    }
+    sender.eeMouseUp = function(c,event,x,y) {
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+    eb.initMouseEvent(c);
     
     //note
     c = createPanel(root, root.id+"panel16", "", 5, cy, w - 15, 10);
@@ -8805,8 +8957,7 @@ sender.init(0);</onCreate>
       <heightRatio>0.212389380530973</heightRatio>
       <left>197</left>
       <leftRatio>0.766536964980545</leftRatio>
-      <onClick>hostRecomdAppend.hostUserId = showUserPage.id;
-hostRecomdAppend.videoUrl = g5.p3.p8.p2.c_edit.c_videoRoot.v_photo;
+      <onClick>hostRecomdAppend.videoUrl = g5.p3.p8.p2.c_edit.c_videoRoot.v_photo;
 hostRecomdAppend.note = ee.getEditText(g5.p3.p8.p2.c_edit.c_edit);
 
 if (eb.isEmpty(hostRecomdAppend.videoUrl)) {
@@ -8817,6 +8968,11 @@ if (eb.isEmpty(hostRecomdAppend.videoUrl)) {
 
 hostRecomdAppend.onComplete = function() {
     g5.p3.p8.p2.c_edit.hide();
+    refreshHostRecomd.userId = showUserPage.id;
+    refreshHostRecomd.onComplete = function() {
+        g5.p3.p8.p2.c_list.refresh(refreshHostRecomd.hostRecomd);
+    }
+    refreshHostRecomd();
 }
 hostRecomdAppend();
 
@@ -9074,6 +9230,18 @@ sender.init(0);
       <topRatio>0.859375</topRatio>
       <width>277</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel298/panel322">
+      <height>366</height>
+      <heightRatio>0.587479935794543</heightRatio>
+      <left>25</left>
+      <leftRatio>0.0814332247557003</leftRatio>
+      <note>底部空白</note>
+      <sizeRatio>3.97826086956522</sizeRatio>
+      <top>251</top>
+      <topRatio>0.402889245585875</topRatio>
+      <width>92</width>
+      <widthRatio>0.299674267100977</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -12091,7 +12259,7 @@ sender.onpointermove = function(event) {
       <widthRatio>0.327913279132791</widthRatio>
     </control>
   </controls>
-  <taskSet count="35">
+  <taskSet count="39">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -13134,6 +13302,52 @@ g5.p3.p8.init();
 
 
 ]]></script3>
+    </taskSetItem>
+    <taskSetItem name="refreshHostRecomd">
+      <script1>//userId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(refreshHostRecomd.userId);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userId = parseInt(eio.readString16());
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+}
+var myUserId = db.getString(sqlResult,"id");  
+
+sql = "select * from hostRecomd where hostUserId = " + userId + " order by orderSn; ";
+sqlResult = db.executeQuery("DB", sql);
+eio.appendString8("T");
+eio.appendDataSet(sqlResult, "id,regDatetime,orderSn,hostUserId,videoUrl,note", 0, 9999);
+
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    return;
+}
+refreshHostRecomd.hostRecomd = eio.readDataSet();
+
+if (!eb.isEmpty(refreshHostRecomd.onComplete)) {
+    refreshHostRecomd.onComplete();
+    refreshHostRecomd.onComplete = null;
+}
+
+
+
+
+</script3>
     </taskSetItem>
     <taskSetItem name="showUserPageP3">
       <script1>//userId,onComplete
@@ -15127,14 +15341,12 @@ setChatRoomVideo.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="hostRecomdAppend">
-      <script1>//hostUserId, videoUrl, note, onComplete()
+      <script1>//videoUrl, note, onComplete()
 eio.appendString16(g5.token);
-eio.appendString16(hostRecomdAppend.hostUserId+"");
 eio.appendString16(hostRecomdAppend.videoUrl);
 eio.appendString16(hostRecomdAppend.note);
 </script1>
       <script2><![CDATA[var token = eio.readString16();
-var hostUserId = parseInt(eio.readString16());
 var videoUrl = eio.readString16();
 var note = eio.readString16();
 
@@ -15158,7 +15370,7 @@ var myUserId = parseInt(db.getString(sqlResult,"id"));
 
 sql =
     "exec hostRecomdAppend " +
-    hostUserId + "," +
+    myUserId + "," +
     "'" + db.encode(videoUrl) + "'," +
     "'" + db.encode(note) + "';";
 
@@ -15185,6 +15397,177 @@ eio.appendString8("T");
 if (!eb.isEmpty(hostRecomdAppend.onComplete)) {
     hostRecomdAppend.onComplete();
     hostRecomdAppend.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="hostRecomdDelete">
+      <script1>//videoId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(hostRecomdDelete.videoId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var videoId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec hostRecomdDelete " +
+    myUserId + "," +
+    videoId + ";";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(hostRecomdDelete.onComplete)) {
+    hostRecomdDelete.onComplete();
+    hostRecomdDelete.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="hostRecomdMoveUp">
+      <script1>//videoId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(hostRecomdMoveUp.videoId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var videoId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec hostRecomdMoveUp " +
+    myUserId + "," +
+    videoId + ";";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(hostRecomdMoveUp.onComplete)) {
+    hostRecomdMoveUp.onComplete();
+    hostRecomdMoveUp.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="hostRecomdMoveDown">
+      <script1>//videoId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(hostRecomdMoveDown.videoId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var videoId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec hostRecomdMoveDown " +
+    myUserId + "," +
+    videoId + ";";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(hostRecomdMoveDown.onComplete)) {
+    hostRecomdMoveDown.onComplete();
+    hostRecomdMoveDown.onComplete = null;
 }
 </script3>
     </taskSetItem>
