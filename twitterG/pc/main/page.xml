@@ -8250,15 +8250,48 @@ sender.c_buttons = ee.getControl("panel310");
 sender.c_title = ee.getControl("panel308");
 sender.c_list = ee.getControl("panel313");
 sender.c_edit = ee.getControl("panel311");
+sender.c_addButton = ee.getControl("panel314");
 sender.v_size = 0;
+sender.v_mode = "view";
 
 sender.init = function() {
     ee.setVisible(this.c_edit, false);
     g5.tiledV(this, 10, 0, 0);
-    g5.tiledResizeV(this, 3);
-    this.c_buttons.init();
+    if (showUserPage.id == g5.myUserInfo.id) {
+        this.v_mode = "owner";
+    } else {
+        this.v_mode = "view";
+    }
     this.c_list.refresh(showUserPage.hostRecomd);
+    this.setMode(this.v_mode);    
 }
+
+sender.changeMode = function() {
+    if (this.v_mode == "view") {
+        return;
+    } else if (this.v_mode == "owner") {
+        this.setMode("edit");
+    } else if (this.v_mode == "edit") {
+        this.setMode("owner");
+    }
+}
+
+sender.setMode = function(mode) {
+    this.v_mode = mode;
+    this.c_list.refreshMode(mode);
+    this.c_buttons.init(mode);
+    if (this.v_mode == "view") {
+        ee.setVisible(this.c_addButton, false);
+        ee.setVisible(this.c_edit, false);
+    } else if (this.v_mode == "owner") {
+        ee.setVisible(this.c_addButton, false);
+        ee.setVisible(this.c_edit, false);
+    } else if (this.v_mode == "edit") {
+        ee.setVisible(this.c_addButton, true);
+    }
+    g5.tiledResizeV(this, 3);
+}
+
 
 sender.loadJoinRecord = function(panel, dataset, index) {
     panel.v_userInfo = new g5.UserInfo();
@@ -8365,8 +8398,8 @@ sender.renderJoinRecord = function(root) {
 ]]></onCreate>
       <outerLeft>30</outerLeft>
       <sizeRatio>0.924187725631769</sizeRatio>
-      <top>261</top>
-      <topRatio>0.418940609951846</topRatio>
+      <top>260</top>
+      <topRatio>0.417335473515249</topRatio>
       <width>277</width>
       <widthRatio>0.90228013029316</widthRatio>
     </control>
@@ -8410,8 +8443,13 @@ sender.renderJoinRecord = function(root) {
       <left>156</left>
       <leftRatio>0.563176895306859</leftRatio>
       <note><![CDATA[p3.p8.p1.buttons->按钮区域]]></note>
-      <onCreate><![CDATA[sender.init = function() {
-    
+      <onCreate><![CDATA[sender.init = function(mode) {
+    if (eb.isEmpty(mode)) mode = 0;
+    if (mode == "view") {
+        ee.setVisible(this.eeChildren[0], false);
+    } else {
+        ee.setVisible(this.eeChildren[0], true);
+    }
     this.arrangeButton(10);
 }
 
@@ -8441,10 +8479,10 @@ sender.arrangeButton = function(space) {
       <heightRatio>0.722222222222222</heightRatio>
       <left>4</left>
       <leftRatio>0.0330578512396694</leftRatio>
-      <onClick>if (sender.v_index==0) {
+      <onClick>g5.p3.p8.p2.changeMode();
+if (g5.p3.p8.p2.v_mode == "edit") {
     sender.init(1);
-    
-} else if (sender.v_index==1) {
+} else if (g5.p3.p8.p2.v_mode == "owner") {
     sender.init(0);
 }
 </onClick>
@@ -8557,6 +8595,11 @@ g5.resizeV(g5.p3.p8, 2);
         var item = createPanel(root, "hRcmd_" + dataset.getData(0,i), "", 10, cy, itemWidth-20, 10);
         this.loadRecord(item, dataset, i);
         this.renderItem(item);
+        if (this.parentNode.v_mode != "edit") {
+            ee.setVisible(item.c_button1, false);
+            ee.setVisible(item.c_button2, false);
+            ee.setVisible(item.c_button3, false);
+        }
         if (i==0) ee.setVisible(item.c_button1, false);
         if (i==dataset.rowCount-1) ee.setVisible(item.c_button3, false);
         this.v_items.push(item);
@@ -8565,6 +8608,24 @@ g5.resizeV(g5.p3.p8, 2);
     g5.tiledV(this, 10, 0, 0);
     g5.tiledResizeV(this, 4);
 }
+
+sender.refreshMode = function(mode) {
+    for (var i=0; i<this.v_items.length; i++) {
+        var item = this.v_items[i];
+        if (mode != "edit") {
+            ee.setVisible(item.c_button1, false);
+            ee.setVisible(item.c_button2, false);
+            ee.setVisible(item.c_button3, false);
+        } else {
+            ee.setVisible(item.c_button1, true);
+            ee.setVisible(item.c_button2, true);
+            ee.setVisible(item.c_button3, true);
+        }
+        if (i==0) ee.setVisible(item.c_button1, false);
+        if (i==this.v_items.length-1) ee.setVisible(item.c_button3, false);
+    }
+}
+
 
 sender.loadRecord = function(panel, dataset, index) {
     //id,regDatetime,orderSn,hostUserId,videoUrl,note
@@ -8585,10 +8646,11 @@ sender.renderItem = function(root) {
     root.style.borderStyle = "solid";
     root.style.borderRadius = "15px";
     
-    //user photo
+    //video
     cy = w * 0.563;
     c = createPanel(root, root.id+"panel13", "", 0, 0, w, cy);
     root.c_video = c;
+    c.v_mode = "";
     c = createPanel(c, root.id+"panel13a", "", 0, 0, w, cy);
     root.c_videoRoot = c;
     c.v_photo = root.v_videoUrl;
@@ -9172,7 +9234,7 @@ sender.init = function() {
       <height>33</height>
       <heightRatio>0.12890625</heightRatio>
       <left>0</left>
-      <note>底部增加按钮</note>
+      <note><![CDATA[c_addButton->底部增加按钮]]></note>
       <onClick>sender.parentNode.c_edit.init();
 sender.parentNode.c_edit.show();
 </onClick>
