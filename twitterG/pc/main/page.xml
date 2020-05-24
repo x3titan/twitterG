@@ -28,23 +28,41 @@ eb.addEvent(g5.mainDiv, "scroll", function() {
     g5.lastScrollY = viewPortY
     var p3h = eb.getDivRect(g5.p3).h;
     p3y = eb.getDivRect(g5.p3).y;
-    //eb.setDivRect(g5.p1,null,viewPortY,null,null);
-    //eb.setDivRect(g5.p4,null,viewPortY,null,null);
+    var newY = p3y - dy;
     if (p3h<=viewPortH) {
-        eb.setDivRect(g5.p3,null,viewPortY,null,null);
+        eb.setDivRect(g5.p3,null,0,null,null);
         return;
     }
-    var newY = p3y;
-    if (dy>0) {
-        if (newY+p3h<viewPortY+viewPortH) {
-            newY = viewPortY+viewPortH-p3h;
-        }
-    } else if (dy<0) {
-        if (newY>viewPortY) {
-            newY = viewPortY;
-        }
-    }
-    if (newY!=p3y) eb.setDivRect(g5.p3,null,newY,null,null);
+    if (newY>0) newY = 0;
+    if (newY+p3h<viewPortH) newY = viewPortH - p3h;
+    eb.setDivRect(g5.p3,null,newY,null,null);
+    
+    //if (newY+p3h<viewPortY+viewPortH) {
+    //        newY = viewPortY+viewPortH-p3h;
+    //    }
+    //} else if (dy<0) {
+    //    if (newY>viewPortY) {
+    //        newY = viewPortY;
+    //    }
+    //}
+    //if (newY!=p3y) eb.setDivRect(g5.p3,null,newY,null,null);
+    
+    
+    //if (p3h<=viewPortH) {
+    //    eb.setDivRect(g5.p3,null,viewPortY,null,null);
+    //    return;
+    //}
+    //var newY = p3y;
+    //if (dy>0) {
+    //    if (newY+p3h<viewPortY+viewPortH) {
+    //        newY = viewPortY+viewPortH-p3h;
+    //    }
+    //} else if (dy<0) {
+    //    if (newY>viewPortY) {
+    //        newY = viewPortY;
+    //    }
+    //}
+    //if (newY!=p3y) eb.setDivRect(g5.p3,null,newY,null,null);
 }, false);
 
 
@@ -168,7 +186,18 @@ window.onmousewheel = document.onmousewheel = g5.scrollFunc; //IE/Opera/Chrome/S
       <heightRatio>0.585427135678392</heightRatio>
       <left>0</left>
       <note>p1</note>
-      <onCreate>sender.style.position="fixed";</onCreate>
+      <onCreate><![CDATA[sender.style.position="fixed";
+sender.addEventListener("mousewheel",function(event){
+    if (event.wheelDelta<0) {
+        g5.mainDiv.scrollTop += 40;
+    } else {
+        g5.mainDiv.scrollTop -= 40;
+    }
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    event.returnValue = false;
+    return false;
+},false);
+]]></onCreate>
       <sizeRatio>1.55333333333333</sizeRatio>
       <top>-2</top>
       <topRatio>-0.00251256281407035</topRatio>
@@ -4862,7 +4891,19 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <left>906</left>
       <leftRatio>0.743232157506153</leftRatio>
       <note>p3</note>
-      <onCreate>sender.p8 = ee.getControl("panel298");</onCreate>
+      <onCreate><![CDATA[sender.p8 = ee.getControl("panel298");
+sender.style.position="fixed";
+sender.addEventListener("mousewheel",function(event){
+    if (event.wheelDelta<0) {
+        g5.mainDiv.scrollTop += 40;
+    } else {
+        g5.mainDiv.scrollTop -= 40;
+    }
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    event.returnValue = false;
+    return false;
+},false);
+]]></onCreate>
       <sizeRatio>2.35179153094463</sizeRatio>
       <top>0</top>
       <width>307</width>
@@ -6717,7 +6758,27 @@ sender.init = function() {
     g5.resizeV(this, 3);
     this.c_buttons.init();
     ee.setRect(this.c_chatRoom,null,null,null,400);
-    ee.getControl("panel302").click();
+    this.setSize("min");
+} 
+
+sender.changeSize = function() {
+    if (this.v_sizeMode == "min") {
+        this.setSize("max");
+    } else if (this.v_sizeMode == "max") {
+        this.setSize("min");
+    }
+}
+ 
+sender.setSize = function(sizeMode) {
+    this.v_sizeMode = sizeMode;
+    if (sizeMode == "min") {
+        ee.setRect(g5.p3.p8.p1,null,null,null,eb.getDivRectSetting(g5.p3.p8.p1.c_title).h);
+        ee.setVisible(this.c_buttons.eeChildren[0], false);
+    } else if (sizeMode == "max") {
+        g5.tiledV(g5.p3.p8.p1, 0);
+        ee.setVisible(this.c_buttons.eeChildren[0], true);
+    }
+    g5.tiledResizeV(g5.p3.p8, 2)
 }
 
 sender.loadJoinRecord = function(panel, dataset, index) {
@@ -6871,7 +6932,6 @@ sender.renderJoinRecord = function(root) {
       <leftRatio>0.563176895306859</leftRatio>
       <note><![CDATA[p3.p8.p1.buttons->按钮区域]]></note>
       <onCreate><![CDATA[sender.init = function() {
-    
     this.arrangeButton(10);
 }
 
@@ -6886,6 +6946,8 @@ sender.arrangeButton = function(space) {
     var w = eb.getDivRectSetting(this.parentNode).w;
     ee.setRect(this,w-cx,null,cx,null);
 }
+
+
 ]]></onCreate>
       <sizeRatio>0.297520661157025</sizeRatio>
       <top>0</top>
@@ -6922,16 +6984,7 @@ g5.resizeV(g5.p3.p8.p1, 3);
       <heightRatio>1</heightRatio>
       <left>80</left>
       <leftRatio>0.661157024793388</leftRatio>
-      <onClick>if (g5.p3.p8.p1.v_size == 0) {
-    ee.setRect(g5.p3.p8.p1,null,null,null,eb.getDivRectSetting(g5.p3.p8.p1.c_title).h);
-    g5.p3.p8.p1.v_size = 1;
-} else if (g5.p3.p8.p1.v_size == 1) {
-    g5.tiledV(g5.p3.p8.p1, 0);
-    g5.resizeV(g5.p3.p8.p1, 3);
-    g5.p3.p8.p1.v_size = 0;
-}
-g5.tiledV(g5.p3.p8, 15);
-g5.resizeV(g5.p3.p8, 2);
+      <onClick>g5.p3.p8.p1.changeSize();
 </onClick>
       <sizeRatio>0.972972972972973</sizeRatio>
       <text>伸缩</text>
@@ -8560,6 +8613,7 @@ sender.init(0);
       <leftRatio>0.661157024793388</leftRatio>
       <onClick>if (g5.p3.p8.p2.v_size == 0) {
     ee.setRect(g5.p3.p8.p2,null,null,null,eb.getDivRectSetting(g5.p3.p8.p2.c_title).h);
+    g5.player.stop();
     g5.p3.p8.p2.v_size = 1;
 } else if (g5.p3.p8.p2.v_size == 1) {
     g5.tiledV(g5.p3.p8.p2, 0);
@@ -8591,6 +8645,11 @@ g5.resizeV(g5.p3.p8, 2);
     var i, item;
     var root = this;
     var itemWidth = eb.getDivRectSetting(root).w;
+    if (dataset.rowCount == 0) {
+        ee.setVisible(this, false);
+        return;
+    }
+    ee.setVisible(this, true);
     for (i=0; i < dataset.rowCount; i++) {
         var item = createPanel(root, "hRcmd_" + dataset.getData(0,i), "", 10, cy, itemWidth-20, 10);
         this.loadRecord(item, dataset, i);
@@ -9235,8 +9294,12 @@ sender.init = function() {
       <heightRatio>0.12890625</heightRatio>
       <left>0</left>
       <note><![CDATA[c_addButton->底部增加按钮]]></note>
-      <onClick>sender.parentNode.c_edit.init();
-sender.parentNode.c_edit.show();
+      <onClick>if (sender.parentNode.c_edit.style.visibility == "hidden") {
+    sender.parentNode.c_edit.init();
+    sender.parentNode.c_edit.show();
+} else {
+    ee.getControl("panel320").click();
+}
 </onClick>
       <onCreate>sender.v_style = [
     new g5.BStyle("","#e8f5fe","#d2ecfc","+增加一条","+增加一条","+增加一条","#404040","#404040","#404040","")
@@ -17580,7 +17643,7 @@ if (root.v_photo.substr(0,4) == "?YTB") {
                     if (event.target!=g5.player.currentPlayer) {
                         g5.player.stop();
                         g5.player.forceMode = true;
-                        g5.currentPlayer=event.target;
+                        g5.player.currentPlayer=event.target;
                     }
                 }
             }
