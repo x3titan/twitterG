@@ -827,14 +827,14 @@ ee.setText(ee.getControl("panel45"), "发推");
 newTwitter.uplinkType = "N";
 newTwitter.uplinkId = 0;
 ee.showAni(ee.getControl("panel42"), 0);</onClick>
-      <onCreate><![CDATA[sender.baseColor = "rgb(29, 161, 242)";
-sender.style.backgroundColor = sender.baseColor;
+      <onCreate><![CDATA[sender.baseColor1 = "rgb(29, 161, 242)";
+sender.style.backgroundColor = sender.baseColor1;
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 8px 8px;fill:#ffffff;vertical-align:middle;\">"+g5.iconNew+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
     sender.style.backgroundColor = "#1a91da";
 });
 ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = sender.baseColor;
+    sender.style.backgroundColor = sender.baseColor1;
 });
 sender.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#1781c2";
@@ -2719,7 +2719,6 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[p2.p2.p1->综合]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>52</top>
@@ -3709,8 +3708,7 @@ chatSend();
 
 window.event? window.event.cancelBubble = true : event.stopPropagation();
 ]]></onClick>
-      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 27 27\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:7px 0px 0px 9px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.iconSend+"</svg>";
-sender.style.borderRadius = "50%";
+      <onCreate>sender.style.borderRadius = "10px";
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#dfeffa";
 });    
@@ -3718,9 +3716,9 @@ ee.setOnMouseLeave(c, function(sender,event) {
     sender.style.backgroundColor = "";
 });
 
-]]></onCreate>
+</onCreate>
       <sizeRatio>1</sizeRatio>
-      <text><![CDATA[>]]></text>
+      <text>发送</text>
       <top>8</top>
       <topRatio>0.156862745098039</topRatio>
       <width>37</width>
@@ -3769,6 +3767,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[p2.p2.p2->聊天室]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.456666666666667</sizeRatio>
       <top>52</top>
@@ -8266,8 +8265,7 @@ chatSend();
 
 window.event? window.event.cancelBubble = true : event.stopPropagation();
 ]]></onClick>
-      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 27 27\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:7px 0px 0px 9px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.iconSend+"</svg>";
-sender.style.borderRadius = "50%";
+      <onCreate>sender.style.borderRadius = "10px";
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#dfeffa";
 });    
@@ -8275,10 +8273,10 @@ ee.setOnMouseLeave(c, function(sender,event) {
     sender.style.backgroundColor = "";
 });
 
-]]></onCreate>
+</onCreate>
       <outerRight>5</outerRight>
       <sizeRatio>1</sizeRatio>
-      <text><![CDATA[>]]></text>
+      <text>发送</text>
       <top>7</top>
       <topRatio>0.137254901960784</topRatio>
       <width>37</width>
@@ -8713,7 +8711,8 @@ sender.renderItem = function(root) {
     c = createPanel(c, root.id+"panel13a", "", 0, 0, w, cy);
     root.c_videoRoot = c;
     c.v_photo = root.v_videoUrl;
-    g5.addPhoto(c);
+    //g5.addPhoto(c);
+    g5.addVideoExt(c);
 
     //button1
     var by = 13;    
@@ -15698,7 +15697,7 @@ if (!eb.isEmpty(hostRecomdMoveDown.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="65">
+  <g5Items count="66">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -17695,6 +17694,19 @@ if (root.parentNode.v_mode=="x") {
         g5.refreshPhoto(sender.parentNode.parentNode);    
     })
 }]]></functionCode>
+    </item>
+    <item name="addVideoExt" type="20">
+      <varValue />
+      <functionParam>root</functionParam>
+      <functionCode>if (root.v_photo.substr(0,4) != "?YTB") return;
+root.style.cursor = "pointer";
+root.imgUrl = "url:http://i3.ytimg.com/vi/" + root.v_photo.substr(4) + "/maxresdefault.jpg";
+g5.setImage(root,root.imgUrl,"trim","","",400);
+ee.setOnClick(root, function(sender, event) {
+    window.open("https://www.youtube.com/watch?v=" + sender.v_photo.substr(4));
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+}); 
+</functionCode>
     </item>
     <item name="processVideo" type="20">
       <varValue />
