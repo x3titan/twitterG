@@ -3133,7 +3133,7 @@ sender.renderMsg = function(root) {
         }
     });
     //message
-    c = createPanel(root, root.id+"_msg", "", 55, cy, mainWidth-60-24, 10);
+    c = createPanel(root, root.id+"_msg", "", 55, cy, mainWidth-55-24, 10);
     root.c_content = c;
     addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + g5.showCommonText(root.v_userInfo.nickName) + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, "000000", "normal");
     eb.processDock();
@@ -3143,6 +3143,64 @@ sender.renderMsg = function(root) {
     cy = rect.y + rect.h + 2;
     cy = Math.max(25+4,cy);
     ee.setRect(root, null,null,null,cy);
+    
+    //button
+    rect = eb.getDivRectSetting(root.c_content);
+    c = createPanel(root, root.id+"_btn", "", mainWidth - 24, rect.y, 20,20);
+    root.c_button = c;
+    c.style.cursor = "pointer";
+    c.v_style = [
+        new g5.BStyle("","#e8f5fe","#d2ecfc","…","…","…","#404040","#404040","#404040","")
+    ];
+    c.init = function(index) {
+        this.v_index = index;
+        this.style.backgroundColor = this.v_style[index].color1;
+        ee.setText(this, this.v_style[index].text1);
+        ee.setTextColor(this, this.v_style[index].tColor1);
+        if (this.v_style[index].bdColor=="") {
+            this.style.borderWidth = "0px";
+        } else {
+            this.style.boxSizing="border-box";
+            this.style.borderWidth = "1px";
+            this.style.borderColor = this.v_style[index].bdColor;
+            this.style.borderStyle = "solid";
+        }
+        this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+    }
+    ee.setOnMouseEnter(c, function(sender,event) { 
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    });
+    ee.setOnMouseLeave(c, function(sender,event) { 
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    });
+    c.eeMouseDown = function(sender,event,x,y) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color3;
+        ee.setText(sender, s.text3);
+        ee.setTextColor(sender, s.tColor3);
+    }
+    c.eeMouseUp = function(sender,event,x,y) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+    eb.initMouseEvent(c);
+    c.init(0);
+    ee.setVisible(c, false);
+    ee.setOnMouseEnter(root, function(sender,event) { 
+        ee.setVisible(sender.c_button, true);
+    });
+    ee.setOnMouseLeave(root, function(sender,event) { 
+        ee.setVisible(sender.c_button, false);
+    });
+
 }
 
 sender.loadData = function(panel,dataset,index) {
@@ -8231,10 +8289,11 @@ sender._input.addEventListener("keydown", function(event) {
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel298/panel295/panel289/layouty9/layoutyitem23/panel294">
       <cursor>pointer</cursor>
       <dockX>right</dockX>
-      <height>37</height>
-      <heightRatio>0.725490196078431</heightRatio>
-      <left>235</left>
-      <leftRatio>0.848375451263538</leftRatio>
+      <dockY>center</dockY>
+      <height>32</height>
+      <heightRatio>0.627450980392157</heightRatio>
+      <left>233</left>
+      <leftRatio>0.830324909747292</leftRatio>
       <onClick><![CDATA[if (!showUserPage.privateChatRoomRights) {
     ee.getControl("panel257").show(
         "无权限",
@@ -8274,11 +8333,11 @@ ee.setOnMouseLeave(c, function(sender,event) {
 });
 
 </onCreate>
-      <outerRight>5</outerRight>
-      <sizeRatio>1</sizeRatio>
+      <outerRight>7</outerRight>
+      <sizeRatio>0.864864864864865</sizeRatio>
       <text>发送</text>
-      <top>7</top>
-      <topRatio>0.137254901960784</topRatio>
+      <top>9</top>
+      <topRatio>0.176470588235294</topRatio>
       <width>37</width>
       <widthRatio>0.133574007220217</widthRatio>
     </control>
@@ -8333,10 +8392,10 @@ sender.setMode = function(mode) {
     this.c_buttons.init(mode);
     if (this.v_mode == "view") {
         ee.setVisible(this.c_addButton, false);
-        ee.setVisible(this.c_edit, false);
+        this.c_edit.hide();
     } else if (this.v_mode == "owner") {
         ee.setVisible(this.c_addButton, false);
-        ee.setVisible(this.c_edit, false);
+        this.c_edit.hide();
     } else if (this.v_mode == "edit") {
         ee.setVisible(this.c_addButton, true);
     }
@@ -8929,12 +8988,20 @@ sender.clearAll = function() {
 sender.show = function() {
     ee.setVisible(this, true);
     g5.tiledResizeV(this, 4);
+    ee.setText(g5.p3.p8.p2.c_addButton, "确定增加");
+    g5.p3.p8.p2.c_addButton.v_style = [
+        new g5.BStyle("","#e8f5fe","#d2ecfc","确定增加","确定增加","确定增加","#404040","#404040","#404040","")
+    ];
 }
 
 sender.hide = function() {
     this.clearAll();
     ee.setVisible(this, false);
     g5.tiledResizeV(this, 4);
+    ee.setText(g5.p3.p8.p2.c_addButton, "+ 增加一条");
+    g5.p3.p8.p2.c_addButton.v_style = [
+        new g5.BStyle("","#e8f5fe","#d2ecfc","+ 增加一条","+ 增加一条","+ 增加一条","#404040","#404040","#404040","")
+    ];
 }
 
 </onCreate>
@@ -9349,7 +9416,7 @@ eb.initMouseEvent(sender);
 sender.init(0);
 </onCreate>
       <sizeRatio>0.11913357400722</sizeRatio>
-      <text>+增加一条</text>
+      <text>+ 增加一条</text>
       <top>220</top>
       <topRatio>0.859375</topRatio>
       <width>277</width>
@@ -17698,7 +17765,8 @@ if (root.parentNode.v_mode=="x") {
     <item name="addVideoExt" type="20">
       <varValue />
       <functionParam>root</functionParam>
-      <functionCode>if (root.v_photo.substr(0,4) != "?YTB") return;
+      <functionCode><![CDATA[/*
+if (root.v_photo.substr(0,4) != "?YTB") return;
 root.style.cursor = "pointer";
 root.imgUrl = "url:http://i3.ytimg.com/vi/" + root.v_photo.substr(4) + "/maxresdefault.jpg";
 g5.setImage(root,root.imgUrl,"trim","","",400);
@@ -17706,7 +17774,40 @@ ee.setOnClick(root, function(sender, event) {
     window.open("https://www.youtube.com/watch?v=" + sender.v_photo.substr(4));
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 }); 
-</functionCode>
+*/
+
+if (root.v_photo.substr(0,4) != "?YTB") return;
+root.innerHTML = "<div id='" + root.id + "_ytb'></div>";
+var rect = eb.getDivRect(root);
+root.parentNode.c_player = new YT.Player(root.id + "_ytb", {
+    height: rect.h,
+    width: rect.w,
+    videoId: root.v_photo.substr(4, root.v_photo.length),
+    events: {
+        "onReady": function(event) {
+        },
+        "onStateChange": function(event) {
+            if (event.data == YT.PlayerState.PLAYING) {
+                if (event.target!=g5.player.currentPlayer) {
+                    g5.player.stop();
+                    g5.player.forceMode = true;
+                    g5.player.currentPlayer=event.target;
+                }
+            }
+        }
+    }
+});
+root.parentNode.c_video = root;
+root.parentNode.v_photo = root.v_photo;
+var h = rect.h;
+if (h<0) h = rect.h;
+c = createPanel(root, root.id+"_clk", "rgba(255,255,255,0.01)", 0,0,rect.w,h);
+c.style.cursor = "pointer";
+ee.setOnClick(c, function(sender, event) {
+    window.open("https://www.youtube.com/watch?v=" + sender.parentNode.v_photo.substr(4));
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
+]]></functionCode>
     </item>
     <item name="processVideo" type="20">
       <varValue />
