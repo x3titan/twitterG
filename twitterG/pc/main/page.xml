@@ -1,5 +1,5 @@
 <page>
-  <controls count="407">
+  <controls count="408">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -3167,6 +3167,25 @@ sender.renderMsg = function(root) {
         }
         this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
     }
+    ee.setOnClick(c,function(sender,event) {
+        g5.popup1.p4.show(sender, 170, [
+            new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""),
+            new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽","屏蔽用户","屏蔽用户","#404040","#404040","#404040",""),
+            new g5.BStyle("","#e8f5fe","#d2ecfc","升级","升级为管理员","升级为管理员","#404040","#404040","#404040",""),
+            new g5.BStyle("","#e8f5fe","#d2ecfc","降级","降级为普通用户","降级为普通用户","#404040","#404040","#404040","")
+            ], [
+                function (sender, event) {
+                    alert("ok");
+                },
+                function (sender, event) {
+                },
+                function (sender, event) {
+                },
+                function (sender, event) {
+                }
+            ]
+        );        
+    });
     ee.setOnMouseEnter(c, function(sender,event) { 
         var s =sender.v_style[sender.v_index];
         sender.style.backgroundColor = s.color2;
@@ -10312,17 +10331,67 @@ sender.refresh = function(progress) {
       <dockY>fill</dockY>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerName><![CDATA[Root->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
+      <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
         ee.showAni(sender.eeChildren[i], 1);
     }
 }]]></onClick>
-      <onCreate>sender.style.zIndex=100;</onCreate>
+      <onCreate>sender.style.zIndex=100;
+sender.p1 = ee.getControl("panel149");
+sender.p2 = ee.getControl("panel124");
+sender.p3 = ee.getControl("panel213");
+sender.p4 = ee.getControl("panel323");
+
+</onCreate>
+      <onMouseMove><![CDATA[var getDist = function(x,y,div) {
+    var rect = eb.getDivRectSetting(div);
+    var dx, dy;
+    if (x<rect.x) {
+        dx = rect.x - x;
+    } else if (x<rect.x+rect.w) {
+        dx = -1;
+    } else {
+        dx = x - rect.x - rect.w;
+    }
+    if (y<rect.y) {
+        dy = rect.y - y;
+    } else if (y<rect.y+rect.h) {
+        dy = -1;
+    } else {
+        dy = y - rect.y - rect.h;
+    }
+    return Math.max(dx,dy);
+}
+
+var div = null;
+for (var i = 0; i<sender.eeChildren.length; i++) {
+    if (sender.eeChildren[i].style.visibility != "hidden") {
+        div = sender.eeChildren[i];
+        break;
+    }
+}
+if (div == null) return;
+
+var lastDist = getDist(sender.v_lastX,sender.v_lastY, div);
+var currentDist = getDist(x,y, div);
+if (currentDist>lastDist) {
+    sender.v_closeCount++;
+} else {
+    sender.v_closeCount = 0;
+}
+sender.v_lastX = x;
+sender.v_lastY = y;
+if (sender.v_closeCount>=4) {
+    sender.click();
+}
+
+
+]]></onMouseMove>
       <sizeRatio>0.652994257588187</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00125628140703518</topRatio>
       <width>1219</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -10334,7 +10403,7 @@ sender.refresh = function(progress) {
       <bgColorEnabled>true</bgColorEnabled>
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
-      <layerName><![CDATA[Root->主界面弹窗->A自己选项]]></layerName>
+      <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
       <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.312551271534044</leftRatio>
@@ -10403,7 +10472,7 @@ ee.showAni(ee.getControl("panel117"), 0);
       <bgColorEnabled>true</bgColorEnabled>
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
-      <layerName><![CDATA[Root->主界面弹窗->B转推菜单]]></layerName>
+      <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
       <layerVisible>false</layerVisible>
       <left>374</left>
       <leftRatio>0.306808859721083</leftRatio>
@@ -10482,7 +10551,7 @@ ee.showAni(ee.getControl("panel42"), 0);</onClick>
       <bgColorEnabled>true</bgColorEnabled>
       <height>205</height>
       <heightRatio>0.257537688442211</heightRatio>
-      <layerName><![CDATA[Root->主界面弹窗->C其他人选项]]></layerName>
+      <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
       <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.249384741591468</leftRatio>
@@ -10609,6 +10678,114 @@ ee.getControl("panel217").show();
       <topRatio>0.731707317073171</topRatio>
       <width>330</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel323">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>205</height>
+      <heightRatio>0.257537688442211</heightRatio>
+      <layerName><![CDATA[popup1.p4>通用弹出窗口]]></layerName>
+      <left>374</left>
+      <leftRatio>0.306808859721083</leftRatio>
+      <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
+      <onCreate><![CDATA[sender.style.borderRadius = "10px";
+sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
+
+sender.show = function(refDiv, width, v_style, v_function) {
+    if (!eb.isEmpty(this.v_items)) {
+        for (var i=0; i<this.v_items.length; i++) {
+            ee.removeControl(this.v_items[i]);
+        }
+    }
+    this.v_items = new Array();
+    var i, item;
+    var root = this;
+    ee.setRect(root,null,null,width,null);
+    var itemWidth = eb.getDivRectSetting(root).w;
+    for (i=0; i < v_style.length; i++) {
+        v_style[i].text1 = "    " + v_style[i].text1;
+        v_style[i].text2 = "    " + v_style[i].text2;
+        v_style[i].text3 = "    " + v_style[i].text3;
+    }
+    this.v_style = v_style;
+    this.v_function = v_function;
+    for (i=0; i < v_style.length; i++) {
+        var item = createPanel(root, "popup1_" + i, "", 0, cy, itemWidth, 50);
+        item.v_index = i;
+        this.renderItem(item);
+        this.v_items.push(item);
+        cy += 0 + eb.getDivRect(item).h;
+    }
+    g5.tiledV(this, 0, 0, 0);
+
+    var rect = g5.getRectAbs(refDiv);
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        ee.setRect(this, rect.x - 50, rect.y - eb.getDivRect(this).h - 10, null, null);
+    } else {
+        ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
+    }
+    
+    this.parentNode.v_lastX = -1000
+    this.parentNode.v_lastY = -1000;
+    this.parentNode.v_closeCount = 0;
+    ee.setVisible(this.parentNode, true);
+    ee.showAni(this, 0);
+}
+
+sender.renderItem = function(root) {
+    var w = eb.getDivRectSetting(root).w;
+    var h = eb.getDivRectSetting(root).h;
+    var c,cy=7;
+    
+    //button1
+    c = createPanel(root, root.id+"button1", "", 0,0,w,h);
+    root.c_button = c;
+    c.style.cursor = "pointer";
+    c.v_style = root.parentNode.v_style[root.v_index];
+    addText(c, c.v_style.text1, "left", "middle", "微软雅黑", 12, "ffffff", "");
+    c.style.backgroundColor = c.v_style.color1;
+    ee.setTextColor(c, c.v_style.tColor1);
+    ee.setOnClick(c,function(sender,event) {
+        sender.parentNode.parentNode.v_function[sender.parentNode.v_index](sender,event);
+    });
+    ee.setOnMouseEnter(c, function(sender,event) { 
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    });
+    ee.setOnMouseLeave(c, function(sender,event) { 
+        var s =sender.v_style;
+        sender. style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    });
+    sender.eeMouseDown = function(c,event,x,y) {
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color3;
+        ee.setText(sender, s.text3);
+        ee.setTextColor(sender, s.tColor3);
+    }
+    sender.eeMouseUp = function(c,event,x,y) {
+        var s = sender.v_style;
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+    eb.initMouseEvent(c);
+
+    return root; 
+}
+
+]]></onCreate>
+      <sizeRatio>0.776515151515151</sizeRatio>
+      <top>18</top>
+      <topRatio>0.0226130653266332</topRatio>
+      <width>264</width>
+      <widthRatio>0.216570959803117</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -15764,7 +15941,7 @@ if (!eb.isEmpty(hostRecomdMoveDown.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="66">
+  <g5Items count="67">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -15812,6 +15989,11 @@ if (!eb.isEmpty(hostRecomdMoveDown.onComplete)) {
     </item>
     <item name="p4" type="10">
       <varValue>ee.getControl("panel24");</varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="popup1" type="10">
+      <varValue>ee.getControl("panel40");</varValue>
       <functionParam />
       <functionCode />
     </item>
