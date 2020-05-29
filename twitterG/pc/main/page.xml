@@ -3102,40 +3102,149 @@ sender.clearTimer = function() {
     }
 }
 
-sender.setChatItemMode = function(item, mode, resize) {
-    var c = null;
-    ee.setVisible(item.c_content, false);
-    ee.setVisible(item.c_msgDelMin, false);
-    ee.setVisible(item.c_msgDelFull, false);
-    if (mode == "delFull") {
-        ee.setVisible(item.c_msgDelFull, true);
-        c = item.c_msgDelFull;
-    } else if (mode == "delMin") {
-        ee.setVisible(item.c_msgDelMin, true);
-        c = item.c_msgDelMin
-    } else if (mode == "normal") {
-        ee.setVisible(item.c_content, true);
-        c = item.c_content;
+sender.refreshContent = function(root, resize) {
+    var c = root.c_content;
+    var user = g5.showCommonText(root.v_userInfo.nickName);
+    if (root.v_isAdmin) {
+        user = " <font color='#d68400'><b>" + user + "</b></font>";    
     }
-    if (c == null) return;
+    if (root.v_isBlack) {
+        if (root.v_mode == 0) {
+            ee.setRect(c,null,null,null,10);
+            ee.setText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
+                " <font color=#D05050 id='" + c.id + "blk'><b>&amp;lt;该用户被屏蔽,点击查看原留言&amp;gt;</b></font>");
+            eb.processDock();
+            var rect = eb.getDivRect(c.label);
+            ee.setRect(c, null, null, null, rect.h);
+            c = $g(c.id+"blk");
+            c.style.cursor = "pointer";
+            ee.setOnClick(c, function(sender, event) {
+                root.v_mode = 1;
+                root.parentNode.refreshContent(root, true);
+            });
+            ee.setOnMouseEnter(c,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            eb.initMouseEvent(c);
+        } else if (root.v_mode == 1) {
+            ee.setRect(c,null,null,null,10);
+            ee.setText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
+                " <font color=#a0a0a0>" + root.v_msgContent + "</font>" +
+                " <font color=#D05050 id='" + c.id + "blk'><b>&amp;lt;该用户被屏蔽,点击隐藏留言&amp;gt;</b></font>");
+            eb.processDock();
+            var rect = eb.getDivRect(c.label);
+            ee.setRect(c, null, null, null, rect.h);
+            c = $g(c.id+"blk");
+            c.style.cursor = "pointer";
+            ee.setOnClick(c, function(sender, event) {
+                root.v_mode = 0;
+                root.parentNode.refreshContent(root, true);
+            });
+            ee.setOnMouseEnter(c,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            eb.initMouseEvent(c);
+        }
+    } else if (root.v_chatStatus == "DEL") {
+        if (root.v_mode == 0) {
+            ee.setRect(c,null,null,null,10);
+            ee.setText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
+                " <font color=#D05050 id='" + c.id + "del'><b>&amp;lt;该聊天记录已删除,点击查看&amp;gt;</b></font>");
+            eb.processDock();
+            var rect = eb.getDivRect(c.label);
+            ee.setRect(c, null, null, null, rect.h);
+            c = $g(c.id+"del");
+            c.style.cursor = "pointer";
+            ee.setOnClick(c, function(sender, event) {
+                root.v_mode = 1;
+                root.parentNode.refreshContent(root, true);
+            });
+            ee.setOnMouseEnter(c,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            eb.initMouseEvent(c);
+        } else if (root.v_mode == 1) {
+            ee.setRect(c,null,null,null,10);
+            ee.setText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
+                " <font color=#a0a0a0>" + root.v_msgContent + "</font>" +
+                " <font color=#D05050 id='" + c.id + "del'><b>&amp;lt;已删除,点击隐藏&amp;gt;</b></font>");
+            eb.processDock();
+            var rect = eb.getDivRect(c.label);
+            ee.setRect(c, null, null, null, rect.h);
+            c = $g(c.id+"del");
+            c.style.cursor = "pointer";
+            ee.setOnClick(c, function(sender, event) {
+                root.v_mode = 0;
+                root.parentNode.refreshContent(root, true);
+            });
+            ee.setOnMouseEnter(c,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            eb.initMouseEvent(c);
+        }
+    } else if (root.v_chatStatus == "IDL") {
+        ee.setRect(c,null,null,null,10);
+        ee.setText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
+            " " + root.v_msgContent);
+        eb.processDock();
+        var rect = eb.getDivRect(c.label);
+        ee.setRect(c, null, null, null, rect.h);
+    }
     
-    var rect = eb.getDivRectSetting(c);
+    var rect = eb.getDivRectSetting(root.c_content);
     var cy = rect.y + rect.h + 2;
     cy = Math.max(25+4,cy);
-    ee.setRect(item, null,null,null,cy);
+    ee.setRect(root, null,null,null,cy);
     
     if (resize) {
-        var root = this;
         cy = 0;
-        for (var i = 0; i < root.v_items.length; i++) {
-            if (root.v_items[i].style.visibility == "hidden") continue;
-            ee.setRect(root.v_items[i], null, cy, null, null);
-            rect = eb.getDivRectSetting(root.v_items[i]);
+        for (var i = 0; i < this.v_items.length; i++) {
+            if (this.v_items[i].style.visibility == "hidden") continue;
+            ee.setRect(this.v_items[i], null, cy, null, null);
+            rect = eb.getDivRectSetting(this.v_items[i]);
             cy += rect.h;
         }
     }
 }
 
+sender.refreshContentAll = function() {
+    for (var i=0; i<this.v_items.length; i++) {
+        this.refreshContent(this.v_items[i], false);
+    }
+    var cy = 0;
+    for (var i = 0; i < this.v_items.length; i++) {
+        if (this.v_items[i].style.visibility == "hidden") continue;
+        ee.setRect(this.v_items[i], null, cy, null, null);
+        rect = eb.getDivRectSetting(this.v_items[i]);
+        cy += rect.h;
+    }
+}
+
+sender.setAdmin = function(userId, isAdmin) {
+    for (var i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_userInfo.id != userId) continue;
+        this.v_items[i].v_isAdmin = isAdmin;
+    }
+}
+
+sender.setBlack = function(userId, isBlack) {
+    for (var i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_userInfo.id != userId) continue;
+        this.v_items[i].v_isBlack = isBlack
+    }
+}
 
 sender.renderMsg = function(root) {
     var c,rect;
@@ -3175,55 +3284,8 @@ sender.renderMsg = function(root) {
     eb.processDock();
     var rect = eb.getDivRect(c.label);
     ee.setRect(c, null, null, null, rect.h);
-    //message delete mini
-    c = createPanel(root, root.id+"_msgdel", "", 55, msgY, mainWidth-55-24, 10);
-    root.c_msgDelMin = c;
-    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + g5.showCommonText(root.v_userInfo.nickName) + "</font> <font color=#D05050 id='" + c.id + "delmin'>&amp;lt;该聊天记录已删除,点击查看&amp;gt;</font>", "left", "top", "微软雅黑", 9, "000000", "normal");
-    eb.processDock();
-    var rect = eb.getDivRect(c.label);
-    ee.setRect(c, null, null, null, rect.h);
-    c = $g(c.id+"delmin");
-    c.style.cursor = "pointer";
-    ee.setOnClick(c, function(sender, event) {
-        root.parentNode.setChatItemMode(root, "delFull", true);
-    });
-    ee.setOnMouseEnter(c,function(sender,e){
-        sender.style.textDecoration="underline";
-    });
-    ee.setOnMouseLeave(c,function(sender,e){
-        sender.style.textDecoration="";
-    });
-    eb.initMouseEvent(c);
-    //message delete full
-    c = createPanel(root, root.id+"_msgdelfull", "", 55, msgY, mainWidth-55-24, 10);
-    root.c_msgDelFull = c;
-    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + g5.showCommonText(root.v_userInfo.nickName) + "</font>" +
-        " <font color=#a0a0a0>" + root.v_msgContent + "</font>" +
-        " <font color=#D05050 id='" + c.id + "delfull'>&amp;lt;已删除,点击隐藏&amp;gt;</font>", "left", "top", "微软雅黑", 9, "000000", "normal");
-    eb.processDock();
-    var rect = eb.getDivRect(c.label);
-    ee.setRect(c, null, null, null, rect.h);
-    c = $g(c.id+"delfull");
-    c.style.cursor = "pointer";
-    ee.setOnClick(c, function(sender, event) {
-        root.parentNode.setChatItemMode(root, "delMin", true);
-    });
-    ee.setOnMouseEnter(c,function(sender,e){
-        sender.style.textDecoration="underline";
-    });
-    ee.setOnMouseLeave(c,function(sender,e){
-        sender.style.textDecoration="";
-    });
-    eb.initMouseEvent(c);
-    //message block
-    
-    
-    //resize root
-    if (root.v_chatStatus == "IDL") {
-        root.parentNode.setChatItemMode(root, "normal", false);
-    } else if (root.v_chatStatus == "DEL") {
-        root.parentNode.setChatItemMode(root, "delMin", false);
-    }
+    root.v_mode = 0;
+    root.parentNode.refreshContent(root, false);
     
     //button
     rect = eb.getDivRectSetting(root.c_content);
@@ -3249,12 +3311,12 @@ sender.renderMsg = function(root) {
         this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
     }
     ee.setOnClick(c,function(sender,event) {
-        g5.popup1.p4.show(sender, 170, [
-            new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""),
-            new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽","屏蔽用户","屏蔽用户","#404040","#404040","#404040",""),
-            new g5.BStyle("","#e8f5fe","#d2ecfc","升级","升级为管理员","升级为管理员","#404040","#404040","#404040",""),
-            new g5.BStyle("","#e8f5fe","#d2ecfc","降级","降级为普通用户","降级为普通用户","#404040","#404040","#404040","")
-            ], [
+        var style = new Array();
+        var onClick = new Array();
+        //delete
+        if (root.v_chatStatus == "IDL") {
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""));
+            onClick.push(
                 function (sender, event) {
                     ee.getControl("panel257").show(
                         "删除聊天记录",
@@ -3265,8 +3327,9 @@ sender.renderMsg = function(root) {
                             chatRoomRecdDelete.chatRoomId = showUserPage.defaultChatRoomId;
                             chatRoomRecdDelete.chatId = root.v_id;
                             chatRoomRecdDelete.onComplete = function() {
-                                root.v_status = "DEL";
-                                root.parentNode.setChatItemMode(root, "delHide", true);
+                                root.v_chatStatus = "DEL";
+                                root.v_mode = 0;
+                                root.parentNode.refreshContent(root, true);
                             }
                             chatRoomRecdDelete();
                         },
@@ -3274,14 +3337,134 @@ sender.renderMsg = function(root) {
                         }
                     );
                 },
+            );
+        } else if (root.v_chatStatus == "DEL") {
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","恢复","恢复聊天记录","恢复聊天记录","#404040","#404040","#404040",""));
+            onClick.push(
                 function (sender, event) {
+                    ee.getControl("panel257").show(
+                        "恢复聊天记录",
+                        "是否恢复此聊天记录？恢复后，其他用户将能重新看到此天记录。",
+                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","恢复","确定恢复","确定恢复","#ffffff","#ffffff","#ffffff","")],
+                        function() {
+                            chatRoomRecdUndel.chatRoomId = showUserPage.defaultChatRoomId;
+                            chatRoomRecdUndel.chatId = root.v_id;
+                            chatRoomRecdUndel.onComplete = function() {
+                                root.v_chatStatus = "IDL";
+                                root.parentNode.refreshContent(root, true);
+                            }
+                            chatRoomRecdUndel();
+                        },
+                        function() {
+                        }
+                    );
                 },
+            );
+        }
+        //admin
+        if (root.v_isAdmin) {
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除管理员","解除管理员","解除管理员","#404040","#404040","#404040",""));
+            onClick.push(
                 function (sender, event) {
+                    ee.getControl("panel257").show(
+                        "解除管理员",
+                        "是否解除 "+ root.v_userInfo.nickName +" @" + root.v_userInfo.userName + " 的管理员身份？解除管理员后该用户将不能履行您聊天室的管理职责。",
+                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","解除","确认解除","确认解除","#ffffff","#ffffff","#ffffff","")],
+                        function() {
+                            chatRoomAdmin.chatRoomId = showUserPage.defaultChatRoomId;
+                            chatRoomAdmin.userId = root.v_userInfo.id;
+                            chatRoomAdmin.operation = "DEL";
+                            chatRoomAdmin.onComplete = function() {
+                                root.parentNode.setAdmin(root.v_userInfo.id, false);
+                                root.parentNode.refreshContentAll();
+                            }
+                            chatRoomAdmin();
+                        },
+                        function() {
+                        }
+                    );
                 },
+            );
+        } else {
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","添加管理员","添加管理员","添加管理员","#404040","#404040","#404040",""));
+            onClick.push(
                 function (sender, event) {
-                }
-            ]
-        );        
+                    ee.getControl("panel257").show(
+                        "添加为管理员",
+                        "是否把 "+ root.v_userInfo.nickName +" @" + root.v_userInfo.userName + "添加升为管理员？该用户成为管理员后将能够帮助您管理此聊天室。",
+                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","添加","确定添加","确定添加","#ffffff","#ffffff","#ffffff","")],
+                        function() {
+                            chatRoomAdmin.chatRoomId = showUserPage.defaultChatRoomId;
+                            chatRoomAdmin.userId = root.v_userInfo.id;
+                            chatRoomAdmin.operation = "ADD";
+                            chatRoomAdmin.onComplete = function() {
+                                root.parentNode.setAdmin(root.v_userInfo.id, true);
+                                root.parentNode.refreshContentAll();
+                            }
+                            chatRoomAdmin();
+                        },
+                        function() {
+                        }
+                    );
+                },
+            );
+        }
+        //blacklist
+        if (root.v_isBlack) {
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除屏蔽","解除屏蔽","解除屏蔽","#404040","#404040","#404040",""));
+            onClick.push(
+                function (sender, event) {
+                    ee.getControl("panel257").show(
+                        "解除屏蔽",
+                        "是解除对 "+ root.v_userInfo.nickName +" @" + root.v_userInfo.userName + " 的屏蔽？解除屏蔽后，该用户可以在聊天室发言，同时历史发言也会被解除限制。",
+                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","解除","确定解除","确定解除","#ffffff","#ffffff","#ffffff","")],
+                        function() {
+                            chatRoomBlack.chatRoomId = showUserPage.defaultChatRoomId;
+                            chatRoomBlack.userId = root.v_userInfo.id;
+                            chatRoomBlack.operation = "DEL";
+                            chatRoomBlack.onComplete = function() {
+                                root.parentNode.setBlack(root.v_userInfo.id, false);
+                                root.parentNode.refreshContentAll();
+                            }
+                            chatRoomBlack();
+                        },
+                        function() {
+                        }
+                    );
+                },
+            );
+        } else {
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽","屏蔽用户","屏蔽用户","#404040","#404040","#404040",""));
+            onClick.push(
+                function (sender, event) {
+                    ee.getControl("panel257").show(
+                        "屏蔽用户",
+                        "是否立即屏蔽（加入黑名单） "+ root.v_userInfo.nickName +" @" + root.v_userInfo.userName + " ？屏蔽完成后，该用户将不能发言，同时历史发言也会被屏蔽。",
+                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","屏蔽","确认屏蔽","确认屏蔽","#ffffff","#ffffff","#ffffff","")],
+                        function() {
+                            chatRoomBlack.chatRoomId = showUserPage.defaultChatRoomId;
+                            chatRoomBlack.userId = root.v_userInfo.id;
+                            chatRoomBlack.operation = "ADD";
+                            chatRoomBlack.onComplete = function() {
+                                root.parentNode.setBlack(root.v_userInfo.id, true);
+                                root.parentNode.refreshContentAll();
+                            }
+                            chatRoomBlack();
+                        },
+                        function() {
+                        }
+                    );
+                },
+            );
+        }
+        
+        g5.popup1.p4.show(sender, 170, style, onClick);
+           
     });
     ee.setOnMouseEnter(c, function(sender,event) { 
         var s =sender.v_style[sender.v_index];
@@ -3325,8 +3508,10 @@ sender.loadData = function(panel,dataset,index) {
     panel.v_chatStatus = dataset.getData(2,index);
     panel.v_roomId = dataset.getData(3,index);
     panel.v_msgContent = dataset.getData(4,index);
+    panel.v_isAdmin = dataset.getData(5,index) == "1";
+    panel.v_isBlack = dataset.getData(6,index) == "1";
     panel.v_userInfo = new g5.UserInfo();
-    panel.v_userInfo.loadFromDataset(dataset, 5, index);
+    panel.v_userInfo.loadFromDataset(dataset, 7, index);
 }
 
 sender.displayTime = function(time) {
@@ -12726,7 +12911,7 @@ sender.onpointermove = function(event) {
       <widthRatio>0.327913279132791</widthRatio>
     </control>
   </controls>
-  <taskSet count="40">
+  <taskSet count="43">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -15351,15 +15536,21 @@ if (isNew==1) {
 }
 
 sql =
-    "SELECT   " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120)  " +
-    "                AS regDatetime, dbo.chatRoomData.status as chatStatus, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, dbo.chatRoomData.msgContent,  " +
-    "                dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime, dbo.userInfo.lastAccessTime,  " +
-    "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
-    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount " +
+    "SELECT   " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120) " + 
+    "                AS regDatetime, dbo.chatRoomData.status AS chatStatus, dbo.chatRoomData.roomId, dbo.chatRoomData.userId,  " +
+    "                dbo.chatRoomData.msgContent, dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime,  " +
+    "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
+    "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount,  " +
+    "                CASE WHEN chatRoomVip.id IS NULL THEN 0 ELSE 1 END AS isAdmin, CASE WHEN chatRoomVip_1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isBlack " +
     "FROM      dbo.chatRoomData LEFT OUTER JOIN " +
+    "                dbo.chatRoomVip AS chatRoomVip_1 ON dbo.chatRoomData.roomId = chatRoomVip_1.chatRoomId AND  " +
+    "                dbo.chatRoomData.userId = chatRoomVip_1.userId AND chatRoomVip_1.status = 'BLK' LEFT OUTER JOIN " +
+    "                dbo.chatRoomVip ON dbo.chatRoomData.roomId = dbo.chatRoomVip.chatRoomId AND  " +
+    "                dbo.chatRoomData.userId = dbo.chatRoomVip.userId AND dbo.chatRoomVip.status = 'ADM' LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.chatRoomData.userId = dbo.userInfo.id " +
     "WHERE   dbo.chatRoomData.roomId = " + roomId + " " + where + " " +
-    "ORDER BY dbo.chatRoomData.id DESC; ";
+    "ORDER BY dbo.chatRoomData.id DESC ";
 
 
 sqlResult = db.executeQuery("DB", sql);
@@ -15369,7 +15560,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,regDatetime,chatStatus,roomId,msgContent," +
+eio.appendDataSet(sqlResult,"id,regDatetime,chatStatus,roomId,msgContent,isAdmin,isBlack," +
     "userId,status,userRegDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 99999);
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
@@ -15815,6 +16006,202 @@ eio.appendString8("T");
 if (!eb.isEmpty(chatRoomRecdDelete.onComplete)) {
     chatRoomRecdDelete.onComplete();
     chatRoomRecdDelete.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="chatRoomRecdUndel">
+      <script1>//chatRoomId, chatId, onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(chatRoomRecdUndel.chatRoomId+"");
+eio.appendString16(chatRoomRecdUndel.chatId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var chatRoomId = parseInt(eio.readString16());
+var chatId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec chatRoomRecdUndel " +
+    myUserId + "," +
+    chatRoomId + "," +
+    chatId;
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(chatRoomRecdUndel.onComplete)) {
+    chatRoomRecdUndel.onComplete();
+    chatRoomRecdUndel.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="chatRoomAdmin">
+      <script1>//chatRoomId, userId, operation(ADD/DEL), onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(chatRoomAdmin.operation);
+eio.appendString16(chatRoomAdmin.chatRoomId+"");
+eio.appendString16(chatRoomAdmin.userId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var operation = eio.readString16();
+var chatRoomId = parseInt(eio.readString16());
+var userId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+if (operation == "ADD") {
+    operation = "chatRoomAdminAdd";
+} else {
+    operation = "chatRoomAdminDel";
+}
+
+sql =
+    "exec " + operation + " " +
+    myUserId + "," +
+    chatRoomId + "," +
+    userId;
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(chatRoomAdmin.onComplete)) {
+    chatRoomAdmin.onComplete();
+    chatRoomAdmin.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="chatRoomBlack">
+      <script1>//chatRoomId, userId, operation(ADD/DEL), onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(chatRoomBlack.operation);
+eio.appendString16(chatRoomBlack.chatRoomId+"");
+eio.appendString16(chatRoomBlack.userId+"");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var operation = eio.readString16();
+var chatRoomId = parseInt(eio.readString16());
+var userId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+if (operation == "ADD") {
+    operation = "chatRoomBlackAdd";
+} else {
+    operation = "chatRoomBlackDel";
+}
+
+sql =
+    "exec " + operation + " " +
+    myUserId + "," +
+    chatRoomId + "," +
+    userId;
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    alert(eio.readString8());
+    return;
+}
+
+if (!eb.isEmpty(chatRoomBlack.onComplete)) {
+    chatRoomBlack.onComplete();
+    chatRoomBlack.onComplete = null;
 }
 </script3>
     </taskSetItem>
