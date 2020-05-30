@@ -7,38 +7,9 @@
       <dockY>fill</dockY>
       <height>796</height>
       <left>0</left>
-      <onControlLoad><![CDATA[ee.setAutoScroll($g("divRoot"), "hidden");
+      <onControlLoad>ee.setAutoScroll($g("divRoot"), "hidden");
 document.body.style.backgroundColor = "#ffffff";
-
-eb.addEvent(g5.mainDiv, "scroll", function() {
-    var viewPortH = $g("divRoot").offsetHeight;
-    g5.player.forceMode = false;
-
-    var p2h = eb.getDivRect(ee.getControl("panel135")).h;
-    if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
-        if (!eb.isEmpty(updateHomepage.data)) {
-            if (updateHomepage.data.rowCount>0) {
-                updateHomepage();
-            }
-        }
-    }
-
-    var viewPortY = g5.mainDiv.scrollTop;
-    var dy = viewPortY - g5.lastScrollY;
-    g5.lastScrollY = viewPortY
-    var p3h = eb.getDivRect(g5.p3).h;
-    p3y = eb.getDivRect(g5.p3).y;
-    var newY = p3y - dy;
-    if (p3h<=viewPortH) {
-        eb.setDivRect(g5.p3,null,0,null,null);
-        return;
-    }
-    if (newY>0) newY = 0;
-    if (newY+p3h<viewPortH) newY = viewPortH - p3h;
-    eb.setDivRect(g5.p3,null,newY,null,null);
-}, false);
-
-
+   
 g5.changeP2(0);
 g5.changeP3(-1);
 
@@ -63,7 +34,7 @@ setInterval(function() {
 
 
 
-                                            ]]></onControlLoad>
+                                            </onControlLoad>
       <onPageCreate><![CDATA[var tag = document.createElement("script");
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName("script")[0];
@@ -120,27 +91,62 @@ eb.arrayRemoveItem = function(arr, item) {
       <heightRatio>1</heightRatio>
       <left>0</left>
       <note>mainDiv</note>
-      <onCreate>g5.scrollFunc = function (e) {
-    return;
-    var direct = 0;
-    ee = e || window.event;
-    var t1 = document.getElementById("wheelDelta");
-    var t2 = document.getElementById("detail");
-    if (e.wheelDelta) {//IE/Opera/Chrome  
-        t1.value = e.wheelDelta;
-    } else if (e.detail) {//Firefox  
-        t2.value = e.detail;
-    }
-    
-    //ScrollText(direct);
-}
-    //注册事件
-if (document.addEventListener) {
-    document.addEventListener("DOMMouseScroll", g5.scrollFunc, false);
-}//W3C  
-window.onmousewheel = document.onmousewheel = g5.scrollFunc; //IE/Opera/Chrome/Safari  
+      <onCreate><![CDATA[sender.addEventListener("mousewheel",function(event){
+    g5.mainDiv.onWheel(event.wheelDelta);
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    event.returnValue = false;
+    return false;
+},false);
 
-</onCreate>
+eb.addEvent(sender, "scroll", function() {
+    var viewPortH = $g("divRoot").offsetHeight;
+    g5.player.forceMode = false;
+
+    var p2h = eb.getDivRect(ee.getControl("panel135")).h;
+    if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
+        if (!eb.isEmpty(updateHomepage.data)) {
+            if (updateHomepage.data.rowCount>0) {
+                updateHomepage();
+            }
+        }
+    }
+
+    var viewPortY = g5.mainDiv.scrollTop;
+    var dy = viewPortY - g5.lastScrollY;
+    g5.lastScrollY = viewPortY
+    var p3h = eb.getDivRect(g5.p3).h;
+    p3y = eb.getDivRect(g5.p3).y;
+    var newY = p3y - dy;
+    if (p3h<=viewPortH) {
+        eb.setDivRect(g5.p3,null,0,null,null);
+        return;
+    }
+    if (newY>0) newY = 0;
+    if (newY+p3h<viewPortH) newY = viewPortH - p3h;
+    eb.setDivRect(g5.p3,null,newY,null,null);
+}, false);
+
+sender.onWheel = function(wheelDelta) {
+    if (eb.isEmpty(this.onWheel.lastTime)) this.onWheel.lastTime = 0;
+    if (eb.isEmpty(this.onWheel.count)) this.onWheel.count = 0;
+    var currentTime = (new Date()).getTime()
+    if (currentTime - this.onWheel.lastTime < 100) {
+        this.onWheel.count++;
+    } else {
+        this.onWheel.count = 0;
+    }
+    this.onWheel.lastTime = currentTime;
+    
+    var amount = this.onWheel.count * this.onWheel.count * 15 + 20; 
+    amount = Math.min(amount, 300);
+    
+    if (wheelDelta<0) {
+        this.scrollTop += amount;
+    } else {
+        this.scrollTop -= amount;
+    }
+}
+]]></onCreate>
       <scrollPosX>5</scrollPosX>
       <scrollPosY>-1</scrollPosY>
       <sizeRatio>0.652994257588187</sizeRatio>
@@ -159,18 +165,14 @@ window.onmousewheel = document.onmousewheel = g5.scrollFunc; //IE/Opera/Chrome/S
       <heightRatio>0.585427135678392</heightRatio>
       <left>0</left>
       <note>p1</note>
-      <onCreate><![CDATA[sender.style.position="fixed";
+      <onCreate>sender.style.position="fixed";
 sender.addEventListener("mousewheel",function(event){
-    if (event.wheelDelta<0) {
-        g5.mainDiv.scrollTop += 40;
-    } else {
-        g5.mainDiv.scrollTop -= 40;
-    }
+    g5.mainDiv.onWheel(event.wheelDelta);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
     event.returnValue = false;
     return false;
 },false);
-]]></onCreate>
+</onCreate>
       <sizeRatio>1.55333333333333</sizeRatio>
       <top>-2</top>
       <topRatio>-0.00251256281407035</topRatio>
@@ -5223,19 +5225,15 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <left>906</left>
       <leftRatio>0.743232157506153</leftRatio>
       <note>p3</note>
-      <onCreate><![CDATA[sender.p8 = ee.getControl("panel298");
+      <onCreate>sender.p8 = ee.getControl("panel298");
 sender.style.position="fixed";
 sender.addEventListener("mousewheel",function(event){
-    if (event.wheelDelta<0) {
-        g5.mainDiv.scrollTop += 40;
-    } else {
-        g5.mainDiv.scrollTop -= 40;
-    }
+    g5.mainDiv.onWheel(event.wheelDelta);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
     event.returnValue = false;
     return false;
 },false);
-]]></onCreate>
+</onCreate>
       <sizeRatio>2.35179153094463</sizeRatio>
       <top>0</top>
       <width>307</width>
