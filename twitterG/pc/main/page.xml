@@ -1,5 +1,5 @@
 <page>
-  <controls count="413">
+  <controls count="432">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -75,6 +75,71 @@ eb.arrayRemoveItem = function(arr, item) {
             arr.splice(i, 1);
         } else i++;
     }
+}
+
+function EDataSet() {
+    this.colCount = 0;
+    this.rowCount = 0;
+    this.data = new Array();
+    this.setColCount = function (value) {
+        if (this.data.length > value) {
+            this.data.length = value;
+        } else if (this.data.length < value) {
+            while (this.data.length < value) {
+                var ydata = new Array();
+                while (ydata.length < this.rowCount) {
+                    ydata.push("");
+                }
+                this.data.push(ydata);
+            }
+        }
+        this.colCount = value;
+    }
+    this.setRowCount = function (value) {
+        var i;
+        if (this.rowCount < value) {
+            for (i = 0; i < this.colCount; i++) {
+                while (this.data[i].length < value) {
+                    this.data[i].push("");
+                }
+            }
+        } else if (this.rowCount > value) {
+            for (i = 0; i < this.colCount; i++) {
+                this.data[i].length = value;
+            }
+        }
+        this.rowCount = value;
+    }
+    this.getData = function (colIndex, rowIndex) {
+        if (colIndex >= this.colCount) return "";
+        if (rowIndex >= this.rowCount) return "";
+        return this.data[colIndex][rowIndex];
+    }
+    this.setData = function (colIndex, rowIndex, value) {
+        if (colIndex >= this.colCount) return;
+        if (rowIndex >= this.rowCount) return;
+        this.data[colIndex][rowIndex] = value;
+    }
+    this.appendDataset = function (dataset) {
+        if (dataset.rowCount <= 0) return false;
+        var st = this.rowCount;
+        this.setRowCount(this.rowCount + dataset.rowCount);
+        for (var i = st; i < this.rowCount; i++) {
+            for (var j = 0; j < this.colCount; j++) {
+                this.setData(j, i, dataset.getData(j, i - st));
+            }
+        }
+        return true;
+    }
+    //增加以下方法
+    this.removeRowAt = function(index) {
+        if ((index < 0) || (index >= this.rowCount)) return;
+        for (var i = 0; i < this.data.length; i++ ) {
+            this.data[i].splice(index,1);
+        }
+        this.rowCount--;
+    }
+    
 }
 ]]></onPageCreate>
       <top>0</top>
@@ -1192,6 +1257,8 @@ sender.style.borderRadius = "50%";
       <left>300</left>
       <leftRatio>0.246103363412633</leftRatio>
       <note>p2</note>
+      <onCreate>sender.p1 = ee.getControl("panel41");
+sender.p2 = ee.getControl("panel16");</onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>-2</top>
       <topRatio>-0.00251256281407035</topRatio>
@@ -1204,7 +1271,7 @@ sender.style.borderRadius = "50%";
       <dockX>fill</dockX>
       <height>780</height>
       <heightRatio>1</heightRatio>
-      <layerName><![CDATA[P2->1->Home主页面]]></layerName>
+      <layerName><![CDATA[p1->Home主页面]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.3</sizeRatio>
@@ -1777,8 +1844,9 @@ sender.resize = function (img) {
       <dockX>fill</dockX>
       <height>780</height>
       <heightRatio>1</heightRatio>
-      <layerName><![CDATA[p2.p2->用户(个人)信息页]]></layerName>
+      <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
       <left>0</left>
+      <onCreate>sender.p2sub = ee.getControl("panel279");</onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -2287,7 +2355,7 @@ eb.initMouseEvent(sender);
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
       <left>0</left>
-      <note>p2PersonSub</note>
+      <note>p2PersonSub,p2sub</note>
       <onCreate><![CDATA[sender.currentPageIndex = -1;
 sender.button1 = ee.getControl("layoutxitem3");
 sender.button2 = ee.getControl("layoutxitem4");
@@ -2694,7 +2762,7 @@ sender.init(0);
       <dockX>fill</dockX>
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
-      <layerName><![CDATA[p2.p2.p1->综合]]></layerName>
+      <layerName><![CDATA[p1->综合]]></layerName>
       <left>0</left>
       <onCreate>sender.c_titleChat = ee.getControl("panel263");
 sender.c_video = ee.getControl("panel264");
@@ -2943,8 +3011,8 @@ sender.init(0);
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19">
       <backgroundColor>E0E0E0</backgroundColor>
-      <height>123</height>
-      <heightRatio>0.404605263157895</heightRatio>
+      <height>153</height>
+      <heightRatio>0.503289473684211</heightRatio>
       <left>22</left>
       <leftRatio>0.0366666666666667</leftRatio>
       <note><![CDATA[c_chat->个人页聊天]]></note>
@@ -2955,16 +3023,128 @@ sender.style.borderStyle = "solid";
 sender.style.borderRadius = "10px";
 
 sender.c_buttons = ee.getControl("panel324");
+sender.c_adminList = ee.getControl("layoutx5");
+sender.c_blackList = ee.getControl("layoutx9");
 sender.c_chat = ee.getControl("layouty2");
 
 sender.init = function() {
     var rect = eb.getDivRectSetting(this);
     ee.setRect(this.c_chat,null,null,null,rect.h-30);
+    ee.setVisible(this.c_adminList, false);
+    ee.setVisible(this.c_blackList, false);
     g5.tiledV(this,0,0,0);
     this.c_buttons.init();
+    this.c_adminList.init();
+    this.c_blackList.init();
+}
+
+sender.getAdminListVisible = function() {
+    return this.c_adminList.style.visibility!="hidden";
+}
+
+sender.setAdminListVisible = function(visible) {
+    ee.setVisible(this.c_adminList, visible);
+    g5.tiledResizeV(this, 5);
+}
+
+sender.getBlackListVisible = function() {
+    return this.c_blackList.style.visibility!="hidden";
+}
+
+sender.setBlackListVisible = function(visible) {
+    ee.setVisible(this.c_blackList, visible);
+    g5.tiledResizeV(this, 5);
+}
+
+sender.deleteAdmin = function(userInfo) {
+    ee.getControl("panel257").show(
+        "解除管理员",
+        "是否解除 "+ userInfo.nickName +" @" + userInfo.userName + " 的管理员身份？解除管理员后该用户将不能履行您聊天室的管理职责。",
+        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","解除","确认解除","确认解除","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            chatRoomAdmin.chatRoomId = showUserPage.defaultChatRoomId;
+            chatRoomAdmin.userId = userInfo.id;
+            chatRoomAdmin.operation = "DEL";
+            chatRoomAdmin.onComplete = function() {
+                sender.c_chat.c_chatRoot.setAdmin(userInfo.id, false);
+                sender.c_chat.c_chatRoot.refreshContentAll();
+                sender.c_adminList.deleteUser(userInfo);
+            }
+            chatRoomAdmin();
+        },
+        function() {
+        }
+    );
+}
+
+sender.addAdmin = function(userInfo) {
+    ee.getControl("panel257").show(
+        "添加为管理员",
+        "是否把 "+ userInfo.nickName +" @" + userInfo.userName + "添加升为管理员？该用户成为管理员后将能够帮助您管理此聊天室。",
+        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","添加","确定添加","确定添加","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            chatRoomAdmin.chatRoomId = showUserPage.defaultChatRoomId;
+            chatRoomAdmin.userId = userInfo.id;
+            chatRoomAdmin.operation = "ADD";
+            chatRoomAdmin.onComplete = function() {
+                sender.c_chat.c_chatRoot.setAdmin(userInfo.id, true);
+                sender.c_chat.c_chatRoot.refreshContentAll();
+                sender.c_adminList.appendUser(userInfo);
+            }
+            chatRoomAdmin();
+        },
+        function() {
+        }
+    );
+}
+
+sender.unblockUser = function(userInfo) {
+    ee.getControl("panel257").show(
+        "解除屏蔽",
+        "是解除对 "+ userInfo.nickName +" @" + userInfo.userName + " 的屏蔽？解除屏蔽后，该用户可以在聊天室发言，同时历史发言也会被解除限制。",
+        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","解除","确定解除","确定解除","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            chatRoomBlack.chatRoomId = showUserPage.defaultChatRoomId;
+            chatRoomBlack.userId = userInfo.id;
+            chatRoomBlack.operation = "DEL";
+            chatRoomBlack.onComplete = function() {
+                sender.c_chat.c_chatRoot.setBlack(userInfo.id, false);
+                sender.c_chat.c_chatRoot.refreshContentAll();
+                sender.c_blackList.deleteUser(userInfo);
+            }
+            chatRoomBlack();
+        },
+        function() {
+        }
+    );    
+}
+
+sender.blockUser = function(userInfo) {
+    ee.getControl("panel257").show(
+        "屏蔽用户",
+        "是否立即屏蔽（加入黑名单） "+ userInfo.nickName +" @" + userInfo.userName + " ？屏蔽完成后，该用户将不能发言，同时历史发言也会被屏蔽。",
+        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","屏蔽","确认屏蔽","确认屏蔽","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            chatRoomBlack.chatRoomId = showUserPage.defaultChatRoomId;
+            chatRoomBlack.userId = userInfo.id;
+            chatRoomBlack.operation = "ADD";
+            chatRoomBlack.onComplete = function() {
+                sender.c_chat.c_chatRoot.setBlack(userInfo.id, true);
+                sender.c_chat.c_chatRoot.refreshContentAll();
+                sender.c_blackList.appendUser(userInfo);
+            }
+            chatRoomBlack();
+        },
+        function() {
+        }
+    );
 }
 </onCreate>
-      <sizeRatio>0.218861209964413</sizeRatio>
+      <sizeRatio>0.272241992882562</sizeRatio>
       <top>107</top>
       <topRatio>0.351973684210526</topRatio>
       <width>562</width>
@@ -3008,7 +3188,23 @@ sender.init = function() {
       <left>330</left>
       <leftRatio>0.587188612099644</leftRatio>
       <note><![CDATA[c_buttons->按钮区域]]></note>
-      <onCreate><![CDATA[sender.init = function() {
+      <onCreate><![CDATA[sender.button1 = ee.getControl("panel326");
+sender.button2 = ee.getControl("panel328");
+sender.button3 = ee.getControl("panel327");
+
+sender.init = function() {
+    this.button1.init(0);
+    this.button2.init(0);
+    if (showUserPage.id == g5.myUserInfo.id) {
+        ee.setVisible(this.button1, true);
+    } else {
+        ee.setVisible(this.button1, false);
+    }
+    if (showUserPage.isChatRoomPubAdmin) {
+        ee.setVisible(this.button2, true);
+    } else {
+        ee.setVisible(this.button2, false);
+    }
     this.arrangeButton(10);
 }
 
@@ -3040,10 +3236,11 @@ sender.arrangeButton = function(space) {
       <heightRatio>0.736842105263158</heightRatio>
       <left>31</left>
       <leftRatio>0.133620689655172</leftRatio>
-      <onClick>g5.p3.p8.p2.changeMode();
-if (g5.p3.p8.p2.v_mode == "edit") {
+      <onClick>var visible = !g5.p2.p2.p2sub.p1.c_chat.getAdminListVisible();
+g5.p2.p2.p2sub.p1.c_chat.setAdminListVisible(visible);
+if (visible) {
     sender.init(1);
-} else if (g5.p3.p8.p2.v_mode == "owner") {
+} else {
     sender.init(0);
 }
 </onClick>
@@ -3120,13 +3317,13 @@ sender.init(0);
       <height>28</height>
       <heightRatio>0.736842105263158</heightRatio>
       <leftRatio>0.431034482758621</leftRatio>
-      <onClick>g5.p3.p8.p2.changeMode();
-if (g5.p3.p8.p2.v_mode == "edit") {
+      <onClick>var visible = !g5.p2.p2.p2sub.p1.c_chat.getBlackListVisible();
+g5.p2.p2.p2sub.p1.c_chat.setBlackListVisible(visible);
+if (visible) {
     sender.init(1);
-} else if (g5.p3.p8.p2.v_mode == "owner") {
+} else {
     sender.init(0);
-}
-</onClick>
+}</onClick>
       <onCreate>sender.v_style = [
     new g5.BStyle("","#e8f5fe","#d2ecfc","黑名单","黑名单","黑名单","#1da1f2","#1da1f2","#1da1f2",""),
     new g5.BStyle("#1da1f2","#1a91da","#1781c2","黑名单","黑名单","黑名单","#ffffff","#ffffff","#ffffff","")
@@ -3199,7 +3396,8 @@ sender.init(0);
       <heightRatio>1</heightRatio>
       <left>178</left>
       <leftRatio>0.767241379310345</leftRatio>
-      <onClick>g5.p3.p8.p1.changeSize();
+      <onClick>return;
+g5.p3.p8.p1.changeSize();
 </onClick>
       <sizeRatio>1.02702702702703</sizeRatio>
       <text>伸缩</text>
@@ -3207,16 +3405,1048 @@ sender.init(0);
       <width>37</width>
       <widthRatio>0.15948275862069</widthRatio>
     </control>
+    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5">
+      <dockX>fill</dockX>
+      <fieldCount>2</fieldCount>
+      <height>47</height>
+      <heightRatio>0.30718954248366</heightRatio>
+      <left>0</left>
+      <note><![CDATA[c_adminList->管理员列表]]></note>
+      <onCreate><![CDATA[sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+sender.style.borderTop = "";
+
+sender.init = function() {
+    if (!eb.isEmpty(this.v_items)) {
+        for (var i=0; i<this.v_items.length; i++) {
+            ee.removeControl(this.v_items[i]);
+        }
+    }
+    this.v_items = new Array();
+    if (!eb.isEmpty(showUserPage.chatRoomAdminList)) {
+        var i, item;
+        var root = ee.getControl("layoutxitem10");
+        var itemWidth = eb.getDivRectSetting(root).w;
+        for (i=0; i< showUserPage.chatRoomAdminList.rowCount; i++) {
+            var item = createPanel(root, "admlst_" + showUserPage.chatRoomAdminList.getData(0,i), "", 0, cy, 65, 90);
+            ee.changeParent(item, root, i+1);
+            this.loadRecord(item, showUserPage.chatRoomAdminList, i);
+            this.renderItem(item);
+            this.v_items.push(item);
+            cy += 0 + eb.getDivRect(item).h;
+        }
+        this.arrange(root, 0, 7);
+        ee.setRect(ee.getControl("layoutxitem17"),null,null,null,30);
+        g5.resizeV(root, 2);
+        var ch = eb.getDivRectSetting(this).h + 10;
+        if (ch>360) ch = 360;
+        ee.setRect(this,null,null,null,ch);
+        ee.getControl("layouty12").init(root);
+    }
+    if (this.v_items.length<=0) {
+        ee.setText(root, "您还没有添加任何管理员");
+    } else {
+        ee.setText(root, " ");
+    }
+} 
+
+sender.arrange = function(div, ySpace, xCount) {
+    if (div.eeChildren.length<=0) return;
+    var rect = eb.getDivRect(div.eeChildren[0]);
+    var xSpace = eb.getDivRectSetting(div).w;
+    xSpace = parseInt((xSpace - xCount*rect.w)/(3+xCount));
+    for (var i=0; i<div.eeChildren.length; i++) {
+        ee.setRect(div.eeChildren[i], xSpace*2 + (i%xCount)*(rect.w+xSpace), ySpace*2 + parseInt(i/xCount) * (rect.h + ySpace), null, null);
+    }     
+}
+
+sender.deleteUser = function(userInfo) {
+    var dat = showUserPage.chatRoomAdminList;
+    for (var i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_userInfo.id != userInfo.id) continue;
+        dat.removeRowAt(i);
+        break;
+    }
+    this.init();
+    g5.tiledResizeV(this.parentNode,5);
+}
+
+sender.appendUser = function(userInfo) {
+    var maxValue = 0;
+    for (var i=0; i<showUserPage.chatRoomAdminList.rowCount; i++) {
+        var a = parseInt(showUserPage.chatRoomAdminList.getData(0,i));
+        if (a>maxValue) maxValue = a;
+    }
+    maxValue += 100;
+    var idx = showUserPage.chatRoomAdminList.rowCount;
+    showUserPage.chatRoomAdminList.setRowCount(showUserPage.chatRoomAdminList.rowCount + 1);
+    showUserPage.chatRoomAdminList.setData(0,idx,maxValue + "");
+    userInfo.setDataset(showUserPage.chatRoomAdminList, 2, idx);
+    this.init();
+    g5.tiledResizeV(this.parentNode,5);
+}
+
+sender.loadRecord = function(panel, dataset, index) {
+    panel.v_id = dataset.getData(0,index);
+    panel.v_vipRegDatetime = dataset.getData(1,index);
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,2,index);
+}
+
+sender.renderItem = function(root) {
+    var w = eb.getDivRectSetting(root).w;
+    var c,cy=7;
+    
+    root.style.cursor = "pointer";
+    root.style.borderRadius = "10px";
+    var userName = root.v_userInfo.userName;
+    var nickName = root.v_userInfo.nickName;
+    ee.setOnClick(root,function(sender,event) {
+        g5.p2.p2.p2sub.p1.c_chat.deleteAdmin(root.v_userInfo);
+    });
+    ee.setOnMouseEnter(root, function(sender,e){
+        sender.style.backgroundColor = "rgb(245,248,250)";
+    });
+    ee.setOnMouseLeave(root, function(sender,e){
+        sender.style.backgroundColor = "#ffffff";
+    });
+    
+    //user photo
+    c = createPanel(root, root.id+"panel13", "", 5,5,55,55);
+    if (root.v_userInfo.photo == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
+    }
+    c.style.borderRadius = "10px";
+    c.v_timer = null;
+    root.c_photo = c;
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+        if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+        sender.v_timer = setTimeout(function() {
+            ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+        }, 700);
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
+    });
+    
+    //user nick name
+    c = createPanel(root, root.id+"panel16", "", 0, 60, 65, 18);
+    addText(c,
+        root.v_userInfo.nickName,
+        "center", "middle", "微软雅黑", 9, "d68400", "bold");
+    
+    //cy+=10;
+    //eb.setDivRect(root,null,null,null,38+7*2);
+    return root; 
+}
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.0836298932384342</sizeRatio>
+      <top>30</top>
+      <topRatio>0.196078431372549</topRatio>
+      <width>562</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem10">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>B4B4B4</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>47</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <note>成员root</note>
+      <sizeRatio>0.0852994555353902</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>551</width>
+      <widthRatio>0.980427046263345</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>47</height>
+      <heightRatio>1</heightRatio>
+      <left>551</left>
+      <leftRatio>0.96028880866426</leftRatio>
+      <sizeRatio>5.81818181818182</sizeRatio>
+      <top>0</top>
+      <width>11</width>
+      <widthRatio>0.0397111913357401</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>47</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.v_minValue = 0;
+sender.v_maxValue = 100;
+sender.v_pageSize = 10;
+sender.v_lineColor = "#e6ecf0";
+sender.init = function(div) {
+    this.v_div = div;
+    div.addEventListener("mousewheel",function(event){
+        if (event.wheelDelta<0) {
+            div.scrollTop += 20;
+        } else {
+            div.scrollTop -= 20;
+        }
+        ee.setRect(sender.c_bar, null,
+            parseInt(div.scrollTop/div.scrollHeight*sender.eeChildren[1].offsetHeight),null,
+            parseInt(div.offsetHeight/div.scrollHeight*sender.eeChildren[1].offsetHeight));
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+        event.returnValue = false;
+        return false;
+    },false);
+    this.v_minValue = 0;
+    this.v_maxValue = div.scrollHeight;
+    this.v_pagesize = div.offsetHeight;
+    this.v_currentValue = div.scrollTop;
+    this.c_bar = this.eeChildren[1].eeChildren[0];
+    ee.setRect(this.c_bar, null,
+        parseInt(div.scrollTop/div.scrollHeight*this.eeChildren[1].offsetHeight),null,
+        parseInt(div.offsetHeight/div.scrollHeight*this.eeChildren[1].offsetHeight));
+}
+
+//implementation
+sender.onChange = function() {
+    this.v_div.scrollTop = this.c_bar.offsetTop/this.eeChildren[1].offsetHeight*this.v_div.scrollHeight;
+}
+]]></onCreate>
+      <outerRight>1</outerRight>
+      <sizeRatio>6.4</sizeRatio>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>0.909090909090909</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem27">
+      <backgroundColor>804040</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>15</height>
+      <heightRatio>0.234375</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.5</sizeRatio>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem27/panel329">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>15</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>var div = sender.parentNode.parentNode.v_div;
+div.scrollTop -= 20;
+var c = sender.parentNode.parentNode;
+ee.setRect(c.c_bar, null,
+    parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
+    parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));
+</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("#fafaff", "#e6ecf0","#6e7f8d","","","","#000000","#ffffff","#ffffff","#e6ecf0")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>1.5</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem28">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>17</height>
+      <heightRatio>0.53125</heightRatio>
+      <left>0</left>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#e6ecf0";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+sender.style.borderBottom = "";
+</onCreate>
+      <sizeRatio>3.4</sizeRatio>
+      <top>15</top>
+      <topRatio>0.234375</topRatio>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem28/panel330">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>17</height>
+      <heightRatio>0.5</heightRatio>
+      <left>0</left>
+      <onCreate>sender.v_down = false;
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_y = event.clientY;
+    sender.v_rect = eb.getDivRectSetting(sender);
+    sender.style.backgroundColor = "#6e7f8d";
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.style.backgroundColor = "#e6ecf0";
+    var div = sender.parentNode.parentNode.v_div;
+    var c = sender.parentNode.parentNode;
+    ee.setRect(c.c_bar, null,
+        parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
+        parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));        
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dy = event.clientY - sender.v_y;
+        var rectP = eb.getDivRectSetting(sender.parentNode);
+        var y = sender.v_rect.y + dy;
+        y = Math.max(y,0);
+        y = Math.min(y, rectP.h - sender.v_rect.h);
+        ee.setRect(sender, null, y, null, null);
+        sender.parentNode.parentNode.onChange();
+    }
+}
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e6ecf0";
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#fafaff";
+});
+
+sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#e6ecf0";
+sender.style.borderStyle = "solid";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+sender.style.backgroundColor = "#fafaff";</onCreate>
+      <sizeRatio>1.7</sizeRatio>
+      <top>6</top>
+      <topRatio>0.176470588235294</topRatio>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem29">
+      <backgroundColor>804040</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>15</height>
+      <heightRatio>0.234375</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.5</sizeRatio>
+      <top>32</top>
+      <topRatio>0.765625</topRatio>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem29/panel331">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>15</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>var div = sender.parentNode.parentNode.v_div;
+div.scrollTop += 20;
+var c = sender.parentNode.parentNode;
+ee.setRect(c.c_bar, null,
+    parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
+    parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));
+</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("#fafaff","#e6ecf0","#6e7f8d","","","","#000000","#ffffff","#ffffff","#e6ecf0")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>1.5</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9">
+      <dockX>fill</dockX>
+      <fieldCount>2</fieldCount>
+      <height>42</height>
+      <heightRatio>0.274509803921569</heightRatio>
+      <left>0</left>
+      <note><![CDATA[c_blackList->黑名单]]></note>
+      <onCreate><![CDATA[sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+sender.style.borderTop = "";
+
+sender.init = function() {
+    if (!eb.isEmpty(this.v_items)) {
+        for (var i=0; i<this.v_items.length; i++) {
+            ee.removeControl(this.v_items[i]);
+        }
+    }
+    this.v_items = new Array();
+    if (!eb.isEmpty(showUserPage.chatRoomBlackList)) {
+        var i, item;
+        var root = ee.getControl("layoutxitem18");
+        var itemWidth = eb.getDivRectSetting(root).w;
+        for (i=0; i< showUserPage.chatRoomBlackList.rowCount; i++) {
+            var item = createPanel(root, "blklst_" + showUserPage.chatRoomBlackList.getData(0,i), "", 0, cy, 65, 90);
+            ee.changeParent(item, root, i+1);
+            this.loadRecord(item, showUserPage.chatRoomBlackList, i);
+            this.renderItem(item);
+            this.v_items.push(item);
+            cy += 0 + eb.getDivRect(item).h;
+        }
+        this.arrange(root, 0, 7);
+        ee.setRect(ee.getControl("layoutxitem19"),null,null,null,30);
+        g5.resizeV(root, 2);
+        var ch = eb.getDivRectSetting(this).h + 10;
+        if (ch>360) ch = 360;
+        ee.setRect(this,null,null,null,ch);
+        ee.getControl("layouty13").init(root);
+    }
+    if (this.v_items.length<=0) {
+        ee.setText(root, "暂无黑名单用户");
+    } else {
+        ee.setText(root, " ");
+    }
+} 
+
+sender.arrange = function(div, ySpace, xCount) {
+    if (div.eeChildren.length<=0) return;
+    var rect = eb.getDivRect(div.eeChildren[0]);
+    var xSpace = eb.getDivRectSetting(div).w;
+    xSpace = parseInt((xSpace - xCount*rect.w)/(3+xCount));
+    for (var i=0; i<div.eeChildren.length; i++) {
+        ee.setRect(div.eeChildren[i], xSpace*2 + (i%xCount)*(rect.w+xSpace), ySpace*2 + parseInt(i/xCount) * (rect.h + ySpace), null, null);
+    }     
+}
+
+sender.deleteUser = function(userInfo) {
+    var dat = showUserPage.chatRoomBlackList
+    for (var i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_userInfo.id != userInfo.id) continue;
+        dat.removeRowAt(i);
+        break;
+    }
+    this.init();
+    g5.tiledResizeV(this.parentNode,5);
+}
+
+sender.appendUser = function(userInfo) {
+    var maxValue = 0;
+    for (var i=0; i<showUserPage.chatRoomBlackList.rowCount; i++) {
+        var a = parseInt(showUserPage.chatRoomBlackList.getData(0,i));
+        if (a>maxValue) maxValue = a;
+    }
+    maxValue += 100;
+    var idx = showUserPage.chatRoomBlackList.rowCount;
+    showUserPage.chatRoomBlackList.setRowCount(showUserPage.chatRoomBlackList.rowCount + 1);
+    showUserPage.chatRoomBlackList.setData(0,idx,maxValue + "");
+    userInfo.setDataset(showUserPage.chatRoomBlackList, 2, idx);
+    this.init();
+    g5.tiledResizeV(this.parentNode,5);
+}
+
+sender.loadRecord = function(panel, dataset, index) {
+    panel.v_id = dataset.getData(0,index);
+    panel.v_vipRegDatetime = dataset.getData(1,index);
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,2,index);
+}
+
+sender.renderItem = function(root) {
+    var w = eb.getDivRectSetting(root).w;
+    var c,cy=7;
+    
+    root.style.cursor = "pointer";
+    root.style.borderRadius = "10px";
+    var userName = root.v_userInfo.userName;
+    var nickName = root.v_userInfo.nickName;
+    ee.setOnClick(root,function(sender,event) {
+        g5.p2.p2.p2sub.p1.c_chat.unblockUser(root.v_userInfo);
+    });
+    ee.setOnMouseEnter(root, function(sender,e){
+        sender.style.backgroundColor = "rgb(245,248,250)";
+    });
+    ee.setOnMouseLeave(root, function(sender,e){
+        sender.style.backgroundColor = "#ffffff";
+    });
+    
+    //user photo
+    c = createPanel(root, root.id+"panel13", "", 5,5,55,55);
+    if (root.v_userInfo.photo == "") {
+        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
+    }
+    c.style.borderRadius = "10px";
+    c.v_timer = null;
+    root.c_photo = c;
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+        if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+        sender.v_timer = setTimeout(function() {
+            ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+        }, 700);
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
+    });
+    
+    //user nick name
+    c = createPanel(root, root.id+"panel16", "", 0, 60, 65, 18);
+    addText(c,
+        root.v_userInfo.nickName,
+        "center", "middle", "微软雅黑", 9, "14171a", "");
+    
+    //cy+=10;
+    //eb.setDivRect(root,null,null,null,38+7*2);
+    return root; 
+}
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.0747330960854092</sizeRatio>
+      <top>67</top>
+      <topRatio>0.437908496732026</topRatio>
+      <width>562</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem18">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>B4B4B4</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>42</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <note>成员root</note>
+      <sizeRatio>0.0762250453720508</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>551</width>
+      <widthRatio>0.980427046263345</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>42</height>
+      <heightRatio>1</heightRatio>
+      <left>551</left>
+      <leftRatio>0.96028880866426</leftRatio>
+      <sizeRatio>5.81818181818182</sizeRatio>
+      <top>0</top>
+      <width>11</width>
+      <widthRatio>0.0397111913357401</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>42</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.v_minValue = 0;
+sender.v_maxValue = 100;
+sender.v_pageSize = 10;
+sender.v_lineColor = "#e6ecf0";
+sender.init = function(div) {
+    this.v_div = div;
+    div.addEventListener("mousewheel",function(event){
+        if (event.wheelDelta<0) {
+            div.scrollTop += 20;
+        } else {
+            div.scrollTop -= 20;
+        }
+        ee.setRect(sender.c_bar, null,
+            parseInt(div.scrollTop/div.scrollHeight*sender.eeChildren[1].offsetHeight),null,
+            parseInt(div.offsetHeight/div.scrollHeight*sender.eeChildren[1].offsetHeight));
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+        event.returnValue = false;
+        return false;
+    },false);
+    this.v_minValue = 0;
+    this.v_maxValue = div.scrollHeight;
+    this.v_pagesize = div.offsetHeight;
+    this.v_currentValue = div.scrollTop;
+    this.c_bar = this.eeChildren[1].eeChildren[0];
+    ee.setRect(this.c_bar, null,
+        parseInt(div.scrollTop/div.scrollHeight*this.eeChildren[1].offsetHeight),null,
+        parseInt(div.offsetHeight/div.scrollHeight*this.eeChildren[1].offsetHeight));
+}
+
+//implementation
+sender.onChange = function() {
+    this.v_div.scrollTop = this.c_bar.offsetTop/this.eeChildren[1].offsetHeight*this.v_div.scrollHeight;
+}
+]]></onCreate>
+      <outerRight>1</outerRight>
+      <sizeRatio>6.4</sizeRatio>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>0.909090909090909</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem30">
+      <backgroundColor>804040</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>15</height>
+      <heightRatio>0.234375</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.5</sizeRatio>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem30/panel332">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>15</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>var div = sender.parentNode.parentNode.v_div;
+div.scrollTop -= 20;
+var c = sender.parentNode.parentNode;
+ee.setRect(c.c_bar, null,
+    parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
+    parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));
+</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("#fafaff", "#e6ecf0","#6e7f8d","","","","#000000","#ffffff","#ffffff","#e6ecf0")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>1.5</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem31">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>12</height>
+      <heightRatio>0.53125</heightRatio>
+      <left>0</left>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#e6ecf0";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+sender.style.borderBottom = "";
+</onCreate>
+      <sizeRatio>3.4</sizeRatio>
+      <top>15</top>
+      <topRatio>0.234375</topRatio>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem31/panel333">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>17</height>
+      <heightRatio>0.5</heightRatio>
+      <left>0</left>
+      <onCreate>sender.v_down = false;
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_y = event.clientY;
+    sender.v_rect = eb.getDivRectSetting(sender);
+    sender.style.backgroundColor = "#6e7f8d";
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.style.backgroundColor = "#e6ecf0";
+    var div = sender.parentNode.parentNode.v_div;
+    var c = sender.parentNode.parentNode;
+    ee.setRect(c.c_bar, null,
+        parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
+        parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));        
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dy = event.clientY - sender.v_y;
+        var rectP = eb.getDivRectSetting(sender.parentNode);
+        var y = sender.v_rect.y + dy;
+        y = Math.max(y,0);
+        y = Math.min(y, rectP.h - sender.v_rect.h);
+        ee.setRect(sender, null, y, null, null);
+        sender.parentNode.parentNode.onChange();
+    }
+}
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e6ecf0";
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#fafaff";
+});
+
+sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#e6ecf0";
+sender.style.borderStyle = "solid";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+sender.style.backgroundColor = "#fafaff";</onCreate>
+      <sizeRatio>1.7</sizeRatio>
+      <top>6</top>
+      <topRatio>0.176470588235294</topRatio>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem32">
+      <backgroundColor>804040</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>15</height>
+      <heightRatio>0.234375</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.5</sizeRatio>
+      <top>27</top>
+      <topRatio>0.765625</topRatio>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem32/panel334">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>15</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>var div = sender.parentNode.parentNode.v_div;
+div.scrollTop += 20;
+var c = sender.parentNode.parentNode;
+ee.setRect(c.c_bar, null,
+    parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
+    parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));
+</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("#fafaff","#e6ecf0","#6e7f8d","","","","#000000","#ffffff","#ffffff","#e6ecf0")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>1.5</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>1</widthRatio>
+    </control>
     <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2">
       <dockX>fill</dockX>
       <fieldCount>2</fieldCount>
       <height>80</height>
-      <heightRatio>0.650406504065041</heightRatio>
+      <heightRatio>0.522875816993464</heightRatio>
       <left>0</left>
       <note><![CDATA[c_chat->聊天区域]]></note>
+      <onCreate>sender.c_chatRoot = ee.getControl("layoutxitem1");
+</onCreate>
       <sizeRatio>0.142348754448399</sizeRatio>
-      <top>43</top>
-      <topRatio>0.349593495934959</topRatio>
+      <top>70</top>
+      <topRatio>0.457516339869281</topRatio>
       <width>562</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -3247,7 +4477,7 @@ sender.init(0);
       <height>29</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <note>聊天root</note>
+      <note><![CDATA[c_chatRoot->聊天root]]></note>
       <onCreate><![CDATA[sender.minRefreshTime = 3000;
 sender.maxRefreshTime = 50000;
 sender.running = false;
@@ -3544,7 +4774,7 @@ sender.renderMsg = function(root) {
         var onClick = new Array();
         //delete
         if (root.v_chatStatus == "IDL") {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""));
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除聊天记录","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""));
             onClick.push(
                 function (sender, event) {
                     ee.getControl("panel257").show(
@@ -3568,7 +4798,7 @@ sender.renderMsg = function(root) {
                 },
             );
         } else if (root.v_chatStatus == "DEL") {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","恢复","恢复聊天记录","恢复聊天记录","#404040","#404040","#404040",""));
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","恢复聊天记录","恢复聊天记录","恢复聊天记录","#404040","#404040","#404040",""));
             onClick.push(
                 function (sender, event) {
                     ee.getControl("panel257").show(
@@ -3596,48 +4826,14 @@ sender.renderMsg = function(root) {
             style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除管理员","解除管理员","解除管理员","#404040","#404040","#404040",""));
             onClick.push(
                 function (sender, event) {
-                    ee.getControl("panel257").show(
-                        "解除管理员",
-                        "是否解除 "+ root.v_userInfo.nickName +" @" + root.v_userInfo.userName + " 的管理员身份？解除管理员后该用户将不能履行您聊天室的管理职责。",
-                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","解除","确认解除","确认解除","#ffffff","#ffffff","#ffffff","")],
-                        function() {
-                            chatRoomAdmin.chatRoomId = showUserPage.defaultChatRoomId;
-                            chatRoomAdmin.userId = root.v_userInfo.id;
-                            chatRoomAdmin.operation = "DEL";
-                            chatRoomAdmin.onComplete = function() {
-                                root.parentNode.setAdmin(root.v_userInfo.id, false);
-                                root.parentNode.refreshContentAll();
-                            }
-                            chatRoomAdmin();
-                        },
-                        function() {
-                        }
-                    );
+                    g5.p2.p2.p2sub.p1.c_chat.deleteAdmin(root.v_userInfo);
                 },
             );
         } else {
             style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","添加管理员","添加管理员","添加管理员","#404040","#404040","#404040",""));
             onClick.push(
                 function (sender, event) {
-                    ee.getControl("panel257").show(
-                        "添加为管理员",
-                        "是否把 "+ root.v_userInfo.nickName +" @" + root.v_userInfo.userName + "添加升为管理员？该用户成为管理员后将能够帮助您管理此聊天室。",
-                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","添加","确定添加","确定添加","#ffffff","#ffffff","#ffffff","")],
-                        function() {
-                            chatRoomAdmin.chatRoomId = showUserPage.defaultChatRoomId;
-                            chatRoomAdmin.userId = root.v_userInfo.id;
-                            chatRoomAdmin.operation = "ADD";
-                            chatRoomAdmin.onComplete = function() {
-                                root.parentNode.setAdmin(root.v_userInfo.id, true);
-                                root.parentNode.refreshContentAll();
-                            }
-                            chatRoomAdmin();
-                        },
-                        function() {
-                        }
-                    );
+                    g5.p2.p2.p2sub.p1.c_chat.addAdmin(root.v_userInfo);
                 },
             );
         }
@@ -3646,48 +4842,14 @@ sender.renderMsg = function(root) {
             style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除屏蔽","解除屏蔽","解除屏蔽","#404040","#404040","#404040",""));
             onClick.push(
                 function (sender, event) {
-                    ee.getControl("panel257").show(
-                        "解除屏蔽",
-                        "是解除对 "+ root.v_userInfo.nickName +" @" + root.v_userInfo.userName + " 的屏蔽？解除屏蔽后，该用户可以在聊天室发言，同时历史发言也会被解除限制。",
-                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","解除","确定解除","确定解除","#ffffff","#ffffff","#ffffff","")],
-                        function() {
-                            chatRoomBlack.chatRoomId = showUserPage.defaultChatRoomId;
-                            chatRoomBlack.userId = root.v_userInfo.id;
-                            chatRoomBlack.operation = "DEL";
-                            chatRoomBlack.onComplete = function() {
-                                root.parentNode.setBlack(root.v_userInfo.id, false);
-                                root.parentNode.refreshContentAll();
-                            }
-                            chatRoomBlack();
-                        },
-                        function() {
-                        }
-                    );
+                    g5.p2.p2.p2sub.p1.c_chat.unblockUser(root.v_userInfo);
                 },
             );
         } else {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽","屏蔽用户","屏蔽用户","#404040","#404040","#404040",""));
+            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽用户","屏蔽用户","屏蔽用户","#404040","#404040","#404040",""));
             onClick.push(
                 function (sender, event) {
-                    ee.getControl("panel257").show(
-                        "屏蔽用户",
-                        "是否立即屏蔽（加入黑名单） "+ root.v_userInfo.nickName +" @" + root.v_userInfo.userName + " ？屏蔽完成后，该用户将不能发言，同时历史发言也会被屏蔽。",
-                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","屏蔽","确认屏蔽","确认屏蔽","#ffffff","#ffffff","#ffffff","")],
-                        function() {
-                            chatRoomBlack.chatRoomId = showUserPage.defaultChatRoomId;
-                            chatRoomBlack.userId = root.v_userInfo.id;
-                            chatRoomBlack.operation = "ADD";
-                            chatRoomBlack.onComplete = function() {
-                                root.parentNode.setBlack(root.v_userInfo.id, true);
-                                root.parentNode.refreshContentAll();
-                            }
-                            chatRoomBlack();
-                        },
-                        function() {
-                        }
-                    );
+                    g5.p2.p2.p2sub.p1.c_chat.blockUser(root.v_userInfo);
                 },
             );
         }
@@ -3823,7 +4985,7 @@ sender.onpointerup = function(event) {
 
 
 ]]></onCreate>
-      <sizeRatio>0.130671506352087</sizeRatio>
+      <sizeRatio>0.0526315789473684</sizeRatio>
       <top>0</top>
       <width>551</width>
       <widthRatio>0.980427046263345</widthRatio>
@@ -4356,7 +5518,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <dockX>fill</dockX>
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
-      <layerName><![CDATA[p2.p2.p2->聊天室]]></layerName>
+      <layerName><![CDATA[p2->聊天室]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.456666666666667</sizeRatio>
@@ -4371,22 +5533,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <dockX>fill</dockX>
       <height>132</height>
       <heightRatio>0.352941176470588</heightRatio>
-      <layerName><![CDATA[p2.p2.p3->短文]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>0.22</sizeRatio>
-      <top>52</top>
-      <topRatio>0.13903743315508</topRatio>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel285">
-      <bindControl>layoutx2</bindControl>
-      <bindTop>bottom</bindTop>
-      <dockX>fill</dockX>
-      <height>132</height>
-      <heightRatio>0.352941176470588</heightRatio>
-      <layerName><![CDATA[p2.p2.p4->回复]]></layerName>
+      <layerName><![CDATA[p3->短文和回复]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.22</sizeRatio>
@@ -13846,23 +14993,21 @@ eio.appendString16(db.getString(sqlResult,"chatRoomVideo"));
 eio.appendString16(db.getString(sqlResult,"followCount"));
 eio.appendString16(db.getString(sqlResult,"fansCount"));
 
-//query follow status
 sql = "exec createDefaultPrivateChatRoom " + userId + "; " + 
-    "select * from follow where userId = " + myUserId + " and followId = " + userId + ";";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-if (db.read(sqlResult)) {
-    eio.appendString16("true");
-} else {
-    eio.appendString16("false");
-}
+    "select * from follow where userId = " + myUserId + " and followId = " + userId + ";" +
+    "select * from blockList where userId=" + myUserId + " and blockUserId=" + userId + "; " +
+    "select * from blockList where userId=" + userId + " and blockUserId=" + myUserId + "; " +
+    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='DEF'; " +
+    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='PIV'; " +
+    "select * from hostRecomd where hostUserId = " + userId + " order by orderSn; " +
 
-//query twitter
-sql = 
+    "SELECT   dbo.chatRoomInfo.id, dbo.chatRoomInfo.creatorId, dbo.chatRoomInfo.roomType, dbo.chatRoomVip.status, " +
+    "                dbo.chatRoomVip.userId " +
+    "FROM      dbo.chatRoomVip INNER JOIN " +
+    "                dbo.chatRoomInfo ON dbo.chatRoomVip.chatRoomId = dbo.chatRoomInfo.id " +
+    "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
+    "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='ADM'; " +
+        
     "SELECT   TOP (30) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
     "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType,  " +
@@ -13887,26 +15032,19 @@ sql =
     "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and dbo.tContent.uplinkType<>'R' " +
     "ORDER BY dbo.tContent.id DESC ";
-    
+
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
-    es.logWarning("数据库执行错误, sql=" + sql);
+    eio.appendString8("系统繁忙请稍后再试");
     return;
 }
-eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
-
-sql = "select * from blockList where userId=" + myUserId + " and blockUserId=" + userId + "; " +
-    "select * from blockList where userId=" + userId + " and blockUserId=" + myUserId + "; " +
-    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='DEF'; " +
-    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='PIV'; " +
-    "select * from hostRecomd where hostUserId = " + userId + " order by orderSn; ";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    return;
+if (db.read(sqlResult)) {
+    eio.appendString16("true");
+} else {
+    eio.appendString16("false");
 }
+db.nextResult(sqlResult);
 if (db.read(sqlResult)) {
     eio.appendString16("T");
 } else {
@@ -13919,8 +15057,10 @@ if (db.read(sqlResult)) {
     eio.appendString16("F");
 }
 db.nextResult(sqlResult);
+var pubRoomId;
 if (db.read(sqlResult)) {
-    eio.appendString16(db.getString(sqlResult,"id"));
+    pubRoomId = db.getString(sqlResult,"id");
+    eio.appendString16(pubRoomId);
 }
 db.nextResult(sqlResult);
 var prvRoomId;
@@ -13930,6 +15070,16 @@ if (db.read(sqlResult)) {
 }
 db.nextResult(sqlResult);
 eio.appendDataSet(sqlResult, "id,regDatetime,orderSn,hostUserId,videoUrl,note", 0, 9999);
+db.nextResult(sqlResult);
+if (db.read(sqlResult)) {
+    eio.appendString16("T");
+} else {
+    eio.appendString16("F");
+}
+db.nextResult(sqlResult);
+eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
+    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
+    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 
 sql = "select * from chatPrivate where roomId=" + prvRoomId + " and permitUserId=" + myUserId + "; ";
 if (userId == myUserId) {
@@ -13952,6 +15102,26 @@ if (userId == myUserId) {
         "                dbo.chatPrivate ON dbo.userInfo.id = dbo.chatPrivate.permitUserId " +
         "WHERE chatPrivate.roomId = " + prvRoomId + " " +
         "ORDER BY chatPrivate.id DESC; ";
+    sql +=
+        "SELECT   dbo.chatRoomVip.id, dbo.chatRoomVip.regDatetime as vipRegDatetime, dbo.chatRoomVip.chatRoomId, dbo.chatRoomVip.status as vipStatus, " +
+        "                dbo.chatRoomVip.userId, dbo.userInfo.status, dbo.userInfo.regDatetime,  " +
+        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
+        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
+        "                dbo.userInfo.followCount, dbo.userInfo.fansCount " +
+        "FROM      dbo.chatRoomVip LEFT OUTER JOIN " +
+        "                dbo.userInfo ON dbo.chatRoomVip.userId = dbo.userInfo.id " +
+        "where chatRoomVip.chatRoomId = " + pubRoomId + " and chatRoomVip.status = 'ADM' " +
+        "order by chatRoomVip.id DESC; ";
+    sql +=
+        "SELECT   dbo.chatRoomVip.id, dbo.chatRoomVip.regDatetime as vipRegDatetime, dbo.chatRoomVip.chatRoomId, dbo.chatRoomVip.status as vipStatus, " +
+        "                dbo.chatRoomVip.userId, dbo.userInfo.status, dbo.userInfo.regDatetime,  " +
+        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
+        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
+        "                dbo.userInfo.followCount, dbo.userInfo.fansCount " +
+        "FROM      dbo.chatRoomVip LEFT OUTER JOIN " +
+        "                dbo.userInfo ON dbo.chatRoomVip.userId = dbo.userInfo.id " +
+        "where chatRoomVip.chatRoomId = " + pubRoomId + " and chatRoomVip.status = 'BLK' " +
+        "order by chatRoomVip.id DESC; ";
 }
 
 sqlResult = db.executeQuery("DB", sql);
@@ -13970,6 +15140,14 @@ if (userId == myUserId) {
     db.nextResult(sqlResult);
     eio.appendDataSet(sqlResult,
         "id,joinDatetime,permitUserId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
+    db.nextResult(sqlResult);
+    eio.appendDataSet(sqlResult,
+        "id,vipRegDatetime,userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
+    db.nextResult(sqlResult);
+    eio.appendDataSet(sqlResult,
+        "id,vipRegDatetime,userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
         "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
 } else {
     eio.appendString16("F");
@@ -13995,13 +15173,15 @@ var countFollow = eio.readString16();
 var countFans = eio.readString16();
 var follow = eio.readString16();
 
-g5.datasetPageUser = eio.readDataSet();
+
 var block1 = eio.readString16();
 var block2 = eio.readString16();
 showUserPage.defaultChatRoomId = eio.readString16(); 
 showUserPage.privateChatRoomId = eio.readString16();
 showUserPage.hostRecomd = eio.readDataSet();
-  
+showUserPage.isChatRoomPubAdmin = eio.readString16() == "T";
+g5.datasetPageUser = eio.readDataSet();
+    
 showUserPage.privateChatRoomRights = eio.readString16() == "T";
 if (showUserPage.id == g5.myUserInfo.id) {
     showUserPage.privateChatRoomRights = true;
@@ -14009,9 +15189,13 @@ if (showUserPage.id == g5.myUserInfo.id) {
 if (eio.readString16() == "T") {
     showUserPage.joinPrvRequest = eio.readDataSet();
     showUserPage.permitUsers = eio.readDataSet();
+    showUserPage.chatRoomAdminList = eio.readDataSet();
+    showUserPage.chatRoomBlackList = eio.readDataSet();
 } else {
     showUserPage.joinPrvRequest = null;
     showUserPage.permitUsers = null;
+    showUserPage.chatRoomAdminList = eio.readDataSet();
+    showUserPage.chatRoomBlackList = null;
 }
 
 ee.setVisible(ee.getControl("panel18"), false);
@@ -16844,6 +18028,24 @@ if (!eb.isEmpty(hostRecomdMoveDown.onComplete)) {
         this.follow = ds.getData(x+13,idx);
         this.block1 = ds.getData(x+14,idx); //屏蔽别人
         this.block2 = ds.getData(x+15,idx); //被别人屏蔽
+    }
+    this.setDataset = function(ds, x, idx) {
+        ds.setData(x+0,idx,this.id);
+        ds.setData(x+1,idx,this.status);    
+        ds.setData(x+2,idx,this.regDatetime);    
+        ds.setData(x+3,idx,this.lastAccessTime);    
+        ds.setData(x+4,idx,this.userName);    
+        ds.setData(x+5,idx,this.mobile);    
+        ds.setData(x+6,idx,this.nickName);    
+        ds.setData(x+7,idx,this.note);    
+        ds.setData(x+8,idx,this.photo);    
+        ds.setData(x+9,idx,this.titleBg);    
+        ds.setData(x+10,idx,this.homePage);    
+        ds.setData(x+11,idx,this.followCount);    
+        ds.setData(x+12,idx,this.fansCount);
+        ds.setData(x+13,idx,this.follow);
+        ds.setData(x+14,idx,this.block1);
+        ds.setData(x+15,idx,this.block2);
     }
 }
 
