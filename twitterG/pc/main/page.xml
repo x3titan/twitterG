@@ -3221,7 +3221,7 @@ sender.init = function() {
     } else {
         ee.setVisible(this.button1, false);
     }
-    if (showUserPage.isChatRoomPubAdmin) {
+    if ((showUserPage.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin)) {
         ee.setVisible(this.button2, true);
     } else {
         ee.setVisible(this.button2, false);
@@ -4588,7 +4588,9 @@ sender.refreshContent = function(root, resize) {
         user = " <font color='#d68400'><b>" + user + "</b></font>";    
     }
     if (root.v_isBlack) {
-        if (root.v_mode == 0) {
+        if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin)) {
+            ee.setRect(c,null,null,null,0);
+        } else if (root.v_mode == 0) {
             ee.setRect(c,null,null,null,10);
             ee.setText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
                 " <font color=#D05050 id='" + c.id + "blk'><b>&amp;lt;该用户被屏蔽,点击查看原留言&amp;gt;</b></font>");
@@ -4631,7 +4633,9 @@ sender.refreshContent = function(root, resize) {
             eb.initMouseEvent(c);
         }
     } else if (root.v_chatStatus == "DEL") {
-        if (root.v_mode == 0) {
+        if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+            ee.setRect(c,null,null,null,0);
+        } else if (root.v_mode == 0) {
             ee.setRect(c,null,null,null,10);
             ee.setText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
                 " <font color=#D05050 id='" + c.id + "del'><b>&amp;lt;该聊天记录已删除,点击查看&amp;gt;</b></font>");
@@ -4685,7 +4689,11 @@ sender.refreshContent = function(root, resize) {
     var rect = eb.getDivRectSetting(root.c_content);
     var cy = rect.y + rect.h + 2;
     cy = Math.max(25+4,cy);
-    ee.setRect(root, null,null,null,cy);
+    if (rect.h == 0) {
+        ee.setRect(root, null,null,null,0);
+    } else {
+        ee.setRect(root, null,null,null,cy);
+    }
     
     if (resize) {
         cy = 0;
@@ -4789,93 +4797,102 @@ sender.renderMsg = function(root) {
         }
         this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
     }
+    if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+        c.v_visible = false;
+    } else {
+        c.v_visible = true;
+    }
     ee.setOnClick(c,function(sender,event) {
         var style = new Array();
         var onClick = new Array();
         //delete
-        if (root.v_chatStatus == "IDL") {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除聊天记录","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""));
-            onClick.push(
-                function (sender, event) {
-                    ee.getControl("panel257").show(
-                        "删除聊天记录",
-                        "是否删除此聊天记录？删除后，其他用户（管理员和房主除外）将无法看到此聊天记录。",
-                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
-                        function() {
-                            chatRoomRecdDelete.chatRoomId = showUserPage.defaultChatRoomId;
-                            chatRoomRecdDelete.chatId = root.v_id;
-                            chatRoomRecdDelete.onComplete = function() {
-                                root.v_chatStatus = "DEL";
-                                root.v_mode = 0;
-                                root.parentNode.refreshContent(root, true);
+        if ((showUserPage.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin) || (root.v_userInfo.id == g5.myUserInfo.id)) {
+            if (root.v_chatStatus == "IDL") {
+                style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除聊天记录","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""));
+                onClick.push(
+                    function (sender, event) {
+                        ee.getControl("panel257").show(
+                            "删除聊天记录",
+                            "是否删除此聊天记录？删除后，其他用户（管理员和房主除外）将无法看到此聊天记录。",
+                            [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+                            function() {
+                                chatRoomRecdDelete.chatRoomId = showUserPage.defaultChatRoomId;
+                                chatRoomRecdDelete.chatId = root.v_id;
+                                chatRoomRecdDelete.onComplete = function() {
+                                    root.v_chatStatus = "DEL";
+                                    root.v_mode = 0;
+                                    root.parentNode.refreshContent(root, true);
+                                }
+                                chatRoomRecdDelete();
+                            },
+                            function() {
                             }
-                            chatRoomRecdDelete();
-                        },
-                        function() {
-                        }
-                    );
-                },
-            );
-        } else if (root.v_chatStatus == "DEL") {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","恢复聊天记录","恢复聊天记录","恢复聊天记录","#404040","#404040","#404040",""));
-            onClick.push(
-                function (sender, event) {
-                    ee.getControl("panel257").show(
-                        "恢复聊天记录",
-                        "是否恢复此聊天记录？恢复后，其他用户将能重新看到此天记录。",
-                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","恢复","确定恢复","确定恢复","#ffffff","#ffffff","#ffffff","")],
-                        function() {
-                            chatRoomRecdUndel.chatRoomId = showUserPage.defaultChatRoomId;
-                            chatRoomRecdUndel.chatId = root.v_id;
-                            chatRoomRecdUndel.onComplete = function() {
-                                root.v_chatStatus = "IDL";
-                                root.parentNode.refreshContent(root, true);
+                        );
+                    },
+                );
+            } else if (root.v_chatStatus == "DEL") {
+                style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","恢复聊天记录","恢复聊天记录","恢复聊天记录","#404040","#404040","#404040",""));
+                onClick.push(
+                    function (sender, event) {
+                        ee.getControl("panel257").show(
+                            "恢复聊天记录",
+                            "是否恢复此聊天记录？恢复后，其他用户将能重新看到此天记录。",
+                            [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","恢复","确定恢复","确定恢复","#ffffff","#ffffff","#ffffff","")],
+                            function() {
+                                chatRoomRecdUndel.chatRoomId = showUserPage.defaultChatRoomId;
+                                chatRoomRecdUndel.chatId = root.v_id;
+                                chatRoomRecdUndel.onComplete = function() {
+                                    root.v_chatStatus = "IDL";
+                                    root.parentNode.refreshContent(root, true);
+                                }
+                                chatRoomRecdUndel();
+                            },
+                            function() {
                             }
-                            chatRoomRecdUndel();
-                        },
-                        function() {
-                        }
-                    );
-                },
-            );
+                        );
+                    },
+                );
+            }
         }
         //admin
-        if (root.v_isAdmin) {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除管理员","解除管理员","解除管理员","#404040","#404040","#404040",""));
-            onClick.push(
-                function (sender, event) {
-                    g5.p2.p2.p2sub.p1.c_chat.deleteAdmin(root.v_userInfo);
-                },
-            );
-        } else {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","添加管理员","添加管理员","添加管理员","#404040","#404040","#404040",""));
-            onClick.push(
-                function (sender, event) {
-                    g5.p2.p2.p2sub.p1.c_chat.addAdmin(root.v_userInfo);
-                },
-            );
+        if ((showUserPage.id == g5.myUserInfo.id) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+            if (root.v_isAdmin) {
+                style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除管理员","解除管理员","解除管理员","#404040","#404040","#404040",""));
+                onClick.push(
+                    function (sender, event) {
+                        g5.p2.p2.p2sub.p1.c_chat.deleteAdmin(root.v_userInfo);
+                    },
+                );
+            } else {
+                style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","添加管理员","添加管理员","添加管理员","#404040","#404040","#404040",""));
+                onClick.push(
+                    function (sender, event) {
+                        g5.p2.p2.p2sub.p1.c_chat.addAdmin(root.v_userInfo);
+                    },
+                );
+            }
         }
         //blacklist
-        if (root.v_isBlack) {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除屏蔽","解除屏蔽","解除屏蔽","#404040","#404040","#404040",""));
-            onClick.push(
-                function (sender, event) {
-                    g5.p2.p2.p2sub.p1.c_chat.unblockUser(root.v_userInfo);
-                },
-            );
-        } else {
-            style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽用户","屏蔽用户","屏蔽用户","#404040","#404040","#404040",""));
-            onClick.push(
-                function (sender, event) {
-                    g5.p2.p2.p2sub.p1.c_chat.blockUser(root.v_userInfo);
-                },
-            );
+        if (((showUserPage.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin)) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+            if (root.v_isBlack) {
+                style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除屏蔽","解除屏蔽","解除屏蔽","#404040","#404040","#404040",""));
+                onClick.push(
+                    function (sender, event) {
+                        g5.p2.p2.p2sub.p1.c_chat.unblockUser(root.v_userInfo);
+                    },
+                );
+            } else {
+                style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽用户","屏蔽用户","屏蔽用户","#404040","#404040","#404040",""));
+                onClick.push(
+                    function (sender, event) {
+                        g5.p2.p2.p2sub.p1.c_chat.blockUser(root.v_userInfo);
+                    },
+                );
+            }
         }
-        
         g5.popup1.p4.show(sender, 170, style, onClick);
-           
     });
     ee.setOnMouseEnter(c, function(sender,event) { 
         var s =sender.v_style[sender.v_index];
@@ -4905,6 +4922,7 @@ sender.renderMsg = function(root) {
     c.init(0);
     ee.setVisible(c, false);
     ee.setOnMouseEnter(root, function(sender,event) { 
+        if (!sender.c_button.v_visible) return;
         ee.setVisible(sender.c_button, true);
     });
     ee.setOnMouseLeave(root, function(sender,event) { 
