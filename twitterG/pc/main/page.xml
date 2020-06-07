@@ -3482,6 +3482,9 @@ sender.deleteUser = function(userInfo) {
 }
 
 sender.appendUser = function(userInfo) {
+    for (var i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_userInfo.id == userInfo.id) return;
+    }
     var maxValue = 0;
     for (var i=0; i<showUserPage.chatRoomAdminList.rowCount; i++) {
         var a = parseInt(showUserPage.chatRoomAdminList.getData(0,i));
@@ -4490,6 +4493,7 @@ sender.running = false;
 sender.start = function(roomId) {
     this.v_roomId = roomId;
     this.running = true;
+    this.firstRun = true;
     this.currentRefreshTime = this.minRefreshTime;
     this.v_lastChatId = 0;
     for (var i=0; i<this.v_items.length; i++) ee.removeControl(this.v_items[i]);
@@ -4515,6 +4519,17 @@ sender.v_timerId = null;
 sender.v_tfId = null;
 //sender.style.overflowX = "hidden";
 sender.v_mouseDown = false;
+sender.loadData = function(panel,dataset,index) {
+    panel.v_id = dataset.getData(0,index);
+    panel.v_regDatetime = g5.getUtcTime(dataset.getData(1,index));
+    panel.v_chatStatus = dataset.getData(2,index);
+    panel.v_roomId = dataset.getData(3,index);
+    panel.v_msgContent = dataset.getData(4,index);
+    panel.v_isAdmin = dataset.getData(5,index) == "1";
+    panel.v_isBlack = dataset.getData(6,index) == "1";
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset, 7, index);
+}
 sender.refresh = function(force) {
     chatGet.roomId = this.v_roomId;
     chatGet.chatId = this.v_lastChatId;
@@ -4531,6 +4546,33 @@ sender.refresh = function(force) {
         for (var i=dataset.rowCount-1; i>=0; i--) {
             var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             root.loadData(item, dataset, i);
+            if (item.v_chatStatus == "CMD") {
+                if (!root.firstRun) {
+                    if (item.v_msgContent == "AdmAdd") {
+                        root.setAdmin(item.v_userInfo.id, true);
+                        root.refreshContentAll();
+                        g5.p2.p2.p2sub.p1.c_chat.c_adminList.appendUser(item.v_userInfo);
+                        if (item.v_userInfo.id == g5.myUserInfo.id) {
+                            showUserPage.isChatRoomPubAdmin = true;
+                            g5.p2.p2.p2sub.p1.c_chat.c_buttons.init();
+                        }
+                    } else if (item.v_msgContent == "AdmDel") {
+                        root.setAdmin(item.v_userInfo.id, false);
+                        root.refreshContentAll();
+                        g5.p2.p2.p2sub.p1.c_chat.c_adminList.deleteUser(item.v_userInfo);
+                        if (item.v_userInfo.id == g5.myUserInfo.id) {
+                            showUserPage.isChatRoomPubAdmin = false;
+                            g5.p2.p2.p2sub.p1.c_chat.c_buttons.init();
+                            if (g5.p2.p2.p2sub.p1.c_chat.getBlackListVisible()) {
+                                g5.p2.p2.p2sub.p1.c_chat.setBlackListVisible(false);
+                            }
+                        }
+                    }
+                }
+                root.v_lastChatId = item.v_id;
+                ee.removeControl(item);
+                continue;
+            }
             root.renderMsg(item);
             cy += 0 + eb.getDivRect(item).h;
             root.v_items.push(item);
@@ -4539,7 +4581,8 @@ sender.refresh = function(force) {
         if (dataset.rowCount>0) {
             root.scrollTop = cy - eb.getDivRect(root).h;
             root.currentRefreshTime = root.minRefreshTime;
-        }    
+        }
+        root.firstRun = false;    
     }
     chatGet();
     if (this.running) {
@@ -4783,11 +4826,6 @@ sender.renderMsg = function(root) {
         }
         this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
     }
-    if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
-        c.v_visible = false;
-    } else {
-        c.v_visible = true;
-    }
     ee.setOnClick(c,function(sender,event) {
         var style = new Array();
         var onClick = new Array();
@@ -4908,25 +4946,17 @@ sender.renderMsg = function(root) {
     c.init(0);
     ee.setVisible(c, false);
     ee.setOnMouseEnter(root, function(sender,event) { 
-        if (!sender.c_button.v_visible) return;
+        var visible = true;
+        if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+            visible = false;
+        };
+        if (!visible) return;
         ee.setVisible(sender.c_button, true);
     });
     ee.setOnMouseLeave(root, function(sender,event) { 
         ee.setVisible(sender.c_button, false);
     });
 
-}
-
-sender.loadData = function(panel,dataset,index) {
-    panel.v_id = dataset.getData(0,index);
-    panel.v_regDatetime = g5.getUtcTime(dataset.getData(1,index));
-    panel.v_chatStatus = dataset.getData(2,index);
-    panel.v_roomId = dataset.getData(3,index);
-    panel.v_msgContent = dataset.getData(4,index);
-    panel.v_isAdmin = dataset.getData(5,index) == "1";
-    panel.v_isBlack = dataset.getData(6,index) == "1";
-    panel.v_userInfo = new g5.UserInfo();
-    panel.v_userInfo.loadFromDataset(dataset, 7, index);
 }
 
 sender.displayTime = function(time) {
