@@ -4567,6 +4567,22 @@ sender.refresh = function(force) {
                                 g5.p2.p2.p2sub.p1.c_chat.setBlackListVisible(false);
                             }
                         }
+                    } else if (item.v_msgContent == "MsgDel") {
+                        for (var j = 0; j<root.v_items.length; j++) {
+                            if (root.v_items[j].v_id == item.v_userInfo.id) {
+                                root.v_items[j].v_chatStatus = "DEL";
+                                root.v_items[j].v_mode = 0;
+                                root.refreshContent(root.v_items[j], true);
+                            }
+                        }
+                    } else if (item.v_msgContent == "MsgUndel") {
+                        for (var j = 0; j<root.v_items.length; j++) {
+                            if (root.v_items[j].v_id == item.v_userInfo.id) {
+                                root.v_items[j].v_chatStatus = "IDL";
+                                root.v_items[j].v_mode = 0;
+                                root.refreshContent(root.v_items[j], true);
+                            }
+                        }
                     }
                 }
                 root.v_lastChatId = item.v_id;
@@ -16989,7 +17005,7 @@ var myUserName = db.getString(sqlResult,"userName");
 var myUserId = db.getString(sqlResult,"id");
 
 var where = "";
-var top = "TOP (10)";
+var top = "TOP (30)";
 if (isNew==1) {
     if (chatId!=0) {
         where = "and chatRoomData.id>" + chatId;
