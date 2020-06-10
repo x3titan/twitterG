@@ -4492,23 +4492,28 @@ sender.maxRefreshTime = 50000;
 sender.running = false;
 sender.start = function(roomId) {
     this.v_roomId = roomId;
-    this.running = true;
     this.firstRun = true;
     this.currentRefreshTime = this.minRefreshTime;
     this.v_lastChatId = 0;
     for (var i=0; i<this.v_items.length; i++) ee.removeControl(this.v_items[i]);
     this.v_items = new Array();
     this.v_nohis = false;
+    ee.getControl("layouty8").init(sender);
+    this.clearTimer();
+    if (showUserPage.isChatRoomPubBlack) return;
     this.v_tfId = setInterval(function() {
         sender.timeFragment();    
     }, 500);
-    ee.getControl("layouty8").init(sender);
+    this.running = true;
     this.refresh();        
 }
 sender.stop = function() {
-    this.running = false;
     this.clearTimer();
-    clearInterval(this.v_tfId);
+    for (var i=0; i<this.v_items.length; i++) {
+        ee.removeControl(this.v_items[i]);
+    }
+    this.v_items = new Array();
+    this.running = false;
 }
 
 //==implementation==//
@@ -4546,19 +4551,21 @@ sender.refresh = function(force) {
         for (var i=dataset.rowCount-1; i>=0; i--) {
             var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             root.loadData(item, dataset, i);
+            if ((root.v_items.length==0) &amp;&amp; (i==dataset.rowCount-1)) {
+                root.v_firstChatId = item.v_id;
+            }
             if (item.v_chatStatus == "CMD") {
                 if (!root.firstRun) {
                     if (item.v_msgContent == "AdmAdd") {
                         root.setAdmin(item.v_userInfo.id, true);
-                        root.refreshContentAll();
                         g5.p2.p2.p2sub.p1.c_chat.c_adminList.appendUser(item.v_userInfo);
                         if (item.v_userInfo.id == g5.myUserInfo.id) {
                             showUserPage.isChatRoomPubAdmin = true;
                             g5.p2.p2.p2sub.p1.c_chat.c_buttons.init();
                         }
+                        root.refreshContentAll();
                     } else if (item.v_msgContent == "AdmDel") {
                         root.setAdmin(item.v_userInfo.id, false);
-                        root.refreshContentAll();
                         g5.p2.p2.p2sub.p1.c_chat.c_adminList.deleteUser(item.v_userInfo);
                         if (item.v_userInfo.id == g5.myUserInfo.id) {
                             showUserPage.isChatRoomPubAdmin = false;
@@ -4567,6 +4574,7 @@ sender.refresh = function(force) {
                                 g5.p2.p2.p2sub.p1.c_chat.setBlackListVisible(false);
                             }
                         }
+                        root.refreshContentAll();
                     } else if (item.v_msgContent == "MsgDel") {
                         for (var j = 0; j<root.v_items.length; j++) {
                             if (root.v_items[j].v_id == item.v_userInfo.id) {
@@ -4583,6 +4591,20 @@ sender.refresh = function(force) {
                                 root.refreshContent(root.v_items[j], true);
                             }
                         }
+                    } else if (item.v_msgContent == "BlackAdd") {
+                        root.setBlack(item.v_userInfo.id, true);
+                        if (item.v_userInfo.id == g5.myUserInfo.id) {
+                            root.stop();    
+                        }
+                        g5.p2.p2.p2sub.p1.c_chat.c_blackList.appendUser(item.v_userInfo);
+                        root.refreshContentAll();
+                    } else if (item.v_msgContent == "BlackDel") {
+                        root.setBlack(item.v_userInfo.id, false);
+                        if (item.v_userInfo.id == g5.myUserInfo.id) {
+                            root.start(showUserPage.defaultChatRoomId);
+                        }
+                        g5.p2.p2.p2sub.p1.c_chat.c_blackList.deleteUser(item.v_userInfo);
+                        root.refreshContentAll();
                     }
                 }
                 root.v_lastChatId = item.v_id;
@@ -4623,6 +4645,10 @@ sender.clearTimer = function() {
     if (this.v_timerId!=null) {
         clearTimeout(this.v_timerId);
         this.v_timerId = null;
+    }
+    if (this.v_tfId!=null) {
+        clearInterval(this.v_tfId);
+        this.v_tfId = null;
     }
 }
 
@@ -4994,7 +5020,7 @@ sender.timeFragment = function() {
 
     sender.v_nohis = false;
     chatGet.roomId = sender.v_roomId;
-    chatGet.chatId = sender.v_items[0].v_id;
+    chatGet.chatId = sender.v_firstChatId;
     chatGet.isNew = 0;
     chatGet.my = sender;
     chatGet.onComplete = function(dataset) {
@@ -5008,6 +5034,11 @@ sender.timeFragment = function() {
         for (var i=0; i<dataset.rowCount; i++) {
             var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy-100, itemWidth, 5);
             root.loadData(item, dataset, i);
+            root.v_firstChatId = item.v_id;
+            if (item.v_chatStatus == "CMD") {
+                ee.removeControl(item);
+                continue;
+            }
             root.renderMsg(item);
             cy -= eb.getDivRect(item).h;
             ee.setRect(item,null,cy,null,null);
@@ -15078,6 +15109,13 @@ sql = "exec createDefaultPrivateChatRoom " + userId + "; " +
     "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
     "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='ADM'; " +
         
+    "SELECT   dbo.chatRoomInfo.id, dbo.chatRoomInfo.creatorId, dbo.chatRoomInfo.roomType, dbo.chatRoomVip.status, " +
+    "                dbo.chatRoomVip.userId " +
+    "FROM      dbo.chatRoomVip INNER JOIN " +
+    "                dbo.chatRoomInfo ON dbo.chatRoomVip.chatRoomId = dbo.chatRoomInfo.id " +
+    "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
+    "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='BLK'; " +
+
     "SELECT   TOP (30) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
     "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType,  " +
@@ -15140,6 +15178,12 @@ if (db.read(sqlResult)) {
 }
 db.nextResult(sqlResult);
 eio.appendDataSet(sqlResult, "id,regDatetime,orderSn,hostUserId,videoUrl,note", 0, 9999);
+db.nextResult(sqlResult);
+if (db.read(sqlResult)) {
+    eio.appendString16("T");
+} else {
+    eio.appendString16("F");
+}
 db.nextResult(sqlResult);
 if (db.read(sqlResult)) {
     eio.appendString16("T");
@@ -15250,6 +15294,7 @@ showUserPage.defaultChatRoomId = eio.readString16();
 showUserPage.privateChatRoomId = eio.readString16();
 showUserPage.hostRecomd = eio.readDataSet();
 showUserPage.isChatRoomPubAdmin = eio.readString16() == "T";
+showUserPage.isChatRoomPubBlack = eio.readString16() == "T";
 g5.datasetPageUser = eio.readDataSet();
     
 showUserPage.privateChatRoomRights = eio.readString16() == "T";
