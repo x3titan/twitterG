@@ -1,5 +1,5 @@
 <page>
-  <controls count="432">
+  <controls count="433">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -847,6 +847,7 @@ sender.style.borderRadius = "24px";
       <left>0</left>
       <sizeRatio>1.55333333333333</sizeRatio>
       <top>0</top>
+      <topRatio>-0.00214592274678112</topRatio>
       <width>300</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -4536,93 +4537,98 @@ sender.loadData = function(panel,dataset,index) {
     panel.v_userInfo.loadFromDataset(dataset, 7, index);
 }
 sender.refresh = function(force) {
-    chatGet.roomId = this.v_roomId;
-    chatGet.chatId = this.v_lastChatId;
-    chatGet.isNew = 1;
-    chatGet.my = this;
-    chatGet.onComplete = function(dataset) {
-        var cy = 0;
-        var root = chatGet.my;
-        if (root.v_items.length>0) {
-            var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
-            cy = rect.y + rect.h;
-        }
-        var itemWidth = eb.getDivRect(root).w;
-        for (var i=dataset.rowCount-1; i>=0; i--) {
-            var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
-            root.loadData(item, dataset, i);
-            if ((root.v_items.length==0) &amp;&amp; (i==dataset.rowCount-1)) {
-                root.v_firstChatId = item.v_id;
+    if (!chatGet.busy) {
+        chatGet.roomId = this.v_roomId;
+        chatGet.chatId = this.v_lastChatId;
+        chatGet.isNew = 1;
+        chatGet.my = this;
+        chatGet.onComplete = function(dataset) {
+            var cy = 0;
+            var root = chatGet.my;
+            if (root.v_items.length>0) {
+                var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
+                cy = rect.y + rect.h;
             }
-            if (item.v_chatStatus == "CMD") {
-                if (!root.firstRun) {
-                    if (item.v_msgContent == "AdmAdd") {
-                        root.setAdmin(item.v_userInfo.id, true);
-                        g5.p2.p2.p2sub.p1.c_chat.c_adminList.appendUser(item.v_userInfo);
-                        if (item.v_userInfo.id == g5.myUserInfo.id) {
-                            showUserPage.isChatRoomPubAdmin = true;
-                            g5.p2.p2.p2sub.p1.c_chat.c_buttons.init();
-                        }
-                        root.refreshContentAll();
-                    } else if (item.v_msgContent == "AdmDel") {
-                        root.setAdmin(item.v_userInfo.id, false);
-                        g5.p2.p2.p2sub.p1.c_chat.c_adminList.deleteUser(item.v_userInfo);
-                        if (item.v_userInfo.id == g5.myUserInfo.id) {
-                            showUserPage.isChatRoomPubAdmin = false;
-                            g5.p2.p2.p2sub.p1.c_chat.c_buttons.init();
-                            if (g5.p2.p2.p2sub.p1.c_chat.getBlackListVisible()) {
-                                g5.p2.p2.p2sub.p1.c_chat.setBlackListVisible(false);
-                            }
-                        }
-                        root.refreshContentAll();
-                    } else if (item.v_msgContent == "MsgDel") {
-                        for (var j = 0; j<root.v_items.length; j++) {
-                            if (root.v_items[j].v_id == item.v_userInfo.id) {
-                                root.v_items[j].v_chatStatus = "DEL";
-                                root.v_items[j].v_mode = 0;
-                                root.refreshContent(root.v_items[j], true);
-                            }
-                        }
-                    } else if (item.v_msgContent == "MsgUndel") {
-                        for (var j = 0; j<root.v_items.length; j++) {
-                            if (root.v_items[j].v_id == item.v_userInfo.id) {
-                                root.v_items[j].v_chatStatus = "IDL";
-                                root.v_items[j].v_mode = 0;
-                                root.refreshContent(root.v_items[j], true);
-                            }
-                        }
-                    } else if (item.v_msgContent == "BlackAdd") {
-                        root.setBlack(item.v_userInfo.id, true);
-                        if (item.v_userInfo.id == g5.myUserInfo.id) {
-                            root.stop();    
-                        }
-                        g5.p2.p2.p2sub.p1.c_chat.c_blackList.appendUser(item.v_userInfo);
-                        root.refreshContentAll();
-                    } else if (item.v_msgContent == "BlackDel") {
-                        root.setBlack(item.v_userInfo.id, false);
-                        if (item.v_userInfo.id == g5.myUserInfo.id) {
-                            root.start(showUserPage.defaultChatRoomId);
-                        }
-                        g5.p2.p2.p2sub.p1.c_chat.c_blackList.deleteUser(item.v_userInfo);
-                        root.refreshContentAll();
-                    }
+            var itemWidth = eb.getDivRect(root).w;
+            for (var i=dataset.rowCount-1; i>=0; i--) {
+                var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+                root.loadData(item, dataset, i);
+                if ((root.v_items.length==0) &amp;&amp; (i==dataset.rowCount-1)) {
+                    root.v_firstChatId = item.v_id;
                 }
-                root.v_lastChatId = item.v_id;
-                ee.removeControl(item);
-                continue;
+                if (item.v_chatStatus == "CMD") {
+                    if (!root.firstRun) {
+                        if (item.v_msgContent == "AdmAdd") {
+                            root.setAdmin(item.v_userInfo.id, true);
+                            g5.p2.p2.p2sub.p1.c_chat.c_adminList.appendUser(item.v_userInfo);
+                            if (item.v_userInfo.id == g5.myUserInfo.id) {
+                                showUserPage.isChatRoomPubAdmin = true;
+                                g5.p2.p2.p2sub.p1.c_chat.c_buttons.init();
+                            }
+                            root.refreshContentAll();
+                        } else if (item.v_msgContent == "AdmDel") {
+                            root.setAdmin(item.v_userInfo.id, false);
+                            g5.p2.p2.p2sub.p1.c_chat.c_adminList.deleteUser(item.v_userInfo);
+                            if (item.v_userInfo.id == g5.myUserInfo.id) {
+                                showUserPage.isChatRoomPubAdmin = false;
+                                g5.p2.p2.p2sub.p1.c_chat.c_buttons.init();
+                                if (g5.p2.p2.p2sub.p1.c_chat.getBlackListVisible()) {
+                                    g5.p2.p2.p2sub.p1.c_chat.setBlackListVisible(false);
+                                }
+                            }
+                            root.refreshContentAll();
+                        } else if (item.v_msgContent == "MsgDel") {
+                            for (var j = 0; j<root.v_items.length; j++) {
+                                if (root.v_items[j].v_id == item.v_userInfo.id) {
+                                    root.v_items[j].v_chatStatus = "DEL";
+                                    root.v_items[j].v_mode = 0;
+                                    root.refreshContent(root.v_items[j], true);
+                                }
+                            }
+                        } else if (item.v_msgContent == "MsgUndel") {
+                            for (var j = 0; j<root.v_items.length; j++) {
+                                if (root.v_items[j].v_id == item.v_userInfo.id) {
+                                    root.v_items[j].v_chatStatus = "IDL";
+                                    root.v_items[j].v_mode = 0;
+                                    root.refreshContent(root.v_items[j], true);
+                                }
+                            }
+                        } else if (item.v_msgContent == "BlackAdd") {
+                            root.setBlack(item.v_userInfo.id, true);
+                            if (item.v_userInfo.id == g5.myUserInfo.id) {
+                                root.stop();
+                                showUserPage.isChatRoomPubBlack = true;
+                                alert("很遗憾，您已经被本聊天室屏蔽。您将不能在本聊天室发言，同时您也不能看到本聊天室的任何发言。");
+                            }
+                            g5.p2.p2.p2sub.p1.c_chat.c_blackList.appendUser(item.v_userInfo);
+                            root.refreshContentAll();
+                        } else if (item.v_msgContent == "BlackDel") {
+                            root.setBlack(item.v_userInfo.id, false);
+                            if (item.v_userInfo.id == g5.myUserInfo.id) {
+                                root.start(showUserPage.defaultChatRoomId);
+                                showUserPage.isChatRoomPubBlack = false;
+                            }
+                            g5.p2.p2.p2sub.p1.c_chat.c_blackList.deleteUser(item.v_userInfo);
+                            root.refreshContentAll();
+                        }
+                    }
+                    root.v_lastChatId = item.v_id;
+                    ee.removeControl(item);
+                    continue;
+                }
+                root.renderMsg(item);
+                cy += 0 + eb.getDivRect(item).h;
+                root.v_items.push(item);
+                root.v_lastChatId = dataset.getData(0,i);
             }
-            root.renderMsg(item);
-            cy += 0 + eb.getDivRect(item).h;
-            root.v_items.push(item);
-            root.v_lastChatId = dataset.getData(0,i);
+            if (dataset.rowCount>0) {
+                root.scrollTop = cy - eb.getDivRect(root).h;
+                root.currentRefreshTime = root.minRefreshTime;
+            }
+            root.firstRun = false;    
         }
-        if (dataset.rowCount>0) {
-            root.scrollTop = cy - eb.getDivRect(root).h;
-            root.currentRefreshTime = root.minRefreshTime;
-        }
-        root.firstRun = false;    
+        chatGet();
     }
-    chatGet();
     if (this.running) {
         if (eb.isEmpty(force)) {
             if (this.currentRefreshTime <= 12000) {
@@ -4634,7 +4640,10 @@ sender.refresh = function(force) {
         } else {
             this.currentRefreshTime = this.minRefreshTime;
         }
-        this.clearTimer();
+        if (this.v_timerId!=null) {
+            clearTimeout(this.v_timerId);
+            this.v_timerId = null;
+        }
         this.v_timerId = setTimeout(function() {
             sender.refresh();
         }, this.currentRefreshTime);
@@ -5017,13 +5026,16 @@ sender.timeFragment = function() {
     if (sender.v_items.length<=0) return;
     var y = eb.getDivRect(sender.v_items[0]).y;
     if (sender.scrollTop > y+50) return;
-
+    if (chatGet.busy) return;
+    
+        g5.writeLog("sendRequest " + sender.v_firstChatId + " rid=" + sender.v_roomId);
     sender.v_nohis = false;
     chatGet.roomId = sender.v_roomId;
     chatGet.chatId = sender.v_firstChatId;
     chatGet.isNew = 0;
     chatGet.my = sender;
     chatGet.onComplete = function(dataset) {
+        g5.writeLog("complete");
         var cy = 0;
         var root = chatGet.my;
         if (root.v_items.length>0) {
@@ -5046,6 +5058,7 @@ sender.timeFragment = function() {
         }
         if (dataset.rowCount<=0) {
             root.v_nohis = true;
+            g5.writeLog("nohis");
         }
         cy = -cy;
         root.move(cy);
@@ -5511,6 +5524,11 @@ sender.c_tester.label.rows[0].cells[0].style.fontWeight = sender._input.style.fo
 
 sender._input.addEventListener("keydown", function(event) {
     if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
+        if (showUserPage.isChatRoomPubBlack) {
+            alert("对不起，您已经被本聊天室屏蔽，您将不能在本聊天室发言");
+            event.preventDefault();
+            return false;
+        }
         var msgContent = ee.getEditText(ee.getControl("edit11")).trim();
         if (msgContent.length<=0) {
             event.preventDefault();
@@ -5542,7 +5560,11 @@ sender._input.addEventListener("keydown", function(event) {
       <heightRatio>0.725490196078431</heightRatio>
       <left>515</left>
       <leftRatio>0.916370106761566</leftRatio>
-      <onClick><![CDATA[var msgContent = ee.getEditText(ee.getControl("edit11")).trim();
+      <onClick><![CDATA[if (showUserPage.isChatRoomPubBlack) {
+    alert("对不起，您已经被本聊天室屏蔽，您将不能在本聊天室发言");
+    return;
+}
+var msgContent = ee.getEditText(ee.getControl("edit11")).trim();
 if (msgContent.length<=0) {
     event.preventDefault();
     return false;
@@ -8593,6 +8615,64 @@ sender.init = function() {
     this.setSize("min");
 } 
 
+sender.appendJoinRequest = function(userInfo) {
+    for (var i=0; i<this.joinRequest.length; i++) {
+        if (this.joinRequest[i].v_userInfo.id == userInfo.id) return;
+    }
+    var maxValue = 0;
+    for (var i=0; i<showUserPage.joinPrvRequest.rowCount; i++) {
+        var a = parseInt(showUserPage.joinPrvRequest.getData(0,i));
+        if (a>maxValue) maxValue = a;
+    }
+    maxValue += 100;
+    var idx = showUserPage.joinPrvRequest.rowCount;
+    showUserPage.joinPrvRequest.setRowCount(showUserPage.joinPrvRequest.rowCount + 1);
+    showUserPage.joinPrvRequest.setData(0,idx,maxValue + "");
+    userInfo.setDataset(showUserPage.joinPrvRequest, 2, idx);
+    this.init();
+    g5.tiledResizeV(this, 3);
+}
+
+sender.deleteJoinRequest = function(userInfo) {
+    var dat = showUserPage.joinPrvRequest;
+    for (var i=0; i<this.joinRequest.length; i++) {
+        if (this.joinRequest[i].v_userInfo.id != userInfo.id) continue;
+        dat.removeRowAt(i);
+        break;
+    }
+    this.init();
+    g5.tiledResizeV(this, 3);
+}
+
+sender.appendPermitUser = function(userInfo) {
+    for (var i=0; i<this.c_userList.v_items.length; i++) {
+        if (this.c_userList.v_items[i].v_userInfo.id == userInfo.id) return;
+    }
+    var maxValue = 0;
+    for (var i=0; i<showUserPage.permitUsers.rowCount; i++) {
+        var a = parseInt(showUserPage.permitUsers.getData(0,i));
+        if (a>maxValue) maxValue = a;
+    }
+    maxValue += 100;
+    var idx = showUserPage.permitUsers.rowCount;
+    showUserPage.permitUsers.setRowCount(showUserPage.permitUsers.rowCount + 1);
+    showUserPage.permitUsers.setData(0,idx,maxValue + "");
+    userInfo.setDataset(showUserPage.permitUsers, 2, idx);
+    this.c_userList.init();
+    g5.tiledResizeV(this, 3);
+}
+
+sender.deletePermitUser = function(userInfo) {
+    var dat = showUserPage.permitUsers;
+    for (var i=0; i<this.c_userList.v_items.length; i++) {
+        if (this.c_userList.v_items[i].v_userInfo.id != userInfo.id) continue;
+        dat.removeRowAt(i);
+        break;
+    }
+    this.c_userList.init();
+    g5.tiledResizeV(this, 3);
+}
+
 sender.changeSize = function() {
     if (this.v_sizeMode == "min") {
         this.setSize("max");
@@ -8615,10 +8695,10 @@ sender.setSize = function(sizeMode) {
 }
 
 sender.loadJoinRecord = function(panel, dataset, index) {
-    panel.v_userInfo = new g5.UserInfo();
-    panel.v_userInfo.loadFromDataset(dataset,2,index);
     panel.v_id = dataset.getData(0,index);
     panel.v_reqeustDatetime = dataset.getData(1,index);
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,2,index);
 }
 
 sender.renderJoinRecord = function(root) {
@@ -8646,10 +8726,8 @@ sender.renderJoinRecord = function(root) {
                 chatPrvPermit.chatRoomId = showUserPage.privateChatRoomId;
                 chatPrvPermit.userId = sender.v_userInfo.id;
                 chatPrvPermit.onComplete = function() {
-                    var p = sender.parentNode;
-                    ee.removeControl(sender);
-                    g5.tiledV(p, 0);
-                    g5.resizeV(p, 3);
+                    g5.p3.p8.p1.deleteJoinRequest(sender.v_userInfo);
+                    g5.p3.p8.p1.appendPermitUser(sender.v_userInfo);
                 }
                 chatPrvPermit();
             },
@@ -8657,10 +8735,7 @@ sender.renderJoinRecord = function(root) {
                 chatPrvReject.chatRoomId = showUserPage.privateChatRoomId;
                 chatPrvReject.userId = sender.v_userInfo.id;
                 chatPrvReject.onComplete = function() {
-                    var p = sender.parentNode;
-                    ee.removeControl(sender);
-                    g5.tiledV(p, 0);
-                    g5.resizeV(p, 3);
+                    g5.p3.p8.p1.deleteJoinRequest(sender.v_userInfo);
                 }
                 chatPrvReject();
             }
@@ -8879,12 +8954,11 @@ sender.arrange = function(div, ySpace, xCount) {
     }     
 }
 
-
 sender.loadRecord = function(panel, dataset, index) {
-    panel.v_userInfo = new g5.UserInfo();
-    panel.v_userInfo.loadFromDataset(dataset,2,index);
     panel.v_id = dataset.getData(0,index);
     panel.v_joinDatetime = dataset.getData(1,index);
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,2,index);
 }
 
 sender.renderItem = function(root) {
@@ -8905,10 +8979,7 @@ sender.renderItem = function(root) {
                 chatPrvDelete.chatRoomId = showUserPage.privateChatRoomId;
                 chatPrvDelete.userId = sender.v_userInfo.id;
                 chatPrvDelete.onComplete = function() {
-                    var p = sender.parentNode;
-                    ee.removeControl(sender);
-                    eb.arrayRemoveItem(p.parentNode.v_items, sender);
-                    p.parentNode.arrange(p, 0, 5);
+                    g5.p3.p8.p1.deletePermitUser(sender.v_userInfo);
                 }
                 chatPrvDelete();
             },
@@ -9391,29 +9462,28 @@ sender.maxRefreshTime = 60000;
 sender.running = false;
 sender.start = function(roomId) {
     this.v_roomId = roomId;
-    this.running = true;
+    this.firstRun = true;
     this.currentRefreshTime = this.minRefreshTime;
     this.v_lastChatId = 0;
     for (var i=0; i<this.v_items.length; i++) ee.removeControl(this.v_items[i]);
     this.v_items = new Array();
     this.v_nohis = false;
-    if (!eb.isEmpty(this.v_tfId)) {
-        clearInterval(this.v_tfId);
-        this.v_tfId = null;
-    }
+    ee.getControl("layouty10").init(sender);
+    this.clearTimer();
+    if (!showUserPage.privateChatRoomRights) return;
     this.v_tfId = setInterval(function() {
         sender.timeFragment();    
     }, 500);
-    ee.getControl("layouty10").init(sender);
+    this.running = true;
     this.refresh();        
 }
 sender.stop = function() {
-    this.running = false;
     this.clearTimer();
-    if (!eb.isEmpty(this.v_tfId)) {
-        clearInterval(this.v_tfId);
-        this.v_tfId = null;
+    for (var i=0; i<this.v_items.length; i++) {
+        ee.removeControl(this.v_items[i]);
     }
+    this.v_items = new Array();
+    this.running = false;
 }
 
 //==implementation==//
@@ -9425,32 +9495,53 @@ sender.v_tfId = null;
 //sender.style.overflowX = "hidden";
 sender.v_mouseDown = false;
 sender.refresh = function(force) {
-    chatGetPv.roomId = this.v_roomId;
-    chatGetPv.chatId = this.v_lastChatId;
-    chatGetPv.isNew = 1;
-    chatGetPv.my = this;
-    chatGetPv.onComplete = function(dataset) {
-        var cy = 0;
-        var root = chatGetPv.my;
-        if (root.v_items.length>0) {
-            var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
-            cy = rect.y + rect.h;
+    if (!chatGetPv.busy) {
+        chatGetPv.roomId = this.v_roomId;
+        chatGetPv.chatId = this.v_lastChatId;
+        chatGetPv.isNew = 1;
+        chatGetPv.my = this;
+        chatGetPv.onComplete = function(dataset) {
+            var cy = 0;
+            var root = chatGetPv.my;
+            if (root.v_items.length>0) {
+                var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
+                cy = rect.y + rect.h;
+            }
+            var itemWidth = eb.getDivRect(root).w;
+            for (var i=dataset.rowCount-1; i>=0; i--) {
+                var item = createPanel(root, "prvcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+                root.loadData(item, dataset, i);
+                if (item.v_chatStatus == "CMD") {
+                    if (!root.firstRun) {
+                        if (item.v_msgContent == "PrvReq") {
+                            if (g5.myUserInfo.id == showUserPage.id) {
+                                g5.p3.p8.p1.appendJoinRequest(item.v_userInfo);
+                            }
+                        } else if (item.v_msgContent == "PrvDel") {
+                            if (item.v_userInfo.id == g5.myUserInfo.id) {
+                                root.stop();
+                                showUserPage.privateChatRoomRights = false;
+                                alert("很遗憾，您已经被房主移出了私有聊天室。您将不能在本聊天室发言，您以前的发言仍旧保留。");
+                            }
+                        }
+                    }
+                    root.v_lastChatId = item.v_id;
+                    ee.removeControl(item);
+                    continue;
+                }
+                root.renderMsg(item);
+                cy += 0 + eb.getDivRect(item).h;
+                root.v_items.push(item);
+                root.v_lastChatId = dataset.getData(0,i);
+            }
+            if (dataset.rowCount>0) {
+                root.scrollTop = cy - eb.getDivRect(root).h;
+                root.currentRefreshTime = root.minRefreshTime;
+            }
+            root.firstRun = false;    
         }
-        var itemWidth = eb.getDivRect(root).w;
-        for (var i=dataset.rowCount-1; i>=0; i--) {
-            var item = createPanel(root, "prvcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
-            root.loadData(item, dataset, i);
-            root.renderMsg(item);
-            cy += 0 + eb.getDivRect(item).h;
-            root.v_items.push(item);
-            root.v_lastChatId = dataset.getData(0,i);
-        }
-        if (dataset.rowCount>0) {
-            root.scrollTop = cy - eb.getDivRect(root).h;
-            root.currentRefreshTime = root.minRefreshTime;
-        }    
+        chatGetPv();
     }
-    chatGetPv();
     if (this.running) {
         if (eb.isEmpty(force)) {
             if (this.currentRefreshTime <= 12000) {
@@ -9462,7 +9553,10 @@ sender.refresh = function(force) {
         } else {
             this.currentRefreshTime = this.minRefreshTime;
         }
-        this.clearTimer();
+        if (this.v_timerId!=null) {
+            clearTimeout(this.v_timerId);
+            this.v_timerId = null;
+        }
         this.v_timerId = setTimeout(function() {
             sender.refresh();
         }, this.currentRefreshTime);
@@ -9473,6 +9567,10 @@ sender.clearTimer = function() {
     if (this.v_timerId!=null) {
         clearTimeout(this.v_timerId);
         this.v_timerId = null;
+    }
+    if (this.v_tfId!=null) {
+        clearInterval(this.v_tfId);
+        this.v_tfId = null;
     }
 }
 
@@ -9522,10 +9620,11 @@ sender.renderMsg = function(root) {
 sender.loadData = function(panel,dataset,index) {
     panel.v_id = dataset.getData(0,index);
     panel.v_regDatetime = g5.getUtcTime(dataset.getData(1,index));
-    panel.v_roomId = dataset.getData(2,index);
-    panel.v_msgContent = dataset.getData(3,index);
+    panel.v_chatStatus = dataset.getData(2,index);
+    panel.v_roomId = dataset.getData(3,index);
+    panel.v_msgContent = dataset.getData(4,index);
     panel.v_userInfo = new g5.UserInfo();
-    panel.v_userInfo.loadFromDataset(dataset, 4, index);
+    panel.v_userInfo.loadFromDataset(dataset, 5, index);
 }
 
 sender.displayTime = function(time) {
@@ -9537,13 +9636,13 @@ sender.displayTime = function(time) {
     );
 }
 
-
 sender.timeFragment = function() {
     if (sender.v_mouseDown) return;
     if (sender.v_nohis) return;
     if (sender.v_items.length<=0) return;
     var y = eb.getDivRect(sender.v_items[0]).y;
     if (sender.scrollTop > y+50) return;
+    if (chatGetPv.busy) return;    
 
     sender.v_nohis = false;
     chatGetPv.roomId = sender.v_roomId;
@@ -10035,6 +10134,10 @@ sender.c_tester.label.rows[0].cells[0].style.fontWeight = sender._input.style.fo
 
 sender._input.addEventListener("keydown", function(event) {
     if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
+        if (!showUserPage.privateChatRoomRights) {
+            g5.chatPrvRequest(showUserPage.privateChatRoomId,showUserPage.nickName,showUserPage.userName);
+            return;
+        }
         var msgContent = ee.getEditText(ee.getControl("edit12")).trim();
         if (msgContent.length<=0) {
             event.preventDefault();
@@ -10071,15 +10174,7 @@ sender._input.addEventListener("keydown", function(event) {
       <left>233</left>
       <leftRatio>0.84115523465704</leftRatio>
       <onClick><![CDATA[if (!showUserPage.privateChatRoomRights) {
-    ee.getControl("panel257").show(
-        "无权限",
-        "对不起，您还没有加入房主的聊天室，需要立即申请加入吗？",
-        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","申请","立即申请","立即申请","#ffffff","#ffffff","#ffffff","")],
-        function() {
-            g5.chatPrvRequest(showUserPage.privateChatRoomId,showUserPage.nickName,showUserPage.userName);
-        }
-    );
+    g5.chatPrvRequest(showUserPage.privateChatRoomId,showUserPage.nickName,showUserPage.userName);
     return;
 }
 
@@ -11381,6 +11476,60 @@ sender.style.borderRight = "";</onCreate>
       <vAlign>top</vAlign>
       <width>191</width>
       <widthRatio>0.161181434599156</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel288/panel285">
+      <backgroundColor>9E9E8C</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>move</cursor>
+      <height>21</height>
+      <heightRatio>0.0300859598853868</heightRatio>
+      <left>99</left>
+      <leftRatio>0.518324607329843</leftRatio>
+      <onCreate><![CDATA[sender.v_down = false;
+if (sender.style.backgroundColor == "") {
+    sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+}
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.228260869565217</sizeRatio>
+      <top>0</top>
+      <width>92</width>
+      <widthRatio>0.481675392670157</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -17140,7 +17289,7 @@ var myUserName = db.getString(sqlResult,"userName");
 var myUserId = db.getString(sqlResult,"id");
 
 var where = "";
-var top = "TOP (10)";
+var top = "TOP (30)";
 if (isNew==1) {
     if (chatId!=0) {
         where = "and chatRoomData.id>" + chatId;
@@ -17152,7 +17301,7 @@ if (isNew==1) {
 
 sql =
     "SELECT   " + top + " dbo.chatRoomData.id, CONVERT(VARCHAR(50), dbo.chatRoomData.regDatetime, 120)  " +
-    "                AS regDatetime, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, dbo.chatRoomData.msgContent,  " +
+    "                AS regDatetime, dbo.chatRoomData.status AS chatStatus, dbo.chatRoomData.roomId, dbo.chatRoomData.userId, dbo.chatRoomData.msgContent,  " +
     "                dbo.userInfo.status, dbo.userInfo.regDatetime AS userRegDatetime, dbo.userInfo.lastAccessTime,  " +
     "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
     "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount " +
@@ -17169,7 +17318,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,regDatetime,roomId,msgContent," +
+eio.appendDataSet(sqlResult,"id,regDatetime,chatStatus,roomId,msgContent," +
     "userId,status,userRegDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 99999);
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
@@ -20219,7 +20368,7 @@ ee.setText(c, ee.getText(c) + "<br/>" + text);]]></functionCode>
       <functionParam>chatRoomId,userNickName,userName</functionParam>
       <functionCode><![CDATA[ee.getControl("panel257").show(
     "申请加入私有聊天室",
-    "申请加入<b>" + userNickName + "@" + userName + "</b>的私有聊天室吗？得到房主许可后，您才可以进入房主的私有聊天室。",
+    "您没有加入房主的私有聊天室，申请加入<b>" + userNickName + "@" + userName + "</b>的私有聊天室吗？得到房主许可后，您才可以进入房主的私有聊天室。",
     [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
     [new g5.BStyle("#1da1f2","#1a91da","#1781c2","申请","提交申请","提交申请","#ffffff","#ffffff","#ffffff","")],
     function() {
