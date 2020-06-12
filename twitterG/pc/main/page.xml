@@ -1,5 +1,5 @@
 <page>
-  <controls count="433">
+  <controls count="432">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -847,7 +847,6 @@ sender.style.borderRadius = "24px";
       <left>0</left>
       <sizeRatio>1.55333333333333</sizeRatio>
       <top>0</top>
-      <topRatio>-0.00214592274678112</topRatio>
       <width>300</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12245,13 +12244,24 @@ sender.refresh = function(progress) {
         ee.showAni(sender.eeChildren[i], 1);
     }
 }]]></onClick>
-      <onCreate>sender.style.zIndex=100;
+      <onCreate><![CDATA[sender.style.zIndex=100;
 sender.p1 = ee.getControl("panel149");
 sender.p2 = ee.getControl("panel124");
 sender.p3 = ee.getControl("panel213");
 sender.p4 = ee.getControl("panel323");
 
-</onCreate>
+sender.addEventListener("mousewheel",function(event){
+    for (var i=0; i<sender.eeChildren.length; i++) {
+        if (sender.eeChildren[i].style.visibility != "hidden") {
+            sender.eeChildren[i].style.visibility = "hidden";
+        }
+    }
+    sender.style.visibility = "hidden";
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    event.returnValue = false;
+    return false;
+},false);
+]]></onCreate>
       <onMouseMove><![CDATA[var getDist = function(x,y,div) {
     var rect = eb.getDivRectSetting(div);
     var dx, dy;
@@ -12594,7 +12604,6 @@ ee.getControl("panel217").show();
       <height>205</height>
       <heightRatio>0.257537688442211</heightRatio>
       <layerName><![CDATA[popup1.p4>通用弹出窗口]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>374</left>
       <leftRatio>0.315611814345992</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -14079,40 +14088,74 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
         ee.showAni(sender.eeChildren[i], 1);
     }
 }]]></onClick>
-      <onCreate>sender.style.zIndex=100;</onCreate>
+      <onCreate><![CDATA[sender.style.zIndex=100;
+
+sender.addEventListener("mousewheel",function(event){
+    for (var i=0; i<sender.eeChildren.length; i++) {
+        if (sender.eeChildren[i].style.visibility != "hidden") {
+            sender.eeChildren[i].style.visibility = "hidden";
+        }
+    }
+    sender.style.visibility = "hidden";
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    event.returnValue = false;
+    return false;
+},false);
+]]></onCreate>
+      <onMouseMove><![CDATA[var getDist = function(x,y,div) {
+    var rect = eb.getDivRectSetting(div);
+    var dx, dy;
+    if (x<rect.x) {
+        dx = rect.x - x;
+    } else if (x<rect.x+rect.w) {
+        dx = -1;
+    } else {
+        dx = x - rect.x - rect.w;
+    }
+    if (y<rect.y) {
+        dy = rect.y - y;
+    } else if (y<rect.y+rect.h) {
+        dy = -1;
+    } else {
+        dy = y - rect.y - rect.h;
+    }
+    return Math.max(dx,dy);
+}
+
+var div = null;
+for (var i = 0; i<sender.eeChildren.length; i++) {
+    if (sender.eeChildren[i].style.visibility != "hidden") {
+        div = sender.eeChildren[i];
+        break;
+    }
+}
+if (div == null) return;
+
+var lastDist = getDist(sender.v_lastX,sender.v_lastY, div);
+var currentDist = getDist(x,y, div);
+if (currentDist>lastDist) {
+    sender.v_closeCount++;
+} else {
+    sender.v_closeCount = 0;
+}
+sender.v_lastX = x;
+sender.v_lastY = y;
+if (sender.v_closeCount>=4) {
+    sender.click();
+}
+
+
+]]></onMouseMove>
       <sizeRatio>0.671729957805907</sizeRatio>
       <top>0</top>
       <width>1185</width>
       <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel268/panel278">
-      <height>172</height>
-      <heightRatio>0.21608040201005</heightRatio>
-      <layerName><![CDATA[Root->主界面弹窗->D用户信息(探测)]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>622</left>
-      <leftRatio>0.524894514767932</leftRatio>
-      <onCreate>sender.style.backgroundColor = "rgba(255,255,255,0.01)";</onCreate>
-      <onMouseLeave>if (!eb.isEmpty(sender.v_timer)) {
-    clearTimeout(sender.v_timer);
-}
-sender.v_timer = setTimeout(function() {
-    ee.showAni(ee.getControl("panel280"), 1);
-}, 100);
-
-</onMouseLeave>
-      <sizeRatio>0.713692946058091</sizeRatio>
-      <top>133</top>
-      <topRatio>0.167085427135678</topRatio>
-      <width>241</width>
-      <widthRatio>0.20337552742616</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268/panel280">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -14123,7 +14166,6 @@ sender.v_timer = setTimeout(function() {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>254</left>
       <leftRatio>0.214345991561181</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
@@ -14235,18 +14277,11 @@ sender.refresh = function() {
     } else {
         ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
     }
-    rect = eb.getDivRect(this);
-    ee.setRect(ee.getControl("panel278"), rect.x-10, rect.y - 30, rect.w+20, rect.h+60);
-    ee.setVisible(ee.getControl("panel278"), true);    
-
+    
     ee.setVisible(this.parentNode, true);
     ee.showAni(this, 0);
 }
 ]]></onCreate>
-      <onMouseEnter>if (!eb.isEmpty(ee.getControl("panel278").v_timer)) {
-    clearTimeout(ee.getControl("panel278").v_timer);
-    ee.getControl("panel278").v_timer = null;
-}</onMouseEnter>
       <sizeRatio>0.813008130081301</sizeRatio>
       <top>168</top>
       <topRatio>0.21105527638191</topRatio>
