@@ -4663,8 +4663,10 @@ sender.clearTimer = function() {
 sender.refreshContent = function(root, resize) {
     var c = root.c_content;
     var user = g5.showCommonText(root.v_userInfo.nickName);
-    if (root.v_isAdmin) {
-        user = " <font color='#d68400'><b>" + user + "</b></font>";    
+    if (root.v_userInfo.id == showUserPage.id) {
+        user = " <span style='background-color:#fcd801;border-radius:3px;font-weight:bold;color:#6e6e6e'> " + user + " </span>";    
+    } else if (root.v_isAdmin) {
+        user = " <font color='#d68400'><b>" + user + "</b></font>";
     }
     if (root.v_isBlack) {
         if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin)) {
@@ -9614,7 +9616,11 @@ sender.renderMsg = function(root) {
     //message
     c = createPanel(root, root.id+"_msg", "", 55, cy, mainWidth-60-24, 10);
     root.c_content = c;
-    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + g5.showCommonText(root.v_userInfo.nickName) + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, "000000", "normal");
+    var user = g5.showCommonText(root.v_userInfo.nickName);
+    if (root.v_userInfo.id == showUserPage.id) {
+        user = " <span style='background-color:#fcd801;border-radius:3px;font-weight:bold'> " + user + " </span>";    
+    }
+    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + user + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, "000000", "normal");
     c.label.style.wordBreak = "break-all";
     eb.processDock();
     var rect = eb.getDivRect(c.label);
