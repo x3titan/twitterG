@@ -4663,12 +4663,21 @@ sender.clearTimer = function() {
 sender.refreshContent = function(root, resize) {
     var c = root.c_content;
     var user = g5.showCommonText(root.v_userInfo.nickName);
-    if (root.v_userInfo.id == showUserPage.id) {
+    if (root.v_chatStatus == "SYS") {
+        user = " <span style='background-color:#48ccfe;border-radius:3px;font-weight:bold;color:#4e4e4e'> 系统提示 </span>";    
+    } else if (root.v_userInfo.id == showUserPage.id) {
         user = " <span style='background-color:#fcd801;border-radius:3px;font-weight:bold;color:#6e6e6e'> " + user + " </span>";    
     } else if (root.v_isAdmin) {
-        user = " <font color='#d68400'><b>" + user + "</b></font>";
+        user = " <font color='#0061a2'><b>" + user + "</b></font>";
     }
-    if (root.v_isBlack) {
+    if (root.v_chatStatus == "SYS") {
+        ee.setRect(c,null,null,null,10);
+        ee.setText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
+            " <font color='#0061a2'>" + root.v_msgContent + "</font>");
+        eb.processDock();
+        var rect = eb.getDivRect(c.label);
+        ee.setRect(c, null, null, null, rect.h);
+    } else if (root.v_isBlack) {
         if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin)) {
             ee.setRect(c,null,null,null,0);
         } else if (root.v_mode == 0) {
@@ -4821,7 +4830,9 @@ sender.renderMsg = function(root) {
     //photo
     c = createPanel(root, root.id+"_img", "", 24, cy, 25, 25);
     c.style.borderRadius = "50%";
-    if (root.v_userInfo.photo == "") {
+    if (root.v_chatStatus == "SYS") {
+        ee.setImage(c,"/twitterG/pc/main/robot.jpg","trim","","")
+    } else if (root.v_userInfo.photo == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
     } else {
         ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
@@ -4934,7 +4945,7 @@ sender.renderMsg = function(root) {
             }
         }
         //admin
-        if ((showUserPage.id == g5.myUserInfo.id) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+        if ((showUserPage.id == g5.myUserInfo.id) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!root.v_isBlack)) {
             if (root.v_isAdmin) {
                 style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除管理员","解除管理员","解除管理员","#404040","#404040","#404040",""));
                 onClick.push(
@@ -4960,6 +4971,7 @@ sender.renderMsg = function(root) {
                         g5.p2.p2.p2sub.p1.c_chat.unblockUser(root.v_userInfo);
                     },
                 );
+            } else if (root.v_isAdmin) {
             } else {
                 style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽用户","屏蔽用户","屏蔽用户","#404040","#404040","#404040",""));
                 onClick.push(
@@ -5003,6 +5015,9 @@ sender.renderMsg = function(root) {
         if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
             visible = false;
         };
+        if (root.v_chatStatus == "SYS") {
+            visible = false;
+        }
         if (!visible) return;
         ee.setVisible(sender.c_button, true);
     });
@@ -5030,14 +5045,12 @@ sender.timeFragment = function() {
     if (sender.scrollTop > y+50) return;
     if (chatGet.busy) return;
     
-        g5.writeLog("sendRequest " + sender.v_firstChatId + " rid=" + sender.v_roomId);
     sender.v_nohis = false;
     chatGet.roomId = sender.v_roomId;
     chatGet.chatId = sender.v_firstChatId;
     chatGet.isNew = 0;
     chatGet.my = sender;
     chatGet.onComplete = function(dataset) {
-        g5.writeLog("complete");
         var cy = 0;
         var root = chatGet.my;
         if (root.v_items.length>0) {
@@ -5060,7 +5073,6 @@ sender.timeFragment = function() {
         }
         if (dataset.rowCount<=0) {
             root.v_nohis = true;
-            g5.writeLog("nohis");
         }
         cy = -cy;
         root.move(cy);
@@ -9590,7 +9602,9 @@ sender.renderMsg = function(root) {
     //photo
     c = createPanel(root, root.id+"_img", "", 24, cy, 25, 25);
     c.style.borderRadius = "50%";
-    if (root.v_userInfo.photo == "") {
+    if (root.v_chatStatus == "SYS") {
+        ee.setImage(c,"/twitterG/pc/main/robot.jpg","trim","","")
+    } else if (root.v_userInfo.photo == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
     } else {
         ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
@@ -9617,10 +9631,14 @@ sender.renderMsg = function(root) {
     c = createPanel(root, root.id+"_msg", "", 55, cy, mainWidth-60-24, 10);
     root.c_content = c;
     var user = g5.showCommonText(root.v_userInfo.nickName);
-    if (root.v_userInfo.id == showUserPage.id) {
+    var textColor = "000000";
+    if (root.v_chatStatus == "SYS") {
+        user = " <span style='background-color:#48ccfe;border-radius:3px;font-weight:bold;color:#4e4e4e'> 系统提示 </span>";
+        textColor = "0061a2";    
+    } else if (root.v_userInfo.id == showUserPage.id) {
         user = " <span style='background-color:#fcd801;border-radius:3px;font-weight:bold'> " + user + " </span>";    
     }
-    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + user + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, "000000", "normal");
+    addText(c, "<font color='#6e6e6e'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + user + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, textColor, "normal");
     c.label.style.wordBreak = "break-all";
     eb.processDock();
     var rect = eb.getDivRect(c.label);
@@ -10280,9 +10298,14 @@ sender.setMode = function(mode) {
     this.v_mode = mode;
     this.c_list.refreshMode(mode);
     this.c_buttons.init(mode);
+    ee.setVisible(this, true);
     if (this.v_mode == "view") {
-        ee.setVisible(this.c_addButton, false);
-        this.c_edit.hide();
+        if (showUserPage.hostRecomd.rowCount <= 0) {
+            ee.setVisible(this, false);
+        } else {
+            ee.setVisible(this.c_addButton, false);
+            this.c_edit.hide();
+        }
     } else if (this.v_mode == "owner") {
         ee.setVisible(this.c_addButton, false);
         this.c_edit.hide();
