@@ -167,15 +167,6 @@ eb.addEvent(sender, "scroll", function() {
     var viewPortH = $g("divRoot").offsetHeight;
     g5.player.forceMode = false;
 
-    var p2h = eb.getDivRect(g5.p2).h;
-    if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
-        if (!eb.isEmpty(updateHomepage.data)) {
-            if (updateHomepage.data.rowCount>0) {
-                updateHomepage();
-            }
-        }
-    }
-
     var viewPortY = g5.mainDiv.scrollTop;
     var dy = viewPortY - g5.lastScrollY;
     g5.lastScrollY = viewPortY
@@ -192,6 +183,30 @@ eb.addEvent(sender, "scroll", function() {
 }, false);
 
 sender.onWheel = function(wheelDelta) {
+    var viewPortH = $g("divRoot").offsetHeight;
+    var p2h = eb.getDivRect(g5.p2).h;
+    if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
+        if (g5.currentPageIndex == 0) {
+            if (!eb.isEmpty(updateHomepage.data)) {
+                if (updateHomepage.data.rowCount>0) {
+                    updateHomepage();
+                }
+            }
+        } else if (g5.currentPageIndex == 10) {
+            if (g5.p2.p11.currentPage == "c1") {
+                g5.p2.p11.c_pages.c1.loadMore();
+            } else if (g5.p2.p11.currentPage == "c2") {
+                g5.p2.p11.c_pages.c2.loadMore();
+            } else if (g5.p2.p11.currentPage == "c3") {
+                g5.p2.p11.c_pages.c3.loadMore();
+            } else if (g5.p2.p11.currentPage == "c4") {
+                g5.p2.p11.c_pages.c4.loadMore();
+            } else if (g5.p2.p11.currentPage == "c5") {
+                g5.p2.p11.c_pages.c5.loadMore();
+            }
+        }
+    }
+    
     if (eb.isEmpty(this.onWheel.lastTime)) this.onWheel.lastTime = 0;
     if (eb.isEmpty(this.onWheel.count)) this.onWheel.count = 0;
     var currentTime = (new Date()).getTime()
@@ -7022,8 +7037,12 @@ sender.v_items.push(sender.c5);
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c1->热门]]></layerName>
       <left>0</left>
-      <onCreate><![CDATA[sender.v_items = new Array();
+      <onCreate><![CDATA[sender.v_headerName = "page11c1_";
+sender.v_searchOptions = "hot";
+sender.v_items = new Array();
 sender.v_status = "init";
+sender.v_searchString = "";
+sender.v_pageIndex = 0;
 
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
@@ -7034,16 +7053,28 @@ sender.clear = function() {
 
 sender.search = function(searchString) {
     if (this.v_items.length>0) return;
+    this.v_searchString = searchString;
+    this.v_pageIndex = 0;
+    this.fSearch();
+}
+
+sender.loadMore = function() {
+    if (this.v_status != "normal") return;
+    this.v_pageIndex++;
+    this.fSearch();
+}
+
+sender.fSearch = function() {
     if (searchV2.busy) return;
-    searchV2.searchString = searchString;
-    searchV2.options = "hot";
-    searchV2.pageIndex = 0;
+    searchV2.searchString = this.v_searchString;
+    searchV2.options = this.v_searchOptions;
+    searchV2.pageIndex = this.v_pageIndex;
     searchV2.onComplete = function() {
         var cy = 0;
         var itemWidth = eb.getDivRectSetting(sender).w;
         for (var i=0; i< searchV2.dataset.rowCount; i++) {
             if (searchV2.dataset.getData(18,i) == "DEL") continue;
-            var item = createPanel(sender, "page11c1_" + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            var item = createPanel(sender, sender.v_headerName + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             item.v_mode = "";
             g5.loadTwitterRecord(item, searchV2.dataset, i);
             for (var j=0; j<sender.v_items.length; j++) {
@@ -7060,6 +7091,9 @@ sender.search = function(searchString) {
         }
         if (searchV2.dataset.rowCount<=0) {
             sender.v_status = "noResult";
+            var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
+            addText(item, "没有更多符合条件的搜索结果", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+            sender.v_items.push(item);
         } else {
             sender.v_status = "normal";
         }
@@ -7068,6 +7102,8 @@ sender.search = function(searchString) {
     }
     searchV2();
 }
+
+
 
 
 
@@ -7084,8 +7120,12 @@ sender.search = function(searchString) {
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c2->最新]]></layerName>
       <left>0</left>
-      <onCreate><![CDATA[sender.v_items = new Array();
+      <onCreate><![CDATA[sender.v_headerName = "page11c2_";
+sender.v_searchOptions = "new";
+sender.v_items = new Array();
 sender.v_status = "init";
+sender.v_searchString = "";
+sender.v_pageIndex = 0;
 
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
@@ -7096,16 +7136,28 @@ sender.clear = function() {
 
 sender.search = function(searchString) {
     if (this.v_items.length>0) return;
+    this.v_searchString = searchString;
+    this.v_pageIndex = 0;
+    this.fSearch();
+}
+
+sender.loadMore = function() {
+    if (this.v_status != "normal") return;
+    this.v_pageIndex++;
+    this.fSearch();
+}
+
+sender.fSearch = function() {
     if (searchV2.busy) return;
-    searchV2.searchString = searchString;
-    searchV2.options = "new";
-    searchV2.pageIndex = 0;
+    searchV2.searchString = this.v_searchString;
+    searchV2.options = this.v_searchOptions;
+    searchV2.pageIndex = this.v_pageIndex;
     searchV2.onComplete = function() {
         var cy = 0;
         var itemWidth = eb.getDivRectSetting(sender).w;
         for (var i=0; i< searchV2.dataset.rowCount; i++) {
             if (searchV2.dataset.getData(18,i) == "DEL") continue;
-            var item = createPanel(sender, "page11c2_" + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            var item = createPanel(sender, sender.v_headerName + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             item.v_mode = "";
             g5.loadTwitterRecord(item, searchV2.dataset, i);
             for (var j=0; j<sender.v_items.length; j++) {
@@ -7122,6 +7174,9 @@ sender.search = function(searchString) {
         }
         if (searchV2.dataset.rowCount<=0) {
             sender.v_status = "noResult";
+            var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
+            addText(item, "没有更多符合条件的搜索结果", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+            sender.v_items.push(item);
         } else {
             sender.v_status = "normal";
         }
@@ -7130,6 +7185,8 @@ sender.search = function(searchString) {
     }
     searchV2();
 }
+
+
 
 
 
@@ -7146,8 +7203,12 @@ sender.search = function(searchString) {
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c3->用户]]></layerName>
       <left>0</left>
-      <onCreate><![CDATA[sender.v_items = new Array();
+      <onCreate><![CDATA[sender.v_headerName = "page11c3_";
+sender.v_searchOptions = "user";
+sender.v_items = new Array();
 sender.v_status = "init";
+sender.v_searchString = "";
+sender.v_pageIndex = 0;
 
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
@@ -7158,15 +7219,27 @@ sender.clear = function() {
 
 sender.search = function(searchString) {
     if (this.v_items.length>0) return;
+    this.v_searchString = searchString;
+    this.v_pageIndex = 0;
+    this.fSearch();
+}
+
+sender.loadMore = function() {
+    if (this.v_status != "normal") return;
+    this.v_pageIndex++;
+    this.fSearch();
+}
+
+sender.fSearch = function() {
     if (searchV2.busy) return;
-    searchV2.searchString = searchString;
-    searchV2.options = "user";
-    searchV2.pageIndex = 0;
+    searchV2.searchString = this.v_searchString;
+    searchV2.options = this.v_searchOptions;
+    searchV2.pageIndex = this.v_pageIndex;
     searchV2.onComplete = function() {
         var cy = 0;
         var itemWidth = eb.getDivRectSetting(sender).w;
         for (var i=0; i<searchV2.dataset.rowCount; i++) {
-            var item = createPanel(sender, "page11c3_" + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            var item = createPanel(sender, sender.v_headerName + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadUserRecord(item, searchV2.dataset, i);
             item.v_mode = "";
             g5.renderUserBar(item);
@@ -7175,6 +7248,9 @@ sender.search = function(searchString) {
         }
         if (searchV2.dataset.rowCount<=0) {
             sender.v_status = "noResult";
+            var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
+            addText(item, "没有更多符合条件的搜索结果", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+            sender.v_items.push(item);
         } else {
             sender.v_status = "normal";
         }
@@ -7183,6 +7259,13 @@ sender.search = function(searchString) {
     }
     searchV2();
 }
+
+
+
+
+
+
+
 
 
 
@@ -7199,8 +7282,12 @@ sender.search = function(searchString) {
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c4->照片]]></layerName>
       <left>0</left>
-      <onCreate><![CDATA[sender.v_items = new Array();
+      <onCreate><![CDATA[sender.v_headerName = "page11c4_";
+sender.v_searchOptions = "photo";
+sender.v_items = new Array();
 sender.v_status = "init";
+sender.v_searchString = "";
+sender.v_pageIndex = 0;
 
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
@@ -7211,16 +7298,28 @@ sender.clear = function() {
 
 sender.search = function(searchString) {
     if (this.v_items.length>0) return;
+    this.v_searchString = searchString;
+    this.v_pageIndex = 0;
+    this.fSearch();
+}
+
+sender.loadMore = function() {
+    if (this.v_status != "normal") return;
+    this.v_pageIndex++;
+    this.fSearch();
+}
+
+sender.fSearch = function() {
     if (searchV2.busy) return;
-    searchV2.searchString = searchString;
-    searchV2.options = "photo";
-    searchV2.pageIndex = 0;
+    searchV2.searchString = this.v_searchString;
+    searchV2.options = this.v_searchOptions;
+    searchV2.pageIndex = this.v_pageIndex;
     searchV2.onComplete = function() {
         var cy = 0;
         var itemWidth = eb.getDivRectSetting(sender).w;
         for (var i=0; i< searchV2.dataset.rowCount; i++) {
             if (searchV2.dataset.getData(18,i) == "DEL") continue;
-            var item = createPanel(sender, "page11c4_" + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            var item = createPanel(sender, sender.v_headerName + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             item.v_mode = "";
             g5.loadTwitterRecord(item, searchV2.dataset, i);
             for (var j=0; j<sender.v_items.length; j++) {
@@ -7237,6 +7336,9 @@ sender.search = function(searchString) {
         }
         if (searchV2.dataset.rowCount<=0) {
             sender.v_status = "noResult";
+            var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
+            addText(item, "没有更多符合条件的搜索结果", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+            sender.v_items.push(item);
         } else {
             sender.v_status = "normal";
         }
@@ -7245,6 +7347,8 @@ sender.search = function(searchString) {
     }
     searchV2();
 }
+
+
 
 
 
@@ -7261,8 +7365,12 @@ sender.search = function(searchString) {
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c5->视频]]></layerName>
       <left>0</left>
-      <onCreate><![CDATA[sender.v_items = new Array();
+      <onCreate><![CDATA[sender.v_headerName = "page11c5_";
+sender.v_searchOptions = "video";
+sender.v_items = new Array();
 sender.v_status = "init";
+sender.v_searchString = "";
+sender.v_pageIndex = 0;
 
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
@@ -7273,16 +7381,28 @@ sender.clear = function() {
 
 sender.search = function(searchString) {
     if (this.v_items.length>0) return;
+    this.v_searchString = searchString;
+    this.v_pageIndex = 0;
+    this.fSearch();
+}
+
+sender.loadMore = function() {
+    if (this.v_status != "normal") return;
+    this.v_pageIndex++;
+    this.fSearch();
+}
+
+sender.fSearch = function() {
     if (searchV2.busy) return;
-    searchV2.searchString = searchString;
-    searchV2.options = "video";
-    searchV2.pageIndex = 0;
+    searchV2.searchString = this.v_searchString;
+    searchV2.options = this.v_searchOptions;
+    searchV2.pageIndex = this.v_pageIndex;
     searchV2.onComplete = function() {
         var cy = 0;
         var itemWidth = eb.getDivRectSetting(sender).w;
         for (var i=0; i< searchV2.dataset.rowCount; i++) {
             if (searchV2.dataset.getData(18,i) == "DEL") continue;
-            var item = createPanel(sender, "page11c5_" + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            var item = createPanel(sender, sender.v_headerName + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             item.v_mode = "";
             g5.loadTwitterRecord(item, searchV2.dataset, i);
             for (var j=0; j<sender.v_items.length; j++) {
@@ -7299,6 +7419,9 @@ sender.search = function(searchString) {
         }
         if (searchV2.dataset.rowCount<=0) {
             sender.v_status = "noResult";
+            var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
+            addText(item, "没有更多符合条件的搜索结果", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+            sender.v_items.push(item);
         } else {
             sender.v_status = "normal";
         }
@@ -7307,6 +7430,8 @@ sender.search = function(searchString) {
     }
     searchV2();
 }
+
+
 
 
 
@@ -17419,7 +17544,8 @@ if (options == "hot") {
     cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%'";
 } else if (options == "user") {
     cond += " dbo.userInfo.userName like '%" + db.encode(searchString) + "%' " +
-        " OR dbo.userInfo.nickName like '%" + db.encode(searchString) + "%' ";
+        " OR dbo.userInfo.nickName like '%" + db.encode(searchString) + "%' " +
+        " OR dbo.userInfo.note like '%" + db.encode(searchString) + "%' ";
 } else if (options == "photo") {
     cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%' and (" +
         "dbo.getPhotoType(dbo.tContent.photo1)='img' OR " +
