@@ -167,7 +167,7 @@ eb.addEvent(sender, "scroll", function() {
     var viewPortH = $g("divRoot").offsetHeight;
     g5.player.forceMode = false;
 
-    var p2h = eb.getDivRect(ee.getControl("panel135")).h;
+    var p2h = eb.getDivRect(g5.p2).h;
     if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
         if (!eb.isEmpty(updateHomepage.data)) {
             if (updateHomepage.data.rowCount>0) {
@@ -7146,6 +7146,48 @@ sender.search = function(searchString) {
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c3->用户]]></layerName>
       <left>0</left>
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.v_status = "init";
+
+sender.clear = function() {
+    for (var i=0; i<this.v_items.length; i++) {
+        ee.removeControl(this.v_items[i]);
+    }
+    this.v_items = new Array();
+}
+
+sender.search = function(searchString) {
+    if (this.v_items.length>0) return;
+    if (searchV2.busy) return;
+    searchV2.searchString = searchString;
+    searchV2.options = "user";
+    searchV2.pageIndex = 0;
+    searchV2.onComplete = function() {
+        var cy = 0;
+        var itemWidth = eb.getDivRectSetting(sender).w;
+        for (var i=0; i<searchV2.dataset.rowCount; i++) {
+            var item = createPanel(sender, "page11c3_" + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadUserRecord(item, searchV2.dataset, i);
+            item.v_mode = "";
+            g5.renderUserBar(item);
+            cy += eb.getDivRect(item).h;
+            sender.v_items.push(item);
+        }
+        if (searchV2.dataset.rowCount<=0) {
+            sender.v_status = "noResult";
+        } else {
+            sender.v_status = "normal";
+        }
+        g5.tiledV(sender,0,0,0);
+        g5.tiledResizeV(sender,4);   
+    }
+    searchV2();
+}
+
+
+
+
+]]></onCreate>
       <sizeRatio>0.735</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -7157,6 +7199,57 @@ sender.search = function(searchString) {
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c4->照片]]></layerName>
       <left>0</left>
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.v_status = "init";
+
+sender.clear = function() {
+    for (var i=0; i<this.v_items.length; i++) {
+        ee.removeControl(this.v_items[i]);
+    }
+    this.v_items = new Array();
+}
+
+sender.search = function(searchString) {
+    if (this.v_items.length>0) return;
+    if (searchV2.busy) return;
+    searchV2.searchString = searchString;
+    searchV2.options = "photo";
+    searchV2.pageIndex = 0;
+    searchV2.onComplete = function() {
+        var cy = 0;
+        var itemWidth = eb.getDivRectSetting(sender).w;
+        for (var i=0; i< searchV2.dataset.rowCount; i++) {
+            if (searchV2.dataset.getData(18,i) == "DEL") continue;
+            var item = createPanel(sender, "page11c4_" + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            item.v_mode = "";
+            g5.loadTwitterRecord(item, searchV2.dataset, i);
+            for (var j=0; j<sender.v_items.length; j++) {
+                if (sender.v_items[j].v_contentId == item.v_contentId) {
+                    ee.removeControl(item);
+                    item = null;
+                    break;
+                }
+            }
+            if (item == null) continue;
+            g5.renderTwitter(item);
+            sender.v_items.push(item);
+            cy += eb.getDivRect(item).h;
+        }
+        if (searchV2.dataset.rowCount<=0) {
+            sender.v_status = "noResult";
+        } else {
+            sender.v_status = "normal";
+        }
+        g5.tiledV(sender,0,0,0);
+        g5.tiledResizeV(sender,4);   
+    }
+    searchV2();
+}
+
+
+
+
+]]></onCreate>
       <sizeRatio>0.735</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -7168,6 +7261,57 @@ sender.search = function(searchString) {
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c5->视频]]></layerName>
       <left>0</left>
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.v_status = "init";
+
+sender.clear = function() {
+    for (var i=0; i<this.v_items.length; i++) {
+        ee.removeControl(this.v_items[i]);
+    }
+    this.v_items = new Array();
+}
+
+sender.search = function(searchString) {
+    if (this.v_items.length>0) return;
+    if (searchV2.busy) return;
+    searchV2.searchString = searchString;
+    searchV2.options = "video";
+    searchV2.pageIndex = 0;
+    searchV2.onComplete = function() {
+        var cy = 0;
+        var itemWidth = eb.getDivRectSetting(sender).w;
+        for (var i=0; i< searchV2.dataset.rowCount; i++) {
+            if (searchV2.dataset.getData(18,i) == "DEL") continue;
+            var item = createPanel(sender, "page11c5_" + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            item.v_mode = "";
+            g5.loadTwitterRecord(item, searchV2.dataset, i);
+            for (var j=0; j<sender.v_items.length; j++) {
+                if (sender.v_items[j].v_contentId == item.v_contentId) {
+                    ee.removeControl(item);
+                    item = null;
+                    break;
+                }
+            }
+            if (item == null) continue;
+            g5.renderTwitter(item);
+            sender.v_items.push(item);
+            cy += eb.getDivRect(item).h;
+        }
+        if (searchV2.dataset.rowCount<=0) {
+            sender.v_status = "noResult";
+        } else {
+            sender.v_status = "normal";
+        }
+        g5.tiledV(sender,0,0,0);
+        g5.tiledResizeV(sender,4);   
+    }
+    searchV2();
+}
+
+
+
+
+]]></onCreate>
       <sizeRatio>0.735</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -16355,7 +16499,9 @@ eio.appendString16(db.getString(sqlResult,"chatRoomVideo"));
 eio.appendString16(db.getString(sqlResult,"followCount"));
 eio.appendString16(db.getString(sqlResult,"fansCount"));
 
-sql = "exec createDefaultPrivateChatRoom " + userId + "; " + 
+sql = 
+    "exec createDefaultChatRoom " + userId + "; " + 
+    "exec createDefaultPrivateChatRoom " + userId + "; " + 
     "select * from follow where userId = " + myUserId + " and followId = " + userId + ";" +
     "select * from blockList where userId=" + myUserId + " and blockUserId=" + userId + "; " +
     "select * from blockList where userId=" + userId + " and blockUserId=" + myUserId + "; " +
@@ -16430,11 +16576,17 @@ var pubRoomId;
 if (db.read(sqlResult)) {
     pubRoomId = db.getString(sqlResult,"id");
     eio.appendString16(pubRoomId);
+} else {
+    pubRoomId = "-1";
+    eio.appendString16(pubRoomId);
 }
 db.nextResult(sqlResult);
 var prvRoomId;
 if (db.read(sqlResult)) {
     prvRoomId = db.getString(sqlResult,"id");
+    eio.appendString16(prvRoomId);
+} else {
+    prvRoomId = "-1";
     eio.appendString16(prvRoomId);
 }
 db.nextResult(sqlResult);
@@ -17256,23 +17408,55 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var userId = db.getString(sqlResult,"id");  
 
 
+if (options == "user") {
+    pageSize = 20;
+}
 var top = (pageIndex+1)*pageSize;
 var cond = "";
 if (options == "hot") {
     cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%'";
 } else if (options == "new") {
     cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%'";
+} else if (options == "user") {
+    cond += " dbo.userInfo.userName like '%" + db.encode(searchString) + "%' " +
+        " OR dbo.userInfo.nickName like '%" + db.encode(searchString) + "%' ";
+} else if (options == "photo") {
+    cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%' and (" +
+        "dbo.getPhotoType(dbo.tContent.photo1)='img' OR " +
+        "dbo.getPhotoType(dbo.tContent.photo2)='img' OR " +
+        "dbo.getPhotoType(dbo.tContent.photo3)='img' OR " +
+        "dbo.getPhotoType(dbo.tContent.photo4)='img') ";
+} else if (options == "video") {
+    cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%' and (" +
+        "dbo.getPhotoType(dbo.tContent.photo1)='video' OR " +
+        "dbo.getPhotoType(dbo.tContent.photo2)='video' OR " +
+        "dbo.getPhotoType(dbo.tContent.photo3)='video' OR " +
+        "dbo.getPhotoType(dbo.tContent.photo4)='video') ";
 }
 var orderby = "ORDER BY ";
 if (options == "hot") {
     orderby += "dbo.tContent.reCount DESC";
 } else if (options == "new") {
     orderby += "dbo.tContent.id DESC";
+} else if (options == "user") {
+    orderby += "dbo.userInfo.id DESC";
+} else if (options == "photo") {
+    orderby += "dbo.tContent.id DESC";
+} else if (options == "video") {
+    orderby += "dbo.tContent.id DESC";
 } else {
     orderby = "";
 }
-
-sql =
+if (options == "user") {
+    sql =
+    "SELECT  TOP (" + top + ") dbo.userInfo.id AS userId, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.note, " + 
+    "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, CASE WHEN follow.userId IS NULL THEN 0 ELSE 1 END AS isFollow " +
+    "FROM      dbo.userInfo LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.userInfo.id = dbo.follow.followId AND dbo.follow.userId = " + userId + " " +
+    "WHERE " + cond + " " +
+    orderby;
+} else {
+    sql =
     "SELECT   TOP (" + top + ") dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
     "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType,  " +
@@ -17299,6 +17483,8 @@ sql =
     "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
     "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) " + cond + " " +
     orderby;
+}
+    es.logWarning(sql);
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -17306,12 +17492,17 @@ if (sqlResult == null) {
     es.logWarning("数据库执行错误, sql=" + sql);
     return;
 }
+
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount," +
-    "reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4",
-    pageIndex*pageSize, pageSize);
-]]></script2>
+if (options == "user") {
+    eio.appendDataSet(sqlResult,"userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,isFollow",
+        pageIndex*pageSize, pageSize);
+} else {
+    eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
+        ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount," +
+        "reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4",
+        pageIndex*pageSize, pageSize);
+}]]></script2>
       <script3>if (eio.readString8() != "T") {
     searchV2.busy = false;
     return;
@@ -21108,6 +21299,7 @@ if (g5.currentPageIndex == 0) {
     ee.showAni(ee.getControl("panel156"), 1);
     g5.changeP3(-1);
 } else if (g5.currentPageIndex == 10) {
+    ee.setVisible(g5.p4, false);
     ee.setVisible(g5.p2.p11, false);
 }
 
