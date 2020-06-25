@@ -204,6 +204,8 @@ sender.onWheel = function(wheelDelta) {
             } else if (g5.p2.p11.currentPage == "c5") {
                 g5.p2.p11.c_pages.c5.loadMore();
             }
+        } else if (g5.currentPageIndex == 4) {
+            g5.p2.p5.loadMore();
         }
     }
     
@@ -843,6 +845,7 @@ sender.style.borderRadius = "24px";
       <height>466</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.55333333333333</sizeRatio>
       <top>0</top>
@@ -6135,6 +6138,7 @@ sender.clear = function() {
         ee.removeControl(this.v_items[i]);
     }
     this.v_items = new Array();
+    ee.setVisible(this.c_noResult, false);
 }
 
 sender.load = function() {
@@ -6146,7 +6150,7 @@ sender.load = function() {
 sender.loadMore = function() {
     if (this.v_status != "normal") return;
     this.v_pageIndex++;
-    this.fSearch();
+    this.fLoad();
 }
 
 sender.fLoad = function() {
@@ -6169,17 +6173,19 @@ sender.fLoad = function() {
             }
             if (item == null) continue;
             g5.renderTwitter(item);
+            sender.addButton(item);
             sender.v_items.push(item);
             cy += eb.getDivRect(item).h;
         }
         if (showBookMark.dataset.rowCount<=0) {
             sender.v_status = "noResult";
-            if (this.v_items.length<=0) {
-                ee.setVisible(this.c_noResult, true);
+            if (sender.v_items.length<=0) {
+                ee.setVisible(sender.c_noResult, true);
             } else {
-                ee.setVisible(this.c_noResult, false);
+                ee.setVisible(sender.c_noResult, false);
                 var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
-                addText(item, "没有更多符合条件的搜索结果", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+                addText(item, "没有更多的书签了", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+                item.v_noResult = true;
                 sender.v_items.push(item);
             }
         } else {
@@ -6190,6 +6196,101 @@ sender.fLoad = function() {
     }
     showBookMark();
 }
+
+sender.addButton = function(root) {
+    var c = createPanel(root, root.id+"_bkmkDel", "", 480, 9, 70, 25);
+    root.c_bookMarkDelete = c;
+    
+    c.v_style = [
+        new g5.BStyle("","#e8f5fe","#d2ecfc","移除书签","移除书签","移除书签","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
+    ];
+    
+    c.init = function(index) {
+        this.v_index = index;
+        this.style.backgroundColor = this.v_style[index].color1;
+        ee.setText(this, this.v_style[index].text1);
+        ee.setTextColor(this, this.v_style[index].tColor1);
+        if (this.v_style[index].bdColor=="") {
+            this.style.borderWidth = "0px";
+        } else {
+            this.style.boxSizing="border-box";
+            this.style.borderWidth = "1px";
+            this.style.borderColor = this.v_style[index].bdColor;
+            this.style.borderStyle = "solid";
+        }
+        this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+    }
+    ee.setOnClick(c, function(button, event) {
+        if (setBookMark.busy) {
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+            return;
+        }
+        var root = button.parentNode;
+        setBookMark.operation = "del";
+        setBookMark.contentId = root.v_contentId;
+        setBookMark.onComplete = function() {
+            for (var i=0; i<sender.v_items.length; i++) {
+                if (sender.v_items[i] == root) {
+                    sender.v_items.splice(i,1);
+                    break;
+                }
+            }
+            ee.removeControl(root);
+            if (sender.v_items.length<=0) {
+                ee.setVisible(sender.c_noResult, true);
+            } else if (sender.v_items.length==1) {
+                if (sender.v_items[0].v_noResult) {
+                    ee.removeControl(sender.v_items[0]);
+                    sender.v_items = new Array();
+                    ee.setVisible(sender.c_noResult, true);
+                }
+            }
+            g5.tiledResizeV(g5.p2.p5,2);
+        }
+        setBookMark();
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    ee.setOnMouseEnter(c, function(sender,event) { 
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    });
+    ee.setOnMouseLeave(c, function(sender,event) { 
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    });
+    c.eeMouseDown = function(sender,event,x,y) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color3;
+        ee.setText(sender, s.text3);
+        ee.setTextColor(sender, s.tColor3);
+    }
+    c.eeMouseUp = function(sender,event,x,y) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+    eb.initMouseEvent(c);
+    c.init(0);
+    ee.setVisible(c, false);
+    
+    var e1 = root.eeOnMouseEnter;
+    var e2 = root.eeOnMouseLeave;
+    ee.setOnMouseEnter(root, function(sender,event) { 
+        ee.setVisible(sender.c_bookMarkDelete, true);
+        e1(sender,event);
+    });
+    ee.setOnMouseLeave(root, function(sender,event) { 
+        ee.setVisible(sender.c_bookMarkDelete, false);
+        e2(sender,event);
+    });
+    
+}
+
 
 
 
@@ -6210,6 +6311,7 @@ sender.fLoad = function() {
       <height>55</height>
       <heightRatio>0.0705128205128205</heightRatio>
       <layerName><![CDATA[  c_topBlank->顶部留空]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.show = function() {
     ee.setVisible(this, true);
@@ -6248,7 +6350,7 @@ sender.fLoad = function() {
       <left>0</left>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.0719063545150502</sizeRatio>
-      <text>您还没有添加任何推文到您的书签中</text>
+      <text>您还没有添加任何短文到您的书签中</text>
       <top>40</top>
       <topRatio>0.199004975124378</topRatio>
       <vAlign>top</vAlign>
