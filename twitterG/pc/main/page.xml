@@ -1,5 +1,5 @@
 <page>
-  <controls count="460">
+  <controls count="461">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -39,6 +39,29 @@ setInterval(function() {
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName("script")[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+//history control
+window.addEventListener("popstate", function (a) {
+    var p = g5.getQueryString("p");
+    if (eb.isEmpty(p)) p = "0";
+    if (p=="0") {
+        g5.changeP2(0);
+    } else if (p=="1") {
+        g5.notPushHis = true;
+        showUserPage.userName = g5.getQueryString("u");
+        showUserPage();
+    } else if (p=="4") {
+        g5.notPushHis = true;
+        g5.p2.p5.show();
+    } else if (p=="7") {
+        showTopic.topicId = g5.getQueryString("c");
+        showTopic.needRefresh = true;
+        showTopic();
+        g5.changeP2(-1);
+        g5.notPushHis = true;
+    }
+})
+
 
 initLButton = function(button,text,dy,icon,size,dx) {
     if (eb.isEmpty(size)) size = "24 24";
@@ -833,6 +856,22 @@ sender.style.borderRadius = "24px";
       <topRatio>0.729613733905579</topRatio>
       <width>144</width>
       <widthRatio>0.48</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel94">
+      <height>29</height>
+      <heightRatio>0.0622317596566524</heightRatio>
+      <left>15</left>
+      <leftRatio>0.05</leftRatio>
+      <onClick>var state = {title:"历史记录", url:window.location.href};
+history.pushState(state,'','?t=aaa');
+
+</onClick>
+      <sizeRatio>1.07407407407407</sizeRatio>
+      <text>T</text>
+      <top>418</top>
+      <topRatio>0.896995708154506</topRatio>
+      <width>27</width>
+      <widthRatio>0.09</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -17072,17 +17111,25 @@ updateHomepage.busy = false;
 ]]></script3>
     </taskSetItem>
     <taskSetItem name="showUserPage">
-      <script1>//function(username)
+      <script1>//userName/userId
 if (g5.currentPageIndex == 1) {
     g5.changeP2(-1);
 }
-//ee.showAni(ee.getControl("panel16"), 0);
 
 eio.appendString16(g5.token);
-eio.appendString16(showUserPage.userName);
+if (showUserPage.userName == "") {
+    eio.appendString16("uid");
+    eio.appendString16(showUserPage.userId+"");
+} else {
+    eio.appendString16("uname");
+    eio.appendString16(showUserPage.userName);
+}
 </script1>
       <script2><![CDATA[var token = eio.readString16();
-var username = eio.readString16();
+var options = eio.readString16();
+var userValue = eio.readString16();
+if (options == "uid") userValue = parseInt(userValue);
+
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -17102,7 +17149,11 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserId = db.getString(sqlResult,"id");  
 
 //query user information
-sql = "select * from userInfo where userName = '" + db.encode(username) + "'";
+if (options == "uname") {
+    sql = "select * from userInfo where userName = '" + db.encode(userValue) + "'";
+} else {
+    sql = "select * from userInfo where id = " + userValue + "";
+}
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -20424,7 +20475,7 @@ if (!eb.isEmpty(setBookMark.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="70">
+  <g5Items count="71">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -22048,6 +22099,11 @@ this.currentIndex = pageIndex;</functionCode>
       <functionCode><![CDATA[//if ((pageIndex<0) || (pageIndex>=7)) return false;
 if (g5.currentPageIndex == pageIndex) return true;
 var root = ee.getControl("panel135");
+var pageState = {title:"", url:window.location.href};
+if (g5.notPushHis) {
+    pageState = "";
+    g5.notPushHis = false;
+}
 if (g5.currentPageIndex == 0) {
     ee.setVisible(g5.p4, false);
     ee.setVisible(ee.getControl("panel34"), false);
@@ -22113,6 +22169,9 @@ if (pageIndex == 0) {
     eb.setDivRect(root,null,null,null,eb.getDivRect(ee.getControl("panel16")).h);
     ee.showAni(ee.getControl("panel16"), 0);
     g5.changeP3(8);
+    if (pageState!="") {
+        history.pushState(pageState,"","?p=1&amp;u=" + showUserPage.userName);
+    }
 } else if (pageIndex == 2) {
     g5.mainDiv.scrollTop = 0;
     g5.pageMode = 0;
@@ -22130,6 +22189,9 @@ if (pageIndex == 0) {
     ee.setVisible(g5.p4, true);
     g5.p4.changePage("a4");
     ee.setVisible(g5.p2.p5, true)
+    if (pageState!="") {
+        history.pushState(pageState,"","?p=4");
+    }
 } else if (pageIndex == 5) {
     g5.mainDiv.scrollTop = 0;
     g5.pageMode = 0;
@@ -22152,6 +22214,9 @@ if (pageIndex == 0) {
     ee.setRect(g5.p4, null,null,null,eb.getDivRect(ee.getControl("panel38")).h);
     g5.refreshMain(true);
     ee.showAni(ee.getControl("panel22"), 0);
+    if (pageState!="") {
+        history.pushState(pageState,"","?p=7&amp;c=" + showTopic.topicId);
+    }
 } else if (pageIndex == 9) {
     g5.mainDiv.scrollTop = 0;
     g5.pageMode = 1;
@@ -22732,6 +22797,13 @@ for (var i=0; i<level; i++) {
     div = div.parentNode;
 }
 ]]></functionCode>
+    </item>
+    <item name="getQueryString" type="20">
+      <varValue />
+      <functionParam>paramName</functionParam>
+      <functionCode>var reg = new RegExp("(^|&amp;)"+ paramName +"=([^&amp;]*)(&amp;|$)");
+var r = window.location.search.substr(1).match(reg);
+if(r!=null)return  unescape(r[2]); return null;</functionCode>
     </item>
   </g5Items>
 </page>
