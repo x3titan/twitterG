@@ -11,6 +11,7 @@
 document.body.style.backgroundColor = "#ffffff";
 
 getUserInfo();
+getPromptCount();
 
 g5.changeP3(-1);
 g5.processUrl();   
@@ -279,9 +280,9 @@ sender.addEventListener("mousewheel",function(event){
       <height>512</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <sizeRatio>1.55333333333333</sizeRatio>
+      <leftRatio>-0.00333333333333333</leftRatio>
+      <sizeRatio>1.70666666666667</sizeRatio>
       <top>0</top>
       <width>300</width>
       <widthRatio>1</widthRatio>
@@ -850,7 +851,7 @@ sender.style.borderRadius = "24px";
       <fontSize>14</fontSize>
       <hAlign>left</hAlign>
       <height>46</height>
-      <heightRatio>0.08</heightRatio>
+      <heightRatio>0.08984375</heightRatio>
       <left>43</left>
       <leftRatio>0.143333333333333</leftRatio>
       <onClick><![CDATA[var items = sender.parentNode.eeChildren;
@@ -891,12 +892,12 @@ sender.style.borderRadius = "24px";
 
 
 ]]></onCreate>
-      <sizeRatio>0.446601941747573</sizeRatio>
+      <sizeRatio>0.323943661971831</sizeRatio>
       <text>通知</text>
       <top>126</top>
-      <topRatio>0.219130434782609</topRatio>
-      <width>103</width>
-      <widthRatio>0.343333333333333</widthRatio>
+      <topRatio>0.24609375</topRatio>
+      <width>142</width>
+      <widthRatio>0.473333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -908,6 +909,7 @@ sender.style.borderRadius = "24px";
       <height>512</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.55333333333333</sizeRatio>
       <top>0</top>
@@ -7761,6 +7763,35 @@ sender.show = function() {
     this.load();
 }
 
+sender.showAlert = function(value) {
+    var button1 = ee.getControl("panel94");
+    var button2 = ee.getControl("panel352");
+    var c;
+    if (button1.eeChildren.length<=0) {
+        c = createPanel(button1, "redDot1", "", 93, 14, 19, 19);
+        c.style.backgroundColor = "#f1502a";
+        c.style.borderRadius = "9px";
+        addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
+    }
+    if (button2.eeChildren.length<=0) {
+        c = createPanel(button2, "redDot2", "", 20, 5, 19, 19);
+        c.style.backgroundColor = "#f1502a";
+        c.style.borderRadius = "9px";
+        addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
+    }
+    var dot1 = button1.eeChildren[0];
+    var dot2 = button2.eeChildren[0];
+    value = parseInt(value);
+    value = value + "";
+    if (value == "0") {
+        dot1.style.visibility = "hidden";
+        dot2.style.visibility = "hidden";
+        return;
+    }
+    ee.setRect(dot1,null,null,19+6*(value.length-1), null);
+    ee.setRect(dot2,20-6*(value.length-1),null,19+6*(value.length-1), null);
+}
+
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
         ee.removeControl(this.v_items[i]);
@@ -7773,6 +7804,7 @@ sender.load = function() {
     if (this.v_items.length>0) return;
     this.v_pageIndex = 0;
     this.fLoad();
+    this.showAlert(0);
 }
 
 sender.loadMore = function() {
@@ -7858,6 +7890,8 @@ sender.renderItem = function(root) {
     temp = "<div style='display:inline'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
     if (root.v_type == "R") {
         temp += " 回复了您的短文";
+    } else if (root.v_type == "F") {
+        temp += " 转发了您的短文";
     }
     addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
     if (root.v_mode.charAt(2) != "x") {
@@ -7884,6 +7918,7 @@ sender.renderItem = function(root) {
     //content
     c = createPanel(root, root.id+"_panel17", "", 75, cy, w-80, 10);
     root.c_content = c;
+    if (root.v_content.length<=0) root.v_content = "<该用户没有留下文字内容>";
     addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(root.v_content) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
     eb.setDock(c,"disabled","disabled");
     eb.processDock();
@@ -16893,7 +16928,7 @@ sender.onpointermove = function(event) {
       <widthRatio>0.327913279132791</widthRatio>
     </control>
   </controls>
-  <taskSet count="48">
+  <taskSet count="49">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -18132,6 +18167,7 @@ var myUserId = db.getString(sqlResult,"id");
 
 var top = (pageIndex+1)*pageSize;
 sql =
+    "exec clearPromptCount " + myUserId + "; " +
     "SELECT TOP(" + top + ")  dbo.userPrompt.id as promptId, dbo.userPrompt.regDatetime AS promptRegDatetime, dbo.userPrompt.refUserId, " +
     "                dbo.userPrompt.status AS promptStatus, dbo.userPrompt.[type], dbo.userPrompt.[content], dbo.userPrompt.url, dbo.userInfo.status,  " +
     "                dbo.userInfo.regDatetime, dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.password,  " +
@@ -20983,6 +21019,55 @@ if (!eb.isEmpty(setBookMark.onComplete)) {
     setBookMark.onComplete = null;
 }
 </script3>
+    </taskSetItem>
+    <taskSetItem name="getPromptCount">
+      <script1>//onComplete()
+eio.appendString16(g5.token);
+if (eb.isEmpty(getPromptCount.timer)) {
+    getPromptCount.timer = setInterval(function() {
+        getPromptCount();
+    }, 50000);
+}</script1>
+      <script2><![CDATA[var token = eio.readString16();
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "exec getPromptCount " +
+    myUserId;
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+eio.appendString8("T");
+eio.appendString16(db.getString(sqlResult,"c"));
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    return;
+}
+
+g5.p2.p12.showAlert(eio.readString16());</script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
