@@ -2198,14 +2198,10 @@ sender.resize = function (img) {
       <heightRatio>0.0525641025641026</heightRatio>
       <left>373</left>
       <leftRatio>0.621666666666667</leftRatio>
-      <onClick>showChat.userName = showUserPage.userName;
-showChat.chatId = 0;
-if (showChat.userName == g5.userName) {
-    alert("自言自语不好吧...");
-    return;
-}
-
-g5.changeP2(6);
+      <onClick>g5.changeP2(6);
+showChatList.defaultUserId = showUserPage.id;
+showChatList.defaultUserNickName = showUserPage.nickName;
+showChatList.defaultUserName = showUserPage.userName;
 showChatList();</onClick>
       <sizeRatio>0.891304347826087</sizeRatio>
       <top>219</top>
@@ -20078,7 +20074,20 @@ for (var i = 0; i < showChatList.dataset.rowCount; i++) {
         
 }
 eb.processDock();
-
+if (showChatList.defaultUserId!=null) {
+    g5.p3.p3.c_chat.c_chatRoot.start(showChatList.defaultUserId);
+    ee.setText(ee.getControl("panel118"), 
+        "<b>" + showChatList.defaultUserNickName + "</b><br>" +
+        "<font color='#808080' style='font-size:9pt'>@" + showChatList.defaultUserName + "</font>"
+        );
+    showChatList.defaultUserId = null;
+} else if (showChatList.dataset.rowCount>0) {
+    g5.p3.p3.c_chat.c_chatRoot.start(root.eeChildren[0].chatUserId);
+    ee.setText(ee.getControl("panel118"), 
+        "<b>" + root.eeChildren[0].nickName + "</b><br>" +
+        "<font color='#808080' style='font-size:9pt'>@" + root.eeChildren[0].userName + "</font>"
+        );
+}
 ]]></script3>
     </taskSetItem>
     <taskSetItem name="delTwitter">
