@@ -14,7 +14,6 @@ getUserInfo();
 getPromptCount();
 
 g5.changeP3(-1);
-g5.processUrl();   
 //g5.changeP2(0);
 
 //searchUser();
@@ -3149,6 +3148,11 @@ sender.init = function() {
         ee.setVisible(this.button2, true);
     } else {
         ee.setVisible(this.button2, false);
+    } 
+    if (showUserPage.id == g5.myUserInfo.id) {
+        ee.setVisible(this.button2_5, true);
+    } else {
+        ee.setVisible(this.button2_5, false);
     }
     this.arrangeButton(10);
 }
@@ -4922,6 +4926,8 @@ sender.refreshContent = function(root, resize) {
         user = "<span style='background-color:#fcd801;border-radius:3px;font-weight:bold;color:#6e6e6e'> " + user + " </span>";    
     } else if (root.v_isAdmin) {
         user = "<font color='#0061a2'><b>" + user + "</b></font>";
+    } else {
+        user = "<font color='#6f6f6f'><b>" + user + "</b></font>";
     }
     if (root.v_chatStatus == "SYS") {
         ee.setRect(c,null,null,null,10);
@@ -5022,7 +5028,8 @@ sender.refreshContent = function(root, resize) {
         }
     } else if (root.v_chatStatus == "IDL") {
         ee.setRect(c,null,null,null,10);
-        ee.setText(c, "<font color='#6e6e6e' style='font-family:Consolas,Monaco,monospace;text-indent:-1ch;'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
+        ee.setText(c, "<font color='#6e6e6e' style='font-family:Consolas,Monaco,monospace;text-indent:-1ch;'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " +
+            user +
             " " + root.v_msgContent);
         eb.processDock();
         var rect = eb.getDivRect(c.label);
@@ -11892,6 +11899,8 @@ sender.renderMsg = function(root) {
         textColor = "0061a2";    
     } else if (root.v_userInfo.id == showUserPage.id) {
         user = "<span style='background-color:#fcd801;border-radius:3px;font-weight:bold'> " + user + " </span>";    
+    } else {
+        user = "<font color='#6f6f6f'><b>" + user + "</b></font>";
     }
     addText(c, "<font color='#6e6e6e' style='font-family:宋体,Consolas,Monaco,monospace;text-indent:-1ch;'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + user + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, textColor, "normal");
     c.label.style.wordBreak = "break-all";
@@ -17967,6 +17976,8 @@ g5.myUserInfo.loadFromDataset(eio.readDataSet(),0,0);
 
 g5.refreshUserInfo();
 updateHomepage();
+g5.processUrl();   
+
                                
 
 
@@ -22461,6 +22472,10 @@ c.style.borderRadius = "50%";
 ee.setOnClick(c,function(sender,event) {
     showUserPage.userName=sender.parentNode.v_userName;
     showUserPage();
+    if (sender.v_timer!=null) {
+        clearTimeout(sender.v_timer);
+        sender.v_timer = null;
+    }
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 ee.setOnMouseEnter(c, function(sender,e) {
@@ -22469,7 +22484,7 @@ ee.setOnMouseEnter(c, function(sender,e) {
     if (sender.v_timer!=null) clearTimeout(sender.v_timer);
     sender.v_timer = setTimeout(function() {
         ee.getControl("panel280").show(root.v_userId, root.c_photo);
-    }, 200);
+    }, 700);
 });
 ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.webkitFilter="brightness(100%)";
