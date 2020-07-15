@@ -1997,10 +1997,17 @@ sender.resize = function (img) {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel20">
       <backgroundColor>0E5079</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
       <dockX>fill</dockX>
       <height>202</height>
       <heightRatio>0.258974358974359</heightRatio>
       <left>0</left>
+      <onClick>g5.popBlack.a2.show([sender.v_photo], sender.v_photo);</onClick>
+      <onCreate>sender.init = function(photoString) {
+    ee.setImage(this, "url:" + g5.imgUrl + photoString);
+    this.v_photo = photoString;
+}
+</onCreate>
       <sizeRatio>0.336666666666667</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -2212,14 +2219,21 @@ showChatList();</onClick>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel23">
       <backgroundImg>user.png</backgroundImg>
+      <cursor>pointer</cursor>
       <height>135</height>
       <heightRatio>0.173076923076923</heightRatio>
       <left>21</left>
       <leftRatio>0.035</leftRatio>
+      <onClick>g5.popBlack.a2.show([sender.v_photo], sender.v_photo);</onClick>
       <onCreate>sender.style.borderRadius = "50%";
 sender.style.borderWidth = "4px";
 sender.style.borderColor = "#ffffff";
-sender.style.borderStyle = "solid";</onCreate>
+sender.style.borderStyle = "solid";
+sender.init = function(photoString) {
+    ee.setImage(this, "url:" + g5.imgUrl + photoString);
+    this.v_photo = photoString;
+}
+</onCreate>
       <outerBottom>1</outerBottom>
       <outerLeft>1</outerLeft>
       <outerRight>1</outerRight>
@@ -6762,7 +6776,6 @@ sender.addButton = function(root) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->7->私信列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onAniEnd>showChatList();</onAniEnd>
@@ -8527,7 +8540,6 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>722</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p3.p3->私信聊天]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_chat = ee.getControl("layoutyitem12");</onCreate>
       <sizeRatio>2.35179153094463</sizeRatio>
@@ -8830,6 +8842,7 @@ sender.renderMsg = function(root) {
         c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 0, 390-15*2, 40);
         addText(c, "a", "left", "center", "微软雅黑", 12, "FFFFFF", "normal");
     }
+    c.label.style.wordBreak = "break-all";
     c.label.style.whiteSpace = "nowrap";
     ee.setText(c, root.v_msgContent);
     eb.processDock();
@@ -9426,6 +9439,8 @@ sender.setText = function(text) {
     if (text.length > 0) {
         if (text.charAt(text.length-1)=="\n") text+="a";
     }
+    var rect = eb.getDivRect(sender._input);
+    ee.setRect(sender.c_tester, rect.w+300, 0, rect.w+2, sender.v_defaultH);
     ee.setText(sender.c_tester, text);
     var h = eb.getDivRect(sender.c_tester.label).h;
     h = Math.max(sender.v_defaultH, h);
@@ -14612,6 +14627,7 @@ sender.onpointermove = function(event) {
       <height>645</height>
       <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[Root->编辑个人信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 50);
@@ -18905,10 +18921,10 @@ var rootH = eb.getDivRect(ee.getControl("panel16")).h;
 
 
 if (photo != "") {
-    ee.setImage(ee.getControl("panel23"), "url:" + g5.imgUrl + photo);
+    ee.getControl("panel23").init(photo);
 }
 if (titleBg != "") {
-    ee.setImage(ee.getControl("panel20"), "url:" + g5.imgUrl + titleBg);
+    ee.getControl("panel20").init(titleBg);
 }
 ee.setText(ee.getControl("panel18"), nickName);
 ee.setVisible(ee.getControl("panel18"), true);
