@@ -279,7 +279,6 @@ sender.addEventListener("mousewheel",function(event){
       <height>512</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.70666666666667</sizeRatio>
       <top>0</top>
@@ -723,7 +722,7 @@ sender.style.borderRadius = "24px";
 
 ]]></onCreate>
       <sizeRatio>0.319444444444444</sizeRatio>
-      <text>个人资料</text>
+      <text>个人主页</text>
       <top>284</top>
       <topRatio>0.5546875</topRatio>
       <width>144</width>
@@ -2026,7 +2025,8 @@ sender.resize = function (img) {
       <heightRatio>0.203883495145631</heightRatio>
       <left>11</left>
       <leftRatio>0.0189753320683112</leftRatio>
-      <onClick>history.go(-1);</onClick>
+      <onClick>history.go(-1);
+window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <sizeRatio>0.531645569620253</sizeRatio>
       <top>9</top>
       <topRatio>0.0436893203883495</topRatio>
@@ -11790,7 +11790,12 @@ sender.start = function(roomId) {
     this.v_nohis = false;
     ee.getControl("layouty10").init(sender);
     this.clearTimer();
-    if (!showUserPage.privateChatRoomRights) return;
+    if (showUserPage.privateChatRoomRights) {
+        ee.setText(ee.getControl("panel294"), "发送");
+    } else {
+        ee.setText(ee.getControl("panel294"), "申请");
+        return;
+    }
     this.v_tfId = setInterval(function() {
         sender.timeFragment();    
     }, 500);
@@ -13661,6 +13666,7 @@ sender.init(0);
       <height>623</height>
       <heightRatio>0.862880886426593</heightRatio>
       <layerName><![CDATA[p3.p9->主页公告]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel366");
 sender.init = function() {
@@ -20053,7 +20059,7 @@ if (isNew==1) {
 }
 
 sql =
-    "SELECT  " + top + " dbo.chat.id AS chatId, dbo.chat.regDatetime AS chatRegDatetime, dbo.chat.[content], dbo.chat.photo1, " +
+    "SELECT  " + top + " dbo.chat.id AS chatId, CONVERT(VARCHAR(50), dbo.chat.regDatetime, 120) AS chatRegDatetime, dbo.chat.[content], dbo.chat.photo1, " +
     "                DATEDIFF(second, dbo.chat.regDatetime, GETUTCDATE()) AS seconds, dbo.userInfo.id, " +
     "                dbo.userInfo.status, dbo.userInfo.regDatetime, dbo.userInfo.lastAccessTime, dbo.userInfo.userName,  " +
     "                dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo, dbo.userInfo.titleBg,  " +
@@ -20171,7 +20177,7 @@ var myUserId = parseInt(db.getString(sqlResult,"id"));
 
 sql =
     "SELECT TOP (30) derivedtbl_2.chatUserId, derivedtbl_2.maxId, " +
-    "      dbo.chat.regDatetime, dbo.chat.[content], dbo.chat.photo1, dbo.userInfo.nickName,  " +
+    "      CONVERT(VARCHAR(50), dbo.chat.regDatetime, 120) as regDatetime, dbo.chat.[content], dbo.chat.photo1, dbo.userInfo.nickName,  " +
     "      dbo.userInfo.userName, dbo.userInfo.photo " +
     "FROM (SELECT chatUserId, MAX(id) AS maxId " +
     "        FROM (SELECT CASE WHEN sendUserId = " + myUserId + " THEN recvUserId WHEN recvUserId = " + myUserId + " " +
