@@ -191,6 +191,7 @@ eb.addEvent(sender, "scroll", function() {
 }, false);
 
 sender.onWheel = function(wheelDelta) {
+    g5.writeLog(wheelDelta);
     var viewPortH = $g("divRoot").offsetHeight;
     var p2h = eb.getDivRect(g5.p2).h;
     if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
@@ -229,14 +230,45 @@ sender.onWheel = function(wheelDelta) {
     
     var amount = this.onWheel.count * this.onWheel.count * 15 + 20; 
     amount = Math.min(amount, 300);
+    if (Math.abs(wheelDelta)<50) {
+        amount = Math.abs(wheelDelta);
+    }
     
-    if (wheelDelta<0) {
-        this.scrollTop += amount;
-    } else {
-        this.scrollTop -= amount;
+    if (wheelDelta>0) {
+        amount = -amount;
+    }
+    this.scrollTop += amount;
+    
+    
+    if (Math.abs(wheelDelta)>50) {
+        this.startScrollAni(amount);
     }
 }
-]]></onCreate>
+
+sender.scrollTimerHandle = null;
+sender.startScrollAni = function(value) {
+    if (this.scrollTimerHandle!=null) {
+        clearTimeout(this.scrollTimerHandle);
+        this.scrollTimerHandle = null;
+    }
+    this.scrollStart = this.scrollTop;
+    this.scrollEnd = this.scrollTop + value;
+    this.scrollStartTime = new Date();
+    this.scrollTimerHandle = setTimeout(function() {
+        sender.scrollAniProcess();        
+    }, 1);
+}
+
+sender.scrollAniProcess = function() {
+    var t = new Date();
+    t = t.getTime() - sender.scrollStartTime.getTime();
+    var amt = 300;
+    if (t>=amt) return;
+    sender.scrollTop = parseInt(eb.getInterpolation("slowDown", t/amt) * (sender.scrollEnd - sender.scrollStart) + sender.scrollStart);
+    this.scrollTimerHandle = setTimeout(function() {                                                                                   
+        sender.scrollAniProcess();        
+    }, 1);
+}]]></onCreate>
       <scrollPosX>5</scrollPosX>
       <scrollPosY>-1</scrollPosY>
       <sizeRatio>0.671729957805907</sizeRatio>
@@ -281,7 +313,7 @@ sender.addEventListener("mousewheel",function(event){
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <sizeRatio>1.70666666666667</sizeRatio>
+      <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
       <width>300</width>
       <widthRatio>1</widthRatio>
@@ -297,7 +329,7 @@ sender.addEventListener("mousewheel",function(event){
       <height>571</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>1.70666666666667</sizeRatio>
+      <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
       <width>300</width>
       <widthRatio>1</widthRatio>
@@ -330,26 +362,26 @@ ee.showAni(ee.getControl("panel42"), 0);</onClick>
       <backgroundImg>fist.jpg</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
       <height>48</height>
-      <heightRatio>0.09375</heightRatio>
+      <heightRatio>0.0840630472854641</heightRatio>
       <left>40</left>
       <leftRatio>0.133333333333333</leftRatio>
       <sizeRatio>0.738461538461539</sizeRatio>
       <top>7</top>
-      <topRatio>0.013671875</topRatio>
+      <topRatio>0.0122591943957968</topRatio>
       <width>65</width>
       <widthRatio>0.216666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel35">
       <bgColorEnabled>true</bgColorEnabled>
       <height>375</height>
-      <heightRatio>0.732421875</heightRatio>
+      <heightRatio>0.656742556917688</heightRatio>
       <layerName><![CDATA[P1->1x>原题头，暂时保留]]></layerName>
       <layerVisible>false</layerVisible>
       <left>19</left>
       <leftRatio>0.0633333333333333</leftRatio>
       <sizeRatio>1.40977443609023</sizeRatio>
       <top>196</top>
-      <topRatio>0.3828125</topRatio>
+      <topRatio>0.343257443082312</topRatio>
       <width>266</width>
       <widthRatio>0.886666666666667</widthRatio>
     </control>
@@ -909,7 +941,7 @@ sender.style.borderRadius = "24px";
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
       <left>0</left>
-      <sizeRatio>1.70666666666667</sizeRatio>
+      <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
       <width>300</width>
       <widthRatio>1</widthRatio>
@@ -925,7 +957,7 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>1.70666666666667</sizeRatio>
+      <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
       <width>300</width>
       <widthRatio>1</widthRatio>
@@ -13710,6 +13742,7 @@ sender.style.borderRight = "";</onCreate>
       <height>33</height>
       <heightRatio>0.622641509433962</heightRatio>
       <left>10</left>
+      <leftRatio>0.0177304964539007</leftRatio>
       <onCreate>sender.v_style = [
     new g5.BStyle("","#e8f5fe","#d2ecfc","","","","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
 ];
@@ -13735,21 +13768,21 @@ sender.init(0);</onCreate>
       <outerLeft>10</outerLeft>
       <outerRight>10</outerRight>
       <outerTop>10</outerTop>
-      <sizeRatio>0.0595667870036101</sizeRatio>
+      <sizeRatio>0.0606617647058824</sizeRatio>
       <top>10</top>
       <topRatio>0.188679245283019</topRatio>
       <width>544</width>
-      <widthRatio>0.982269503546099</widthRatio>
+      <widthRatio>0.964539007092199</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel24/panel34/layoutx10/layoutxitem20">
       <backgroundColor>f0f0f0</backgroundColor>
       <height>33</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>0.168367346938776</sizeRatio>
+      <sizeRatio>0.0652173913043478</sizeRatio>
       <top>0</top>
       <width>506</width>
-      <widthRatio>0.837606837606838</widthRatio>
+      <widthRatio>0.930147058823529</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel134/panel24/panel34/layoutx10/layoutxitem20/edit14">
       <backgroundSkin>empty</backgroundSkin>
@@ -13786,11 +13819,11 @@ sender.init(0);</onCreate>
       <height>33</height>
       <heightRatio>1</heightRatio>
       <left>506</left>
-      <leftRatio>0.837606837606838</leftRatio>
+      <leftRatio>0.930147058823529</leftRatio>
       <sizeRatio>0.868421052631579</sizeRatio>
       <top>0</top>
       <width>38</width>
-      <widthRatio>0.162393162393162</widthRatio>
+      <widthRatio>0.0698529411764706</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel34/layoutx10/layoutxitem21/panel278">
       <dockX>fill</dockX>
@@ -17929,7 +17962,7 @@ eio.appendString16(newFileName);
 }
 
 uploadImage.controlName = eio.readString16();
-uploadImage.newFileName = eio.readString16();
+uploadImage.newFileName = eio.readString16();  
 
 if (!eb.isEmpty(uploadImage.onComplete)) {
     uploadImage.onComplete();
