@@ -1,5 +1,5 @@
 <page>
-  <controls count="479">
+  <controls count="484">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -191,7 +191,12 @@ eb.addEvent(sender, "scroll", function() {
 }, false);
 
 sender.onWheel = function(wheelDelta) {
-    g5.writeLog(wheelDelta);
+    var d1 = parseFloat(ee.getEditText(ee.getControl("edit15")));
+    var d2 = parseFloat(ee.getEditText(ee.getControl("edit17")));
+    var d3 = parseFloat(ee.getEditText(ee.getControl("edit16")));
+    
+    var mouseType = this.getMouseType(wheelDelta);
+    
     var viewPortH = $g("divRoot").offsetHeight;
     var p2h = eb.getDivRect(g5.p2).h;
     if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 800) {
@@ -228,21 +233,73 @@ sender.onWheel = function(wheelDelta) {
     }
     this.onWheel.lastTime = currentTime;
     
-    var amount = this.onWheel.count * this.onWheel.count * 15 + 20; 
-    amount = Math.min(amount, 300);
-    if (Math.abs(wheelDelta)<50) {
-        amount = Math.abs(wheelDelta);
+    var amount;
+    if (mouseType == "macWheel") {
+        amount = - wheelDelta * d2;
+    } else if (mouseType == "macTouch") {
+        amount = - wheelDelta * d1;
+    } else {
+        amount = this.onWheel.count * this.onWheel.count * d3 + d3; 
+        amount = Math.min(amount, 500);
+        if (wheelDelta>0) {
+            amount = -amount;
+        }
     }
-    
-    if (wheelDelta>0) {
-        amount = -amount;
-    }
+    amount = parseInt(amount);
     this.scrollTop += amount;
     
-    
-    if (Math.abs(wheelDelta)>50) {
+    if ((mouseType == "windows") || (mouseType == "macWheel")) {
         this.startScrollAni(amount);
     }
+}
+
+sender.wheelData = null;
+sender.wheelDataLen = 50;
+sender.wheelPos = 0;
+sender.getMouseType = function(wheelDelta) {
+    var log = "";
+    log+= "delta=" + wheelDelta + "<br/>";
+    
+    var len = this.wheelDataLen, i;
+    if (this.wheelData == null) {
+        this.wheelData = new Array();
+        for (i = 0; i<len; i++) this.wheelData.push(0);
+    }
+    this.wheelData[this.wheelPos] = parseInt(wheelDelta);
+    this.wheelPos = (this.wheelPos + 1) % len;
+    
+    var min = 0xFFFF;
+    for (i = 0; i<len; i++) {
+        if (this.wheelData[i] == 0) continue;
+        if (Math.abs(this.wheelData[i]) < min) min = Math.abs(this.wheelData[i]);
+    }
+    log+= "min=" + min + "<br/>";
+
+    var result = "unknow";
+    if (g5.getOperationSys()!="Mac") {
+        result = "windows";
+    } else if (min > 10) {
+        result = "macWheel";
+    } else {
+        result = "macTouch";
+    }
+    log+= "mouseType: " + result;
+    
+    g5.writeLog(log, true);
+ 
+    return result;    
+}
+
+sender.gcd = function (a, b) {
+    if (a === b) {
+        return b;
+    }
+    if (a > b) {
+        a -= b;
+    } else {
+        b -= a;
+    }
+    return arguments.callee(a, b)
 }
 
 sender.scrollTimerHandle = null;
@@ -940,6 +997,7 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -11027,7 +11085,7 @@ sender.renderJoinRecord = function(root) {
       <leftRatio>0.0397111913357401</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
       <sizeRatio>0.23841059602649</sizeRatio>
-      <text>私有聊天室</text>
+      <text>私人聊天室</text>
       <top>0</top>
       <width>151</width>
       <widthRatio>0.545126353790614</widthRatio>
@@ -14543,17 +14601,44 @@ sender.style.borderRight = "";</onCreate>
       <height>698</height>
       <heightRatio>0.876884422110553</heightRatio>
       <layerName>LOG</layerName>
-      <layerVisible>false</layerVisible>
       <left>11</left>
       <leftRatio>0.00928270042194093</leftRatio>
       <onCreate>sender.style.position="fixed";</onCreate>
       <sizeRatio>3.6544502617801</sizeRatio>
-      <text>====Log====</text>
       <top>13</top>
       <topRatio>0.0163316582914573</topRatio>
-      <vAlign>top</vAlign>
+      <vAlign>bottom</vAlign>
       <width>191</width>
       <widthRatio>0.161181434599156</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel288/panel37">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <hAlign>left</hAlign>
+      <height>111</height>
+      <heightRatio>0.159025787965616</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0261780104712042</leftRatio>
+      <onClick>sender.setText("时间；浪费时间；理发师阿道夫；路上看见；浪费空间撒旦飞洒；了烦死拉进来是否；拉萨；附件；老师");</onClick>
+      <onCreate>sender.setText = function(text) {
+    ee.setRect(this,null,null,null,1);
+    ee.setText(this, text);
+    var h = eb.getDivRect(this.label).h;
+    ee.setRect(this,null,null,null,h);
+}
+</onCreate>
+      <outerBottom>5</outerBottom>
+      <outerLeft>5</outerLeft>
+      <outerRight>5</outerRight>
+      <sizeRatio>0.613259668508287</sizeRatio>
+      <text>======Log======</text>
+      <top>582</top>
+      <topRatio>0.833810888252149</topRatio>
+      <vAlign>top</vAlign>
+      <width>181</width>
+      <widthRatio>0.947643979057592</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel288/panel285">
       <backgroundColor>9E9E8C</backgroundColor>
@@ -14608,6 +14693,62 @@ sender.onpointermove = function(event) {
       <top>0</top>
       <width>92</width>
       <widthRatio>0.481675392670157</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel134/panel288/edit15">
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>32</height>
+      <heightRatio>0.0458452722063037</heightRatio>
+      <inputText>0.3</inputText>
+      <left>112</left>
+      <leftRatio>0.586387434554974</leftRatio>
+      <sizeRatio>0.470588235294118</sizeRatio>
+      <top>111</top>
+      <topRatio>0.159025787965616</topRatio>
+      <width>68</width>
+      <widthRatio>0.356020942408377</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel134/panel288/edit16">
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>32</height>
+      <heightRatio>0.0458452722063037</heightRatio>
+      <inputText>30</inputText>
+      <left>112</left>
+      <leftRatio>0.586387434554974</leftRatio>
+      <sizeRatio>0.470588235294118</sizeRatio>
+      <top>179</top>
+      <topRatio>0.256446991404011</topRatio>
+      <width>68</width>
+      <widthRatio>0.356020942408377</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel288/panel113">
+      <backgroundSkin>button3a</backgroundSkin>
+      <dockX>fill</dockX>
+      <hAlign>left</hAlign>
+      <height>70</height>
+      <heightRatio>0.100286532951289</heightRatio>
+      <left>7</left>
+      <leftRatio>0.0366492146596859</leftRatio>
+      <outerLeft>7</outerLeft>
+      <outerRight>4</outerRight>
+      <sizeRatio>0.388888888888889</sizeRatio>
+      <text>status</text>
+      <top>28</top>
+      <topRatio>0.0401146131805158</topRatio>
+      <width>180</width>
+      <widthRatio>0.942408376963351</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel134/panel288/edit17">
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>32</height>
+      <heightRatio>0.0458452722063037</heightRatio>
+      <inputText>0.5</inputText>
+      <left>112</left>
+      <leftRatio>0.586387434554974</leftRatio>
+      <sizeRatio>0.470588235294118</sizeRatio>
+      <top>145</top>
+      <topRatio>0.207736389684814</topRatio>
+      <width>68</width>
+      <widthRatio>0.356020942408377</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -17929,6 +18070,16 @@ eio.appendString16(uploadImage.controlName);
 eio.appendString32(uploadImage.data);</script1>
       <script2><![CDATA[var controlName = eio.readString16();
 
+var getFileName = function(sn, sep) {
+    sn = parseInt(sn);
+    var f1 = (sn &amp; 0xFF000000) >> 24;
+    var f2 = (sn &amp; 0x00fff000) >> 12;
+    f1 = f1 ^ 0x59AE;
+    f2 = f2 ^ 0xA93;
+    sn = ((sn >> 7) | ((sn &amp; 0x7f)<<24)) ^ 0x5BC3A96A;
+    return "usr" + f1 + sep + f2 + sep + "p" + sn + ".jpg";
+}
+
 //onUploadStart(): newFilePathName,newFileName
 var newFilePathName, newFileName;
 if (controlName == "ee_panel299") {
@@ -17940,8 +18091,8 @@ if (controlName == "ee_panel299") {
     }
     db.read(sqlResult);
     var sn = db.getInt32(sqlResult, "Sn");
-    newFileName = "img" + sn + ".jpg";
-    newFilePathName = "c:\\www\\incoming\\"+ newFileName;
+    newFileName = getFileName(sn, "/");
+    newFilePathName = "c:\\www\\incoming\\"+ getFileName(sn, "\\");
 } 
 
 //implementation
@@ -22102,7 +22253,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="71">
+  <g5Items count="72">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -24271,10 +24422,18 @@ return result;</functionCode>
     </item>
     <item name="writeLog" type="20">
       <varValue />
-      <functionParam>text</functionParam>
-      <functionCode><![CDATA[var c = ee.getControl("panel288");
-ee.setVisible(c, true);
-ee.setText(c, ee.getText(c) + "<br/>" + text);]]></functionCode>
+      <functionParam>text, status</functionParam>
+      <functionCode><![CDATA[if (eb.isEmpty(status)) status = false;
+ee.setVisible(ee.getControl("panel288"), true);
+if (status) {
+    ee.setText(ee.getControl("panel113"),text);
+    return;
+}
+var c = ee.getControl("panel37");
+c.setText(ee.getText(c) + "<br/>" + text);
+eb.processDock();
+
+]]></functionCode>
     </item>
     <item name="chatPrvRequest" type="20">
       <varValue />
@@ -24376,6 +24535,26 @@ if (document.execCommand("copy")) {
 }
 
 </functionCode>
+    </item>
+    <item name="getOperationSys" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode><![CDATA[var OS = '';
+var OSArray = {};
+var UserAgent = navigator.userAgent.toLowerCase();
+OSArray.Windows = (navigator.platform == 'Win32') || (navigator.platform == 'Windows');
+OSArray.Mac = (navigator.platform == 'Mac68K') || (navigator.platform == 'MacPPC')
+  || (navigator.platform == 'Macintosh') || (navigator.platform == 'MacIntel');
+OSArray.iphone = UserAgent.indexOf('iPhone') > -1;
+OSArray.ipod = UserAgent.indexOf('iPod') > -1;
+OSArray.ipad = UserAgent.indexOf('iPad') > -1;
+OSArray.Android = UserAgent.indexOf('Android') > -1;
+for (var i in OSArray) {
+  if (OSArray[i]) {
+    OS = i;
+  }
+}
+return OS;]]></functionCode>
     </item>
   </g5Items>
 </page>
