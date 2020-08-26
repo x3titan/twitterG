@@ -1,5 +1,5 @@
 <page>
-  <controls count="23">
+  <controls count="26">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -313,8 +313,8 @@ sender.init(0);
       <hAlign>left</hAlign>
       <height>376</height>
       <heightRatio>0.472361809045226</heightRatio>
-      <left>866</left>
-      <leftRatio>0.761653474054529</leftRatio>
+      <left>865</left>
+      <leftRatio>0.760773966578716</leftRatio>
       <onClick>sender.setText("时间；浪费时间；理发师阿道夫；路上看见；浪费空间撒旦飞洒；了烦死拉进来是否；拉萨；附件；老师");</onClick>
       <onCreate>sender.setText = function(text) {
     ee.setRect(this,null,null,null,1);
@@ -868,6 +868,93 @@ sender._input.addEventListener("keydown", function(event) {
       <topRatio>0.0263819095477387</topRatio>
       <width>249</width>
       <widthRatio>0.218997361477573</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel13">
+      <height>36</height>
+      <heightRatio>0.0452261306532663</heightRatio>
+      <left>38</left>
+      <leftRatio>0.0334212840809147</leftRatio>
+      <note>老文件上传备份</note>
+      <sizeRatio>1</sizeRatio>
+      <top>471</top>
+      <topRatio>0.591708542713568</topRatio>
+      <width>36</width>
+      <widthRatio>0.0316622691292876</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel13/panel14">
+      <height>36</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M19.75 2H4.25C3.01 2 2 3.01 2 4.25v15.5C2 20.99 3.01 22 4.25 22h15.5c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2zM4.25 3.5h15.5c.413 0 .75.337.75.75v9.676l-3.858-3.858c-.14-.14-.33-.22-.53-.22h-.003c-.2 0-.393.08-.532.224l-4.317 4.384-1.813-1.806c-.14-.14-.33-.22-.53-.22-.193-.03-.395.08-.535.227L3.5 17.642V4.25c0-.413.337-.75.75-.75zm-.744 16.28l5.418-5.534 6.282 6.254H4.25c-.402 0-.727-.322-.744-.72zm16.244.72h-2.42l-5.007-4.987 3.792-3.85 4.385 4.384v3.703c0 .413-.337.75-.75.75z\"></path><circle cx=\"8.868\" cy=\"8.309\" r=\"1.542\"></circle></g></svg>";
+sender.style.borderRadius = "50%";
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>图片</text>
+      <top>0</top>
+      <width>36</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="FileUpload" pathname="/divRoot/panel13/fileupload4">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <height>36</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate>eb.setAlpha(sender, 1);
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.parentNode.eeChildren[0].style.backgroundColor = "#dfeffa";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.parentNode.eeChildren[0].style.backgroundColor = "";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+</onCreate>
+      <onUploadCompleteC><![CDATA[if (ee.getControl("panel7").v_photos.length>=4) return;
+ee.getControl("panel7").v_photos.push(eio.readString16());
+g5.refreshPhoto(ee.getControl("panel7"));
+if (ee.getControl("panel7").style.visibility=="hidden") {
+    ee.setVisible(ee.getControl("panel7"), true);
+    ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+462-140);
+    g5.homepageMoveY(0,462-140);
+    eb.processDock();
+}
+ee.getControl("panel1").check();
+
+
+
+
+
+
+]]></onUploadCompleteC>
+      <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
+var filename = newFileName.substring(pos+1);  
+eio.appendString16(filename);</onUploadCompleteS>
+      <onUploadStartC><![CDATA[fileExt = fileExt.toLowerCase();
+if ((fileExt != ".bmp") &amp;&amp;
+    (fileExt != ".jpg") &amp;&amp;
+    (fileExt != ".jpeg") &amp;&amp;
+    (fileExt != ".png") &amp;&amp;
+    (fileExt != ".tif") &amp;&amp;
+    (fileExt != ".tiff")) return;
+    
+if (ee.getControl("panel7").v_photos.length>=4) {
+    alert("对不起，您最多只能上传4张图片。");
+    return;
+} ]]></onUploadStartC>
+      <onUploadStartS>var sql,sqlResult;  
+sql = "select next value for dbo.SEQImageSn as Sn";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
+      <sizeRatio>1</sizeRatio>
+      <top>0</top>
+      <width>36</width>
+      <widthRatio>1</widthRatio>
     </control>
   </controls>
   <taskSet count="1">
