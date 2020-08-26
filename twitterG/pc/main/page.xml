@@ -1,5 +1,5 @@
 <page>
-  <controls count="482">
+  <controls count="480">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -375,6 +375,7 @@ sender.addEventListener("mousewheel",function(event){
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -14831,7 +14832,6 @@ sender.onpointermove = function(event) {
       <height>645</height>
       <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[Root->编辑个人信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 50);
@@ -14909,7 +14909,6 @@ ee.setVisible(ee.getControl("panel233"), false);]]></onCreate>
     <control type="Panel" pathname="/divRoot/panel54/panel58">
       <backgroundColor>0E5079</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <cursor>pointer</cursor>
       <dockX>fill</dockX>
       <height>171</height>
       <heightRatio>0.265116279069767</heightRatio>
@@ -14923,77 +14922,112 @@ ee.setVisible(ee.getControl("panel233"), false);]]></onCreate>
       <width>584</width>
       <widthRatio>0.973333333333333</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel58/panel61">
+    <control type="Panel" pathname="/divRoot/panel54/panel58/panel5">
+      <backgroundColor>008080</backgroundColor>
       <backgroundImg>upload.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
       <height>51</height>
       <heightRatio>0.298245614035088</heightRatio>
-      <left>237</left>
-      <leftRatio>0.405821917808219</leftRatio>
-      <sizeRatio>0.525773195876289</sizeRatio>
-      <top>56</top>
-      <topRatio>0.327485380116959</topRatio>
-      <width>97</width>
-      <widthRatio>0.166095890410959</widthRatio>
-    </control>
-    <control type="FileUpload" pathname="/divRoot/panel54/panel58/panel61/fileupload3">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>51</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onCreate>eb.setAlpha(sender, 1);</onCreate>
-      <onUploadCompleteC>if (eio.readString8() == "F") {
-    return;
+      <left>263</left>
+      <leftRatio>0.450342465753425</leftRatio>
+      <onClick>sender.c_file.click();</onClick>
+      <onCreate><![CDATA[sender.maxWidth = 1920;
+sender.maxHeight = 1080;
+sender.compressRatio = 0.92;
+
+sender.style.borderRadius = "50%";
+
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "rgba(0,0,0,0.3)";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+
+
+//implementation
+var c = document.createElement("input");
+c.setAttribute("type", "file");
+c.setAttribute("accept", "image/*");
+c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
+sender.insertBefore(c, sender.childNodes[0]);
+sender.c_file = c;
+
+c.onchange = function() {
+    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
+        var file = sender.c_file.files[0];
+        var pos = file.name.lastIndexOf(".");
+        var fileExt = pos<0 ? "" : file.name.substring(pos);
+        
+        //onUserSelectedFile(file.name,fileExt)
+        fileExt = fileExt.toLowerCase();
+        if ((fileExt != ".bmp") &amp;&amp;
+            (fileExt != ".jpg") &amp;&amp;
+            (fileExt != ".jpeg") &amp;&amp;
+            (fileExt != ".png") &amp;&amp;
+            (fileExt != ".tif") &amp;&amp;
+            (fileExt != ".tiff")) return;
+        
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var blob = new Blob([event.target.result]); 
+            window.URL = window.URL || window.webkitURL;
+            var blobURL = window.URL.createObjectURL(blob); 
+            var image = new Image();
+            image.src = blobURL;
+            image.onload = function() {
+                sender.v_data = sender.resize(image);
+                if (sender.v_data) {
+                    //upload immediately
+                    uploadImage.data = sender.v_data;
+                    uploadImage.controlName = sender.id;
+                    uploadImage.onComplete = function(newFileName) {
+                        getUserInfo();
+                        return;
+                    }
+                    uploadImage();
+                    sender.v_data = "";
+                }
+            }
+        }
+        reader.readAsArrayBuffer(file);
+    } else {
+        alert("此浏览器不完全支持压缩上传图片");
+    }
 }
-getUserInfo();
 
-
-
-
-
-</onUploadCompleteC>
-      <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
-var filename = newFileName.substring(pos+1);  
-var userName = session.get("userName");
-
-var sql,sqlResult;  
-sql = "update userInfo set titleBg = '" + db.encode(filename) + "' where userName = '" + db.encode(userName) + "'";
-if (!db.executeNoneQuery("DB", sql)) {
-    eio.appendString8("F");
-} else {
-    eio.appendString8("T");
-}</onUploadCompleteS>
-      <onUploadStartC>fileExt = fileExt.toLowerCase();
-if ((fileExt != ".bmp") &amp;&amp;
-    (fileExt != ".jpg") &amp;&amp;
-    (fileExt != ".jpeg") &amp;&amp;
-    (fileExt != ".png") &amp;&amp;
-    (fileExt != ".tif") &amp;&amp;
-    (fileExt != ".tiff")) return;
-    </onUploadStartC>
-      <onUploadStartS>var sql,sqlResult;  
-sql = "select next value for dbo.SEQImageSn as Sn";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    return;
+sender.resize = function (img) {
+    var canvas = document.createElement("canvas");
+    var width = img.width;
+    var height = img.height;
+    if(width > height) {
+        if(width > sender.maxWidth) {
+            height = Math.round(height *= sender.maxWidth / width);
+            width = sender.maxWidth
+        }
+    }else{
+        if(height > sender.maxHeight) {
+            width = Math.round(width *= sender.maxHeight / height);
+            height = sender.maxHeight
+        }
+    }
+    canvas.width = width;
+    canvas.height = height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
 }
-db.read(sqlResult);
-var sn = db.getInt32(sqlResult, "Sn");
-newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
-      <sizeRatio>0.525773195876289</sizeRatio>
-      <top>0</top>
-      <width>97</width>
-      <widthRatio>1</widthRatio>
+]]></onCreate>
+      <sizeRatio>0.894736842105263</sizeRatio>
+      <top>60</top>
+      <topRatio>0.444444444444444</topRatio>
+      <width>57</width>
+      <widthRatio>0.0976027397260274</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel55">
       <backgroundImg>user.png</backgroundImg>
-      <cursor>pointer</cursor>
       <height>119</height>
       <heightRatio>0.184496124031008</heightRatio>
       <left>29</left>
@@ -15009,66 +15043,111 @@ sender.style.borderStyle = "solid";</onCreate>
       <width>119</width>
       <widthRatio>0.198333333333333</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel55/panel62">
+    <control type="Panel" pathname="/divRoot/panel54/panel55/panel4">
+      <backgroundColor>008080</backgroundColor>
       <backgroundImg>upload.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <height>44</height>
-      <heightRatio>0.369747899159664</heightRatio>
-      <left>37</left>
-      <leftRatio>0.310924369747899</leftRatio>
-      <sizeRatio>0.956521739130435</sizeRatio>
-      <top>37</top>
-      <topRatio>0.310924369747899</topRatio>
-      <width>46</width>
-      <widthRatio>0.38655462184874</widthRatio>
-    </control>
-    <control type="FileUpload" pathname="/divRoot/panel54/panel55/fileupload2">
-      <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
-      <height>119</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onCreate>eb.setAlpha(sender, 1);</onCreate>
-      <onUploadCompleteC>if (eio.readString8() == "F") {
-    return;
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>51</height>
+      <heightRatio>0.428571428571429</heightRatio>
+      <left>28</left>
+      <leftRatio>0.218487394957983</leftRatio>
+      <onClick>sender.c_file.click();</onClick>
+      <onCreate><![CDATA[sender.maxWidth = 1920;
+sender.maxHeight = 1080;
+sender.compressRatio = 0.92;
+
+sender.style.borderRadius = "50%";
+
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "rgba(0,0,0,0.3)";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+
+
+//implementation
+var c = document.createElement("input");
+c.setAttribute("type", "file");
+c.setAttribute("accept", "image/*");
+c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
+sender.insertBefore(c, sender.childNodes[0]);
+sender.c_file = c;
+
+c.onchange = function() {
+    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
+        var file = sender.c_file.files[0];
+        var pos = file.name.lastIndexOf(".");
+        var fileExt = pos<0 ? "" : file.name.substring(pos);
+        
+        //onUserSelectedFile(file.name,fileExt)
+        fileExt = fileExt.toLowerCase();
+        if ((fileExt != ".bmp") &amp;&amp;
+            (fileExt != ".jpg") &amp;&amp;
+            (fileExt != ".jpeg") &amp;&amp;
+            (fileExt != ".png") &amp;&amp;
+            (fileExt != ".tif") &amp;&amp;
+            (fileExt != ".tiff")) return;
+        
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var blob = new Blob([event.target.result]); 
+            window.URL = window.URL || window.webkitURL;
+            var blobURL = window.URL.createObjectURL(blob); 
+            var image = new Image();
+            image.src = blobURL;
+            image.onload = function() {
+                sender.v_data = sender.resize(image);
+                if (sender.v_data) {
+                    //upload immediately
+                    uploadImage.data = sender.v_data;
+                    uploadImage.controlName = sender.id;
+                    uploadImage.onComplete = function(newFileName) {
+                        getUserInfo();
+                        return;
+                    }
+                    uploadImage();
+                    sender.v_data = "";
+                }
+            }
+        }
+        reader.readAsArrayBuffer(file);
+    } else {
+        alert("此浏览器不完全支持压缩上传图片");
+    }
 }
-getUserInfo();
 
-
-
-</onUploadCompleteC>
-      <onUploadCompleteS>var pos=newFileName.lastIndexOf("\\");
-var filename = newFileName.substring(pos+1);  
-var userName = session.get("userName");
-
-var sql,sqlResult;  
-sql = "update userInfo set photo = '" + db.encode(filename) + "' where userName = '" + db.encode(userName) + "'";
-if (!db.executeNoneQuery("DB", sql)) {
-    eio.appendString8("F");
-} else {
-    eio.appendString8("T");
-}</onUploadCompleteS>
-      <onUploadStartC>fileExt = fileExt.toLowerCase();
-if ((fileExt != ".bmp") &amp;&amp;
-    (fileExt != ".jpg") &amp;&amp;
-    (fileExt != ".jpeg") &amp;&amp;
-    (fileExt != ".png") &amp;&amp;
-    (fileExt != ".tif") &amp;&amp;
-    (fileExt != ".tiff")) return;
-    </onUploadStartC>
-      <onUploadStartS>var sql,sqlResult;  
-sql = "select next value for dbo.SEQImageSn as Sn";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    return;
+sender.resize = function (img) {
+    var canvas = document.createElement("canvas");
+    var width = img.width;
+    var height = img.height;
+    if(width > height) {
+        if(width > sender.maxWidth) {
+            height = Math.round(height *= sender.maxWidth / width);
+            width = sender.maxWidth
+        }
+    }else{
+        if(height > sender.maxHeight) {
+            width = Math.round(width *= sender.maxHeight / height);
+            height = sender.maxHeight
+        }
+    }
+    canvas.width = width;
+    canvas.height = height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
 }
-db.read(sqlResult);
-var sn = db.getInt32(sqlResult, "Sn");
-newFileName = "c:\\www\\incoming\\img" + sn + fileExt;</onUploadStartS>
-      <sizeRatio>1</sizeRatio>
-      <top>0</top>
-      <width>119</width>
-      <widthRatio>1</widthRatio>
+]]></onCreate>
+      <outerBottom>6</outerBottom>
+      <outerRight>6</outerRight>
+      <sizeRatio>0.894736842105263</sizeRatio>
+      <top>31</top>
+      <topRatio>0.260504201680672</topRatio>
+      <width>57</width>
+      <widthRatio>0.478991596638655</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel54/panel140">
       <backgroundImgMode>fill</backgroundImgMode>
@@ -18133,10 +18212,30 @@ sender.onpointermove = function(event) {
   <taskSet count="51">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
-//newFileName
+//newFileName 
+eio.appendString16(g5.token);
 eio.appendString16(uploadImage.controlName);
 eio.appendString32(uploadImage.data);</script1>
-      <script2><![CDATA[var controlName = eio.readString16();
+      <script2><![CDATA[var token = eio.readString16();
+var controlName = eio.readString16();
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName =db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
 
 var getFileName = function(sn, sep) {
     sn = parseInt(sn);
@@ -18150,18 +18249,15 @@ var getFileName = function(sn, sep) {
 
 //onUploadStart(): newFilePathName,newFileName
 var newFilePathName, newFileName;
-if (controlName == "ee_panel299") {
-    var sql,sqlResult;  
-    sql = "select next value for dbo.SEQImageSn as Sn";
-    sqlResult = db.executeQuery("DB", sql);
-    if (sqlResult == null) {
-        return;
-    }
-    db.read(sqlResult);
-    var sn = db.getInt32(sqlResult, "Sn");
-    newFileName = getFileName(sn, "/");
-    newFilePathName = "c:\\www\\incoming\\"+ getFileName(sn, "\\");
-} 
+sql = "select next value for dbo.SEQImageSn as Sn";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = getFileName(sn, "/");
+newFilePathName = "c:\\www\\incoming\\"+ getFileName(sn, "\\");
 
 //implementation
 var buff = eio.readString32();
@@ -18171,8 +18267,22 @@ pos += "base64,".length;
 buff = buff.substr(pos, buff.length - pos);
 es.saveBase64AsFile(newFilePathName, buff);
 
+if (controlName == "ee_panel299") {
+} else if (controlName == "ee_panel4") {
+    sql = "update userInfo set photo = '" + db.encode(newFileName) + "' where userName = '" + db.encode(myUserName) + "'";
+    if (!db.executeNoneQuery("DB", sql)) {
+        eio.appendString8("F");
+        return;
+    }
+} else if (controlName == "ee_panel5") {
+    sql = "update userInfo set titleBg = '" + db.encode(newFileName) + "' where userName = '" + db.encode(myUserName) + "'";
+    if (!db.executeNoneQuery("DB", sql)) {
+        eio.appendString8("F");
+        return;
+    }
+}
+
 eio.appendString8("T");
-eio.appendString16(controlName)
 eio.appendString16(newFileName);
 
 ]]></script2>
@@ -18180,11 +18290,10 @@ eio.appendString16(newFileName);
     return;
 }
 
-uploadImage.controlName = eio.readString16();
 uploadImage.newFileName = eio.readString16();  
 
 if (!eb.isEmpty(uploadImage.onComplete)) {
-    uploadImage.onComplete();
+    uploadImage.onComplete(uploadImage.newFileName);
     uploadImage.onComplete = null;
 }</script3>
     </taskSetItem>
