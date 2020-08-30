@@ -219,7 +219,6 @@ ee.showAni(ee.getControl("panel21"), 0);
       <height>397</height>
       <heightRatio>0.609831029185868</heightRatio>
       <layerName><![CDATA[p1.a3 -> 主登录]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.975429975429975</sizeRatio>
       <top>226</top>
@@ -261,7 +260,14 @@ sender.style.borderColor = "rgb(29,161,242)";
 sender.style.borderStyle = "solid";
 sender.style.boxSizing="border-box";
 sender.style.backgroundColor = "rgba(29,161,242,0.05)";
-</onCreate>
+
+sender._input.addEventListener("keydown", function(event) {
+    if (event.keyCode==13) {
+        ee.getControl("edit8")._input.focus();
+        event.preventDefault();
+        return false;
+    }
+});</onCreate>
       <sizeRatio>0.121323529411765</sizeRatio>
       <top>49</top>
       <topRatio>0.123425692695214</topRatio>
@@ -303,7 +309,16 @@ sender.style.borderColor = "rgb(29,161,242)";
 sender.style.borderStyle = "solid";
 sender.style.boxSizing="border-box";
 sender.style.backgroundColor = "rgba(29,161,242,0.05)";
-</onCreate>
+
+sender._input.addEventListener("keydown", function(event) {
+    if (event.keyCode==13) {
+        login.username = ee.getEditText(ee.getControl("edit7"));
+        login.password = ee.getEditText(ee.getControl("edit8"));
+        login();
+        event.preventDefault();
+        return false;
+    }
+});</onCreate>
       <sizeRatio>0.121323529411765</sizeRatio>
       <top>116</top>
       <topRatio>0.292191435768262</topRatio>
@@ -576,8 +591,8 @@ sender.init(0);
       <height>397</height>
       <heightRatio>0.609831029185868</heightRatio>
       <layerName><![CDATA[p1.a4 -> 注册第一页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
-      <leftRatio>-0.00491400491400491</leftRatio>
       <sizeRatio>0.975429975429975</sizeRatio>
       <top>234</top>
       <topRatio>0.359447004608295</topRatio>
@@ -661,7 +676,7 @@ sender.style.backgroundColor = "rgba(29,161,242,0.05)";
       <left>0</left>
       <sizeRatio>0.00735294117647059</sizeRatio>
       <top>38</top>
-      <topRatio>0.975</topRatio>
+      <topRatio>0.95</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -953,7 +968,7 @@ sender.style.backgroundColor = "rgba(29,161,242,0.05)";
       <left>0</left>
       <sizeRatio>0.00735294117647059</sizeRatio>
       <top>38</top>
-      <topRatio>0.975</topRatio>
+      <topRatio>0.95</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -1246,7 +1261,7 @@ sender.style.backgroundColor = "rgba(29,161,242,0.05)";
       <left>0</left>
       <sizeRatio>0.00735294117647059</sizeRatio>
       <top>38</top>
-      <topRatio>0.975</topRatio>
+      <topRatio>0.95</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2266,10 +2281,10 @@ ee.showAni(ee.getControl("panel21"), 1);
 sender.a7 = ee.getControl("panel344");
 
 </onCreate>
-      <sizeRatio>0.671729957805907</sizeRatio>
+      <sizeRatio>0.700087950747581</sizeRatio>
       <top>0</top>
       <width>1137</width>
-      <widthRatio>1.04221635883905</widthRatio>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel344">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -2285,6 +2300,7 @@ sender.a7 = ee.getControl("panel344");
       <layerName><![CDATA[  a7->通用提示窗口]]></layerName>
       <layerVisible>false</layerVisible>
       <left>377</left>
+      <leftRatio>0.331574318381706</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -2303,6 +2319,7 @@ sender.a7 = ee.getControl("panel344");
 </onCreate>
       <sizeRatio>0.552356020942408</sizeRatio>
       <top>292</top>
+      <topRatio>0.366834170854271</topRatio>
       <width>382</width>
       <widthRatio>0.335971855760774</widthRatio>
     </control>
@@ -2647,11 +2664,21 @@ if (g5.username.length <= 2) {
 eio.appendString8(g5.username);
 eio.appendString8(g5.password);
 
+
 ]]></script1>
-      <script2>var username = eio.readString8();
+      <script2><![CDATA[var username = eio.readString8();
 var password = eio.readString8();
-var passwordMd5 = es.getMd5(password);
 var sql,sqlResult;  
+
+//var decodeText = function(text) {
+//1    var result = "";
+//    for (var i=0; i<text.length; i++) {
+//        result +=  String.fromCharCode(text.charCodeAt(i) ^ 0x0A);    
+//    }
+//    return result;                   
+//}
+//var passwordMd5 = es.getMd5(decodeText(password));
+var passwordMd5 = es.getMd5(password);
 
 sql = "exec login '" + db.encode(username) + "'," +
     "'" + passwordMd5 + "'";
@@ -2671,7 +2698,7 @@ if (db.getInt32(sqlResult, "errorCode")!=0) {
 eio.appendString8("T");
 eio.appendString8(db.getString(sqlResult, "errorString"));
 es.logCommon("用户输入账户密码登录：" + username);
-</script2>
+]]></script2>
       <script3>var resultCode=eio.readString8(); 
 if (resultCode=="F") {
     alert("登录失败：" + eio.readString8());
