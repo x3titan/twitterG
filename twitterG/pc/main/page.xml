@@ -14036,6 +14036,7 @@ eb.initMouseEvent(sender);
       <height>702</height>
       <heightRatio>0.972299168975069</heightRatio>
       <layerName><![CDATA[p3->11->修改手机号]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniStart>ee.setEditText(ee.getControl("edit8"),"");
 ee.setEditText(ee.getControl("edit9"),"");
@@ -14060,6 +14061,7 @@ sender.init = function() {
 </onCreate>
       <sizeRatio>2.28664495114007</sizeRatio>
       <top>0</top>
+      <topRatio>0.00138504155124654</topRatio>
       <width>307</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -14313,24 +14315,36 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <heightRatio>0.061633281972265</heightRatio>
       <left>209</left>
       <leftRatio>0.680781758957655</leftRatio>
-      <onClick><![CDATA[if (changeNickName.busy) return;
-var p1 = ee.getEditText(ee.getControl("edit19"));
-if (p1.length>50) {
-    g5.alert1("用户名错误", "您输入的用户名过长，用户名的长度不能超过50个英文或者汉字");
-    return;
-}
-if (p1.length<3) {
-    g5.alert1("用户名错误", "您输入的用户名短，用户名的长度不能少于3个英文或者汉字");
-    return;
+      <onClick><![CDATA[if (changeMobile.busy) return;
+var p1 = ee.getEditText(ee.getControl("edit18"));
+if (p1.length<=0) {
+    g5.popBlack.a6.show(
+        "删除手机号",
+        "是否将您的手机号信息删除？",
+        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            changeMobile.mobile = p1;
+            changeMobile.onComplete = function() {
+                g5.alert1("完成", "手机号码修改完成，您的手机号码信息已删除。");
+                g5.changeP3(4);
+                getUserInfo();    
+            }
+            changeMobile();
+        },
+        function() {
+        }
+    );
+    return;    
 }
 
-changeNickName.nickName = p1;
-changeNickName.onComplete = function() {
-    g5.alert1("完成", "用户名修改完成，您的新用户名是：" + p1);
+changeMobile.mobile = p1;
+changeMobile.onComplete = function() {
+    g5.alert1("完成", "手机号码修改完成，您的新手机号是：" + p1);
     g5.changeP3(4);
     getUserInfo();    
 }
-changeNickName();
+changeMobile();
 ]]></onClick>
       <onCreate>sender.bgColorDisabled = "#8ed0f9";
 sender.bgColorEnabled = "#1da1f2";
@@ -14388,8 +14402,8 @@ eb.initMouseEvent(sender);
       <height>702</height>
       <heightRatio>0.972299168975069</heightRatio>
       <layerName><![CDATA[p3->12->修改电子邮件]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
+      <leftRatio>-0.00325732899022801</leftRatio>
       <onAniStart>ee.setEditText(ee.getControl("edit8"),"");
 ee.setEditText(ee.getControl("edit9"),"");
 ee.setEditText(ee.getControl("edit10"),"");
@@ -14406,8 +14420,8 @@ sender.style.borderColor = "rgb(230,236,240)";
 sender.style.borderStyle = "solid";
 
 sender.init = function() {
-    ee.setText(ee.getControl("panel187"), g5.myUserInfo.nickName);
-    ee.setEditText(ee.getControl("edit19"), "");
+    ee.setText(ee.getControl("panel395"), g5.myUserInfo.email);
+    ee.setEditText(ee.getControl("edit20"), "");
 }
 
 </onCreate>
@@ -14543,12 +14557,12 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <heightRatio>0.424242424242424</heightRatio>
       <left>9</left>
       <leftRatio>0.0313588850174216</leftRatio>
-      <sizeRatio>0.115702479338843</sizeRatio>
+      <sizeRatio>0.102564102564103</sizeRatio>
       <text>--</text>
       <top>33</top>
       <topRatio>0.5</topRatio>
-      <width>242</width>
-      <widthRatio>0.843205574912892</widthRatio>
+      <width>273</width>
+      <widthRatio>0.951219512195122</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel396">
       <backgroundColor>F5F8FA</backgroundColor>
@@ -14666,25 +14680,36 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <heightRatio>0.061633281972265</heightRatio>
       <left>209</left>
       <leftRatio>0.680781758957655</leftRatio>
-      <onClick><![CDATA[if (changeNickName.busy) return;
-var p1 = ee.getEditText(ee.getControl("edit19"));
-if (p1.length>50) {
-    g5.alert1("用户名错误", "您输入的用户名过长，用户名的长度不能超过50个英文或者汉字");
-    return;
-}
-if (p1.length<3) {
-    g5.alert1("用户名错误", "您输入的用户名短，用户名的长度不能少于3个英文或者汉字");
-    return;
+      <onClick><![CDATA[if (changeEmail.busy) return;
+var p1 = ee.getEditText(ee.getControl("edit20"));
+if (p1.length<=0) {
+    g5.popBlack.a6.show(
+        "删除电子邮箱",
+        "是否将您的电子邮箱地址删除？",
+        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            changeEmail.email = p1;
+            changeEmail.onComplete = function() {
+                g5.alert1("完成", "电子邮箱地址修改完成，您的电子邮箱地址信息已删除。");
+                g5.changeP3(4);
+                getUserInfo();    
+            }
+            changeMchangeEmailobile();
+        },
+        function() {
+        }
+    );
+    return;    
 }
 
-changeNickName.nickName = p1;
-changeNickName.onComplete = function() {
-    g5.alert1("完成", "用户名修改完成，您的新用户名是：" + p1);
+changeEmail.email = p1;
+changeEmail.onComplete = function() {
+    g5.alert1("完成", "电子邮箱地址修改完成，您的新电子邮箱地址是：" + p1);
     g5.changeP3(4);
     getUserInfo();    
 }
-changeNickName();
-]]></onClick>
+changeEmail();]]></onClick>
       <onCreate>sender.bgColorDisabled = "#8ed0f9";
 sender.bgColorEnabled = "#1da1f2";
 sender.bgColorHot = "#1a91da";
@@ -19284,7 +19309,7 @@ sender.onpointermove = function(event) {
       <widthRatio>0.327913279132791</widthRatio>
     </control>
   </controls>
-  <taskSet count="52">
+  <taskSet count="54">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName 
@@ -19413,7 +19438,7 @@ db.nextResult(sqlResult);
 eio.appendString8("T");
 es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
     ",nickName=" + db.getString(sqlResult, "nickName"));
-eio.appendDataSet(sqlResult,"id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount",0,1);
+eio.appendDataSet(sqlResult,"id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,block1,block2,email",0,1);
 
 sql = "exec createDefaultChatRoom " + myUserId + "; ";
 db.executeNoneQuery("DB", sql);
@@ -22410,6 +22435,144 @@ changeNickName.busy = false;
 
 </script3>
     </taskSetItem>
+    <taskSetItem name="changeMobile">
+      <script1>//mobile,onComplete
+changeMobile.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(changeMobile.mobile);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var mobile = eio.readString16();
+if (mobile.length>0) {
+    if (!/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/.test(mobile)) {
+        eio.appendString8("F");
+        eio.appendString8("您输入的手机号有误");
+        return;
+    }
+}
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName =db.getString(sqlResult,"userName");
+if (userName=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能对本内容进行修改，如需要更多的功能请注册正式用户。");
+    return;
+}
+
+sql = "update userInfo set mobile = '" + db.encode(mobile) + "'" +
+    " where userName = '" + db.encode(userName) + "'";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}    
+
+
+
+
+
+
+
+
+
+
+
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("无法修改手机号码",eio.readString8());
+    changeMobile.busy = false;
+    return;
+}
+changeMobile.onComplete();
+changeMobile.busy = false;
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="changeEmail">
+      <script1>//email,onComplete
+changeEmail.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(changeEmail.email);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var email = eio.readString16();
+if (email.length>0) {
+    if (!/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(email)) {
+        eio.appendString8("F");
+        eio.appendString8("您输入的电子邮件地址有误");
+        return;
+    }
+}
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName =db.getString(sqlResult,"userName");
+if (userName=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能对本内容进行修改，如需要更多的功能请注册正式用户。");
+    return;
+}
+
+sql = "update userInfo set email = '" + db.encode(email) + "'" +
+    " where userName = '" + db.encode(userName) + "'";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}    
+
+
+
+
+
+
+
+
+
+
+
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("修改电子邮箱失败",eio.readString8());
+    changeEmail.busy = false;
+    return;
+}
+changeEmail.onComplete();
+changeEmail.busy = false;
+
+</script3>
+    </taskSetItem>
     <taskSetItem name="chatGet">
       <script1>//roomId, chatId, isNew(0,1), onComplete(dataset)
 //dataset
@@ -23801,6 +23964,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         this.follow = ds.getData(x+13,idx);
         this.block1 = ds.getData(x+14,idx); //屏蔽别人
         this.block2 = ds.getData(x+15,idx); //被别人屏蔽
+        this.email = ds.getData(x+16,idx);
     }
     this.setDataset = function(ds, x, idx) {
         ds.setData(x+0,idx,this.id);
@@ -23819,6 +23983,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         ds.setData(x+13,idx,this.follow);
         ds.setData(x+14,idx,this.block1);
         ds.setData(x+15,idx,this.block2);
+        ds.setData(x+16,idx,this.email);
     }
 }
 
