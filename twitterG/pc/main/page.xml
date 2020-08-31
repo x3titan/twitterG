@@ -1,5 +1,5 @@
 <page>
-  <controls count="495">
+  <controls count="525">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -8240,6 +8240,8 @@ sender.fLoad = function() {
 sender.p8 = ee.getControl("panel298");
 sender.p9 = ee.getControl("panel365");
 sender.p10 = ee.getControl("panel61");
+sender.p11 = ee.getControl("panel370");
+sender.p12 = ee.getControl("panel388");
 
 sender.style.position="fixed";
 sender.addEventListener("mousewheel",function(event){
@@ -9761,7 +9763,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>45</height>
       <heightRatio>0.0576923076923077</heightRatio>
       <left>0</left>
-      <onClick>sender.parentNode.setSelected(sender);</onClick>
+      <onClick>sender.parentNode.setSelected(sender);
+g5.changeP3(11);</onClick>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "0 0 1px 0";
 sender.style.borderColor = "#e6ecf0";
@@ -9826,7 +9829,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>45</height>
       <heightRatio>0.0576923076923077</heightRatio>
       <left>0</left>
-      <onClick>sender.parentNode.setSelected(sender);</onClick>
+      <onClick>sender.parentNode.setSelected(sender);
+g5.changeP3(12);</onClick>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "0 0 1px 0";
 sender.style.borderColor = "#e6ecf0";
@@ -13679,6 +13683,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>702</height>
       <heightRatio>0.972299168975069</heightRatio>
       <layerName><![CDATA[p3->10->修改用户名]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniStart>ee.setEditText(ee.getControl("edit8"),"");
 ee.setEditText(ee.getControl("edit9"),"");
@@ -13944,6 +13949,711 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel61/panel166/panel376">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <dockX>right</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.061633281972265</heightRatio>
+      <left>209</left>
+      <leftRatio>0.680781758957655</leftRatio>
+      <onClick><![CDATA[if (changeNickName.busy) return;
+var p1 = ee.getEditText(ee.getControl("edit19"));
+if (p1.length>50) {
+    g5.alert1("用户名错误", "您输入的用户名过长，用户名的长度不能超过50个英文或者汉字");
+    return;
+}
+if (p1.length<3) {
+    g5.alert1("用户名错误", "您输入的用户名短，用户名的长度不能少于3个英文或者汉字");
+    return;
+}
+
+changeNickName.nickName = p1;
+changeNickName.onComplete = function() {
+    g5.alert1("完成", "用户名修改完成，您的新用户名是：" + p1);
+    g5.changeP3(4);
+    getUserInfo();    
+}
+changeNickName();
+]]></onClick>
+      <onCreate>sender.bgColorDisabled = "#8ed0f9";
+sender.bgColorEnabled = "#1da1f2";
+sender.bgColorHot = "#1a91da";
+sender.bgColorDown = "#1781c2";
+sender.v_enabled = true;
+sender.setEnabled = function(enabled) {
+    this.v_enabled = enabled;
+    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+}
+sender.setEnabled(true);
+
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorEnabled;
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorDown;
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+}
+eb.initMouseEvent(sender);
+
+
+
+
+
+
+
+</onCreate>
+      <outerRight>15</outerRight>
+      <sizeRatio>0.481927710843373</sizeRatio>
+      <text>保存</text>
+      <top>246</top>
+      <topRatio>0.37904468412943</topRatio>
+      <width>83</width>
+      <widthRatio>0.270358306188925</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>702</height>
+      <heightRatio>0.972299168975069</heightRatio>
+      <layerName><![CDATA[p3->11->修改手机号]]></layerName>
+      <left>0</left>
+      <onAniStart>ee.setEditText(ee.getControl("edit8"),"");
+ee.setEditText(ee.getControl("edit9"),"");
+ee.setEditText(ee.getControl("edit10"),"");
+ee.getControl("panel248").setEnabled(false);
+
+
+
+
+                                
+</onAniStart>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+
+sender.init = function() {
+    ee.setText(ee.getControl("panel381"), g5.myUserInfo.mobile);
+    ee.setEditText(ee.getControl("edit18"), "");
+}
+
+</onCreate>
+      <sizeRatio>2.28664495114007</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel371">
+      <backgroundColor>FFC080</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>53</height>
+      <heightRatio>0.0754985754985755</heightRatio>
+      <left>0</left>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#ccd6dd";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+</onCreate>
+      <sizeRatio>0.172638436482085</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel371/panel372">
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>53</height>
+      <heightRatio>1</heightRatio>
+      <left>52</left>
+      <leftRatio>0.169381107491857</leftRatio>
+      <onClick>g5.mainDiv.scrollTop = 0;</onClick>
+      <sizeRatio>0.350993377483444</sizeRatio>
+      <text>修改手机号码</text>
+      <top>0</top>
+      <width>151</width>
+      <widthRatio>0.49185667752443</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel371/panel377">
+      <cursor>pointer</cursor>
+      <height>37</height>
+      <heightRatio>0.69811320754717</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0325732899022801</leftRatio>
+      <onClick>g5.changeP3(4);
+window.event? window.event.cancelBubble = true : event.stopPropagation();
+</onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 27 27\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:7px 0px 0px 6px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.iconBack+"</svg>";
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text><![CDATA[<]]></text>
+      <top>8</top>
+      <topRatio>0.150943396226415</topRatio>
+      <width>37</width>
+      <widthRatio>0.120521172638436</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378">
+      <autoScroll>true</autoScroll>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>649</height>
+      <heightRatio>0.924501424501424</heightRatio>
+      <left>0</left>
+      <outerTop>53</outerTop>
+      <sizeRatio>2.11400651465798</sizeRatio>
+      <top>53</top>
+      <topRatio>0.0754985754985755</topRatio>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel379">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>66</height>
+      <heightRatio>0.101694915254237</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0325732899022801</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";
+</onCreate>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>0.229965156794425</sizeRatio>
+      <top>10</top>
+      <topRatio>0.0154083204930663</topRatio>
+      <width>287</width>
+      <widthRatio>0.93485342019544</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel379/panel380">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.424242424242424</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0313588850174216</leftRatio>
+      <sizeRatio>0.142857142857143</sizeRatio>
+      <text>当前手机号码：</text>
+      <top>0</top>
+      <width>196</width>
+      <widthRatio>0.682926829268293</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel379/panel381">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontBold>true</fontBold>
+      <fontColor>282828</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.424242424242424</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0313588850174216</leftRatio>
+      <sizeRatio>0.115702479338843</sizeRatio>
+      <text>--</text>
+      <top>33</top>
+      <topRatio>0.5</topRatio>
+      <width>242</width>
+      <widthRatio>0.843205574912892</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel382">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>66</height>
+      <heightRatio>0.101694915254237</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0325732899022801</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";
+</onCreate>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>0.229965156794425</sizeRatio>
+      <top>123</top>
+      <topRatio>0.189522342064715</topRatio>
+      <width>287</width>
+      <widthRatio>0.93485342019544</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel382/panel383">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.424242424242424</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0313588850174216</leftRatio>
+      <sizeRatio>0.142857142857143</sizeRatio>
+      <text>新手机号码</text>
+      <top>0</top>
+      <width>196</width>
+      <widthRatio>0.682926829268293</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel134/panel137/panel370/panel378/panel382/edit18">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>41</height>
+      <heightRatio>0.621212121212121</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>14</inputFontSize>
+      <left>15</left>
+      <leftRatio>0.0522648083623693</leftRatio>
+      <onChange>ee.getControl("panel231").refresh();</onChange>
+      <outerLeft>15</outerLeft>
+      <outerRight>15</outerRight>
+      <sizeRatio>0.159533073929961</sizeRatio>
+      <text>请在这里输入新的手机号码</text>
+      <top>25</top>
+      <topRatio>0.378787878787879</topRatio>
+      <width>257</width>
+      <widthRatio>0.895470383275261</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel382/panel384">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0303030303030303</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00696864111498258</sizeRatio>
+      <top>64</top>
+      <topRatio>0.96969696969697</topRatio>
+      <width>287</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel385">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>10</height>
+      <heightRatio>0.0154083204930663</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0325732899022801</sizeRatio>
+      <top>95</top>
+      <topRatio>0.146379044684129</topRatio>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel386">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>20</height>
+      <heightRatio>0.0308166409861325</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0651465798045603</sizeRatio>
+      <top>207</top>
+      <topRatio>0.318952234206472</topRatio>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel370/panel378/panel387">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <dockX>right</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.061633281972265</heightRatio>
+      <left>209</left>
+      <leftRatio>0.680781758957655</leftRatio>
+      <onClick><![CDATA[if (changeNickName.busy) return;
+var p1 = ee.getEditText(ee.getControl("edit19"));
+if (p1.length>50) {
+    g5.alert1("用户名错误", "您输入的用户名过长，用户名的长度不能超过50个英文或者汉字");
+    return;
+}
+if (p1.length<3) {
+    g5.alert1("用户名错误", "您输入的用户名短，用户名的长度不能少于3个英文或者汉字");
+    return;
+}
+
+changeNickName.nickName = p1;
+changeNickName.onComplete = function() {
+    g5.alert1("完成", "用户名修改完成，您的新用户名是：" + p1);
+    g5.changeP3(4);
+    getUserInfo();    
+}
+changeNickName();
+]]></onClick>
+      <onCreate>sender.bgColorDisabled = "#8ed0f9";
+sender.bgColorEnabled = "#1da1f2";
+sender.bgColorHot = "#1a91da";
+sender.bgColorDown = "#1781c2";
+sender.v_enabled = true;
+sender.setEnabled = function(enabled) {
+    this.v_enabled = enabled;
+    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+}
+sender.setEnabled(true);
+
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorEnabled;
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorDown;
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+}
+eb.initMouseEvent(sender);
+
+
+
+
+
+
+
+</onCreate>
+      <outerRight>15</outerRight>
+      <sizeRatio>0.481927710843373</sizeRatio>
+      <text>保存</text>
+      <top>246</top>
+      <topRatio>0.37904468412943</topRatio>
+      <width>83</width>
+      <widthRatio>0.270358306188925</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>702</height>
+      <heightRatio>0.972299168975069</heightRatio>
+      <layerName><![CDATA[p3->12->修改电子邮件]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onAniStart>ee.setEditText(ee.getControl("edit8"),"");
+ee.setEditText(ee.getControl("edit9"),"");
+ee.setEditText(ee.getControl("edit10"),"");
+ee.getControl("panel248").setEnabled(false);
+
+
+
+
+                                
+</onAniStart>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+
+sender.init = function() {
+    ee.setText(ee.getControl("panel187"), g5.myUserInfo.nickName);
+    ee.setEditText(ee.getControl("edit19"), "");
+}
+
+</onCreate>
+      <sizeRatio>2.28664495114007</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel389">
+      <backgroundColor>FFC080</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>53</height>
+      <heightRatio>0.0754985754985755</heightRatio>
+      <left>0</left>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#ccd6dd";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+</onCreate>
+      <sizeRatio>0.172638436482085</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel389/panel390">
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>53</height>
+      <heightRatio>1</heightRatio>
+      <left>52</left>
+      <leftRatio>0.169381107491857</leftRatio>
+      <onClick>g5.mainDiv.scrollTop = 0;</onClick>
+      <sizeRatio>0.350993377483444</sizeRatio>
+      <text>修改电子邮箱</text>
+      <top>0</top>
+      <width>151</width>
+      <widthRatio>0.49185667752443</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel389/panel391">
+      <cursor>pointer</cursor>
+      <height>37</height>
+      <heightRatio>0.69811320754717</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0325732899022801</leftRatio>
+      <onClick>g5.changeP3(4);
+window.event? window.event.cancelBubble = true : event.stopPropagation();
+</onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 27 27\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:7px 0px 0px 6px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.iconBack+"</svg>";
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text><![CDATA[<]]></text>
+      <top>8</top>
+      <topRatio>0.150943396226415</topRatio>
+      <width>37</width>
+      <widthRatio>0.120521172638436</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392">
+      <autoScroll>true</autoScroll>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>649</height>
+      <heightRatio>0.924501424501424</heightRatio>
+      <left>0</left>
+      <outerTop>53</outerTop>
+      <sizeRatio>2.11400651465798</sizeRatio>
+      <top>53</top>
+      <topRatio>0.0754985754985755</topRatio>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel393">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>66</height>
+      <heightRatio>0.101694915254237</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0325732899022801</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";
+</onCreate>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>0.229965156794425</sizeRatio>
+      <top>10</top>
+      <topRatio>0.0154083204930663</topRatio>
+      <width>287</width>
+      <widthRatio>0.93485342019544</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel393/panel394">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.424242424242424</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0313588850174216</leftRatio>
+      <sizeRatio>0.142857142857143</sizeRatio>
+      <text>当前电子邮箱：</text>
+      <top>0</top>
+      <width>196</width>
+      <widthRatio>0.682926829268293</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel393/panel395">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontBold>true</fontBold>
+      <fontColor>282828</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.424242424242424</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0313588850174216</leftRatio>
+      <sizeRatio>0.115702479338843</sizeRatio>
+      <text>--</text>
+      <top>33</top>
+      <topRatio>0.5</topRatio>
+      <width>242</width>
+      <widthRatio>0.843205574912892</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel396">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>66</height>
+      <heightRatio>0.101694915254237</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0325732899022801</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";
+</onCreate>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>0.229965156794425</sizeRatio>
+      <top>123</top>
+      <topRatio>0.189522342064715</topRatio>
+      <width>287</width>
+      <widthRatio>0.93485342019544</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel396/panel397">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.424242424242424</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0313588850174216</leftRatio>
+      <sizeRatio>0.142857142857143</sizeRatio>
+      <text>新电子邮箱</text>
+      <top>0</top>
+      <width>196</width>
+      <widthRatio>0.682926829268293</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel134/panel137/panel388/panel392/panel396/edit20">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>41</height>
+      <heightRatio>0.621212121212121</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>14</inputFontSize>
+      <left>15</left>
+      <leftRatio>0.0522648083623693</leftRatio>
+      <onChange>ee.getControl("panel231").refresh();</onChange>
+      <outerLeft>15</outerLeft>
+      <outerRight>15</outerRight>
+      <sizeRatio>0.159533073929961</sizeRatio>
+      <text>请在这里输入新的电子邮箱</text>
+      <top>25</top>
+      <topRatio>0.378787878787879</topRatio>
+      <width>257</width>
+      <widthRatio>0.895470383275261</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel396/panel398">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0303030303030303</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00696864111498258</sizeRatio>
+      <top>64</top>
+      <topRatio>0.96969696969697</topRatio>
+      <width>287</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel399">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>10</height>
+      <heightRatio>0.0154083204930663</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0325732899022801</sizeRatio>
+      <top>95</top>
+      <topRatio>0.146379044684129</topRatio>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel400">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>20</height>
+      <heightRatio>0.0308166409861325</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0651465798045603</sizeRatio>
+      <top>207</top>
+      <topRatio>0.318952234206472</topRatio>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel388/panel392/panel401">
       <backgroundColor>8ED0F9</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <cursor>pointer</cursor>
@@ -24639,6 +25349,10 @@ if (g5.currentP3Index == 4) {
     ee.showAni(g5.p3.p9, 1);
 } else if (g5.currentP3Index == 10) {
     ee.showAni(g5.p3.p10, 1);
+} else if (g5.currentP3Index == 11) {
+    ee.showAni(g5.p3.p11, 1);
+} else if (g5.currentP3Index == 12) {
+    ee.showAni(g5.p3.p12, 1);
 }
 
 if (pageIndex==4) {
@@ -24657,6 +25371,12 @@ if (pageIndex==4) {
 } else if(pageIndex==10) {
     g5.p3.p10.init();
     ee.showAni(g5.p3.p10, 0);
+} else if(pageIndex==11) {
+    g5.p3.p11.init();
+    ee.showAni(g5.p3.p11, 0);
+} else if(pageIndex==12) {
+    g5.p3.p12.init();
+    ee.showAni(g5.p3.p12, 0);
 }
 
 g5.currentP3Index = pageIndex;</functionCode>
