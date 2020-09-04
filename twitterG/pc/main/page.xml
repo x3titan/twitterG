@@ -5208,21 +5208,16 @@ sender.renderMsg = function(root) {
         }
         c.v_timer = null;
         root.c_photo = c;
+        ee.setOnClick(c, function(sender, event) {
+            ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+        });
         ee.setOnMouseEnter(c, function(sender,e) {
             sender.style.webkitFilter="brightness(80%)";
             sender.style.filter="brightness(80%)";
-            if (sender.v_timer!=null) clearTimeout(sender.v_timer);
-            sender.v_timer = setTimeout(function() {
-                ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
-            }, 100);
         });
         ee.setOnMouseLeave(c, function(sender,e) {
             sender.style.webkitFilter="brightness(100%)";
             sender.style.filter="brightness(100%)";
-            if (sender.v_timer!=null) {
-                clearTimeout(sender.v_timer);
-                sender.v_timer = null;
-            }
         });
     }
     //message
@@ -8543,7 +8538,6 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>722</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p3.p3->私信聊天]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_chat = ee.getControl("layoutyitem12");</onCreate>
       <sizeRatio>2.35179153094463</sizeRatio>
@@ -8591,7 +8585,6 @@ sender.style.borderStyle = "solid";</onCreate>
       <heightRatio>1</heightRatio>
       <left>20</left>
       <leftRatio>0.0651465798045603</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <outerLeft>20</outerLeft>
       <sizeRatio>0.196</sizeRatio>
       <text>&amp;nbsp;</text>
@@ -10783,6 +10776,7 @@ sender.init = function() {
         }
     }
     this.joinRequest = new Array();
+    var cy = 0;
     if (!eb.isEmpty(showUserPage.joinPrvRequest)) {
         var i, item;
         var root = this;
@@ -11723,7 +11717,7 @@ sender.refresh = function(force) {
                             if (item.v_userInfo.id == g5.myUserInfo.id) {
                                 root.stop();
                                 showUserPage.privateChatRoomRights = false;
-                                alert("很遗憾，您已经被房主移出了私有聊天室。您将不能在本聊天室发言，您以前的发言仍旧保留。");
+                                g5.alert1("提示", "很遗憾，您已经被房主移出了私有聊天室。您将不能在本聊天室发言，您以前的发言仍旧保留。");
                             }
                         }
                     }
@@ -11792,21 +11786,16 @@ sender.renderMsg = function(root) {
         }
         c.v_timer = null;
         root.c_photo = c;
+        ee.setOnClick(c, function(sender, event) {
+            ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+        });
         ee.setOnMouseEnter(c, function(sender,e) {
             sender.style.webkitFilter="brightness(80%)";
             sender.style.filter="brightness(80%)";
-            if (sender.v_timer!=null) clearTimeout(sender.v_timer);
-            sender.v_timer = setTimeout(function() {
-                ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
-            }, 100);
         });
         ee.setOnMouseLeave(c, function(sender,e) {
             sender.style.webkitFilter="brightness(100%)";
             sender.style.filter="brightness(100%)";
-            if (sender.v_timer!=null) {
-                clearTimeout(sender.v_timer);
-                sender.v_timer = null;
-            }
         });
     }
     //message
@@ -17191,6 +17180,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17254,7 +17244,7 @@ if (sender.formResult) {
       <left>31</left>
       <leftRatio>0.0895953757225433</leftRatio>
       <sizeRatio>0.268551236749117</sizeRatio>
-      <text>此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及 GET搜索结果中移除。</text>
+      <text>此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。</text>
       <top>62</top>
       <topRatio>0.271929824561404</topRatio>
       <width>283</width>
@@ -18064,7 +18054,8 @@ sender.onpointermove = function(event) {
       <heightRatio>0.0540098199672668</heightRatio>
       <left>412</left>
       <leftRatio>0.774436090225564</leftRatio>
-      <onClick><![CDATA[newTwitter.content = ee.getEditText(sender.parentNode.c_input);
+      <onClick><![CDATA[if (!sender.v_enabled) return;
+newTwitter.content = ee.getEditText(sender.parentNode.c_input);
 newTwitter.photos = sender.parentNode.c_photos.v_photos;
 if ((newTwitter.content.length<=0) &amp;&amp; (newTwitter.photos.length<=0)) {
     g5.alert1("提示", "发言内容不能为空，您至少要留有文字或者至少一张图片或者视频。");
@@ -18785,6 +18776,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>211</height>
       <heightRatio>0.265075376884422</heightRatio>
       <layerName><![CDATA[  a7->通用提示窗口]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>401</left>
       <leftRatio>0.338396624472574</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -26248,14 +26240,12 @@ ee.setEditText(ee.getControl("edit4"), g5.myUserInfo.homePage);
 if (g5.photo == "") {
     ee.setImage(ee.getControl("panel2"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel29"), "/twitterG/main/user.png");
-    ee.setImage(ee.getControl("panel47"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel55"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel14"), "/twitterG/main/user.png");
     //ee.setImage(ee.getControl("panel111"), "/twitterG/main/user.png");
 } else {
     ee.setImage(ee.getControl("panel2"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
     ee.setImage(ee.getControl("panel29"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
-    ee.setImage(ee.getControl("panel47"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
     ee.setImage(ee.getControl("panel55"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
     ee.setImage(ee.getControl("panel14"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
     //ee.setImage(ee.getControl("panel111"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
@@ -26696,7 +26686,7 @@ eb.processDock();
     function() {
         chatPrvRequest.chatRoomId = chatRoomId;
         chatPrvRequest.onComplete = function() {
-            alert("申请已经发送成功，请耐心等待房主同意。 ");
+            g5.alert1("提示", "申请已经发送成功，请耐心等待房主同意。 ");
         }
         chatPrvRequest();
     }
