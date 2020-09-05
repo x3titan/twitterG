@@ -2022,7 +2022,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p2sub = ee.getControl("panel279");
 
@@ -2095,12 +2094,30 @@ window.event? window.event.cancelBubble = true : event.stopPropagation();</onCli
       <heightRatio>0.0435897435897436</heightRatio>
       <left>165</left>
       <leftRatio>0.275</leftRatio>
-      <sizeRatio>0.129277566539924</sizeRatio>
+      <onCreate><![CDATA[sender.v_text = "";
+sender.setText = function(text) {
+    this.v_text = text;
+    this.label.style.wordBreak = "keep-all";
+    this.label.style.whiteSpace = "nowrap";
+    eb.setDivRect(this.label, null, null, 1, null);
+    var thisW = eb.getDivRect(sender).w - 10;
+    var s, i;
+    for (i=1; i<text.length; i++) {
+        s = text.substr(0,i) + "...";
+        ee.setText(this, s);
+        var r = eb.getDivRect(sender.label);
+        if (r.w>thisW) break;
+    }
+    s = i>=text.length?text:text.substr(0,i-1) + "...";
+    ee.setText(this, s);
+}
+]]></onCreate>
+      <sizeRatio>0.161137440758294</sizeRatio>
       <text>昵称nicheng</text>
       <top>212</top>
       <topRatio>0.271794871794872</topRatio>
-      <width>263</width>
-      <widthRatio>0.438333333333333</widthRatio>
+      <width>211</width>
+      <widthRatio>0.351666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel21">
       <fontColor>808080</fontColor>
@@ -2111,12 +2128,30 @@ window.event? window.event.cancelBubble = true : event.stopPropagation();</onCli
       <heightRatio>0.0435897435897436</heightRatio>
       <left>165</left>
       <leftRatio>0.275</leftRatio>
-      <sizeRatio>0.129277566539924</sizeRatio>
+      <onCreate><![CDATA[sender.v_text = "";
+sender.setText = function(text) {
+    this.v_text = text;
+    this.label.style.wordBreak = "keep-all";
+    this.label.style.whiteSpace = "nowrap";
+    eb.setDivRect(this.label, null, null, 1, null);
+    var thisW = eb.getDivRect(sender).w - 10;
+    var s, i;
+    for (i=1; i<text.length; i++) {
+        s = text.substr(0,i) + "...";
+        ee.setText(this, s);
+        var r = eb.getDivRect(sender.label);
+        if (r.w>thisW) break;
+    }
+    s = i>=text.length?text:text.substr(0,i-1) + "...";
+    ee.setText(this, s);
+}
+]]></onCreate>
+      <sizeRatio>0.161137440758294</sizeRatio>
       <text>@用户名</text>
       <top>237</top>
       <topRatio>0.303846153846154</topRatio>
-      <width>263</width>
-      <widthRatio>0.438333333333333</widthRatio>
+      <width>211</width>
+      <widthRatio>0.351666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel69">
       <fontFamily>微软雅黑</fontFamily>
@@ -5022,12 +5057,13 @@ sender.clearTimer = function() {
 sender.refreshContent = function(root, resize) {
     var c = root.c_content;
     var user = g5.showCommonText(root.v_userInfo.nickName);
+    //blue:#48ccfe,#4e4e4e  yellow:#fcd801,#6e6e6e  blueLetter:"<font color='#0061a2'><b>" + user + "</b></font>";
     if (root.v_chatStatus == "SYS") {
-        user = "<span style='background-color:#48ccfe;border-radius:3px;font-weight:bold;color:#4e4e4e'> 系统提示 </span>";    
+        user = "<font color='#a0a0a0'><b> 系统提示 </b></font>";;    
     } else if (root.v_userInfo.id == showUserPage.id) {
         user = "<span style='background-color:#fcd801;border-radius:3px;font-weight:bold;color:#6e6e6e'> " + user + " </span>";    
     } else if (root.v_isAdmin) {
-        user = "<font color='#0061a2'><b>" + user + "</b></font>";
+        user = "<span style='background-color:#48ccfe;border-radius:3px;font-weight:bold;color:#4e4e4e'> " + user + " </span>";  
     } else {
         user = "<font color='#6f6f6f'><b>" + user + "</b></font>";
     }
@@ -15907,6 +15943,7 @@ sender.onpointermove = function(event) {
       <height>645</height>
       <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[Root->编辑个人信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);
@@ -21052,9 +21089,9 @@ if (photo != "") {
 if (titleBg != "") {
     ee.getControl("panel20").init(titleBg);
 }
-ee.setText(ee.getControl("panel18"), nickName);
+ee.getControl("panel18").setText(nickName);
 ee.setVisible(ee.getControl("panel18"), true);
-ee.setText(ee.getControl("panel21"), "@" + userName);
+ee.getControl("panel21").setText("@" + userName);
 ee.setVisible(ee.getControl("panel21"), true);
 
 var cy = eb.getDivRect(ee.getControl("panel21")).y + eb.getDivRect(ee.getControl("panel21")).h;
@@ -26296,18 +26333,16 @@ ee.setEditText(ee.getControl("edit2"), g5.myUserInfo.nickName);
 ee.setEditText(ee.getControl("edit3"), g5.myUserInfo.note);
 ee.setEditText(ee.getControl("edit4"), g5.myUserInfo.homePage);
 
-if (g5.photo == "") {
+if (g5.myUserInfo.photo == "") {
     ee.setImage(ee.getControl("panel2"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel29"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel55"), "/twitterG/main/user.png");
     ee.setImage(ee.getControl("panel14"), "/twitterG/main/user.png");
-    //ee.setImage(ee.getControl("panel111"), "/twitterG/main/user.png");
 } else {
     ee.setImage(ee.getControl("panel2"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
     ee.setImage(ee.getControl("panel29"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
     ee.setImage(ee.getControl("panel55"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
     ee.setImage(ee.getControl("panel14"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
-    //ee.setImage(ee.getControl("panel111"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
 }
 if (g5.myUserInfo.titleBg == "") {
     ee.setImage(ee.getControl("panel58"));
