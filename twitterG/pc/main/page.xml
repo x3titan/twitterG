@@ -2022,6 +2022,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p2sub = ee.getControl("panel279");
 
@@ -5057,7 +5058,6 @@ sender.clearTimer = function() {
 sender.refreshContent = function(root, resize) {
     var c = root.c_content;
     var user = g5.showCommonText(root.v_userInfo.nickName);
-    //blue:#48ccfe,#4e4e4e  yellow:#fcd801,#6e6e6e  blueLetter:"<font color='#0061a2'><b>" + user + "</b></font>";
     if (root.v_chatStatus == "SYS") {
         user = "<font color='#a0a0a0'><b> 系统提示 </b></font>";;    
     } else if (root.v_userInfo.id == showUserPage.id) {
@@ -15943,7 +15943,6 @@ sender.onpointermove = function(event) {
       <height>645</height>
       <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[Root->编辑个人信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);
@@ -16150,9 +16149,9 @@ sender.style.borderStyle = "solid";</onCreate>
       <left>28</left>
       <leftRatio>0.235294117647059</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxWidth = 1920;
-sender.maxHeight = 1080;
-sender.compressRatio = 0.92;
+      <onCreate><![CDATA[sender.maxWidth = 200;
+sender.maxHeight = 200;
+sender.compressRatio = 0.70;
 
 sender.style.borderRadius = "50%";
 
@@ -24569,7 +24568,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="73">
+  <g5Items count="74">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -25029,7 +25028,7 @@ var mainWidth = parseInt((w-75)*0.97);
 c = createPanel(root, root.id+"_panel16", "", 75, cy-3, mainWidth-80, 26);
 root.v_titleText = c;
 var temp = "";
-temp = "<div style='display:inline'><b>" + root.v_nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userName + "</font></div>";
+temp = "<div style='display:inline'><b>" + g5.add3Dot(root.v_nickName, 30) + "</b> <font color='#808080' style='font-size:12pt'>@" + g5.add3Dot(root.v_userName, 30) + "</font></div>";
 if (root.v_mode.charAt(2) != "x") {
     temp+=" · <font>" + g5.getMins(root.v_times) + "</font>";
 }
@@ -25212,7 +25211,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     //reUserName,reNickName,reTime
     c = createPanel($g(root.id+"_panel2"), root.id+"_panel11", "", 35, 7, p1w*0.833734939759036, 25);
-    addText(c, "<div style='display:inline'><b>" + root.v_reNickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserName + "</font></div> · <font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reTimes) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+    addText(c, "<div style='display:inline'><b>" + g5.add3Dot(root.v_reNickName, 24) + "</b> <font color='#808080' style='font-size:15px'>@" + g5.add3Dot(root.v_reUserName, 24) + "</font></div> · <font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reTimes) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     root.c_reTitleText = c.label.rows[0].cells[0].childNodes[0];
     root.c_reTitleText.id = root.id + "_reTitleText";
     root.c_reTitleText.v_userName = root.v_reUserName;
@@ -25305,7 +25304,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     //reUserName,reNickName,reTime
     c = createPanel($g(root.id+"_panel6"), root.id+"_panel11", "", 45, 8, p1w*0.833734939759036, 28);
-    addText(c, "<div style='display:inline'><b>" + root.v_reNickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserName + "</font></div> · <font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reTimes) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+    addText(c, "<div style='display:inline'><b>" + g5.add3Dot(root.v_reNickName, 24) + "</b> <font color='#808080' style='font-size:15px'>@" + g5.add3Dot(root.v_reUserName, 24) + "</font></div> · <font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reTimes) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     root.c_reTitleText = c.label.rows[0].cells[0].childNodes[0];
     root.c_reTitleText.id = root.id + "_reTitleText";
     root.c_reTitleText.v_userName = root.v_reUserName;
@@ -26889,6 +26888,23 @@ for (var i in OSArray) {
   }
 }
 return OS;]]></functionCode>
+    </item>
+    <item name="add3Dot" type="20">
+      <varValue />
+      <functionParam>text,maxLen</functionParam>
+      <functionCode><![CDATA[var i,len=0;
+for (i=0; i<text.length; i++) {
+    if (len>=maxLen) break;
+    len += text.charCodeAt(i)>0xff?2:1;
+}
+if (i>=text.length) return text;
+text = text.substr(0, i);
+len = 0;
+for (i = text.length-1; i>=0; i--) {
+    if (len>=3) break;
+    len += text.charCodeAt(i)>0xff?2:1;
+}
+return text.substr(0,i+1) + "...";]]></functionCode>
     </item>
   </g5Items>
 </page>
