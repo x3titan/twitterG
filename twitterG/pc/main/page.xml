@@ -3640,7 +3640,7 @@ sender.init = function(videoUrl, isOwner) {
                         if (event.target!=g5.player.currentPlayer) {
                             g5.player.stop();
                             g5.player.forceMode = true;
-                            g5.currentPlayer=event.target;
+                            g5.player.currentPlayer=event.target;
                         }
                     }
                 }
@@ -10769,7 +10769,6 @@ eb.initMouseEvent(sender);
       <height>623</height>
       <heightRatio>0.862880886426593</heightRatio>
       <layerName><![CDATA[p3.p8->个人页右侧]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel295");
 sender.p2 = ee.getControl("panel307");
@@ -12849,7 +12848,7 @@ g5.resizeV(g5.p3.p8, 2);
         this.v_items.push(item);
         cy += 0 + eb.getDivRect(item).h;
     }
-    g5.tiledV(this, 10, 0, 0);
+    g5.tiledV(this, 10, 0, 1);
     g5.tiledResizeV(this, 4);
 }
 
@@ -15943,6 +15942,7 @@ sender.onpointermove = function(event) {
       <height>645</height>
       <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[Root->编辑个人信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);
@@ -16151,7 +16151,7 @@ sender.style.borderStyle = "solid";</onCreate>
       <onClick>sender.c_file.click();</onClick>
       <onCreate><![CDATA[sender.maxWidth = 200;
 sender.maxHeight = 200;
-sender.compressRatio = 0.70;
+sender.compressRatio = 0.90;
 
 sender.style.borderRadius = "50%";
 
@@ -24680,6 +24680,12 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
             this.currentPlayer.pauseVideo();
             this.currentPlayer = null;
         }
+    },
+    clear: function() {
+        if (this.currentPlayer!=null) {
+            this.currentDiv.innerHTML = "";
+            this.currentPlayer = null;    
+        }
     }
 }</varValue>
       <functionParam />
@@ -26069,7 +26075,7 @@ if (g5.currentPageIndex == 0) {
     g5.mainDiv.lastScrollTop = g5.mainDiv.scrollTop;
 } else if (g5.currentPageIndex == 1) {
     ee.setVisible(g5.p4, false);
-    g5.player.stop();
+    g5.player.clear();
     g5.p2.p2.p2sub.p1.c_chat.c_chat.c_chatRoot.stop();
     g5.p3.p8.p1.c_chatRoom.c_chatRoot.stop();
     ee.showAni(ee.getControl("panel16"), 1);
