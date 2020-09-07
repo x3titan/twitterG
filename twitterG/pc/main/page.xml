@@ -1,5 +1,5 @@
 <page>
-  <controls count="550">
+  <controls count="552">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -14742,6 +14742,7 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -15730,6 +15731,7 @@ sender.style.borderRight = "";</onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a6->个人主页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -17596,7 +17598,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17786,12 +17787,13 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
-ee.setText(ee.getControl("panel145"), "");
+      <onAni2End>sender.close();
 </onAni2End>
-      <onCreate><![CDATA[sender.show = function(photos, photo) {
+      <onCreate><![CDATA[sender.c_photo = ee.getControl("panel75");
+sender.c_video = ee.getControl("panel76");
+
+sender.show = function(photos, photo) {
     sender.v_photos = photos;
     sender.v_index = -1;
     for (var i = 0; i < photos.length; i++) {
@@ -17810,20 +17812,32 @@ sender.refresh = function() {
     if (this.v_index<0) return;
     if (this.v_index>=this.v_photos.length) return;
     var v_photo = this.v_photos[this.v_index];
-    var c = ee.getControl("panel145");
-    var rect = eb.getDivRect(c);
+    var rect = eb.getDivRect(this.c_photo);
+    this.clear();
     if (v_photo.substr(0,4) == "?YTB") {
-        ee.setImage(c,"","fill","","");
-        ee.setText(c,"<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
+        this.c_video.innerHTML =
+            "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
             v_photo.substr(4, v_photo.length) + 
-            "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>");
+            "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+        ee.setVisible(this.c_video, true);
     } else {
-        ee.setText(c,"");
-        c.imgUrl = "url:" + g5.imgUrl + v_photo
-        ee.setImage(c, c.imgUrl,"fill","","");
+        this.c_photo.imgUrl = "url:" + g5.imgUrl + v_photo
+        ee.setImage(this.c_photo, this.c_photo.imgUrl,"fill","","");
+        ee.setVisible(this.c_photo, true);
     }
 }
 
+sender.clear = function() {
+    ee.setImage(this.c_photo,"","fill","","");
+    this.c_video.innerHTML = "";
+    ee.setVisible(this.c_photo, false);
+    ee.setVisible(this.c_video, false);
+}
+
+sender.close = function() {
+    ee.setVisible(this.parentNode, false);
+    this.clear();
+}
 ]]></onCreate>
       <sizeRatio>0.671729957805907</sizeRatio>
       <top>0</top>
@@ -17847,6 +17861,30 @@ sender.refresh = function() {
       <topRatio>0.0628140703517588</topRatio>
       <width>1025</width>
       <widthRatio>0.864978902953586</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel142/panel145/panel75">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>696</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <note>c_photo</note>
+      <sizeRatio>0.679024390243902</sizeRatio>
+      <top>0</top>
+      <width>1025</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel142/panel145/panel76">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>696</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <note>c_video</note>
+      <sizeRatio>0.679024390243902</sizeRatio>
+      <top>0</top>
+      <width>1025</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel147">
       <height>49</height>
