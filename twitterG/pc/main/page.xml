@@ -1571,10 +1571,10 @@ sender.style.borderLeft = "";
 sender.style.borderRight = "";
 
 sender.check = function() {
-    ee.getControl("panel251").setEnabled(
-        ((ee.getEditText(ee.getControl("edit7")).trim().length>0) &amp;&amp;(ee.getEditText(ee.getControl("edit7")).trim().length<=200)) ||
-        ee.getControl("panel7").v_photos.length>0
-    );    
+    var enabled = ee.getEditText(ee.getControl("edit7")).trim().length > 0;
+    if (ee.getControl("panel7").v_photos.length>0) enabled = true;
+    if (ee.getEditText(ee.getControl("edit7")).trim().length>200) enabled = false;
+    ee.getControl("panel251").setEnabled(enabled);
 }
 
 sender.init = function() {
@@ -1585,6 +1585,10 @@ sender.init = function() {
     ee.setRect(this.c_edit, null,null,null,53);
     ee.setRect(this, null,null,null,110);
     if (this.c_button.setEnabled) this.c_button.setEnabled(false);
+    if (ee.getControl("panel53").refresh) {
+        ee.getControl("panel53").refresh(0/200);
+        ee.setText(ee.getControl("panel122"), "");
+    }    
     eb.processDock();
 }
 sender.init();]]></onCreate>
@@ -7290,6 +7294,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_topBlank = ee.getControl("panel336");
 sender.c_buttons = ee.getControl("layoutx11");
@@ -7614,6 +7619,7 @@ sender.fSearch = function() {
       <height>441</height>
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c3->用户]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_headerName = "page11c3_";
 sender.v_searchOptions = "user";
@@ -16238,7 +16244,6 @@ sender.onpointermove = function(event) {
       <height>645</height>
       <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[Root->编辑个人信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);
@@ -16324,9 +16329,8 @@ ee.setVisible(ee.getControl("panel233"), false);]]></onCreate>
       <left>263</left>
       <leftRatio>0.450342465753425</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxWidth = 1920;
-sender.maxHeight = 1080;
-sender.compressRatio = 0.92;
+      <onCreate><![CDATA[sender.maxSqr = 900*900;
+sender.compressRatio = 0.90;
 
 sender.style.borderRadius = "50%";
 
@@ -16391,23 +16395,20 @@ c.onchange = function() {
 
 sender.resize = function (img) {
     var canvas = document.createElement("canvas");
-    var width = img.width;
-    var height = img.height;
-    if(width > height) {
-        if(width > sender.maxWidth) {
-            height = Math.round(height *= sender.maxWidth / width);
-            width = sender.maxWidth
-        }
-    }else{
-        if(height > sender.maxHeight) {
-            width = Math.round(width *= sender.maxHeight / height);
-            height = sender.maxHeight
-        }
+    var imgW = img.width;
+    var imgH = img.height;
+    var dw,dh;
+    if (imgW*imgH>this.maxSqr) {
+        var ratio = imgW / imgH;
+        var y = Math.sqrt(this.maxSqr/ratio);
+        canvas.width = parseInt(ratio*y);
+        canvas.height = parseInt(y);
+    } else {
+        canvas.width = imgW;
+        canvas.height = imgH;
     }
-    canvas.width = width;
-    canvas.height = height;
     var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, width, height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL("image/jpeg", sender.compressRatio); 
 }
 ]]></onCreate>
@@ -18344,9 +18345,8 @@ g5.popBlack2.a1.show(function(ytbVideo) {
       <left>41</left>
       <leftRatio>0.0770676691729323</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxWidth = 1920;
-sender.maxHeight = 1080;
-sender.compressRatio = 0.92;
+      <onCreate><![CDATA[sender.maxSqr = 900*900;
+sender.compressRatio = 0.90;
 
 sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M19.75 2H4.25C3.01 2 2 3.01 2 4.25v15.5C2 20.99 3.01 22 4.25 22h15.5c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2zM4.25 3.5h15.5c.413 0 .75.337.75.75v9.676l-3.858-3.858c-.14-.14-.33-.22-.53-.22h-.003c-.2 0-.393.08-.532.224l-4.317 4.384-1.813-1.806c-.14-.14-.33-.22-.53-.22-.193-.03-.395.08-.535.227L3.5 17.642V4.25c0-.413.337-.75.75-.75zm-.744 16.28l5.418-5.534 6.282 6.254H4.25c-.402 0-.727-.322-.744-.72zm16.244.72h-2.42l-5.007-4.987 3.792-3.85 4.385 4.384v3.703c0 .413-.337.75-.75.75z\"></path><circle cx=\"8.868\" cy=\"8.309\" r=\"1.542\"></circle></g></svg>";
 sender.style.borderRadius = "50%";
@@ -18419,23 +18419,20 @@ c.onchange = function() {
 
 sender.resize = function (img) {
     var canvas = document.createElement("canvas");
-    var width = img.width;
-    var height = img.height;
-    if(width > height) {
-        if(width > sender.maxWidth) {
-            height = Math.round(height *= sender.maxWidth / width);
-            width = sender.maxWidth
-        }
-    }else{
-        if(height > sender.maxHeight) {
-            width = Math.round(width *= sender.maxHeight / height);
-            height = sender.maxHeight
-        }
+    var imgW = img.width;
+    var imgH = img.height;
+    var dw,dh;
+    if (imgW*imgH>this.maxSqr) {
+        var ratio = imgW / imgH;
+        var y = Math.sqrt(this.maxSqr/ratio);
+        canvas.width = parseInt(ratio*y);
+        canvas.height = parseInt(y);
+    } else {
+        canvas.width = imgW;
+        canvas.height = imgH;
     }
-    canvas.width = width;
-    canvas.height = height;
     var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, width, height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL("image/jpeg", sender.compressRatio); 
 }
 ]]></onCreate>
