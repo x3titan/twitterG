@@ -1541,8 +1541,8 @@ sender.p12 = ee.getControl("panel355");</onCreate>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
-      <leftRatio>-0.00166666666666667</leftRatio>
       <onCreate>sender.a1 = ee.getControl("panel1");</onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>-1</top>
@@ -1919,9 +1919,8 @@ eb.initMouseEvent(sender);
       <left>79</left>
       <leftRatio>0.131666666666667</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxWidth = 1920;
-sender.maxHeight = 1080;
-sender.compressRatio = 0.92;
+      <onCreate><![CDATA[sender.maxSqr = 900*900;
+sender.compressRatio = 0.90;
 
 sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M19.75 2H4.25C3.01 2 2 3.01 2 4.25v15.5C2 20.99 3.01 22 4.25 22h15.5c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2zM4.25 3.5h15.5c.413 0 .75.337.75.75v9.676l-3.858-3.858c-.14-.14-.33-.22-.53-.22h-.003c-.2 0-.393.08-.532.224l-4.317 4.384-1.813-1.806c-.14-.14-.33-.22-.53-.22-.193-.03-.395.08-.535.227L3.5 17.642V4.25c0-.413.337-.75.75-.75zm-.744 16.28l5.418-5.534 6.282 6.254H4.25c-.402 0-.727-.322-.744-.72zm16.244.72h-2.42l-5.007-4.987 3.792-3.85 4.385 4.384v3.703c0 .413-.337.75-.75.75z\"></path><circle cx=\"8.868\" cy=\"8.309\" r=\"1.542\"></circle></g></svg>";
 sender.style.borderRadius = "50%";
@@ -2000,23 +1999,20 @@ c.onchange = function() {
 
 sender.resize = function (img) {
     var canvas = document.createElement("canvas");
-    var width = img.width;
-    var height = img.height;
-    if(width > height) {
-        if(width > sender.maxWidth) {
-            height = Math.round(height *= sender.maxWidth / width);
-            width = sender.maxWidth
-        }
-    }else{
-        if(height > sender.maxHeight) {
-            width = Math.round(width *= sender.maxHeight / height);
-            height = sender.maxHeight
-        }
+    var imgW = img.width;
+    var imgH = img.height;
+    var dw,dh;
+    if (imgW*imgH>this.maxSqr) {
+        var ratio = imgW / imgH;
+        var y = Math.sqrt(this.maxSqr/ratio);
+        canvas.width = parseInt(ratio*y);
+        canvas.height = parseInt(y);
+    } else {
+        canvas.width = imgW;
+        canvas.height = imgH;
     }
-    canvas.width = width;
-    canvas.height = height;
     var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, width, height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL("image/jpeg", sender.compressRatio); 
 }
 ]]></onCreate>
@@ -7294,7 +7290,6 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_topBlank = ee.getControl("panel336");
 sender.c_buttons = ee.getControl("layoutx11");
@@ -7619,7 +7614,6 @@ sender.fSearch = function() {
       <height>441</height>
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c3->用户]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_headerName = "page11c3_";
 sender.v_searchOptions = "user";
@@ -15805,18 +15799,18 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <text><![CDATA[<]]></text>
       <top>0</top>
       <width>33</width>
-      <widthRatio>1</widthRatio>
+      <widthRatio>0.673469387755102</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel24/panel57/layoutx15/layoutxitem36">
       <backgroundColor>d0d0d0</backgroundColor>
       <height>33</height>
       <heightRatio>1</heightRatio>
       <left>49</left>
-      <leftRatio>0.444839857651246</leftRatio>
-      <sizeRatio>0.523809523809524</sizeRatio>
+      <leftRatio>0.0871886120996441</leftRatio>
+      <sizeRatio>0.0774647887323944</sizeRatio>
       <top>0</top>
       <width>426</width>
-      <widthRatio>0.112099644128114</widthRatio>
+      <widthRatio>0.758007117437722</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel134/panel24/panel57/layoutx15/layoutxitem36/layoutx16">
       <dockX>fill</dockX>
@@ -15847,10 +15841,10 @@ sender.init = function(index) {
 }
 
 sender.init(0);</onCreate>
-      <sizeRatio>0.211538461538462</sizeRatio>
+      <sizeRatio>0.0774647887323944</sizeRatio>
       <top>0</top>
       <width>426</width>
-      <widthRatio>0.993630573248408</widthRatio>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel24/panel57/layoutx15/layoutxitem36/layoutx16/layoutxitem34">
       <backgroundColor>f0f0f0</backgroundColor>
@@ -15861,7 +15855,7 @@ sender.init(0);</onCreate>
       <sizeRatio>0.942857142857143</sizeRatio>
       <top>0</top>
       <width>35</width>
-      <widthRatio>0.0701402805611222</widthRatio>
+      <widthRatio>0.0821596244131455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel57/layoutx15/layoutxitem36/layoutx16/layoutxitem34/panel415">
       <dockX>fill</dockX>
@@ -15897,11 +15891,11 @@ sender.style.borderRadius = "50%";
       <height>33</height>
       <heightRatio>1</heightRatio>
       <left>35</left>
-      <leftRatio>0.0701402805611222</leftRatio>
-      <sizeRatio>0.0711206896551724</sizeRatio>
+      <leftRatio>0.0821596244131455</leftRatio>
+      <sizeRatio>0.0843989769820972</sizeRatio>
       <top>0</top>
       <width>391</width>
-      <widthRatio>0.929859719438878</widthRatio>
+      <widthRatio>0.917840375586855</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel134/panel24/panel57/layoutx15/layoutxitem36/layoutx16/layoutxitem35/edit22">
       <backgroundSkin>empty</backgroundSkin>
@@ -15916,7 +15910,7 @@ sender.style.borderRadius = "50%";
       <inputFontColor>404040</inputFontColor>
       <inputFontSize>12</inputFontSize>
       <left>10</left>
-      <leftRatio>0.021551724137931</leftRatio>
+      <leftRatio>0.0255754475703325</leftRatio>
       <onCreate>sender._input.addEventListener("keydown", function(event) {
     if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
         var text = ee.getEditText(sender);
@@ -15935,11 +15929,11 @@ sender.v_index = 0;
       <onFocusLost>ee.getControl("layoutx10").init(0);</onFocusLost>
       <outerBottom>2</outerBottom>
       <outerLeft>10</outerLeft>
-      <sizeRatio>0.0682819383259912</sizeRatio>
+      <sizeRatio>0.0813648293963255</sizeRatio>
       <text>站内搜索</text>
       <top>0</top>
       <width>381</width>
-      <widthRatio>0.978448275862069</widthRatio>
+      <widthRatio>0.974424552429668</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel24/panel57/layoutx15/layoutxitem37">
       <backgroundColor>f0f0f0</backgroundColor>
@@ -15966,7 +15960,7 @@ sender.v_index = 0;
       <height>33</height>
       <heightRatio>1</heightRatio>
       <left>10</left>
-      <leftRatio>0.530120481927711</leftRatio>
+      <leftRatio>0.114942528735632</leftRatio>
       <onClick>var text = ee.getEditText(ee.getControl("edit22"))
 g5.p2.p11.search(text);
 </onClick>
@@ -16038,12 +16032,11 @@ sender.init(0);
 
 </onCreate>
       <outerLeft>10</outerLeft>
-      <sizeRatio>0.622641509433962</sizeRatio>
+      <sizeRatio>0.428571428571429</sizeRatio>
       <text>搜索</text>
       <top>0</top>
-      <topRatio>0.606060606060606</topRatio>
       <width>77</width>
-      <widthRatio>0.21285140562249</widthRatio>
+      <widthRatio>0.885057471264368</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel242">
       <backgroundColor>E6ECF0</backgroundColor>
@@ -17607,7 +17600,6 @@ sender.renderItem = function(root) {
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <leftRatio>-0.000843881856540084</leftRatio>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
         ee.showAni(sender.eeChildren[i], 1);
@@ -17627,7 +17619,6 @@ sender.a8 = ee.getControl("panel402");
 </onCreate>
       <sizeRatio>0.671729957805907</sizeRatio>
       <top>0</top>
-      <topRatio>0.00125628140703518</topRatio>
       <width>1185</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -17894,7 +17885,6 @@ sender.close = function() {
       <note>c_video</note>
       <sizeRatio>0.679024390243902</sizeRatio>
       <top>0</top>
-      <topRatio>0.00431034482758621</topRatio>
       <width>1025</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -20571,6 +20561,7 @@ g5.processUrl();
     </taskSetItem>
     <taskSetItem name="getUserInfo2">
       <script1>//userId,onComplete(userInfo)
+getUserInfo2.busy = true;
 eio.appendString16(g5.token);
 eio.appendString16(getUserInfo2.userId+"");
 
@@ -20629,8 +20620,11 @@ eio.appendDataSet(sqlResult,
     "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 1);
               ]]></script2>
       <script3>if (eio.readString8() != "T") {
+    getUserInfo2.busy = false;
     return;
 }
+if (!getUserInfo2.busy) return;
+
 getUserInfo2.dataset = eio.readDataSet()
 getUserInfo2.userInfo = new g5.UserInfo();
 getUserInfo2.userInfo.loadFromDataset(getUserInfo2.dataset, 0, 0);
@@ -20638,6 +20632,7 @@ if (!eb.isEmpty(getUserInfo2.onComplete)) {
     getUserInfo2.onComplete(getUserInfo2.userInfo);
     getUserInfo2.onComplete = null;
 }
+getUserInfo2.busy = false;
 
 
 
@@ -22699,18 +22694,35 @@ for (var i = 0; i < showChatList.dataset.rowCount; i++) {
     });
     c = createPanel($g(hd+"panel4"), hd+"panel2", "C0C0C0", 0, 75, 439, 1);
     eb.setDock(c,"fill","bottom");
+    
+    //avata
     c = createPanel($g(hd+"panel4"), hd+"panel13", "", 15, 15, 45, 45);
-    c = createPanel($g(hd+"panel13"), hd+"panel14", "", 1, 1, 43, 43);
-    eb.setOuter(c,1,1,1,1);
+    c.v_timer = null;
     if (showChatList.dataset.getData(7,i) == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
     } else {
         ee.setImage(c,"url:" + g5.imgUrl + showChatList.dataset.getData(7,i),"trim","","")
-    }    
-    eb.setDock(c,"fill","fill");
-    c = createPanel($g(hd+"panel13"), hd+"panel15", "", 0, 0, 62, 62);
-    ee.setImage(c,"/twitterG/main/page4/cirMask.png","trim","","")
-    eb.setDock(c,"fill","fill");
+    }  
+    c.style.cursor="pointer";
+    c.style.borderRadius = "50%";
+    ee.setOnClick(c,function(sender,event) {
+        showUserPage.userName=sender.parentNode.userName;
+        showUserPage();
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+    });
+    
     c = createPanel($g(hd+"panel4"), hd+"panel3", "", 70, 15, 190, 29);
     addText(c, "<b>" + showChatList.dataset.getData(5,i) + "</b>" +
         "<font color = '#A0A0A0'> @" + showChatList.dataset.getData(6,i) + "</font>",
@@ -22728,8 +22740,6 @@ for (var i = 0; i < showChatList.dataset.rowCount; i++) {
     s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
     addText(c, s, "left", "middle", "微软雅黑", 12, "808080", "normal");
     //eb.setFontSizeAuto(c, 28);
-    
-        
 }
 eb.processDock();
 if (showChatList.defaultUserId!=null) {
@@ -25345,6 +25355,7 @@ ee.setOnClick(c,function(sender,event) {
         clearTimeout(sender.v_timer);
         sender.v_timer = null;
     }
+    getUserInfo2.busy = false;
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 ee.setOnMouseEnter(c, function(sender,e) {
@@ -25531,6 +25542,11 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     ee.setOnClick(c,function(sender,event) {
         showUserPage.userName=sender.v_username;
         showUserPage();
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
+        getUserInfo2.busy = false;
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     root.c_rePhoto = c;
@@ -25624,6 +25640,11 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     ee.setOnClick(c,function(sender,event) {
         showUserPage.userName=sender.v_username;
         showUserPage();
+        if (sender.v_timer!=null) {
+            clearTimeout(sender.v_timer);
+            sender.v_timer = null;
+        }
+        getUserInfo2.busy = false;
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     root.c_rePhoto = c;
@@ -25965,7 +25986,12 @@ root.style.cursor = "pointer";
 ee.setOnClick(root,function(sender,event) {
     showUserPage.userName=sender.v_userInfo.userName;
     showUserPage();
-    ee.showAni(ee.getControl("panel10"), 1);    
+    if (sender.c_photo.v_timer!=null) {
+        clearTimeout(sender.c_photo.v_timer);
+        sender.c_photo.v_timer = null;
+    }
+    getUserInfo2.busy = false;    
+    ee.s1howAni(ee.getControl("panel10"), 1);    
 });
 ee.setOnMouseEnter(root, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
