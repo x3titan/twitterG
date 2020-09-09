@@ -1526,6 +1526,7 @@ sender.style.borderRadius = "50%";
       <onCreate>sender.p1 = ee.getControl("panel41");
 sender.p2 = ee.getControl("panel16");
 sender.p5 = ee.getControl("panel91");
+sender.p9 = ee.getControl("panel22");
 sender.p11 = ee.getControl("panel335");
 sender.p12 = ee.getControl("panel355");</onCreate>
       <sizeRatio>1.3</sizeRatio>
@@ -7036,7 +7037,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->话题页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.3</sizeRatio>
       <top>0</top>
@@ -16233,9 +16233,7 @@ sender.onpointermove = function(event) {
     </control>
     <control type="Panel" pathname="/divRoot/panel54">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <ani2Pos>bottomFlyOut:底部飞出</ani2Pos>
       <aniAlpha>appear:渐变出现</aniAlpha>
-      <aniPos>leftFlyIn:左侧飞入</aniPos>
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>stretch</backgroundImgMode>
       <backgroundSkin>body5</backgroundSkin>
@@ -16244,6 +16242,7 @@ sender.onpointermove = function(event) {
       <height>645</height>
       <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[Root->编辑个人信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);
@@ -19721,23 +19720,30 @@ sender.style.borderRadius = "50%";
     follow();
     //ee.showAni(sender.parentNode, 1);
 } else if (sender.v_index==2) {
+    follow.follow = 0;
+    follow.userId = sender.parentNode.v_userInfo.id;
+    follow.onComplete = function() {
+        sender.init(1);
+        sender.parentNode.v_userInfo.isFollow = 0;
+    }
+    follow();
     //正在关注
-    ee.getControl("panel257").show(
-        "取消关注@"+showUserPage.userName+"？",
-        "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
-        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
-        function() {
-            follow.follow = 0;
-            follow.userId = sender.parentNode.v_userInfo.id;
-            follow.onComplete = function() {
-                sender.init(1);
-                sender.parentNode.v_userInfo.isFollow = 0;
-            }
-            follow();
-        }
-    );
-    ee.showAni(sender.parentNode, 1);
+    //ee.getControl("panel257").show(
+    //    "取消关注@"+showUserPage.userName+"？",
+    //    "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
+    //    [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+    //    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
+    //    function() {
+    //        follow.follow = 0;
+    //        follow.userId = sender.parentNode.v_userInfo.id;
+    //        follow.onComplete = function() {
+    //            sender.init(1);
+    //            sender.parentNode.v_userInfo.isFollow = 0;
+    //        }
+    //        follow();
+    //    }
+    //);
+    //ee.showAni(sender.parentNode, 1);
 } else if (sender.v_index==3) {
     //编辑个人资料
     ee.showAni(ee.getControl("panel54"), 0);
@@ -22067,21 +22073,29 @@ if (lastCy<0) {
 }
 scrollY += 2;
 
+var item = null;
 for (i=0; i< showTopic.data.rowCount; i++) {
     uType = " "; dType = " ";
     if ((i==0) &amp;&amp; (showTopic.backTrace.rowCount>0)) {
         uType="T"; dType = " ";
     }
     if (i==0) dType += "x";
-    var item = createPanel(root, "page8_" + showTopic.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    item = createPanel(root, "page8_" + showTopic.data.getData(0,i), "", 0, cy, itemWidth, 5);
     g5.loadTwitterRecord(item, showTopic.data, i);
     item.v_mode = uType + dType;
     g5.renderTwitter(item);        
     showTopic.items.push(item);
     cy += 0 + eb.getDivRect(item).h;    
 }
-eb.setDivRect(ee.getControl("panel135"),null,null,null,cy+200);
-eb.setDivRect(ee.getControl("panel22"),null,null,null,cy+200);
+if (item!=null) {
+    var ch = $g("divRoot").offsetHeight;
+    var h = cy + ch - eb.getDivRect(item).h - 50; 
+    eb.setDivRect(g5.p2,null,null,null,h);
+    eb.setDivRect(g5.p2.p9,null,null,null,h);
+} else {
+    eb.setDivRect(g5.p2,null,null,null,cy+200);
+    eb.setDivRect(g5.p2.p9,null,null,null,cy+200);
+}
 showTopic.scrollY = scrollY;
 eb.processDock();
 
@@ -25346,30 +25360,31 @@ if (root.v_userPhoto == "") {
 c.style.cursor="pointer";
 c.style.borderRadius = "50%";
 ee.setOnClick(c,function(sender,event) {
-    showUserPage.userName=sender.parentNode.v_userName;
-    showUserPage();
-    if (sender.v_timer!=null) {
-        clearTimeout(sender.v_timer);
-        sender.v_timer = null;
-    }
-    getUserInfo2.busy = false;
+    ee.getControl("panel280").show(root.v_userId, root.c_photo);
+    //showUserPage.userName=sender.parentNode.v_userName;
+    //showUserPage();
+    //if (sender.v_timer!=null) {
+    //    clearTiwmeout(sender.v_timer);
+    //    sender.v_timer = null;
+    //}
+    //getUserInfo2.busy = false;
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.webkitFilter="brightness(80%)";
     sender.style.filter="brightness(80%)";
-    if (sender.v_timer!=null) clearTimeout(sender.v_timer);
-    sender.v_timer = setTimeout(function() {
-        ee.getControl("panel280").show(root.v_userId, root.c_photo);
-    }, 700);
+//    if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+//    sender.v_timer = setTimeout(function() {
+//        ee.getControl("panel280").show(root.v_userId, root.c_photo);
+//    }, 700);
 });
 ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.webkitFilter="brightness(100%)";
     sender.style.filter="brightness(100%)";
-    if (sender.v_timer!=null) {
-        clearTimeout(sender.v_timer);
-        sender.v_timer = null;
-    }
+    //if (sender.v_timer!=null) {
+    //    clearTimeout(sender.v_timer);
+    //    sender.v_timer = null;
+    //}
 });
 
 var mainWidth = parseInt((w-75)*0.97);
@@ -25537,13 +25552,14 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     c.v_username = root.v_reUserName;
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.v_username;
-        showUserPage();
-        if (sender.v_timer!=null) {
-            clearTimeout(sender.v_timer);
-            sender.v_timer = null;
-        }
-        getUserInfo2.busy = false;
+        ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
+        //showUserPage.userName=sender.v_username;
+        //showUserPage();
+        //if (sender.v_timer!=null) {
+        //    clearTimeout(sender.v_timer);
+        //    sender.v_timer = null;
+        //}
+        //getUserInfo2.busy = false;
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     root.c_rePhoto = c;
@@ -25551,18 +25567,18 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     ee.setOnMouseEnter(c, function(sender,e) {
         sender.style.webkitFilter="brightness(80%)";
         sender.style.filter="brightness(80%)";
-        if (sender.v_timer!=null) clearTimeout(sender.v_timer);
-        sender.v_timer = setTimeout(function() {
-            ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
-        }, 200);
+        //if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+        //sender.v_timer = setTimeout(function() {
+        //    ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
+        //}, 200);
     });
     ee.setOnMouseLeave(c, function(sender,e) {
         sender.style.webkitFilter="brightness(100%)";
         sender.style.filter="brightness(100%)";
-        if (sender.v_timer!=null) {
-            clearTimeout(sender.v_timer);
-            sender.v_timer = null;
-        }
+        //if (sender.v_timer!=null) {
+        //    clearTimeout(sender.v_timer);
+        //    sender.v_timer = null;
+        //}
     });
     //reUserName,reNickName,reTime
     c = createPanel($g(root.id+"_panel2"), root.id+"_panel11", "", 35, 7, p1w*0.833734939759036, 25);
@@ -25635,13 +25651,14 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     c.v_username = root.v_reUserName;
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.v_username;
-        showUserPage();
-        if (sender.v_timer!=null) {
-            clearTimeout(sender.v_timer);
-            sender.v_timer = null;
-        }
-        getUserInfo2.busy = false;
+        ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
+        //showUserPage.userName=sender.v_username;
+        //showUserPage();
+        //if (sender.v_timer!=null) {
+        //    clearTimeout(sender.v_timer);
+        //    sender.v_timer = null;
+        //}
+        //getUserInfo2.busy = false;
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     root.c_rePhoto = c;
@@ -25649,18 +25666,18 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     ee.setOnMouseEnter(c, function(sender,e) {
         sender.style.webkitFilter="brightness(80%)";
         sender.style.filter="brightness(80%)";
-        if (sender.v_timer!=null) clearTimeout(sender.v_timer);
-        sender.v_timer = setTimeout(function() {
-            ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
-        }, 200);
+        //if (sender.v_timer!=null) clearTimeout(sender.v_timer);
+        //sender.v_timer = setTimeout(function() {
+        //    ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
+        //}, 200);
     });
     ee.setOnMouseLeave(c, function(sender,e) {
         sender.style.webkitFilter="brightness(100%)";
         sender.style.filter="brightness(100%)";
-        if (sender.v_timer!=null) {
-            clearTimeout(sender.v_timer);
-            sender.v_timer = null;
-        }
+        //if (sender.v_timer!=null) {
+        //    clearTimeout(sender.v_timer);
+        //    sender.v_timer = null;
+        //}
     });
     //reUserName,reNickName,reTime
     c = createPanel($g(root.id+"_panel6"), root.id+"_panel11", "", 45, 8, p1w*0.833734939759036, 28);
