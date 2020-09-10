@@ -1,5 +1,5 @@
 <page>
-  <controls count="552">
+  <controls count="553">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -200,7 +200,7 @@ sender.onWheel = function(wheelDelta) {
     
     var viewPortH = $g("divRoot").offsetHeight;
     var p2h = eb.getDivRect(g5.p2).h;
-    if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 4000) {
+    if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 6000) {
         if (g5.currentPageIndex == 0) {
             if (!eb.isEmpty(updateHomepage.data)) {
                 if (updateHomepage.data.rowCount>0) {
@@ -1526,6 +1526,7 @@ sender.style.borderRadius = "50%";
       <onCreate>sender.p1 = ee.getControl("panel41");
 sender.p2 = ee.getControl("panel16");
 sender.p5 = ee.getControl("panel91");
+sender.p7 = ee.getControl("layouty5");
 sender.p9 = ee.getControl("panel22");
 sender.p11 = ee.getControl("panel335");
 sender.p12 = ee.getControl("panel355");</onCreate>
@@ -1589,12 +1590,13 @@ sender.init = function() {
         ee.getControl("panel53").refresh(0/200);
         ee.setText(ee.getControl("panel122"), "");
     }    
+    ee.setVisible(ee.getControl("panel53"), false);
     eb.processDock();
 }
 sender.init();]]></onCreate>
       <sizeRatio>0.715</sizeRatio>
-      <top>121</top>
-      <topRatio>0.155128205128205</topRatio>
+      <top>53</top>
+      <topRatio>0.0679487179487179</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -1818,6 +1820,7 @@ sender.v_bgColor = "#ecf0f3";
 sender.v_width = "4px";
 sender.v_progress = "0.0001";
 sender.refresh = function(progress) {
+    ee.setVisible(this, true);
     var path = this.childNodes[0].childNodes[0];
     path.style.stroke=sender.v_bgColor;
     path.style.strokeWidth=sender.v_width;
@@ -2683,12 +2686,17 @@ sender.updateP3 = function() {
         var i, j, item;
         var root = sender.p3; 
         var itemWidth = eb.getDivRect(root).w;
-        var cy = eb.getDivRect(root).h;
+        var cy = 0;
+        if (sender.p3Items.length>0) {
+            var r = eb.getDivRect(sender.p3Items[sender.p3Items.length-1]);
+            cy = r.y + r.h;
+        }
+        var item = null;
         for (i=0; i< dataset.rowCount; i++) {
             for (j=0; j<sender.p3Items; j++) {
                 if (sender.p3Items[j].v_contentId == dataset.getData(0,i)) break;    
             }
-            var item = createPanel(root, "puser3_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            item = createPanel(root, "puser3_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
             item.v_mode = "   x";
             g5.renderTwitter(item);
@@ -2697,8 +2705,17 @@ sender.updateP3 = function() {
             item.style.borderLeft="";    
             item.style.borderRight="";    
         }
-        g5.tiledV(root, 0, 0, 0);
-        g5.resizeV(root, 4);
+        if (item!=null) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = cy + ch - eb.getDivRect(item).h - 51; 
+            ee.setRect(root,null,null,null,h);
+        } else if (sender.p3Items.length<=0) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = ch + eb.getDivRect(ee.getControl("layoutx2")).y - 51; 
+            ee.setRect(root,null,null,null,h);
+        }
+        //g5.tiledV(root, 0, 0, 0);
+        g5.resizeV(root.parentNode, 3);
     }
     showUserPageP3(); 
 }
@@ -3025,13 +3042,18 @@ sender.loadMore = function() {
         var i, j, item;
         var root = sender;
         var itemWidth = eb.getDivRect(root).w;
-        var cy = eb.getDivRect(root).h;
+        var cy = 0;
+        if (g5.itemsPageUser.length>0) {
+            var r = eb.getDivRect(g5.itemsPageUser[g5.itemsPageUser.length-1]);
+            cy = r.y + r.h;
+        }
+        var item = null;
         for (i=0; i< dataset.rowCount; i++) {
             for (j=0; j<g5.itemsPageUser.length; j++) {
                 if (g5.itemsPageUser[j].v_contentId == dataset.getData(0,i)) break;    
             }
             if (j<g5.itemsPageUser.length) continue;
-            var item = createPanel(root, "puser_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            item = createPanel(root, "puser_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
             item.v_mode = "   x";
             g5.renderTwitter(item);
@@ -3040,7 +3062,12 @@ sender.loadMore = function() {
             item.style.borderLeft="";    
             item.style.borderRight="";    
         }
-        g5.resizeV(root, 4);
+        if (item!=null) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = cy + ch - eb.getDivRect(item).h - 51; 
+            ee.setRect(root,null,null,null,h);
+            g5.resizeV(root.parentNode, 3);
+        }
     }
     showUserPageLoadMore();
 }
@@ -7162,14 +7189,57 @@ sender.style.borderRight = "";
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "0 0 1px 0";
 sender.style.borderColor = "#e6ecf0";
-sender.style.borderStyle = "solid";
+sender.style.borderStyle = "solid"; 
+
+
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
-      <text>   @UserName</text>
       <top>53</top>
       <topRatio>0.0679487179487179</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel156/panel157/panel418">
+      <backgroundColor>FFC080</backgroundColor>
+      <bindControl>panel154</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>45</height>
+      <heightRatio>1</heightRatio>
+      <left>18</left>
+      <leftRatio>0.0333333333333333</leftRatio>
+      <onCreate><![CDATA[sender.v_text = "";
+sender.setText = function(text) {
+    this.v_text = text;
+    this.label.style.wordBreak = "keep-all";
+    this.label.style.whiteSpace = "nowrap";
+    eb.setDivRect(this.label, null, null, 1, null);
+    var thisW = eb.getDivRect(sender).w - 10;
+    var s, i;
+    for (i=1; i<text.length; i++) {
+        s = text.substr(0,i) + "...";
+        ee.setText(this, s);
+        var r = eb.getDivRect(sender.label);
+        if (r.w>thisW) break;
+    }
+    s = i>=text.length?text:text.substr(0,i-1) + "...";
+    ee.setText(this, s);
+}
+
+]]></onCreate>
+      <outerLeft>18</outerLeft>
+      <outerRight>20</outerRight>
+      <sizeRatio>0.0803571428571429</sizeRatio>
+      <text>@UserName</text>
+      <top>0</top>
+      <width>562</width>
+      <widthRatio>0.933333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel156/panel158">
       <backgroundColor>FFC080</backgroundColor>
@@ -21068,9 +21138,10 @@ if (mode == "N") {
         cy = 0 + rect.y + rect.h;
     }
 }
+var item = null;
 for (i=0; i< updateHomepage.data.rowCount; i++) {
     if (updateHomepage.data.getData(18,i) == "DEL") continue;
-    var item = createPanel(root, "page1_" + updateHomepage.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    item = createPanel(root, "page1_" + updateHomepage.data.getData(0,i), "", 0, cy, itemWidth, 5);
     g5.loadTwitterRecord(item, updateHomepage.data, i);
     item.v_mode = "";
     g5.renderTwitter(item);
@@ -21091,9 +21162,13 @@ if (mode == "N") {
 }
 
 if (g5.currentPageIndex == 0) {
-    eb.setDivRect(ee.getControl("panel135"),null,null,null,cy);
+    if (item!=null) {
+        var ch = $g("divRoot").offsetHeight;
+        var h = cy + ch - eb.getDivRect(item).h - 51; 
+        eb.setDivRect(g5.p2,null,null,null,h);
+    }    
 }
-eb.setDivRect(ee.getControl("panel41"),null,null,null,cy);
+eb.setDivRect(g5.p2.p1,null,null,null,cy);
 eb.processDock();
 
 
@@ -21533,8 +21608,9 @@ var i, item;
 var root = g5.p2.p2.p2sub.p1;
 root.init(); 
 var itemWidth = eb.getDivRect(root).w;
+var item = null;
 for (i=0; i< g5.datasetPageUser.rowCount; i++) {
-    var item = createPanel(root, "puser_" + g5.datasetPageUser.getData(0,i), "", 0, cy, itemWidth, 5);
+    item = createPanel(root, "puser_" + g5.datasetPageUser.getData(0,i), "", 0, cy, itemWidth, 5);
     g5.loadTwitterRecord(item, g5.datasetPageUser, i);
     item.v_mode = "   x";
     g5.renderTwitter(item);
@@ -21543,7 +21619,15 @@ for (i=0; i< g5.datasetPageUser.rowCount; i++) {
     item.style.borderLeft="";    
     item.style.borderRight="";    
 }
-ee.setRect(root,null,null,null,cy);
+if (item!=null) {
+    var ch = $g("divRoot").offsetHeight;
+    var h = cy + ch - eb.getDivRect(item).h - 51; 
+    ee.setRect(root,null,null,null,h);
+} else {
+    var ch = $g("divRoot").offsetHeight;
+    var h = ch + eb.getDivRect(ee.getControl("layoutx2")).y - 51; 
+    ee.setRect(root,null,null,null,h);
+}    
 rect = eb.getDivRectSetting(root);
 ee.setRect(root.parentNode,null,null,null,rect.y + rect.h);
 rect = eb.getDivRectSetting(root.parentNode);
@@ -22771,6 +22855,7 @@ for (var i = 0; i < showChatList.dataset.rowCount; i++) {
     //eb.setFontSizeAuto(c, 28);
 }
 eb.processDock();
+g5.resizeV(root,3);
 if (showChatList.defaultUserId!=null) {
     g5.p3.p3.c_chat.c_chatRoot.start(showChatList.defaultUserId);
     ee.setText(ee.getControl("panel118"), 
@@ -26572,8 +26657,8 @@ if (pageIndex == 0) {
     g5.refreshMain(true);
     ee.setRect(g5.p3,null,null,null,eb.getDivRect(g5.mainDiv).h);
     eb.processDock();
-    ee.showAni(ee.getControl("layouty5"), 0);
-    ee.showAni(ee.getControl("panel116"), 0);
+    ee.showAni(g5.p2.p7, 0);
+    ee.showAni(g5.p3.p3, 0);
     if (pageState!="") {
         history.pushState(pageState,"","?p=6");
     }
@@ -26732,7 +26817,7 @@ if (eb.isEmpty(g5.myUserInfo)) return;
 s = "<b>" + g5.myUserInfo.nickName + "</b><br/>";
 s += "@" + g5.myUserInfo.userName;
 ee.setText(ee.getControl("panel31"), s);
-ee.setText(ee.getControl("panel157"), "   " + g5.myUserInfo.nickName + " @" + g5.myUserInfo.userName);
+ee.getControl("panel418").setText(g5.myUserInfo.nickName + " @" + g5.myUserInfo.userName);
 ee.setEditText(ee.getControl("edit2"), g5.myUserInfo.nickName);
 ee.setEditText(ee.getControl("edit3"), g5.myUserInfo.note);
 ee.setEditText(ee.getControl("edit4"), g5.myUserInfo.homePage);
