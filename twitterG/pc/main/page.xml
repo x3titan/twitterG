@@ -2055,6 +2055,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p2sub = ee.getControl("panel279");
 
@@ -3017,6 +3018,7 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[p1->综合]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_titleChat = ee.getControl("panel263");
 sender.c_video = ee.getControl("panel264");
@@ -6158,6 +6160,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[p2->聊天室]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.456666666666667</sizeRatio>
       <top>52</top>
@@ -17191,7 +17194,6 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17419,7 +17421,6 @@ g5.popBlack.a3.show("带评论转发");</onClick>
       <height>205</height>
       <heightRatio>0.257537688442211</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.256540084388186</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -17544,7 +17545,7 @@ setBookMark();
       <height>50</height>
       <heightRatio>0.24390243902439</heightRatio>
       <left>0</left>
-      <onClick><![CDATA[var value = "http://" + window.location.host + ee.pageUrl + "?p=7&amp;c=" + sender.parentNode.v_root.v_contentId;
+      <onClick><![CDATA[var value = "https://" + window.location.host + ee.pageUrl + "?p=7&amp;c=" + sender.parentNode.v_root.v_contentId;
 g5.copyClipboard(value,
     function() {
         g5.alert1("复制成功", value + "<br/>已经成功复制到您的剪贴板");
@@ -17891,8 +17892,21 @@ sender.show = function(photos, photo) {
     }
     if (sender.v_index<0) return;
     sender.refresh();    
+    document.addEventListener("keydown", this.onKeyDown);
     ee.setVisible(ee.getControl("panel112"), true);
     ee.showAni(sender, 0);
+}
+
+sender.onKeyDown = function(event) {
+    event = event || window.event;
+    if (event.keyCode == 37) {
+        ee.getControl("panel8").click();
+    } else if (event.keyCode == 39) {
+        ee.getControl("panel52").click();
+    } else if (event.keyCode == 27) {
+        sender.parentNode.click();
+    }
+    //g5.writeLog(event.keyCode+"");
 }
 
 sender.refresh = function() {
@@ -17923,6 +17937,7 @@ sender.clear = function() {
 
 sender.close = function() {
     ee.setVisible(this.parentNode, false);
+    document.removeEventListener("keydown", this.onKeyDown);
     this.clear();
 }
 ]]></onCreate>
@@ -18033,6 +18048,10 @@ sender.eeMouseUp = function(sender,event,x,y) {
     sender.style.backgroundColor = "rgba(0,0,0,0.5)";
 }
 ee.setOnClick(sender, function(sender, event) {
+    if (sender.parentNode.v_photos.length<=1) {
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+        return;
+    }
     if (sender.parentNode.v_index==0) {
         sender.parentNode.v_index = sender.parentNode.v_photos.length-1;
     } else {
@@ -18083,6 +18102,10 @@ sender.eeMouseUp = function(sender,event,x,y) {
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 }
 ee.setOnClick(sender, function(sender, event) {
+    if (sender.parentNode.v_photos.length<=1) {
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+        return;
+    }
     if (sender.parentNode.v_index>=sender.parentNode.v_photos.length-1) {
         sender.parentNode.v_index = 0;
     } else {
