@@ -410,11 +410,9 @@ sender.addEventListener("mousewheel",function(event){
       <heightRatio>0.0805604203152364</heightRatio>
       <left>46</left>
       <leftRatio>0.153333333333333</leftRatio>
-      <onClick>ee.setEditText(ee.getControl("edit1"), "");
-ee.setText(ee.getControl("panel45"), "发推");
-newTwitter.uplinkType = "N";
+      <onClick>newTwitter.uplinkType = "N";
 newTwitter.uplinkId = 0;
-ee.showAni(ee.getControl("panel42"), 0);</onClick>
+g5.popBlack.a3.show("发言");</onClick>
       <sizeRatio>0.207207207207207</sizeRatio>
       <text>发言</text>
       <top>489</top>
@@ -1056,11 +1054,9 @@ sender.style.borderRadius = "24px";
       <heightRatio>0.0980735551663748</heightRatio>
       <left>120</left>
       <leftRatio>0.4</leftRatio>
-      <onClick>ee.setEditText(ee.getControl("edit1"), "");
-ee.setText(ee.getControl("panel45"), "发推");
-newTwitter.uplinkType = "N";
+      <onClick>newTwitter.uplinkType = "N";
 newTwitter.uplinkId = 0;
-ee.showAni(ee.getControl("panel42"), 0);</onClick>
+g5.popBlack.a3.show("发言");</onClick>
       <onCreate><![CDATA[sender.baseColor1 = "rgb(29, 161, 242)";
 //sender.style.backgroundColor = sender.baseColor1;
 //ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 8px 8px;fill:#ffffff;vertical-align:middle;\">"+g5.iconNew+"</svg>");
@@ -1543,6 +1539,7 @@ sender.p12 = ee.getControl("panel355");</onCreate>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.a1 = ee.getControl("panel1");</onCreate>
       <sizeRatio>1.3</sizeRatio>
@@ -1980,7 +1977,7 @@ c.onchange = function() {
             (fileExt != ".tif") &amp;&amp;
             (fileExt != ".tiff")) return;
         if (ee.getControl("panel7").v_photos.length>=4) {
-            alert("对不起，您最多只能上传4张图片。");
+            g5.alert1("提示", "对不起，您最多只能上传4张图片。");
             return;
         }         
         
@@ -2017,7 +2014,7 @@ c.onchange = function() {
         }
         reader.readAsArrayBuffer(file);
     } else {
-        alert("此浏览器不完全支持压缩上传图片");
+        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
     }
 }
 
@@ -2058,7 +2055,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p2sub = ee.getControl("panel279");
 
@@ -2641,9 +2637,13 @@ sender.changePage = function(pageIndex) {
         ee.changeParent(this.chat, this.p2, 1);
         g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.id == g5.myUserInfo.id);
         this.chat.c_buttons.c_buttons.showButton3(false);
-        g5.tiledV(this.p2,10,1,20);
+        g5.tiledV(this.p2,10,1,0);
         ee.setVisible(this.p2, true);
         g5.tiledResizeV(this.chat, 5);
+        var ch = $g("divRoot").offsetHeight;
+        var h = ch + eb.getDivRect(this).y + eb.getDivRect(this).h - eb.getDivRect(this.chat.c_chat).h - 51 - 8; 
+        ee.setRect(this.parentNode,null,null,null,h);
+        g5.resizeV(this.parentNode.parentNode, 1);
     } else if (pageIndex == 3) {
         g5.player.stop();
         this.button3.init(1);
@@ -3017,7 +3017,6 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[p1->综合]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_titleChat = ee.getControl("panel263");
 sender.c_video = ee.getControl("panel264");
@@ -3718,11 +3717,11 @@ sender.init = function(videoUrl, isOwner) {
     } else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
         ytbVideo = url.substr(pos + "youtu.be/".length, url.length);
     } else {
-        alert("您输入的视频地址不正确");
+        g5.alert1("提示", "您输入的视频地址不正确");
         return;
     }
     if ((ytbVideo.length<=8)||(ytbVideo.length>=14)) {
-        alert("您输入的视频地址不正确");
+        g5.alert1("提示", "您输入的视频地址不正确");
         return;
     }
     ytbVideo = "?YTB" + ytbVideo;
@@ -5013,7 +5012,7 @@ sender.refresh = function(force) {
                             if (item.v_userInfo.id == g5.myUserInfo.id) {
                                 root.stop();
                                 showUserPage.isChatRoomPubBlack = true;
-                                alert("很遗憾，您已经被本聊天室屏蔽。您将不能在本聊天室发言，同时您也不能看到本聊天室的任何发言。");
+                                g5.alert1("提示", "很遗憾，您已经被本聊天室屏蔽。您将不能在本聊天室发言，同时您也不能看到本聊天室的任何发言。");
                             }
                             g5.p2.p2.p2sub.p1.c_chat.c_blackList.appendUser(item.v_userInfo);
                             root.refreshContentAll();
@@ -6043,7 +6042,7 @@ sender.setText = function(text) {
 sender._input.addEventListener("keydown", function(event) {
     if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
         if (showUserPage.isChatRoomPubBlack) {
-            alert("对不起，您已经被本聊天室屏蔽，您将不能在本聊天室发言");
+            g5.alert1("提示", "对不起，您已经被本聊天室屏蔽，您将不能在本聊天室发言");
             event.preventDefault();
             return false;
         }
@@ -6159,7 +6158,6 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[p2->聊天室]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.456666666666667</sizeRatio>
       <top>52</top>
@@ -7213,7 +7211,7 @@ sender.style.borderStyle = "solid";
       <height>45</height>
       <heightRatio>1</heightRatio>
       <left>18</left>
-      <leftRatio>0.0333333333333333</leftRatio>
+      <leftRatio>0.03</leftRatio>
       <onCreate><![CDATA[sender.v_text = "";
 sender.setText = function(text) {
     this.v_text = text;
@@ -7235,11 +7233,11 @@ sender.setText = function(text) {
 ]]></onCreate>
       <outerLeft>18</outerLeft>
       <outerRight>20</outerRight>
-      <sizeRatio>0.0803571428571429</sizeRatio>
+      <sizeRatio>0.0800711743772242</sizeRatio>
       <text>@UserName</text>
       <top>0</top>
       <width>562</width>
-      <widthRatio>0.933333333333333</widthRatio>
+      <widthRatio>0.936666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel156/panel158">
       <backgroundColor>FFC080</backgroundColor>
@@ -10768,14 +10766,14 @@ var p1 = ee.getEditText(ee.getControl("edit8"));
 var p2 = ee.getEditText(ee.getControl("edit9"));
 var p3 = ee.getEditText(ee.getControl("edit10"));
 if (p2!=p3) {
-    alert("新密码两次输入的不一致，请重新输入");
+    g5.alert1("提示", "新密码两次输入的不一致，请重新输入");
     return;
 }
 
 changePassword.old = p1;
 changePassword.new = p2;
 changePassword.onComplete = function(参数) {
-    alert("密码修改完成，请牢记您的新密码");
+    g5.alert1("提示", "密码修改完成，请牢记您的新密码");
     g5.changeP3(4);    
 }
 changePassword();
@@ -11691,7 +11689,6 @@ sender.init(0);
       <height>143</height>
       <heightRatio>0.514388489208633</heightRatio>
       <left>0</left>
-      <leftRatio>-0.0036101083032491</leftRatio>
       <note><![CDATA[c_chatRoom->聊天室]]></note>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -13229,11 +13226,11 @@ if ((pos=url.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
 } else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
     ytbVideo = url.substr(pos + "youtu.be/".length, url.length);
 } else {
-    alert("您输入的视频地址不正确");
+    g5.alert1("提示", "您输入的视频地址不正确");
     return;
 }
 if ((ytbVideo.length<=8)||(ytbVideo.length>=14)) {
-    alert("您输入的视频地址不正确");
+    g5.alert1("提示", "您输入的视频地址不正确");
     return;
 }
 ytbVideo = "?YTB" + ytbVideo;
@@ -13341,7 +13338,7 @@ sender.init(0);</onCreate>
 hostRecomdAppend.note = ee.getEditText(g5.p3.p8.p2.c_edit.c_edit);
 
 if (eb.isEmpty(hostRecomdAppend.videoUrl)) {
-    alert("您必须指定推荐的视频");
+    g5.alert1("提示", "您必须指定推荐的视频");
     window.event? window.event.cancelBubble = true : event.stopPropagation();
     return;
 }
@@ -16476,7 +16473,7 @@ c.onchange = function() {
         }
         reader.readAsArrayBuffer(file);
     } else {
-        alert("此浏览器不完全支持压缩上传图片");
+        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
     }
 }
 
@@ -16594,7 +16591,7 @@ c.onchange = function() {
         }
         reader.readAsArrayBuffer(file);
     } else {
-        alert("此浏览器不完全支持压缩上传图片");
+        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
     }
 }
 
@@ -17354,9 +17351,9 @@ ee.showAni(ee.getControl("panel117"), 0);
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
 sender.setMode=function(mode) {
     if (mode=="0") {
-        $g("panel125label").innerHTML = "转推";
+        $g("panel125label").innerHTML = "转发";
     } else if (mode=="1") {
-        $g("panel125label").innerHTML = "取消转推";
+        $g("panel125label").innerHTML = "取消转发";
     }
 }</onCreate>
       <sizeRatio>0.605882352941176</sizeRatio>
@@ -17382,11 +17379,11 @@ newTwitter.uplinkType="L";
 newTwitter();
 
 </onClick>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg> <div id='panel125label' style='display:inline;'>转推</div>");]]></onCreate>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg> <div id='panel125label' style='display:inline;'>转发</div>");]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.294117647058824</sizeRatio>
-      <text>   X   转推</text>
+      <text>   X   转发</text>
       <top>0</top>
       <width>170</width>
       <widthRatio>1</widthRatio>
@@ -17402,12 +17399,12 @@ newTwitter();
       <heightRatio>0.485436893203884</heightRatio>
       <left>0</left>
       <onClick>newTwitter.uplinkType = "F";
-g5.popBlack.a3.show("发表转推短文");</onClick>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> 带评论转推");]]></onCreate>
+g5.popBlack.a3.show("带评论转发");</onClick>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> 带评论转发");]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.294117647058824</sizeRatio>
-      <text>   X   带评论转推</text>
+      <text>   X   带评论转发</text>
       <top>52</top>
       <topRatio>0.504854368932039</topRatio>
       <width>170</width>
@@ -18106,9 +18103,7 @@ eb.initMouseEvent(sender);
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel42">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <ani2Size>tinyZoomOut:轻微缩小</ani2Size>
       <aniAlpha>appear:渐变出现</aniAlpha>
-      <aniSize>tinyZoom:轻微放大</aniSize>
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>stretch</backgroundImgMode>
       <backgroundSkin>body5</backgroundSkin>
@@ -18310,7 +18305,7 @@ sender.parentNode.parentNode.check();
 ]]></onChange>
       <onCreate>sender._input.style.resize = "none";</onCreate>
       <sizeRatio>0.326271186440678</sizeRatio>
-      <text>在这里输入您的短文内容</text>
+      <text>在这里输入您的发言内容</text>
       <top>79</top>
       <topRatio>0.129296235679214</topRatio>
       <width>472</width>
@@ -18378,7 +18373,7 @@ sender.v_photos = new Array();</onCreate>
       <left>84</left>
       <leftRatio>0.157894736842105</leftRatio>
       <onClick><![CDATA[if (sender.parentNode.c_photos.v_photos.length>=4) {
-    alert("对不起，您最多上传4张照片或者视频");
+    g5.alert1("提示", "对不起，您最多上传4张照片或者视频");
     return;
 }
 
@@ -18469,7 +18464,7 @@ c.onchange = function() {
             (fileExt != ".tif") &amp;&amp;
             (fileExt != ".tiff")) return;
         if (sender.parentNode.c_photos.v_photos.length>=4) {
-            alert("对不起，您最多只能上传4张图片。");
+            g5.alert1("提示", "对不起，您最多只能上传4张图片。");
             return;
         }         
         
@@ -18500,7 +18495,7 @@ c.onchange = function() {
         }
         reader.readAsArrayBuffer(file);
     } else {
-        alert("此浏览器不完全支持压缩上传图片");
+        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
     }
 }
 
@@ -19682,10 +19677,10 @@ sender.refresh = function() {
     }
     //nickName
     c = ee.getControl("panel271");
-    ee.setText(c, this.v_userInfo.nickName);
+    c.setText(this.v_userInfo.nickName);
     //userName    
     c = ee.getControl("panel270");
-    ee.setText(c, "@" + this.v_userInfo.userName);
+    c.setText("@" + this.v_userInfo.userName);
     //userName    
     c = ee.getControl("panel272");
     c.setText(this.v_userInfo.note);
@@ -19924,12 +19919,30 @@ eb.initMouseEvent(sender);
       <heightRatio>0.113333333333333</heightRatio>
       <left>29</left>
       <leftRatio>0.0785907859078591</leftRatio>
-      <sizeRatio>0.129277566539924</sizeRatio>
+      <onCreate><![CDATA[sender.v_text = "";
+sender.setText = function(text) {
+    this.v_text = text;
+    this.label.style.wordBreak = "keep-all";
+    this.label.style.whiteSpace = "nowrap";
+    eb.setDivRect(this.label, null, null, 1, null);
+    var thisW = eb.getDivRect(sender).w - 10;
+    var s, i;
+    for (i=1; i<text.length; i++) {
+        s = text.substr(0,i) + "...";
+        ee.setText(this, s);
+        var r = eb.getDivRect(sender.label);
+        if (r.w>thisW) break;
+    }
+    s = i>=text.length?text:text.substr(0,i-1) + "...";
+    ee.setText(this, s);
+}
+]]></onCreate>
+      <sizeRatio>0.111111111111111</sizeRatio>
       <text>@用户名</text>
       <top>114</top>
       <topRatio>0.38</topRatio>
-      <width>263</width>
-      <widthRatio>0.712737127371274</widthRatio>
+      <width>306</width>
+      <widthRatio>0.829268292682927</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268/panel280/panel271">
       <fontBold>true</fontBold>
@@ -19940,12 +19953,30 @@ eb.initMouseEvent(sender);
       <heightRatio>0.113333333333333</heightRatio>
       <left>29</left>
       <leftRatio>0.0785907859078591</leftRatio>
-      <sizeRatio>0.129277566539924</sizeRatio>
+      <onCreate><![CDATA[sender.v_text = "";
+sender.setText = function(text) {
+    this.v_text = text;
+    this.label.style.wordBreak = "keep-all";
+    this.label.style.whiteSpace = "nowrap";
+    eb.setDivRect(this.label, null, null, 1, null);
+    var thisW = eb.getDivRect(sender).w - 10;
+    var s, i;
+    for (i=1; i<text.length; i++) {
+        s = text.substr(0,i) + "...";
+        ee.setText(this, s);
+        var r = eb.getDivRect(sender.label);
+        if (r.w>thisW) break;
+    }
+    s = i>=text.length?text:text.substr(0,i-1) + "...";
+    ee.setText(this, s);
+}
+]]></onCreate>
+      <sizeRatio>0.111111111111111</sizeRatio>
       <text>昵称nicheng</text>
       <top>89</top>
       <topRatio>0.296666666666667</topRatio>
-      <width>263</width>
-      <widthRatio>0.712737127371274</widthRatio>
+      <width>306</width>
+      <widthRatio>0.829268292682927</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268/panel280/panel272">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -20066,7 +20097,6 @@ sender.a1 = ee.getControl("panel402");
     </control>
     <control type="Panel" pathname="/divRoot/panel48/panel402">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <ani2Size>pointDisappear:收缩消失成点</ani2Size>
       <aniAlpha>appear:渐变出现</aniAlpha>
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>fill</backgroundImgMode>
@@ -20632,7 +20662,7 @@ db.executeNoneQuery("DB", sql);
 
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     window.location.href = ee.getUrl("/new");
     return;
 }
@@ -20983,7 +21013,7 @@ if (!db.executeNoneQuery("DB", sql)) {
 ]]></script2>
       <script3>newTwitter.busy = false;
 if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 ee.showAni(ee.getControl("panel42"), 1);
@@ -22578,7 +22608,7 @@ eio.appendString8("T");
 eio.appendString8(follow);
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 var f = eio.readString8();
@@ -22656,7 +22686,7 @@ eio.appendDataSet(sqlResult,"chatId,chatRegDatetime,seconds,content,photo1," +
     "id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 99999);
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     chatGet1v1.busy = false;
     return;
 }
@@ -22717,7 +22747,7 @@ if (!db.executeNoneQuery("DB", sql)) {
 eio.appendString8("T");
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     sendChat1v1.busy = false;
     return;
 }
@@ -22778,7 +22808,7 @@ eio.appendDataSet(sqlResult,"chatUserId,maxId,regDatetime,content,photo1,nickNam
 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8()!="T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 showChatList.dataset = eio.readDataSet();
@@ -22920,7 +22950,7 @@ if (!db.executeNoneQuery("DB", sql)) {
 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 var i=0;
@@ -22984,7 +23014,7 @@ if (!db.executeNoneQuery("DB", sql)) {
 
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 if (!eb.isEmpty(blockUser.onComplete)) {
@@ -23048,7 +23078,7 @@ eio.appendString8("T");
 eio.appendString8(follow);
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 </script3>
@@ -23101,7 +23131,7 @@ eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePag
 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8()!="T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 showForwardList.data = eio.readDataSet();
@@ -23176,7 +23206,7 @@ eio.appendDataSet(sqlResult,"id,status,regDatetime,lastAccessTime,userName,mobil
 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8()!="T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 showForwardList.data = eio.readDataSet();
@@ -23256,7 +23286,7 @@ eio.appendDataSet(sqlResult,"userId,status,regDatetime,lastAccessTime,userName,m
 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8()!="T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 showForwardList.data = eio.readDataSet();
@@ -23332,7 +23362,7 @@ eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePag
 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8()!="T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 showForwardList.data = eio.readDataSet();
@@ -23404,7 +23434,7 @@ eio.appendDataSet(sqlResult,"id,userName,nickName,note,photo,titleBg,homePage,is
 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8()!="T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 showBlockList.data = eio.readDataSet();
@@ -23482,7 +23512,7 @@ if (!db.executeNoneQuery("DB", sql)) {
 ]]></script2>
       <script3>newTwitter.busy = false;
 if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 g5.syncTwitter(likeContent.contentId,3);
@@ -23557,7 +23587,7 @@ if (!db.executeNoneQuery("DB", sql)) {
 
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 changePassword.onComplete();
@@ -23621,7 +23651,7 @@ if (!db.executeNoneQuery("DB", sql)) {
 
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     changeNickName.busy = false;
     return;
 }
@@ -23844,7 +23874,7 @@ eio.appendDataSet(sqlResult,"id,regDatetime,chatStatus,roomId,msgContent,isAdmin
     "userId,status,userRegDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 99999);
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     chatGet.busy = false;
     return;
 }
@@ -23929,7 +23959,7 @@ eio.appendDataSet(sqlResult,"id,regDatetime,chatStatus,roomId,msgContent," +
     "userId,status,userRegDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 99999);
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     chatGetPv.busy = false;
     return;
 }
@@ -25910,7 +25940,7 @@ root.v_btn1 = c;
 ee.setOnClick(c,function(sender,event) {
     newTwitter.uplinkType = "R";
     newTwitter.uplinkId = sender.parentNode.v_contentId;
-    g5.popBlack.a3.show("发表回复短文");
+    g5.popBlack.a3.show("回复发言");
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 
@@ -27134,7 +27164,7 @@ if (g5.currentPageIndex == 0) {
     items = showTopic.items;
 } else return;
 for (var i = 0; i < items.length; i++) {
-    if (g5.p2PersonSub.currentPageIndex!=1) break;
+    //if (g5.p2PersonSub.currentPageIndex!=1) break;
     if (eb.isEmpty(items[i].c_photos)) continue;
     if (eb.isEmpty(items[i].c_photos.c_player)) continue;
     var dy = g5.getRectAbs(items[i].c_photos).y + items[i].c_photos.v_videoH/2;
@@ -27146,7 +27176,7 @@ for (var i = 0; i < items.length; i++) {
     }
 }
 for (var i = 0; i < items.length; i++) {
-    if (g5.p2PersonSub.currentPageIndex!=1) break;
+    //if (g5.p2PersonSub.currentPageIndex!=1) break;
     if (eb.isEmpty(items[i].c_rePhotos)) continue;
     if (eb.isEmpty(items[i].c_rePhotos.c_player)) continue;
     var dy = g5.getRectAbs(items[i].c_rePhotos).y + items[i].c_rePhotos.v_videoH/2;
