@@ -2585,7 +2585,7 @@ es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") 
 
 ]]></script2>
       <script3>if (eio.readString8()!="T") {
-    alert("登录失败："+eio.readString8() + ",请尝试使用用户名和密码进行登录。");
+    g5.alert1("提示", "登录失败："+eio.readString8() + ",请尝试使用用户名和密码进行登录。");
     return;
 }
 
@@ -2657,7 +2657,7 @@ if (db.getInt32(sqlResult,"c") > 0) {
 */
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
-    alert(eio.readString8());
+    g5.alert1("提示", eio.readString8());
     return;
 }
 
@@ -2729,7 +2729,7 @@ es.logCommon("用户输入账户密码登录：" + username);
 ]]></script2>
       <script3>var resultCode=eio.readString8(); 
 if (resultCode=="F") {
-    alert("登录失败：" + eio.readString8());
+    g5.alert1("提示", "登录失败：" + eio.readString8());
     return;
 }  
 //获取令牌
@@ -2914,19 +2914,19 @@ var nickname = ee.getEditText(ee.getControl("edit6"));
 var password1 = ee.getEditText(ee.getControl("edit4"));
 var password2 = ee.getEditText(ee.getControl("edit5"));
 if (username.length < 3) {
-    alert("请输入有效的用户名,用户名长度至少为3个英文或者汉字字母");
+    g5.alert1("提示", "请输入有效的用户名,用户名长度至少为3个英文或者汉字字母");
     return;
 }
 if (nickname.length < 3) {
-    alert("昵称需要至少3个英文字母或者汉字长度");
+    g5.alert1("提示", "昵称需要至少3个英文字母或者汉字长度");
     return;
 }
 if (password1.length<6) {
-    alert("密码的长度至少为6位");
+    g5.alert1("提示", "密码的长度至少为6位");
     return;    
 }
 if (password1 != password2) {
-    alert("两次输入的密码不一致");
+    g5.alert1("提示", "两次输入的密码不一致");
     return;
 }
 
@@ -2964,10 +2964,10 @@ eio.appendString16(db.getString(sqlResult, "errorString"));
 
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
-    alert("无法注册用户：" + eio.readString16());
+    g5.alert1("提示", "无法注册用户：" + eio.readString16());
     return;
 }
-alert("账户注册成功，欢迎您加入GET!");                        
+g5.alert1("提示", "账户注册成功，欢迎您加入GET!");                        
 login.username = ee.getEditText(ee.getControl("edit3")).trim();
 login.password = ee.getEditText(ee.getControl("edit4"));
 login();
@@ -3010,10 +3010,10 @@ var chkUserName = function(userName) {
         if ((ch>="A") &amp;&amp; (ch<="Z")) continue;
         if ((ch>="0") &amp;&amp; (ch<="9")) continue;
         if (ch=="_") continue;
-        return "账号名中存在非英文或者数字字符";
+        return "账号名只能是英文或者数字";
     }
-    var ch = userName[0];
-    if ((ch>="0") &amp;&amp; (ch<="9")) return "账号名的首字母不能是数字";
+    //var ch = userName[0];
+    //if ((ch>="0") &amp;&amp; (ch<="9")) return "账号名的首字母不能是数字";
     return "";
 }
 var r = chkUserName(userName);
