@@ -3928,6 +3928,11 @@ sender.renderItem = function(root) {
     var userName = root.v_userInfo.userName;
     var nickName = root.v_userInfo.nickName;
     ee.setOnClick(root,function(sender,event) {
+        if (sender.c_photo.v_timer!=null) {
+            clearTimeout(sender.c_photo.v_timer);
+            sender.c_photo.v_timer = null;
+        }
+        getUserInfo2.busy = false;
         g5.p2.p2.p2sub.p1.c_chat.deleteAdmin(root.v_userInfo);
     });
     ee.setOnMouseEnter(root, function(sender,e){
@@ -4414,6 +4419,9 @@ sender.deleteUser = function(userInfo) {
 }
 
 sender.appendUser = function(userInfo) {
+    for (var i=0; i<showUserPage.chatRoomBlackList.rowCount; i++) {
+        if (userInfo.id==showUserPage.chatRoomBlackList.getData(2,i)) return;
+    }
     var maxValue = 0;
     for (var i=0; i<showUserPage.chatRoomBlackList.rowCount; i++) {
         var a = parseInt(showUserPage.chatRoomBlackList.getData(0,i));
@@ -4949,6 +4957,7 @@ sender.loadData = function(panel,dataset,index) {
     panel.v_isBlockTime = dataset.getData(7,index) == "1";
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset, 8, index);
+    panel.v_isOwner = panel.v_userInfo.id == showUserPage.id;
 }
 sender.refresh = function(force) {
     if (!chatGet.busy) {
@@ -5319,7 +5328,9 @@ sender.renderMsg = function(root) {
         var style = new Array();
         var onClick = new Array();
         //delete
-        if ((showUserPage.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin) || (root.v_userInfo.id == g5.myUserInfo.id)) {
+        if ((showUserPage.id == g5.myUserInfo.id) || 
+            (showUserPage.isChatRoomPubAdmin &amp;&amp; !root.v_isAdmin) || 
+            (root.v_userInfo.id == g5.myUserInfo.id)) {
             if (root.v_chatStatus == "IDL") {
                 style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除聊天记录","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""));
                 onClick.push(
@@ -5479,6 +5490,8 @@ sender.renderMsg = function(root) {
                 },
             );
         }
+        if (style.length<=0) return;
+        if (root.v_isOwner &amp;&amp; (showUserPage.id != g5.myUserInfo.id)) return;
         g5.popup1.p4.show(sender, 170, style, onClick);
     });
     ee.setOnMouseEnter(c, function(sender,event) { 
@@ -25520,7 +25533,7 @@ ee.setOnClick(c,function(sender,event) {
     //showUserPage.userName=sender.parentNode.v_userName;
     //showUserPage();
     //if (sender.v_timer!=null) {
-    //    clearTiwmeout(sender.v_timer);
+    //    clearTimeout(sender.v_timer);
     //    sender.v_timer = null;
     //}
     //getUserInfo2.busy = false;
