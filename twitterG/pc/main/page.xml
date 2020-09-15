@@ -1940,8 +1940,8 @@ eb.initMouseEvent(sender);
       <left>79</left>
       <leftRatio>0.131666666666667</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxSqr = 900*900;
-sender.compressRatio = 0.90;
+      <onCreate><![CDATA[sender.maxSqr = 700*700;
+sender.compressRatio = 0.85;
 
 sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M19.75 2H4.25C3.01 2 2 3.01 2 4.25v15.5C2 20.99 3.01 22 4.25 22h15.5c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2zM4.25 3.5h15.5c.413 0 .75.337.75.75v9.676l-3.858-3.858c-.14-.14-.33-.22-.53-.22h-.003c-.2 0-.393.08-.532.224l-4.317 4.384-1.813-1.806c-.14-.14-.33-.22-.53-.22-.193-.03-.395.08-.535.227L3.5 17.642V4.25c0-.413.337-.75.75-.75zm-.744 16.28l5.418-5.534 6.282 6.254H4.25c-.402 0-.727-.322-.744-.72zm16.244.72h-2.42l-5.007-4.987 3.792-3.85 4.385 4.384v3.703c0 .413-.337.75-.75.75z\"></path><circle cx=\"8.868\" cy=\"8.309\" r=\"1.542\"></circle></g></svg>";
 sender.style.borderRadius = "50%";
@@ -4448,6 +4448,11 @@ sender.renderItem = function(root) {
     var userName = root.v_userInfo.userName;
     var nickName = root.v_userInfo.nickName;
     ee.setOnClick(root,function(sender,event) {
+        if (sender.c_photo.v_timer!=null) {
+            clearTimeout(sender.c_photo.v_timer);
+            sender.c_photo.v_timer = null;
+        }
+        getUserInfo2.busy = false;
         g5.p2.p2.p2sub.p1.c_chat.unblockUser(root.v_userInfo);
     });
     ee.setOnMouseEnter(root, function(sender,e){
@@ -16423,8 +16428,8 @@ ee.setVisible(ee.getControl("panel233"), false);]]></onCreate>
       <left>263</left>
       <leftRatio>0.450342465753425</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxSqr = 900*900;
-sender.compressRatio = 0.90;
+      <onCreate><![CDATA[sender.maxSqr = 700*700;
+sender.compressRatio = 0.85;
 
 sender.style.borderRadius = "50%";
 
@@ -18459,8 +18464,8 @@ g5.popBlack2.a1.show(function(ytbVideo) {
       <left>41</left>
       <leftRatio>0.0770676691729323</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxSqr = 900*900;
-sender.compressRatio = 0.90;
+      <onCreate><![CDATA[sender.maxSqr = 700*700;
+sender.compressRatio = 0.85;
 
 sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M19.75 2H4.25C3.01 2 2 3.01 2 4.25v15.5C2 20.99 3.01 22 4.25 22h15.5c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2zM4.25 3.5h15.5c.413 0 .75.337.75.75v9.676l-3.858-3.858c-.14-.14-.33-.22-.53-.22h-.003c-.2 0-.393.08-.532.224l-4.317 4.384-1.813-1.806c-.14-.14-.33-.22-.53-.22-.193-.03-.395.08-.535.227L3.5 17.642V4.25c0-.413.337-.75.75-.75zm-.744 16.28l5.418-5.534 6.282 6.254H4.25c-.402 0-.727-.322-.744-.72zm16.244.72h-2.42l-5.007-4.987 3.792-3.85 4.385 4.384v3.703c0 .413-.337.75-.75.75z\"></path><circle cx=\"8.868\" cy=\"8.309\" r=\"1.542\"></circle></g></svg>";
 sender.style.borderRadius = "50%";
@@ -20558,7 +20563,7 @@ sender.v_mode = "-";
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="54">
+  <taskSet count="55">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName 
@@ -21083,6 +21088,217 @@ if (updateHomepage.needRefresh) {
 } else if (updateHomepage.getNews) {
     eio.appendString16("N");
     if (g5.itemsHome.length>0) {
+        eio.appendString16(g5.itemsHome[0].v_content.id);
+    } else {
+        eio.appendString16("0");
+    }
+} else {
+    eio.appendString16("F");
+    if (g5.itemsHome.length>0) {
+        eio.appendString16(g5.itemsHome[g5.itemsHome.length-1].v_content.id);
+    } else {
+        eio.appendString16("9999999");
+    }
+}
+
+
+]]></script1>
+      <script2><![CDATA[var token = eio.readString16();
+var needRefresh = eio.readString16();
+var lastId = parseInt(eio.readString16());
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName =db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+var sql1 = "";
+if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
+    sql1 = "and dbo.tContent.id < " + lastId + " ";
+} else if (needRefresh=="N") {
+    if (isNaN(lastId)) lastId = 0;
+    sql1 = "and dbo.tContent.id > " + lastId + " ";
+}
+
+sql =
+    "SELECT   TOP (15) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, dbo.tContent.status,  " +
+    "                dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.photo2,  " +
+    "                dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount, dbo.tContent.likeCount,  " +
+    "                dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL THEN 0 ELSE 1 END AS isForward,  " +
+    "                CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike, CASE WHEN unlikeList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isUnlike, tContent_1.id AS reId, DATEDIFF(second, tContent_1.regDatetime, GETDATE())  " +
+    "                AS reSeconds, tContent_1.status AS reStatus, tContent_1.uplinkType AS reUplinkType, tContent_1.uplinkId AS reUplinkId,  " +
+    "                tContent_1.[content] AS reContent, tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2,  " +
+    "                tContent_1.photo3 AS rePhoto3, tContent_1.photo4 AS rePhoto4, tContent_1.reCount AS reReCount,  " +
+    "                tContent_1.fwCount AS reFwCount, tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount,  " +
+    "                CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS reIsLike, CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike,  " +
+    "                dbo.tContent.userId AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
+    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
+    "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
+    "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
+    "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
+    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
+    "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
+    "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
+    "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
+    "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow,  " +
+    "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail " +
+    "FROM      dbo.blockList AS rBlockList FULL OUTER JOIN " +
+    "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
+    "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
+    "                dbo.follow AS rFollow ON userInfo_1.id = rFollow.followId AND rFollow.userId = " + userId + " ON  " +
+    "                rBlockList1.userId = userInfo_1.id AND rBlockList1.blockUserId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId RIGHT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList1 RIGHT OUTER JOIN " +
+    "                dbo.userInfo ON uBlockList1.userId = dbo.userInfo.id AND uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.forwardLink AS forwardLink_1 RIGHT OUTER JOIN " +
+    "                dbo.tContent RIGHT OUTER JOIN " +
+    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
+    "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList AS unlikeList_1 ON dbo.tContent.uplinkId = unlikeList_1.contentId AND  " +
+    "                unlikeList_1.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList ON dbo.tContent.id = dbo.unlikeList.contentId AND dbo.unlikeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " ON  " +
+    "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
+    "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
+    "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
+    "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
+    "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) " + 
+    "  AND dbo.tContent.status<>'DEL' " + sql1 +
+    "ORDER BY dbo.tContent.id DESC ";
+   
+//es.logCommon(sql);
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
+    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
+    0, 99999);
+
+]]></script2>
+      <script3><![CDATA[if (eio.readString8() != "T") {
+    updateHomepage.busy = false;
+    return;
+}
+updateHomepage.data = eio.readDataSet();
+if (updateHomepage.data.rowCount > 0) {
+    updateHomepage.lastId = updateHomepage.data.getData(0, updateHomepage.data.rowCount - 1);
+}
+
+var mode = "";
+if (updateHomepage.getNews) {
+    mode = "N";
+    updateHomepage.getNews = false;
+}
+
+
+if (eb.isEmpty(updateHomepage.data)) return;
+var i, item;
+var root = ee.getControl("panel41"); 
+var itemWidth = eb.getDivRect(root).w;
+
+var cy = eb.getDivRect(g5.p4).h;
+ee.setRect(g5.p2.p1.a1, null, cy, null,null);
+cy+=eb.getDivRect(g5.p2.p1.a1).h;
+if (mode == "N") {
+} else if (updateHomepage.needRefresh) {
+    for (i=0; i<g5.itemsHome.length; i++) ee.removeControl(g5.itemsHome[i]);
+    g5.itemsHome = new Array();
+} else {
+    if (g5.itemsHome.length>0) {
+        var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
+        cy = 0 + rect.y + rect.h;
+    }
+}
+var item = null;
+for (i=0; i< updateHomepage.data.rowCount; i++) {
+    item = createPanel(root, "page1_" + updateHomepage.data.getData(0,i), "", 0, cy, itemWidth, 5);
+    g5.loadTwitterRecord(item, updateHomepage.data, i);
+    if (item.v_content.status == "DEL") {
+        ee.removeControl(item);
+        continue;
+    }
+    item.v_mode = "";
+    g5.renderTwitter(item);
+    if (mode == "N") {
+        g5.itemsHome.splice(i, 0, item);
+    } else {
+        g5.itemsHome.push(item);
+    }
+    cy += 0 + eb.getDivRect(item).h;
+}
+if (mode == "N") {
+    if (updateHomepage.data.rowCount>0) {
+        if (updateHomepage.data.rowCount<g5.itemsHome.length) {
+            var dy = cy - eb.getDivRect(g5.itemsHome[updateHomepage.data.rowCount]).y; 
+            g5.homepageMoveY(updateHomepage.data.rowCount,dy);
+        }
+    }
+    var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
+    cy = rect.y + rect.h;
+}
+
+if (g5.currentPageIndex == 0) {
+    if (item!=null) {
+        var ch = $g("divRoot").offsetHeight;
+        var h = cy + ch - eb.getDivRect(item).h - 51; 
+        eb.setDivRect(g5.p2,null,null,null,h);
+    }    
+}
+eb.setDivRect(g5.p2.p1,null,null,null,cy);
+eb.processDock();
+
+
+updateHomepage.needRefresh = false;
+updateHomepage.busy = false;
+                        
+]]></script3>
+    </taskSetItem>
+    <taskSetItem name="updateHomepageBak">
+      <script1><![CDATA[if (eb.isEmpty(updateHomepage.getNews)) updateHomepage.getNews=false;
+if (eb.isEmpty(updateHomepage.busy)) updateHomepage.busy = false;
+if (eb.isEmpty(updateHomepage.lastId)) updateHomepage.lastId = 0;
+
+if (updateHomepage.busy) return;
+updateHomepage.busy = true;
+
+eio.appendString16(g5.token);
+if (ee.getControl("panel41").eeChildren.length<=1) {
+    updateHomepage.needRefresh = true;
+}
+if (updateHomepage.needRefresh) {
+    eio.appendString16("T");
+    eio.appendString16("0");
+} else if (updateHomepage.getNews) {
+    eio.appendString16("N");
+    if (g5.itemsHome.length>0) {
         eio.appendString16(g5.itemsHome[0].v_contentId);
     } else {
         eio.appendString16("0");
@@ -21154,6 +21370,7 @@ sql =
     "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
     "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) " + sql1 +
     "ORDER BY dbo.tContent.id DESC ";
+es.logCommon(sql);
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -21165,6 +21382,12 @@ eio.appendString8("T");
 eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
     ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount," +
     "reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
+
+//id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike
+//reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike
+//uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail  
+//rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail  
+
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     updateHomepage.busy = false;
@@ -21216,8 +21439,10 @@ for (i=0; i< updateHomepage.data.rowCount; i++) {
 }
 if (mode == "N") {
     if (updateHomepage.data.rowCount>0) {
-        var dy = cy - eb.getDivRect(g5.itemsHome[updateHomepage.data.rowCount]).y; 
-        g5.homepageMoveY(updateHomepage.data.rowCount,dy);
+        if (updateHomepage.data.rowCount<g5.itemsHome.length) {
+            var dy = cy - eb.getDivRect(g5.itemsHome[updateHomepage.data.rowCount]).y; 
+            g5.homepageMoveY(updateHomepage.data.rowCount,dy);
+        }
     }
     var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
     cy = rect.y + rect.h;
@@ -25090,7 +25315,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="74">
+  <g5Items count="76">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -25215,6 +25440,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </item>
     <item name="UserInfo" type="10">
       <varValue>function() {
+    this.size = 17;
     this.loadFromDataset = function(ds, x, idx) {
         this.id = ds.getData(x+0,idx);    
         this.status = ds.getData(x+1,idx);    
@@ -25256,6 +25482,60 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
 }
 
 </varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="ContentInfo" type="10">
+      <varValue><![CDATA[//"id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,
+//likeCount,unlikeCount,isForward,isLike,isUnlike," +
+function() {
+    this.size = 17;
+    this.loadFromDataset = function(ds, x, idx) {
+        this.id = ds.getData(x+0,idx);    
+        this.seconds = ds.getData(x+1,idx);    
+        this.status = ds.getData(x+2,idx);    
+        this.uplinkType = ds.getData(x+3,idx);    
+        this.uplinkId = ds.getData(x+4,idx);    
+        this.content = ds.getData(x+5,idx);    
+        this.photo1 = ds.getData(x+6,idx);    
+        this.photo2 = ds.getData(x+7,idx);    
+        this.photo3 = ds.getData(x+8,idx);    
+        this.photo4 = ds.getData(x+9,idx);    
+        this.reCount = ds.getData(x+10,idx);    
+        this.fwCount = ds.getData(x+11,idx);    
+        this.likeCount = ds.getData(x+12,idx);
+        this.unlikeCount = ds.getData(x+13,idx);
+        this.isForward = ds.getData(x+14,idx)=="1";
+        this.isLike = ds.getData(x+15,idx)=="1";
+        this.isUnlike = ds.getData(x+16,idx)=="1";
+
+        this.photos = new Array();
+        if (this.photo1.length>0) this.photos.push(this.photo1);
+        if (this.photo2.length>0) this.photos.push(this.photo2);
+        if (this.photo3.length>0) this.photos.push(this.photo3);
+        if (this.photo4.length>0) this.photos.push(this.photo4);
+    }
+    this.setDataset = function(ds, x, idx) {
+        ds.setData(x+0,idx,this.id);
+        ds.setData(x+1,idx,this.seconds);    
+        ds.setData(x+2,idx,this.status);    
+        ds.setData(x+3,idx,this.uplinkType);    
+        ds.setData(x+4,idx,this.uplinkId);    
+        ds.setData(x+5,idx,this.content);    
+        ds.setData(x+6,idx,this.photo1);    
+        ds.setData(x+7,idx,this.photo2);    
+        ds.setData(x+8,idx,this.photo3);    
+        ds.setData(x+9,idx,this.photo4);    
+        ds.setData(x+10,idx,this.reCount);    
+        ds.setData(x+11,idx,this.fwCount);    
+        ds.setData(x+12,idx,this.likeCount);    
+        ds.setData(x+13,idx,this.unlikeCount);
+        ds.setData(x+14,idx,this.isForward?"1":"0");
+        ds.setData(x+15,idx,this.isLike?"1":"0");
+        ds.setData(x+16,idx,this.isUnlike?"1":"0");
+    }
+}
+]]></varValue>
       <functionParam />
       <functionCode />
     </item>
@@ -25360,6 +25640,21 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     <item name="loadTwitterRecord" type="20">
       <varValue />
       <functionParam>panel, dataset, index</functionParam>
+      <functionCode>panel.v_content = new g5.ContentInfo();
+panel.v_reContent = new g5.ContentInfo();
+panel.v_userInfo = new g5.UserInfo();
+panel.v_reUserInfo = new g5.UserInfo();
+var dx = 0;
+panel.v_content.loadFromDataset(dataset, dx, index); dx += panel.v_content.size;
+panel.v_reContent.loadFromDataset(dataset, dx, index); dx += panel.v_reContent.size;
+panel.v_userInfo.loadFromDataset(dataset, dx, index); dx += panel.v_userInfo.size;
+panel.v_reUserInfo.loadFromDataset(dataset, dx, index); dx += panel.v_reUserInfo.size;
+
+</functionCode>
+    </item>
+    <item name="loadTwitterRecordOld" type="20">
+      <varValue />
+      <functionParam>panel, dataset, index</functionParam>
       <functionCode><![CDATA[//"id,mins,userId,content,photo1,replyCount(5),forwardCount,likeCount,userName,nickName(9),photo" +
 //",reMins(11),reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,
 //uplinkId(20),reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,
@@ -25415,8 +25710,8 @@ if (panel.v_rePhoto4.length>0) panel.v_rePhotos.push(panel.v_rePhoto4);
     <item name="renderTwitter" type="20">
       <varValue />
       <functionParam>root</functionParam>
-      <functionCode><![CDATA[if (eb.isEmpty(root.v_userPhoto)) root.v_userPhoto = "";
-if (eb.isEmpty(root.v_photo1)) root.v_photo1 = "";
+      <functionCode><![CDATA[if (eb.isEmpty(root.v_userInfo.photo)) root.v_userInfo.photo = "";
+if (eb.isEmpty(root.v_content.photo1)) root.v_content.photo1 = "";
 while (root.v_mode.length<5) root.v_mode += " ";
 
 root.style.boxSizing="border-box";
@@ -25436,7 +25731,7 @@ eb.setAni2(root,1,"disappear", "rightFlyOut", "null", 0, true);
 eb.setAniEvent(root,1,function(){}, function(sender) {
     g5.deletePage1(sender);
 });
-if ((root.v_mode.charAt(2) != "x") &amp;&amp; (root.v_status!="DEL"))  {
+if ((root.v_mode.charAt(2) != "x") &amp;&amp; (root.v_content.status!="DEL"))  {
     root.style.cursor = "pointer"; 
     ee.setOnClick(root,function(sender,event) {
         showTopic.topicId = sender.v_contentId;
@@ -25461,7 +25756,7 @@ if (root.v_mode.charAt(1) == "T") {
     c = createPanel(root, root.id+"_downlink01", "ccd6dd", 40, 64, 2, 1000);
 }
 var cy = 9;
-if (root.v_status=="DEL") {
+if (root.v_content.status=="DEL") {
     c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
@@ -25472,20 +25767,20 @@ if (root.v_status=="DEL") {
     eb.processDock()
     return root;
 }
-if (root.v_uplinkType == "L") {
+if (root.v_content.uplinkType == "L") {
     //direct forward
     c = createPanel(root, root.id+"_forward01", "", 50, cy, 400, 19); cy+=22;
     var sTemp = "<svg viewBox=\"0 -2 34 34\" style='height: 1.25rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg>";
     sTemp += " <div id='"+root.id+"_fwL01' style='display:inline;'>";
-    if (g5.userName==root.v_userName) {
+    if (g5.userName==root.v_userInfo.userName) {
         sTemp += "你";
     } else {
-        sTemp += root.v_nickName + " ";
+        sTemp += root.v_userInfo.nickName + " ";
     }
     sTemp += "转发了</div>";    
     addText(c, sTemp, "left", "middle", "微软雅黑", 10, "#657786", "normal");
     c.fw=$g(root.id+"_fwL01");
-    c.userName = root.v_userName;
+    c.userName = root.v_userInfo.userName;
     ee.setOnClick(c,function(sender,event) {
         showUserPage.userName=sender.userName
         showUserPage();
@@ -25497,19 +25792,27 @@ if (root.v_uplinkType == "L") {
     ee.setOnMouseLeave(c,function(sender,e){
         sender.fw.style.textDecoration="";
     });
-    root.v_userName = root.v_reUserName;
-    root.v_nickName = root.v_reNickName;
-    root.v_times = root.v_reTimes;
-    root.id = root.id.substr(0,root.id.length-(root.v_contentId+"").length) + root.v_uplinkId + "L";
-    root.v_contentId = root.v_uplinkId;
-    root.v_userPhoto = root.v_rePhoto;
-    root.v_photo1 = root.v_rePhoto1;
+
+    root.v_userInfo = root.v_reUserInfo;
+    //root.v_userInfo.userName = root.v_reUserInfo.userName;
+    //root.v_userInfo.nickName = root.v_reUserInfo.nickName;
+    //root.v_userInfo.photo = root.v_rePhoto;
+    
+    root.id = root.id.substr(0,root.id.length-(root.v_content.id+"").length) + root.v_content.uplinkId + "L";
+    var uid = root.v_content.uplinkId;
+    var utp = root.v_content.uplinkType;
     root.v_content = root.v_reContent;
-    root.v_label1 = root.v_reReCount;
-    root.v_label2 = root.v_reFwCount;
-    root.v_label3 = root.v_reLikeCount;
-    root.v_isForward = root.v_reIsForward;
-    root.v_isLike = root.v_reIsLike
+    root.v_content.uplinkType = utp;
+    root.v_content.uplinkId = uid;
+    //root.v_content.seconds = root.v_reContent.seconds;
+    //root.v_content.id = root.v_content.uplinkId;
+    //root.v_photo1 = root.v_reContent.photo1;
+    ////root.v_content = root.v_reContent;
+    //root.v_content.reCount = root.v_reContent.reCount;
+    //root.v_content.fwCount = root.v_reContent.fwCount;
+    //root.v_content.likeCount = root.v_reContent.likeCount;
+    //root.v_content.isForward = root.v_reContent.isForward;
+    //root.v_content.isLike = root.v_reContent.isLike
 }
 
 //avata image box
@@ -25517,15 +25820,15 @@ c = createPanel(root, root.id+"_panel13", "", 16, cy, 50, 50);
 root.c_userPhoto = c;
 root.c_photo = c;
 c.v_timer = null;
-if (root.v_userPhoto == "") {
+if (root.v_userInfo.photo == "") {
     ee.setImage(c,"/twitterG/main/user.png","trim","","")
 } else {
-    ee.setImage(c,"url:" + g5.imgUrl + root.v_userPhoto,"trim","","")
+    ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
 }
 c.style.cursor="pointer";
 c.style.borderRadius = "50%";
 ee.setOnClick(c,function(sender,event) {
-    ee.getControl("panel280").show(root.v_userId, root.c_photo);
+    ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
     //showUserPage.userName=sender.parentNode.v_userName;
     //showUserPage();
     //if (sender.v_timer!=null) {
@@ -25540,7 +25843,7 @@ ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.filter="brightness(80%)";
 //    if (sender.v_timer!=null) clearTimeout(sender.v_timer);
 //    sender.v_timer = setTimeout(function() {
-//        ee.getControl("panel280").show(root.v_userId, root.c_photo);
+//        ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
 //    }, 700);
 });
 ee.setOnMouseLeave(c, function(sender,e) {
@@ -25558,20 +25861,20 @@ var mainWidth = parseInt((w-75)*0.97);
 c = createPanel(root, root.id+"_panel16", "", 75, cy-3, mainWidth-80, 26);
 root.v_titleText = c;
 var temp = "";
-temp = "<div style='display:inline'><b>" + g5.add3Dot(root.v_nickName, 30) + "</b> <font color='#808080' style='font-size:12pt'>@" + g5.add3Dot(root.v_userName, 30) + "</font></div>";
+temp = "<div style='display:inline'><b>" + g5.add3Dot(root.v_userInfo.nickName, 30) + "</b> <font color='#808080' style='font-size:12pt'>@" + g5.add3Dot(root.v_userInfo.userName, 30) + "</font></div>";
 if (root.v_mode.charAt(2) != "x") {
-    temp+=" · <font>" + g5.getMins(root.v_times) + "</font>";
+    temp+=" · <font>" + g5.getMins(root.v_content.seconds) + "</font>";
 }
 //temp+="</font>";
 addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
 if (root.v_mode.charAt(2) != "x") {
     root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
-    root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_times
+    root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_content.seconds
 }
-c.v_username = root.v_userName;
+c.v_username = root.v_userInfo.userName;
 root.c_titleText = c.label.rows[0].cells[0].childNodes[0];
 root.c_titleText.id = root.id + "_titleText";
-root.c_titleText.v_userName = root.v_userName;
+root.c_titleText.v_userName = root.v_userInfo.userName;
 c.style.cursor="pointer";
 ee.setOnClick(root.c_titleText,function(sender,event) {
     showUserPage.userName=sender.v_userName;
@@ -25622,14 +25925,14 @@ ee.setOnClick(c,function(sender,event) {
 
 //reUsername
 cy+=17;
-if (root.v_uplinkType == "R") {
+if (root.v_content.uplinkType == "R") {
     c = createPanel(root, root.id+"_pareUsername01nel17", "", 75, cy, mainWidth-80, 22);
     cy += 22;
-    addText(c, "<font color='#808080'>回复 </font><font color='#1b95e0'>@" + root.v_reUserName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+    addText(c, "<font color='#808080'>回复 </font><font color='#1b95e0'>@" + root.v_reUserInfo.userName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     c.style.cursor="pointer";
-    c.v_username = root.v_reUserName;
+    c.v_username = root.v_reUserInfo.userName;
     root.c_reUserName = c.label.rows[0].cells[0].childNodes[1];
-    root.c_reUserName.v_reUserName = root.v_reUserName
+    root.c_reUserName.v_reUserName = root.v_reUserInfo.userName
     ee.setOnClick(root.c_reUserName,function(sender,event) {
         showUserPage.userName=sender.v_reUserName
         showUserPage();
@@ -25647,9 +25950,9 @@ if (root.v_uplinkType == "R") {
 c = createPanel(root, root.id+"_panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
 root.c_content = c;
 if (root.v_mode.charAt(2) == "x") {
-    addText(c, "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(root.v_content) + "</font>", "left", "top", "微软雅黑", 16, "000000", "normal");
+    addText(c, "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(root.v_content.content) + "</font>", "left", "top", "微软雅黑", 16, "000000", "normal");
 } else {
-    addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(root.v_content) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
+    addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(root.v_content.content) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
 }
 c.label.style.wordBreak = "break-all";
 //eb.setFontSizeAuto(c, 25);
@@ -25661,7 +25964,7 @@ rect = eb.getDivRect(c);
 cy = rect.y + rect.h + 1;
 
 //photos
-if (root.v_photos.length>0) {
+if (root.v_content.photos.length>0) {
     c = createPanel(root, root.id+"_panel18", "", 75, cy, mainWidth, parseInt(mainWidth*0.565));
     cy += mainWidth*0.565 + w*0.03;
     c.style.borderRadius = "15px";
@@ -25669,8 +25972,11 @@ if (root.v_photos.length>0) {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.cursor="pointer";
-    c.v_photos = root.v_photos;
+    c.v_photos = root.v_content.photos;
     c.v_mode = "";
+
+    g5.writeLog(root.v_content.photos[0]);
+
     g5.refreshPhoto(c);
     root.c_photos = c;
 } else {
@@ -25678,12 +25984,12 @@ if (root.v_photos.length>0) {
 }
 
 if (root.v_mode.charAt(2)=="x") {
-    root.v_uplinkType = "";
+    root.v_content.uplinkType = "";
 }
 if (root.v_mode.substr(0,2)!="  ") {
-    root.v_uplinkType = "";
+    root.v_content.uplinkType = "";
 }
-if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (root.v_rePhotos.length>0)) {
+if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_content.photos.length>0) &amp;&amp; (root.v_reContent.photos.length>0)) {
     c = createPanel(root, root.id+"_panel2", "", 75, cy-7, mainWidth-2, 146);
     cy += 146 + 10;
     var p1w = mainWidth-2;
@@ -25698,7 +26004,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     ee.setOnMouseLeave(c, function(sender,e){
         sender.style.backgroundColor = "";
     });
-    c.v_uplinkId = root.v_uplinkId
+    c.v_uplinkId = root.v_content.uplinkId
     ee.setOnClick(c,function(sender,event) {
         showTopic.topicId = sender.v_uplinkId;
         showTopic.needRefresh = true;
@@ -25715,7 +26021,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
         ee.setImage(c,"url:" + g5.imgUrl + root.v_rePhoto,"trim","","")
     }
     c.style.borderRadius = "50%";
-    c.v_username = root.v_reUserName;
+    c.v_username = root.v_reUserInfo.userName;
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
         ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
@@ -25748,10 +26054,10 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     //reUserName,reNickName,reTime
     c = createPanel($g(root.id+"_panel2"), root.id+"_panel11", "", 35, 7, p1w*0.833734939759036, 25);
-    addText(c, "<div style='display:inline'><b>" + g5.add3Dot(root.v_reNickName, 24) + "</b> <font color='#808080' style='font-size:15px'>@" + g5.add3Dot(root.v_reUserName, 24) + "</font></div> · <font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reTimes) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+    addText(c, "<div style='display:inline'><b>" + g5.add3Dot(root.v_reUserInfo.nickName, 24) + "</b> <font color='#808080' style='font-size:15px'>@" + g5.add3Dot(root.v_reUserInfo.userName, 24) + "</font></div> · <font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reContent.seconds) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     root.c_reTitleText = c.label.rows[0].cells[0].childNodes[0];
     root.c_reTitleText.id = root.id + "_reTitleText";
-    root.c_reTitleText.v_userName = root.v_reUserName;
+    root.c_reTitleText.v_userName = root.v_reUserInfo.userName;
     c.style.cursor="pointer";
     ee.setOnClick(root.c_reTitleText,function(sender,event) {
         showUserPage.userName=sender.v_userName
@@ -25766,21 +26072,21 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     //reContent
     c = createPanel($g(root.id+"_panel2"), root.id+"_panel25", "", 120, 36, p1w-130, 100);
-    addText(c, g5.showCommonText(root.v_reContent), "left", "top", "微软雅黑", 12, "000000", "normal");
+    addText(c, g5.showCommonText(root.v_reContent.content), "left", "top", "微软雅黑", 12, "000000", "normal");
     c.label.style.wordBreak = "break-all";
     //rePhotos                                                                                          
-    if (root.v_rePhotos.length>0) {
+    if (root.v_reContent.photos.length>0) {
         c = createPanel($g(root.id+"_panel2"), root.id+"_panel26", "", 11, 36, 100,100);
         c.style.borderRadius = "15px";
         c.style.borderWidth = "1px";
         c.style.borderColor = "rgb(230,236,240)";
         c.style.borderStyle = "solid";
-        c.v_photos = root.v_rePhotos;
+        c.v_photos = root.v_reContent.photos;
         c.v_mode = "";
         g5.refreshPhoto(c);
         root.c_rePhotos = c;
     }
-} else if (root.v_uplinkType == "F") {
+} else if (root.v_content.uplinkType == "F") {
     var p1ratio = 2.64;
     c = createPanel(root, root.id+"_panel2", "", 75, cy, mainWidth-2, 100);
     c.style.borderRadius = "15px";
@@ -25794,7 +26100,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     ee.setOnMouseLeave(c, function(sender,e){
         sender.style.backgroundColor = "";
     });
-    c.v_uplinkId = root.v_uplinkId
+    c.v_uplinkId = root.v_content.uplinkId
     ee.setOnClick(c,function(sender,event) {
         showTopic.topicId = sender.v_uplinkId;
         showTopic.needRefresh = true;
@@ -25815,7 +26121,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
         ee.setImage(c,"url:" + g5.imgUrl + root.v_rePhoto,"trim","","")
     }
     c.style.borderRadius = "50%";
-    c.v_username = root.v_reUserName;
+    c.v_username = root.v_reUserInfo.userName;
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
         ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
@@ -25848,10 +26154,10 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     //reUserName,reNickName,reTime
     c = createPanel($g(root.id+"_panel6"), root.id+"_panel11", "", 45, 8, p1w*0.833734939759036, 28);
-    addText(c, "<div style='display:inline'><b>" + g5.add3Dot(root.v_reNickName, 24) + "</b> <font color='#808080' style='font-size:15px'>@" + g5.add3Dot(root.v_reUserName, 24) + "</font></div> · <font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reTimes) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+    addText(c, "<div style='display:inline'><b>" + g5.add3Dot(root.v_reUserInfo.nickName, 24) + "</b> <font color='#808080' style='font-size:15px'>@" + g5.add3Dot(root.v_reUserInfo.userName, 24) + "</font></div> · <font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reContent.seconds) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     root.c_reTitleText = c.label.rows[0].cells[0].childNodes[0];
     root.c_reTitleText.id = root.id + "_reTitleText";
-    root.c_reTitleText.v_userName = root.v_reUserName;
+    root.c_reTitleText.v_userName = root.v_reUserInfo.userName;
     c.style.cursor="pointer";
     ee.setOnClick(root.c_reTitleText,function(sender,event) {
         showUserPage.userName=sender.v_userName
@@ -25866,7 +26172,7 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     });
     //reContent
     c = createPanel($g(root.id+"_panel6"), root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, 10);
-    addText(c, g5.showCommonText(root.v_reContent), "left", "top", "微软雅黑", 12, "000000", "normal");
+    addText(c, g5.showCommonText(root.v_reContent.content), "left", "top", "微软雅黑", 12, "000000", "normal");
     c.label.style.wordBreak = "break-all";
     //eb.setFontSizeAuto(c, 25);
     eb.setDock(c,"disabled","disabled");
@@ -25876,10 +26182,10 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
     rect = eb.getDivRect(c);
     var p1y = rect.y + rect.h + p1h * 0.05;
     //rePhotos
-    if (root.v_rePhotos.length>0) {
+    if (root.v_reContent.photos.length>0) {
         c = createPanel($g(root.id+"_panel6"), root.id+"_panel26", "", 0, p1y, p1w, parseInt(p1w*0.565));
         p1y += eb.getDivRect(c).h;
-        c.v_photos = root.v_rePhotos;
+        c.v_photos = root.v_reContent.photos;
         c.v_mode = "";
         g5.refreshPhoto(c);
         root.c_rePhotos = c;
@@ -25897,26 +26203,26 @@ if ((root.v_uplinkType == "F") &amp;&amp; (root.v_photos.length>0) &amp;&amp; (r
 
 if (root.v_mode.charAt(2) == "x") {
     c = createPanel(root, root.id+"_bottom01", "", 16, cy, mainWidth, 26); cy+=33;
-    addText(c, g5.getMins(root.v_times), "left", "middle", "微软雅黑", 12, "808080", "normal");
+    addText(c, g5.getMins(root.v_content.seconds), "left", "middle", "微软雅黑", 12, "808080", "normal");
     root.v_timeLabel = c.label.rows[0].cells[0]; 
-    root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_times
+    root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_content.seconds
     c = createPanel(root, root.id+"_btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
-    if ((root.v_label1!="0") || (root.v_label2!="0") || (root.v_label3!="0")) {
+    if ((root.v_content.reCount!="0") || (root.v_content.fwCount!="0") || (root.v_content.likeCount!="0")) {
         c = createPanel(root, root.id+"_bottom02", "", 16, cy-6, mainWidth, 22); cy+=33;
         temp = "";
-        if (root.v_label1!="0") {
-            temp += "<font color='#000000'><b>"+root.v_label1+"</b></font> 回复      ";
+        if (root.v_content.reCount!="0") {
+            temp += "<font color='#000000'><b>"+root.v_content.reCount+"</b></font> 回复      ";
         }
-        if (root.v_label2!="0") {
-            temp += "<div id='"+root.id+"_fw01' style='display:inline;'><font color='#000000'><b>"+root.v_label2+"</b></font> 转发</div>      ";
+        if (root.v_content.fwCount!="0") {
+            temp += "<div id='"+root.id+"_fw01' style='display:inline;'><font color='#000000'><b>"+root.v_content.fwCount+"</b></font> 转发</div>      ";
         }
-        if (root.v_label3!="0") {
-            temp += "<div id='"+root.id+"_like01' style='display:inline;'>收到<font color='#000000'><b>"+root.v_label3+"</b></font>个赞</div>      ";
+        if (root.v_content.likeCount!="0") {
+            temp += "<div id='"+root.id+"_like01' style='display:inline;'>收到<font color='#000000'><b>"+root.v_content.likeCount+"</b></font>个赞</div>      ";
         }
         addText(c, temp, "left", "middle", "微软雅黑", 12, "808080", "normal");
         temp = $g(root.id+"_fw01");
         if (temp!=null) {
-            temp.v_contentId = root.v_contentId;
+            temp.v_contentId = root.v_content.id;
             temp.style.cursor="pointer";
             ee.setOnClick(temp,function(sender,event) {
                 showForwardList.contentId=sender.v_contentId;
@@ -25932,7 +26238,7 @@ if (root.v_mode.charAt(2) == "x") {
         }
         temp = $g(root.id+"_like01");
         if (temp!=null) {
-            temp.v_contentId = root.v_contentId;
+            temp.v_contentId = root.v_content.id;
             temp.style.cursor="pointer";
             ee.setOnClick(temp,function(sender,event) {
                 showLikeList.contentId=sender.v_contentId;
@@ -26008,7 +26314,7 @@ root.changeButton2 = function() {
         }
     }
 }
-if (root.v_isForward=="1") {
+if (root.v_content.isForward=="1") {
     initColor = "#17bf63";
 }
 c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:"+initColor+";fill: currentcolor;vertical-align:middle;\">"+g5.iconForward+"</svg>"
@@ -26103,22 +26409,22 @@ root.v_btn4 = c;
 
 //3 label
 if (root.v_mode.charAt(2) != "x") {
-    if (root.v_label1=="0") root.v_label1="";
-    if (root.v_label2=="0") root.v_label2="";
-    if (root.v_label3=="0") root.v_label3="";
+    if (root.v_content.reCount=="0") root.v_content.reCount="";
+    if (root.v_content.fwCount=="0") root.v_content.fwCount="";
+    if (root.v_content.likeCount=="0") root.v_content.likeCount="";
     c = createPanel(root, root.id+"_panel3", "", b1+35, cy+7, 40, 22);
     root.c_label1 = c;
-    addText(c, root.v_label1, "left", "middle", "Arial", 12, "657786", "");
+    addText(c, root.v_content.reCount, "left", "middle", "Arial", 12, "657786", "");
     c = createPanel(root, root.id+"_panel4", "", b2+35, cy+7, 40, 22);
     root.c_label2 = c;
-    if (root.v_isForward=="1") {
-        addText(c, root.v_label2, "left", "middle", "Arial", 12, "17bf63", "");
+    if (root.v_content.isForward=="1") {
+        addText(c, root.v_content.fwCount, "left", "middle", "Arial", 12, "17bf63", "");
     } else {
-        addText(c, root.v_label2, "left", "middle", "Arial", 12, "657786", "");
+        addText(c, root.v_content.fwCount, "left", "middle", "Arial", 12, "657786", "");
     }
     c = createPanel(root, root.id+"_panel5", "", b3+35, cy+7, 40, 22);
     root.c_label3 = c;
-    addText(c, root.v_label3, "left", "middle", "Arial", 12, "657786", "");
+    addText(c, root.v_content.likeCount, "left", "middle", "Arial", 12, "657786", "");
 }
 //final
 root.changeButton3(); root.changeButton3();
