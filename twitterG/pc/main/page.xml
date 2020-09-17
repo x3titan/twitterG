@@ -37,16 +37,19 @@ setInterval(function() {
 
 
                                             </onControlLoad>
-      <onPageCreate><![CDATA[var tag = document.createElement("script");
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName("script")[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-//history control
+      <onPageCreate><![CDATA[//history control
 window.addEventListener("popstate", function (a) {
     g5.processUrl();
 })
 
+
+var tag = document.createElement("script");
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName("script")[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+function onYouTubeIframeAPIReady() {
+
+}
 
 initLButton = function(button,text,dy,icon,size,dx) {
     if (eb.isEmpty(size)) size = "24 24";
@@ -202,11 +205,7 @@ sender.onWheel = function(wheelDelta) {
     var p2h = eb.getDivRect(g5.p2).h;
     if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 6000) {
         if (g5.currentPageIndex == 0) {
-            if (!eb.isEmpty(updateHomepage.data)) {
-                if (updateHomepage.data.rowCount>0) {
-                    updateHomepage();
-                }
-            }
+            g5.p2.p1.loadMore();
         } else if (g5.currentPageIndex == 10) {
             if (g5.p2.p11.currentPage == "c1") {
                 g5.p2.p11.c_pages.c1.loadMore();
@@ -1541,7 +1540,110 @@ sender.p12 = ee.getControl("panel355");</onCreate>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.a1 = ee.getControl("panel1");</onCreate>
+      <onCreate><![CDATA[sender.a1 = ee.getControl("panel1");
+sender.v_items = new Array();
+sender.update = function(v_content,v_userInfo,v_reContent,v_reUserInfo) {
+    var i;
+    for (i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_content.id==v_content.id) break;
+    }
+    if (i>=this.v_items.length) return;
+    var root = this.v_items[i];
+    while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
+    root.v_content = v_content;
+    root.v_userInfo = v_userInfo;
+    root.v_reContent = v_reContent;
+    root.v_reUserInfo = v_reUserInfo;
+    g5.renderTwitter(root);
+}
+
+sender.init = function() {
+    if (updateHomepage.busy) return;
+    updateHomepage.contentId = 0
+    updateHomepage.isForward = true;
+    this.loadFromServer();
+}
+
+sender.loadMore = function() {
+    if (updateHomepage.busy) return;
+    updateHomepage.contentId = 0
+    if (this.v_items.length>0) {
+        updateHomepage.contentId = this.v_items[this.v_items.length - 1].v_content.id;
+    }
+    updateHomepage.isForward = true;
+    this.loadFromServer();
+}
+
+sender.loadNew = function() {
+    if (updateHomepage.busy) return;
+    updateHomepage.contentId = 0
+    if (this.v_items.length>0) {
+        updateHomepage.contentId = this.v_items[0].v_content.id;
+    }
+    updateHomepage.isForward = false;
+    this.loadFromServer();
+}
+
+sender.loadFromServer = function() {
+    updateHomepage.onComplete = function(dataset) {
+        var i, item;
+        var root = sender;
+        var itemWidth = eb.getDivRect(root).w;
+        var cy = eb.getDivRect(g5.p4).h;
+        ee.setRect(g5.p2.p1.a1, null, cy, null,null);
+        cy+=eb.getDivRect(g5.p2.p1.a1).h;
+        if (updateHomepage.contentId == 0) {
+            for (i=0; i<root.v_items.length; i++) ee.removeControl(root.v_items[i]);
+            root.v_items = new Array();
+        } else if (updateHomepage.isForward) {
+            if (root.v_items.length>0) {
+                var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
+                cy = rect.y + rect.h;
+            }
+        }
+        var item = null;
+        for (i=0; i< dataset.rowCount; i++) {
+            item = createPanel(root, "page1_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadTwitterRecord(item, dataset, i);
+            if (item.v_content.status == "DEL") {
+                ee.removeControl(item);
+                continue;
+            }
+            item.v_mode = "";
+            g5.renderTwitter(item);
+            if (updateHomepage.isForward) {
+                root.v_items.push(item);
+            } else {
+                root.v_items.splice(i, 0, item);
+            }
+            cy += 0 + eb.getDivRect(item).h;
+        }
+        if (!updateHomepage.isForward) {
+            if (dataset.rowCount>0) {
+                if (dataset.rowCount<root.v_items.length) {
+                    var dy = cy - eb.getDivRect(root.v_items[dataset.rowCount]).y; 
+                    g5.homepageMoveY(dataset.rowCount,dy);
+                }
+            }
+            var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
+            cy = rect.y + rect.h;
+        }
+        
+        if (g5.currentPageIndex == 0) {
+            if (item!=null) {
+                var ch = $g("divRoot").offsetHeight;
+                var h = cy + ch - eb.getDivRect(item).h - 51; 
+                eb.setDivRect(g5.p2,null,null,null,h);
+            }    
+        }
+        eb.setDivRect(g5.p2.p1,null,null,null,cy);
+        eb.processDock();
+    }
+    updateHomepage();    
+}
+
+
+]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>-1</top>
       <topRatio>-0.00128205128205128</topRatio>
@@ -2055,12 +2157,196 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.p2sub = ee.getControl("panel279");
+      <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
+sender.p1Items = new Array();
+sender.p3Items = new Array();
+
+sender.show = function(v_userInfo) {
+    if (showUserPage.busy) return;
+    this.v_userInfo = v_userInfo;
+    
+    g5.pageMode = 0;
+    g5.refreshMain(true);
+    
+    
+    if (v_userInfo.isFollow) {
+        ee.getControl("panel256").init(2);
+    } else {
+        ee.getControl("panel256").init(1);
+    }
+    
+    if (v_userInfo.userName == g5.myUserInfo.userName) {
+        ee.getControl("panel256").init(3);
+        ee.setVisible(ee.getControl("panel115"), false);
+    } else {
+        ee.setVisible(ee.getControl("panel115"), true);
+    }
+    var rootH = eb.getDivRect(ee.getControl("panel16")).h;
+    //photo
+    if (v_userInfo.photo != "") {
+        ee.getControl("panel23").init(v_userInfo.photo);
+    }
+    //titleBg
+    if (v_userInfo.titleBg != "") {
+        ee.getControl("panel20").init(v_userInfo.titleBg);
+    }
+    ee.getControl("panel18").setText(v_userInfo.nickName);
+    ee.getControl("panel21").setText("@" + v_userInfo.userName);
+    
+    var cy = eb.getDivRect(ee.getControl("panel21")).y + eb.getDivRect(ee.getControl("panel21")).h;
+    var vspace = 2;
+    cy += vspace;
+    if (v_userInfo.note != "") {
+        eb.getDivRect(ee.getControl("panel69")).y = cy;
+        ee.setText(ee.getControl("panel69"), v_userInfo.note);
+        ee.setVisible(ee.getControl("panel69"), true);
+        ee.setRect(ee.getControl("panel69"),null,null,null, eb.getDivRect(ee.getControl("panel69").label).h);
+        cy += vspace + eb.getDivRect(ee.getControl("panel69")).h;
+    }
+    if (v_userInfo.homePage != "") {
+        eb.setDivRect(ee.getControl("layoutx6"),null,cy,null,null);
+        ee.setText(ee.getControl("layoutxitem12"), v_userInfo.homePage);
+        ee.getControl("layoutxitem12").homePage = v_userInfo.homePage;
+        ee.setVisible(ee.getControl("layoutx6"), true);
+        cy += vspace + eb.getDivRect(ee.getControl("layoutx6")).h;
+    }
+    
+    eb.setDivRect(ee.getControl("layoutx7"),null,cy,null,null);
+    ee.setText(ee.getControl("layoutxitem14"), 
+        v_userInfo.regDatetime.substr(0,4) + "年" + parseInt(v_userInfo.regDatetime.substr(5,2)) + "月" + parseInt(v_userInfo.regDatetime.substr(8,2)) + "日" + "加入");
+    ee.setVisible(ee.getControl("layoutx7"), true);
+    cy += vspace + eb.getDivRect(ee.getControl("layoutx7")).h;
+    
+    eb.setDivRect(ee.getControl("panel72"),null,cy,null,null);
+    ee.setVisible(ee.getControl("panel72"), true);
+    ee.setText(ee.getControl("panel72"), "  <div id='userPageLink01' style='display:inline;'>" + v_userInfo.followCount + "个关注</div>" +
+        "     <div id='userPageLink02' style='display:inline;'>" + v_userInfo.fansCount +"个粉丝</div>");
+    var c = ee.getControl("panel72"); 
+    c.link01=$g("userPageLink01");
+    c.link02=$g("userPageLink02");
+    if (v_userInfo.followCount>0) {
+        c.link01.style.cursor = "pointer";
+        ee.setOnMouseEnter(c.link01,function(sender,e){
+            sender.style.textDecoration="underline";
+        });
+        ee.setOnMouseLeave(c.link01,function(sender,e){
+            sender.style.textDecoration="";
+        });
+        ee.setOnClick(c.link01, function(sender, event) {
+            showFollowList.userName = showUserPage.userName;
+            showFollowList();
+        });
+    }
+    if (v_userInfo.fansCount>0) {
+        c.link02.style.cursor = "pointer";
+        ee.setOnMouseEnter(c.link02,function(sender,e){
+            sender.style.textDecoration="underline";
+        });
+        ee.setOnMouseLeave(c.link02,function(sender,e){
+            sender.style.textDecoration="";
+        });
+        ee.setOnClick(c.link02, function(sender, event) {
+            showFansList.userName = showUserPage.userName;
+            showFansList();
+        });
+    }
+    cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
+    
+    if (v_userInfo.isBlock1) {
+        ee.setVisible(ee.getControl("panel6"), true);
+        ee.setText(ee.getControl("panel253"), "@" + v_userInfo.userName + "已被屏蔽");
+        ee.setText(ee.getControl("panel254"), "是否确定要查看这些发言？查看发言不会取消屏蔽 @" + v_userInfo.userName + "。");
+        ee.getControl("panel255").cy = cy;
+        g5.changeP2(1);
+        ee.getControl("panel256").init(0);
+        return;
+    } else {
+        ee.setVisible(ee.getControl("panel6"), false);
+    }
+    
+    eb.setDivRect(ee.getControl("panel279"),null,cy,null,null);
+    ee.setVisible(ee.getControl("panel279"), true);
+    
+    var rect = eb.getDivRect(ee.getControl("panel263"));
+    cy = rect.y + rect.h;
+    eb.setDivRect(ee.getControl("panel19"),null,cy,null,300);
+    ee.setVisible(ee.getControl("panel19"), true);
+    cy += eb.getDivRect(ee.getControl("panel19")).h;
+    
+    eb.setDivRect(ee.getControl("panel73"),null,cy,null,null);
+    ee.setVisible(ee.getControl("panel73"), true);
+    cy += eb.getDivRect(ee.getControl("panel73")).h;
+    
+    g5.changeP2(1);
+    
+    showUserPage.userName = "";
+    showUserPage.userId = v_userInfo.id;
+    showUserPage.onComplete = function() {
+        //ee.setVisible(ee.getControl("panel18"), false);
+        //ee.setVisible(ee.getControl("panel21"), false);
+        //ee.setRect(ee.getControl("panel69"), null,null,null,20);
+        //ee.setVisible(ee.getControl("panel69"), false);
+        //ee.setVisible(ee.getControl("layoutx6"), false);
+        //ee.setVisible(ee.getControl("layoutx7"), false);
+        //ee.setVisible(ee.getControl("panel72"), false);
+        //ee.setImage(ee.getControl("panel23"), "/twitterG/main/user.png");
+        //ee.setImage(ee.getControl("panel20"), "/twitterG/main/empty.png");
+        var i;
+        
+        for (var i=0; i<sender.p1Items.length; i++) {
+            ee.removeControl(sender.p1Items[i]);
+        }
+        sender.p1Items = new Array();
+        
+        var i, item;
+        var root = g5.p2.p2.p2sub.p1;
+        root.init(); 
+        var itemWidth = eb.getDivRect(root).w;
+        var item = null;
+        for (i=0; i< showUserPage.dataset.rowCount; i++) {
+            item = createPanel(root, "puser_" + showUserPage.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadTwitterRecord(item, showUserPage.dataset, i);
+            item.v_mode = "   x";
+            g5.renderTwitter(item);
+            sender.p1Items.push(item);
+            cy += 0 + eb.getDivRect(item).h;
+            item.style.borderLeft="";    
+            item.style.borderRight="";    
+        }
+        if (item!=null) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = cy + ch - eb.getDivRect(item).h - 51; 
+            ee.setRect(root,null,null,null,h);
+        } else {
+            var ch = $g("divRoot").offsetHeight;
+            var h = ch + eb.getDivRect(ee.getControl("layoutx2")).y - 51; 
+            ee.setRect(root,null,null,null,h);
+        }    
+        rect = eb.getDivRectSetting(root);
+        ee.setRect(root.parentNode,null,null,null,rect.y + rect.h);
+        rect = eb.getDivRectSetting(root.parentNode);
+        ee.setRect(root.parentNode.parentNode,null,null,null,rect.y + rect.h);
+        
+        
+        g5.p2.p2.p2sub.p1.c_chat.c_chat.c_chatRoot.start(showUserPage.defaultChatRoomId);
+        if (showUserPage.privateChatRoomRights) {
+            g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
+        }
+                
+        g5.tiledV(g5.p2PersonSub.p1,0);
+        g5.p2PersonSub.init();
+        g5.p2PersonSub.changePage(1);
+        g5.p3.p8.init();
+    }
+    
+    
+    showUserPage();    
+}
 
 
-</onCreate>
+
+]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -2625,7 +2911,7 @@ sender.changePage = function(pageIndex) {
         }
         ee.setRect(this.p1.c_chat.c_chat, null, this.p1ChatRect.y, null, this.p1ChatRect.h);
         ee.changeParent(this.chat, this.p1, 1);
-        g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.id == g5.myUserInfo.id);
+        g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.v_userInfo.id == g5.myUserInfo.id);
         this.chat.init();
         this.chat.c_buttons.c_buttons.showButton3(true);
         g5.tiledV(this.p1, 0);
@@ -7399,6 +7685,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_topBlank = ee.getControl("panel336");
 sender.c_buttons = ee.getControl("layoutx11");
@@ -7555,6 +7842,7 @@ sender.v_items.push(sender.c5);
       <height>441</height>
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c1->热门]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_headerName = "page11c1_";
 sender.v_searchOptions = "hot";
@@ -20571,7 +20859,7 @@ sender.v_mode = "-";
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="57">
+  <taskSet count="56">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName 
@@ -20716,7 +21004,7 @@ g5.myUserInfo = new g5.UserInfo();
 g5.myUserInfo.loadFromDataset(eio.readDataSet(),0,0);
 
 g5.refreshUserInfo();
-updateHomepage();
+g5.p2.p1.init();
 g5.processUrl();   
 
                                
@@ -21079,6 +21367,124 @@ if (newTwitter.userPage=="x") {
 }</script3>
     </taskSetItem>
     <taskSetItem name="updateHomepage">
+      <script1>//busy,contentId,isForward,onComplete(dataset)
+if (updateHomepage.busy) return;
+updateHomepage.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(updateHomepage.contentId+"");
+eio.appendString16(updateHomepage.isForward?"T":"F");
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var lastId = parseInt(eio.readString16());
+var isForward = eio.readString16()=="T"?true:false;
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName =db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+var sql1 = "";
+if (lastId == 0) {
+} else if (isForward) {
+    sql1 = "and dbo.tContent.id < " + lastId + " ";
+} else {
+    sql1 = "and dbo.tContent.id > " + lastId + " ";
+}
+
+sql =
+    "SELECT   TOP (15) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, dbo.tContent.status,  " +
+    "                dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1, dbo.tContent.photo2,  " +
+    "                dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount, dbo.tContent.likeCount,  " +
+    "                dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL THEN 0 ELSE 1 END AS isForward,  " +
+    "                CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike, CASE WHEN unlikeList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isUnlike, tContent_1.id AS reId, DATEDIFF(second, tContent_1.regDatetime, GETDATE())  " +
+    "                AS reSeconds, tContent_1.status AS reStatus, tContent_1.uplinkType AS reUplinkType, tContent_1.uplinkId AS reUplinkId,  " +
+    "                tContent_1.[content] AS reContent, tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2,  " +
+    "                tContent_1.photo3 AS rePhoto3, tContent_1.photo4 AS rePhoto4, tContent_1.reCount AS reReCount,  " +
+    "                tContent_1.fwCount AS reFwCount, tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount,  " +
+    "                CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS reIsLike, CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike,  " +
+    "                dbo.tContent.userId AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
+    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
+    "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
+    "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
+    "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
+    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
+    "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
+    "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
+    "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
+    "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow,  " +
+    "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail " +
+    "FROM      dbo.blockList AS rBlockList FULL OUTER JOIN " +
+    "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
+    "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
+    "                dbo.follow AS rFollow ON userInfo_1.id = rFollow.followId AND rFollow.userId = " + userId + " ON  " +
+    "                rBlockList1.userId = userInfo_1.id AND rBlockList1.blockUserId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId RIGHT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList1 RIGHT OUTER JOIN " +
+    "                dbo.userInfo ON uBlockList1.userId = dbo.userInfo.id AND uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.forwardLink AS forwardLink_1 RIGHT OUTER JOIN " +
+    "                dbo.tContent RIGHT OUTER JOIN " +
+    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
+    "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList AS unlikeList_1 ON dbo.tContent.uplinkId = unlikeList_1.contentId AND  " +
+    "                unlikeList_1.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList ON dbo.tContent.id = dbo.unlikeList.contentId AND dbo.unlikeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " ON  " +
+    "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
+    "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
+    "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
+    "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
+    "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) " + 
+    "  AND dbo.tContent.status<>'DEL' " + sql1 +
+    "ORDER BY dbo.tContent.id DESC ";
+   
+//es.logCommon(sql);
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
+    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
+    0, 99999);
+
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    updateHomepage.busy = false;
+    return;
+}
+updateHomepage.dataset = eio.readDataSet();
+updateHomepage.onComplete(updateHomepage.dataset); 
+updateHomepage.busy = false;
+                        
+</script3>
+    </taskSetItem>
+    <taskSetItem name="updateHomepageOld">
       <script1><![CDATA[if (eb.isEmpty(updateHomepage.getNews)) updateHomepage.getNews=false;
 if (eb.isEmpty(updateHomepage.busy)) updateHomepage.busy = false;
 if (eb.isEmpty(updateHomepage.lastId)) updateHomepage.lastId = 0;
@@ -21289,42 +21695,15 @@ updateHomepage.busy = false;
                         
 ]]></script3>
     </taskSetItem>
-    <taskSetItem name="updateHomepageOld">
-      <script1><![CDATA[if (eb.isEmpty(updateHomepage.getNews)) updateHomepage.getNews=false;
-if (eb.isEmpty(updateHomepage.busy)) updateHomepage.busy = false;
-if (eb.isEmpty(updateHomepage.lastId)) updateHomepage.lastId = 0;
-
-if (updateHomepage.busy) return;
-updateHomepage.busy = true;
-
+    <taskSetItem name="showUserPage">
+      <script1>//busy, userId, onComplete()
+if (showUserPage.busy) return;
+showUserPage.busy = true;
 eio.appendString16(g5.token);
-if (ee.getControl("panel41").eeChildren.length<=1) {
-    updateHomepage.needRefresh = true;
-}
-if (updateHomepage.needRefresh) {
-    eio.appendString16("T");
-    eio.appendString16("0");
-} else if (updateHomepage.getNews) {
-    eio.appendString16("N");
-    if (g5.itemsHome.length>0) {
-        eio.appendString16(g5.itemsHome[0].v_contentId);
-    } else {
-        eio.appendString16("0");
-    }
-} else {
-    eio.appendString16("F");
-    if (g5.itemsHome.length>0) {
-        eio.appendString16(g5.itemsHome[g5.itemsHome.length-1].v_contentId);
-    } else {
-        eio.appendString16("9999999");
-    }
-}
-
-
-]]></script1>
+eio.appendString16(showUserPage.userId+"");
+</script1>
       <script2><![CDATA[var token = eio.readString16();
-var needRefresh = eio.readString16();
-var lastId = parseInt(eio.readString16());
+var userId = parseInt(eio.readString16());
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -21340,139 +21719,269 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     eio.appendString8("上次登录时间太久或者您更换了系统");
     es.logCommon("用户token登录失败,token=" + token);
     return;
-} 
-var userName =db.getString(sqlResult,"userName");
-var userId = db.getString(sqlResult,"id");
-var sql1 = "";
-if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
-    sql1 = "and dbo.tContent.id < " + lastId + " ";
-} else if (needRefresh=="N") {
-    if (isNaN(lastId)) lastId = 0;
-    sql1 = "and dbo.tContent.id > " + lastId + " ";
 }
+var myUserId = db.getString(sqlResult,"id");  
 
-sql =
-    "SELECT   TOP (15) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
-    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " +
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType,  " +
-    "                dbo.tContent.likeCount, dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
-    "                dbo.userInfo.photo, DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds,  " +
-    "                tContent_1.userId AS reUserId, tContent_1.status AS reStatus, tContent_1.[content] AS reContent,  " +
-    "                tContent_1.photoCount AS rePhotoCount, tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2,  " +
-    "                tContent_1.photo3 AS rePhoto3, tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount,  " +
-    "                tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName,  " +
-    "                userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto, CASE WHEN forwardLink.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS isForward, CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward,  " +
-    "                CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike, CASE WHEN likeList_1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS reIsLike " +
-    "FROM      dbo.tContent LEFT OUTER JOIN " +
+sql = 
+    "SELECT   dbo.userInfo.id, dbo.userInfo.status, CONVERT(VARCHAR(50), dbo.userInfo.regDatetime, 120) " +
+    "                AS regDatetime, CONVERT(VARCHAR(50), dbo.userInfo.lastAccessTime, 120) AS lastAccessTime,  " +
+    "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
+    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount,  " +
+    "                CASE WHEN dbo.follow.id IS NULL THEN 0 ELSE 1 END AS isFollow, CASE WHEN dbo.blockList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isBlock1, CASE WHEN blockList_1.id IS NULL THEN 0 ELSE 1 END AS isBlock2, dbo.userInfo.email, " +
+    "                dbo.userInfo.chatRoomVideo " + 
+    "FROM      dbo.blockList RIGHT OUTER JOIN " +
+    "                dbo.userInfo LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.userInfo.id = dbo.follow.followId AND dbo.follow.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS blockList_1 ON dbo.userInfo.id = blockList_1.userId AND blockList_1.blockUserId = " + userId + " ON  " +
+    "                dbo.blockList.blockUserId = dbo.userInfo.id AND dbo.blockList.userId = " + userId + " " +
+    "where dbo.userInfo.id = " + userId + "";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("该用户不存在");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2,email," +
+    "chatRoomVideo",
+    0, 1);
+
+sql = 
+    "exec createDefaultChatRoom " + userId + "; " + 
+    "exec createDefaultPrivateChatRoom " + userId + "; " + 
+    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='DEF'; " +
+    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='PIV'; " +
+    "select * from hostRecomd where hostUserId = " + userId + " order by orderSn; " +
+
+    "SELECT   dbo.chatRoomInfo.id, dbo.chatRoomInfo.creatorId, dbo.chatRoomInfo.roomType, dbo.chatRoomVip.status, " +
+    "                dbo.chatRoomVip.userId " +
+    "FROM      dbo.chatRoomVip INNER JOIN " +
+    "                dbo.chatRoomInfo ON dbo.chatRoomVip.chatRoomId = dbo.chatRoomInfo.id " +
+    "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
+    "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='ADM'; " +
+        
+    "SELECT   dbo.chatRoomInfo.id, dbo.chatRoomInfo.creatorId, dbo.chatRoomInfo.roomType, dbo.chatRoomVip.status, " +
+    "                dbo.chatRoomVip.userId " +
+    "FROM      dbo.chatRoomVip INNER JOIN " +
+    "                dbo.chatRoomInfo ON dbo.chatRoomVip.chatRoomId = dbo.chatRoomInfo.id " +
+    "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
+    "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='BLK'; " +
+
+    "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
+    "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
+    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
+    "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isForward, CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike,  " +
+    "                CASE WHEN unlikeList.id IS NULL THEN 0 ELSE 1 END AS isUnlike, tContent_1.id AS reId, DATEDIFF(second,  " +
+    "                tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.status AS reStatus,  " +
+    "                tContent_1.uplinkType AS reUplinkType, tContent_1.uplinkId AS reUplinkId, tContent_1.[content] AS reContent,  " +
+    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " +
+    "                tContent_1.photo4 AS rePhoto4, tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount,  " +
+    "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, CASE WHEN forwardLink_1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike,  " +
+    "                CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike, dbo.tContent.userId AS uId,  " +
+    "                dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
+    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
+    "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
+    "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
+    "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
+    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
+    "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
+    "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
+    "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
+    "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow,  " +
+    "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail " +
+    "FROM      dbo.blockList AS rBlockList FULL OUTER JOIN " +
+    "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
+    "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
+    "                dbo.follow AS rFollow ON userInfo_1.id = rFollow.followId AND rFollow.userId = " + userId + " ON  " +
+    "                rBlockList1.userId = userInfo_1.id AND rBlockList1.blockUserId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId RIGHT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList1 RIGHT OUTER JOIN " +
+    "                dbo.userInfo ON uBlockList1.userId = dbo.userInfo.id AND uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.forwardLink AS forwardLink_1 RIGHT OUTER JOIN " +
+    "                dbo.tContent LEFT OUTER JOIN " +
     "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.forwardLink AS forwardLink_1 ON dbo.tContent.uplinkId = forwardLink_1.contentId AND  " +
-    "                forwardLink_1.userId = " + userId + " RIGHT OUTER JOIN " +
-    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
-    "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " +
-    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " +
-    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " +
-    "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
-    "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) " + sql1 +
+    "                dbo.unlikeList AS unlikeList_1 ON dbo.tContent.uplinkId = unlikeList_1.contentId AND  " +
+    "                unlikeList_1.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList ON dbo.tContent.id = dbo.unlikeList.contentId AND dbo.unlikeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " ON  " +
+    "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
+    "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
+    "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
+    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and dbo.tContent.uplinkType<>'R' " +
     "ORDER BY dbo.tContent.id DESC ";
-es.logCommon(sql);
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
-    es.logWarning("数据库执行错误, sql=" + sql);
+    eio.appendString8("系统繁忙请稍后再试");
     return;
 }
-eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId,reReCount," +
-    "reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
-
-//id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike
-//reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike
-//uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail  
-//rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail  
-
-]]></script2>
-      <script3><![CDATA[if (eio.readString8() != "T") {
-    updateHomepage.busy = false;
-    return;
-}
-updateHomepage.data = eio.readDataSet();
-if (updateHomepage.data.rowCount > 0) {
-    updateHomepage.lastId = updateHomepage.data.getData(0, updateHomepage.data.rowCount - 1);
-}
-
-var mode = "";
-if (updateHomepage.getNews) {
-    mode = "N";
-    updateHomepage.getNews = false;
-}
-
-
-if (eb.isEmpty(updateHomepage.data)) return;
-var i, item;
-var root = ee.getControl("panel41"); 
-var itemWidth = eb.getDivRect(root).w;
-
-var cy = eb.getDivRect(g5.p4).h;
-ee.setRect(g5.p2.p1.a1, null, cy, null,null);
-cy+=eb.getDivRect(g5.p2.p1.a1).h;
-if (mode == "N") {
-} else if (updateHomepage.needRefresh) {
-    for (i=0; i<g5.itemsHome.length; i++) ee.removeControl(g5.itemsHome[i]);
-    g5.itemsHome = new Array();
+var pubRoomId;
+if (db.read(sqlResult)) {
+    pubRoomId = db.getString(sqlResult,"id");
+    eio.appendString16(pubRoomId);
 } else {
-    if (g5.itemsHome.length>0) {
-        var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
-        cy = 0 + rect.y + rect.h;
-    }
+    pubRoomId = "-1";
+    eio.appendString16(pubRoomId);
 }
-var item = null;
-for (i=0; i< updateHomepage.data.rowCount; i++) {
-    if (updateHomepage.data.getData(18,i) == "DEL") continue;
-    item = createPanel(root, "page1_" + updateHomepage.data.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadTwitterRecord(item, updateHomepage.data, i);
-    item.v_mode = "";
-    g5.renderTwitter(item);
-    if (mode == "N") {
-        g5.itemsHome.splice(i, 0, item);
-    } else {
-        g5.itemsHome.push(item);
-    }
-    cy += 0 + eb.getDivRect(item).h;
+db.nextResult(sqlResult);
+var prvRoomId;
+if (db.read(sqlResult)) {
+    prvRoomId = db.getString(sqlResult,"id");
+    eio.appendString16(prvRoomId);
+} else {
+    prvRoomId = "-1";
+    eio.appendString16(prvRoomId);
 }
-if (mode == "N") {
-    if (updateHomepage.data.rowCount>0) {
-        if (updateHomepage.data.rowCount<g5.itemsHome.length) {
-            var dy = cy - eb.getDivRect(g5.itemsHome[updateHomepage.data.rowCount]).y; 
-            g5.homepageMoveY(updateHomepage.data.rowCount,dy);
-        }
-    }
-    var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
-    cy = rect.y + rect.h;
+db.nextResult(sqlResult);
+eio.appendDataSet(sqlResult, "id,regDatetime,orderSn,hostUserId,videoUrl,note", 0, 9999);
+db.nextResult(sqlResult);
+if (db.read(sqlResult)) {
+    eio.appendString16("T");
+} else {
+    eio.appendString16("F");
+}
+db.nextResult(sqlResult);
+if (db.read(sqlResult)) {
+    eio.appendString16("T");
+} else {
+    eio.appendString16("F");
+}
+db.nextResult(sqlResult);
+eio.appendDataSet(sqlResult,
+    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
+    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
+    0, 99999);
+
+sql = "select * from chatPrivate where roomId=" + prvRoomId + " and permitUserId=" + myUserId + "; ";
+if (userId == myUserId) {
+    sql +=
+        "SELECT   dbo.chatPrvRequest.id, dbo.chatPrvRequest.chatRoomId, dbo.chatPrvRequest.appUserId, dbo.userInfo.status, " + 
+        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
+        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
+        "                dbo.userInfo.followCount, dbo.userInfo.fansCount, dbo.userInfo.regDatetime,  " +
+        "                dbo.chatPrvRequest.regDatetime AS requestDatetime " +
+        "FROM      dbo.chatPrvRequest INNER JOIN " +
+        "                dbo.userInfo ON dbo.chatPrvRequest.appUserId = dbo.userInfo.id " +
+        "WHERE chatPrvRequest.chatRoomId = " + prvRoomId + " " +
+        "ORDER BY chatPrvRequest.id DESC; " +
+        "SELECT   dbo.chatPrivate.id, dbo.chatPrivate.regDatetime AS joinDatetime, dbo.chatPrivate.roomId AS chatRoomId, " + 
+        "                dbo.chatPrivate.permitUserId, dbo.userInfo.status, dbo.userInfo.regDatetime, dbo.userInfo.lastAccessTime,  " +
+        "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
+        "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo, dbo.userInfo.followCount,  " +
+        "                dbo.userInfo.fansCount " +
+        "FROM      dbo.userInfo INNER JOIN " +
+        "                dbo.chatPrivate ON dbo.userInfo.id = dbo.chatPrivate.permitUserId " +
+        "WHERE chatPrivate.roomId = " + prvRoomId + " " +
+        "ORDER BY chatPrivate.id DESC; ";
+    sql +=
+        "SELECT   dbo.chatRoomVip.id, dbo.chatRoomVip.regDatetime as vipRegDatetime, dbo.chatRoomVip.chatRoomId, dbo.chatRoomVip.status as vipStatus, " +
+        "                dbo.chatRoomVip.userId, dbo.userInfo.status, dbo.userInfo.regDatetime,  " +
+        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
+        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
+        "                dbo.userInfo.followCount, dbo.userInfo.fansCount " +
+        "FROM      dbo.chatRoomVip LEFT OUTER JOIN " +
+        "                dbo.userInfo ON dbo.chatRoomVip.userId = dbo.userInfo.id " +
+        "where chatRoomVip.chatRoomId = " + pubRoomId + " and chatRoomVip.status = 'ADM' " +
+        "order by chatRoomVip.id DESC; ";
+    sql +=
+        "SELECT   dbo.chatRoomVip.id, dbo.chatRoomVip.regDatetime as vipRegDatetime, dbo.chatRoomVip.chatRoomId, dbo.chatRoomVip.status as vipStatus, " +
+        "                dbo.chatRoomVip.userId, dbo.userInfo.status, dbo.userInfo.regDatetime,  " +
+        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
+        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
+        "                dbo.userInfo.followCount, dbo.userInfo.fansCount " +
+        "FROM      dbo.chatRoomVip LEFT OUTER JOIN " +
+        "                dbo.userInfo ON dbo.chatRoomVip.userId = dbo.userInfo.id " +
+        "where chatRoomVip.chatRoomId = " + pubRoomId + " and chatRoomVip.status = 'BLK' " +
+        "order by chatRoomVip.id DESC; ";
 }
 
-if (g5.currentPageIndex == 0) {
-    if (item!=null) {
-        var ch = $g("divRoot").offsetHeight;
-        var h = cy + ch - eb.getDivRect(item).h - 51; 
-        eb.setDivRect(g5.p2,null,null,null,h);
-    }    
+sqlResult = db.executeQuery("DB", sql);
+if (db.read(sqlResult)) {
+    eio.appendString16("T");
+} else {
+    eio.appendString16("F");
 }
-eb.setDivRect(g5.p2.p1,null,null,null,cy);
-eb.processDock();
+
+if (userId == myUserId) {
+    eio.appendString16("T");
+    db.nextResult(sqlResult);
+    eio.appendDataSet(sqlResult,
+        "id,requestDatetime,appUserId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
+    db.nextResult(sqlResult);
+    eio.appendDataSet(sqlResult,
+        "id,joinDatetime,permitUserId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
+    db.nextResult(sqlResult);
+    eio.appendDataSet(sqlResult,
+        "id,vipRegDatetime,userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
+    db.nextResult(sqlResult);
+    eio.appendDataSet(sqlResult,
+        "id,vipRegDatetime,userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
+} else {
+    eio.appendString16("F");
+}]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    ee.setVisible(ee.getControl("panel16"), false);
+    showUserPage.busy = false;
+    return;
+}
+
+var ds = eio.readDataSet();
+showUserPage.v_userInfo = new g5.UserInfo();
+showUserPage.v_userInfo.loadFromDataset(ds, 0, 0);
+showUserPage.chatRoomVideo = ds.getData(showUserPage.v_userInfo.size,0);
+showUserPage.defaultChatRoomId = eio.readString16(); 
+showUserPage.privateChatRoomId = eio.readString16();
+showUserPage.hostRecomd = eio.readDataSet();
+showUserPage.isChatRoomPubAdmin = eio.readString16() == "T";
+showUserPage.isChatRoomPubBlack = eio.readString16() == "T";
+showUserPage.dataset = eio.readDataSet();
+showUserPage.privateChatRoomRights = eio.readString16() == "T";
+if (showUserPage.id == g5.myUserInfo.id) {
+    showUserPage.privateChatRoomRights = true;
+}
+if (eio.readString16() == "T") {
+    showUserPage.joinPrvRequest = eio.readDataSet();
+    showUserPage.permitUsers = eio.readDataSet();
+    showUserPage.chatRoomAdminList = eio.readDataSet();
+    showUserPage.chatRoomBlackList = eio.readDataSet();
+} else {
+    showUserPage.joinPrvRequest = null;
+    showUserPage.permitUsers = null;
+    showUserPage.chatRoomAdminList = eio.readDataSet();
+    showUserPage.chatRoomBlackList = null;
+}
+
+showUserPage.onComplete();
+showUserPage.busy = false;
 
 
-updateHomepage.needRefresh = false;
-updateHomepage.busy = false;
-                        
-]]></script3>
+
+
+</script3>
     </taskSetItem>
-    <taskSetItem name="showUserPage">
+    <taskSetItem name="showUserPageOld">
       <script1>//userName/userId
 if (g5.currentPageIndex == 1) {
     g5.changeP2(-1);
@@ -21678,479 +22187,6 @@ eio.appendDataSet(sqlResult,
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
     0, 99999);
-
-sql = "select * from chatPrivate where roomId=" + prvRoomId + " and permitUserId=" + myUserId + "; ";
-if (userId == myUserId) {
-    sql +=
-        "SELECT   dbo.chatPrvRequest.id, dbo.chatPrvRequest.chatRoomId, dbo.chatPrvRequest.appUserId, dbo.userInfo.status, " + 
-        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
-        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
-        "                dbo.userInfo.followCount, dbo.userInfo.fansCount, dbo.userInfo.regDatetime,  " +
-        "                dbo.chatPrvRequest.regDatetime AS requestDatetime " +
-        "FROM      dbo.chatPrvRequest INNER JOIN " +
-        "                dbo.userInfo ON dbo.chatPrvRequest.appUserId = dbo.userInfo.id " +
-        "WHERE chatPrvRequest.chatRoomId = " + prvRoomId + " " +
-        "ORDER BY chatPrvRequest.id DESC; " +
-        "SELECT   dbo.chatPrivate.id, dbo.chatPrivate.regDatetime AS joinDatetime, dbo.chatPrivate.roomId AS chatRoomId, " + 
-        "                dbo.chatPrivate.permitUserId, dbo.userInfo.status, dbo.userInfo.regDatetime, dbo.userInfo.lastAccessTime,  " +
-        "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
-        "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo, dbo.userInfo.followCount,  " +
-        "                dbo.userInfo.fansCount " +
-        "FROM      dbo.userInfo INNER JOIN " +
-        "                dbo.chatPrivate ON dbo.userInfo.id = dbo.chatPrivate.permitUserId " +
-        "WHERE chatPrivate.roomId = " + prvRoomId + " " +
-        "ORDER BY chatPrivate.id DESC; ";
-    sql +=
-        "SELECT   dbo.chatRoomVip.id, dbo.chatRoomVip.regDatetime as vipRegDatetime, dbo.chatRoomVip.chatRoomId, dbo.chatRoomVip.status as vipStatus, " +
-        "                dbo.chatRoomVip.userId, dbo.userInfo.status, dbo.userInfo.regDatetime,  " +
-        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
-        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
-        "                dbo.userInfo.followCount, dbo.userInfo.fansCount " +
-        "FROM      dbo.chatRoomVip LEFT OUTER JOIN " +
-        "                dbo.userInfo ON dbo.chatRoomVip.userId = dbo.userInfo.id " +
-        "where chatRoomVip.chatRoomId = " + pubRoomId + " and chatRoomVip.status = 'ADM' " +
-        "order by chatRoomVip.id DESC; ";
-    sql +=
-        "SELECT   dbo.chatRoomVip.id, dbo.chatRoomVip.regDatetime as vipRegDatetime, dbo.chatRoomVip.chatRoomId, dbo.chatRoomVip.status as vipStatus, " +
-        "                dbo.chatRoomVip.userId, dbo.userInfo.status, dbo.userInfo.regDatetime,  " +
-        "                dbo.userInfo.lastAccessTime, dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note,  " +
-        "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.chatRoomVideo,  " +
-        "                dbo.userInfo.followCount, dbo.userInfo.fansCount " +
-        "FROM      dbo.chatRoomVip LEFT OUTER JOIN " +
-        "                dbo.userInfo ON dbo.chatRoomVip.userId = dbo.userInfo.id " +
-        "where chatRoomVip.chatRoomId = " + pubRoomId + " and chatRoomVip.status = 'BLK' " +
-        "order by chatRoomVip.id DESC; ";
-}
-
-sqlResult = db.executeQuery("DB", sql);
-if (db.read(sqlResult)) {
-    eio.appendString16("T");
-} else {
-    eio.appendString16("F");
-}
-
-if (userId == myUserId) {
-    eio.appendString16("T");
-    db.nextResult(sqlResult);
-    eio.appendDataSet(sqlResult,
-        "id,requestDatetime,appUserId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
-        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
-    db.nextResult(sqlResult);
-    eio.appendDataSet(sqlResult,
-        "id,joinDatetime,permitUserId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
-        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
-    db.nextResult(sqlResult);
-    eio.appendDataSet(sqlResult,
-        "id,vipRegDatetime,userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
-        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
-    db.nextResult(sqlResult);
-    eio.appendDataSet(sqlResult,
-        "id,vipRegDatetime,userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
-        "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 9999);
-} else {
-    eio.appendString16("F");
-}]]></script2>
-      <script3><![CDATA[if (eio.readString8() != "T") {
-    ee.setVisible(ee.getControl("panel16"), false);
-    return;
-}
-
-var id = eio.readString8();
-showUserPage.id = id;
-var userName = eio.readString16();
-showUserPage.userName = userName;
-var nickName = eio.readString16();
-showUserPage.nickName = nickName;
-var regDatetime = eio.readString16();
-var photo = eio.readString16();
-var titleBg = eio.readString16();
-var note = eio.readString16();
-var homePage = eio.readString16();
-showUserPage.chatRoomVideo = eio.readString16();
-var countFollow = eio.readString16();
-var countFans = eio.readString16();
-var follow = eio.readString16();
-
-
-var block1 = eio.readString16();
-var block2 = eio.readString16();
-showUserPage.defaultChatRoomId = eio.readString16(); 
-showUserPage.privateChatRoomId = eio.readString16();
-showUserPage.hostRecomd = eio.readDataSet();
-showUserPage.isChatRoomPubAdmin = eio.readString16() == "T";
-showUserPage.isChatRoomPubBlack = eio.readString16() == "T";
-g5.datasetPageUser = eio.readDataSet();
-    
-showUserPage.privateChatRoomRights = eio.readString16() == "T";
-if (showUserPage.id == g5.myUserInfo.id) {
-    showUserPage.privateChatRoomRights = true;
-}
-if (eio.readString16() == "T") {
-    showUserPage.joinPrvRequest = eio.readDataSet();
-    showUserPage.permitUsers = eio.readDataSet();
-    showUserPage.chatRoomAdminList = eio.readDataSet();
-    showUserPage.chatRoomBlackList = eio.readDataSet();
-} else {
-    showUserPage.joinPrvRequest = null;
-    showUserPage.permitUsers = null;
-    showUserPage.chatRoomAdminList = eio.readDataSet();
-    showUserPage.chatRoomBlackList = null;
-}
-
-ee.setVisible(ee.getControl("panel18"), false);
-ee.setVisible(ee.getControl("panel21"), false);
-ee.setRect(ee.getControl("panel69"), null,null,null,20);
-ee.setVisible(ee.getControl("panel69"), false);
-ee.setVisible(ee.getControl("layoutx6"), false);
-ee.setVisible(ee.getControl("layoutx7"), false);
-ee.setVisible(ee.getControl("panel72"), false);
-ee.setImage(ee.getControl("panel23"), "/twitterG/main/user.png");
-ee.setImage(ee.getControl("panel20"), "/twitterG/main/empty.png");
-for (var i=0; i<g5.itemsPageUser.length; i++) {
-    ee.removeControl(g5.itemsPageUser[i]);
-}
-g5.itemsPageUser = new Array();
-  
-        
-g5.pageMode = 0;
-g5.refreshMain(true);
-
-if (follow == "true") {
-    ee.getControl("panel256").init(2);
-} else {
-    ee.getControl("panel256").init(1);
-}
-
-if (userName == g5.myUserInfo.userName) {
-    ee.getControl("panel256").init(3);
-    ee.setVisible(ee.getControl("panel115"), false);
-} else {
-    ee.setVisible(ee.getControl("panel115"), true);
-}
-
-ee.getControl("panel16").userId = id;
-ee.getControl("panel16").userName = userName;
-var rootH = eb.getDivRect(ee.getControl("panel16")).h;
-
-
-if (photo != "") {
-    ee.getControl("panel23").init(photo);
-}
-if (titleBg != "") {
-    ee.getControl("panel20").init(titleBg);
-}
-ee.getControl("panel18").setText(nickName);
-ee.setVisible(ee.getControl("panel18"), true);
-ee.getControl("panel21").setText("@" + userName);
-ee.setVisible(ee.getControl("panel21"), true);
-
-var cy = eb.getDivRect(ee.getControl("panel21")).y + eb.getDivRect(ee.getControl("panel21")).h;
-var vspace = 2;
-cy += vspace;
-if (note != "") {
-    eb.getDivRect(ee.getControl("panel69")).y = cy;
-    ee.setText(ee.getControl("panel69"), note);
-    ee.setVisible(ee.getControl("panel69"), true);
-    ee.setRect(ee.getControl("panel69"),null,null,null, eb.getDivRect(ee.getControl("panel69").label).h);
-    cy += vspace + eb.getDivRect(ee.getControl("panel69")).h;
-}
-if (homePage != "") {
-    eb.setDivRect(ee.getControl("layoutx6"),null,cy,null,null);
-    ee.setText(ee.getControl("layoutxitem12"), homePage);
-    ee.getControl("layoutxitem12").homePage = homePage;
-    ee.setVisible(ee.getControl("layoutx6"), true);
-    cy += vspace + eb.getDivRect(ee.getControl("layoutx6")).h;
-}
-
-eb.setDivRect(ee.getControl("layoutx7"),null,cy,null,null);
-ee.setText(ee.getControl("layoutxitem14"), 
-    regDatetime.substr(0,4) + "年" + parseInt(regDatetime.substr(5,2)) + "月" + parseInt(regDatetime.substr(8,2)) + "日" + "加入");
-ee.setVisible(ee.getControl("layoutx7"), true);
-cy += vspace + eb.getDivRect(ee.getControl("layoutx7")).h;
-
-eb.setDivRect(ee.getControl("panel72"),null,cy,null,null);
-ee.setVisible(ee.getControl("panel72"), true);
-ee.setText(ee.getControl("panel72"), "  <div id='userPageLink01' style='display:inline;'>"+countFollow+"个关注</div>" +
-    "     <div id='userPageLink02' style='display:inline;'>" + countFans+"个粉丝</div>");
-var c = ee.getControl("panel72"); 
-c.link01=$g("userPageLink01");
-c.link02=$g("userPageLink02");
-if (countFollow>0) {
-    c.link01.style.cursor = "pointer";
-    ee.setOnMouseEnter(c.link01,function(sender,e){
-        sender.style.textDecoration="underline";
-    });
-    ee.setOnMouseLeave(c.link01,function(sender,e){
-        sender.style.textDecoration="";
-    });
-    ee.setOnClick(c.link01, function(sender, event) {
-        showFollowList.userName = showUserPage.userName;
-        showFollowList();
-    });
-}
-if (countFans>0) {
-    c.link02.style.cursor = "pointer";
-    ee.setOnMouseEnter(c.link02,function(sender,e){
-        sender.style.textDecoration="underline";
-    });
-    ee.setOnMouseLeave(c.link02,function(sender,e){
-        sender.style.textDecoration="";
-    });
-    ee.setOnClick(c.link02, function(sender, event) {
-        showFansList.userName = showUserPage.userName;
-        showFansList();
-    });
-}
-cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
-
-if (block1=="T") {
-    ee.setVisible(ee.getControl("panel6"), true);
-    ee.setText(ee.getControl("panel253"), "@" +userName + "已被屏蔽");
-    ee.setText(ee.getControl("panel254"), "是否确定要查看这些发言？查看发言不会取消屏蔽 @" +userName + "。");
-    ee.getControl("panel255").cy = cy;
-    g5.changeP2(1);
-    ee.getControl("panel256").init(0);
-    return;
-} else {
-    ee.setVisible(ee.getControl("panel6"), false);
-}
-
-eb.setDivRect(ee.getControl("panel279"),null,cy,null,null);
-ee.setVisible(ee.getControl("panel279"), true);
-
-var rect = eb.getDivRect(ee.getControl("panel263"));
-cy = rect.y + rect.h;
-eb.setDivRect(ee.getControl("panel19"),null,cy,null,300);
-ee.setVisible(ee.getControl("panel19"), true);
-cy += eb.getDivRect(ee.getControl("panel19")).h;
-
-eb.setDivRect(ee.getControl("panel73"),null,cy,null,null);
-ee.setVisible(ee.getControl("panel73"), true);
-cy += eb.getDivRect(ee.getControl("panel73")).h;
-
-var i, item;
-var root = g5.p2.p2.p2sub.p1;
-root.init(); 
-var itemWidth = eb.getDivRect(root).w;
-var item = null;
-for (i=0; i< g5.datasetPageUser.rowCount; i++) {
-    item = createPanel(root, "puser_" + g5.datasetPageUser.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadTwitterRecord(item, g5.datasetPageUser, i);
-    item.v_mode = "   x";
-    g5.renderTwitter(item);
-    g5.itemsPageUser.push(item);
-    cy += 0 + eb.getDivRect(item).h;
-    item.style.borderLeft="";    
-    item.style.borderRight="";    
-}
-if (item!=null) {
-    var ch = $g("divRoot").offsetHeight;
-    var h = cy + ch - eb.getDivRect(item).h - 51; 
-    ee.setRect(root,null,null,null,h);
-} else {
-    var ch = $g("divRoot").offsetHeight;
-    var h = ch + eb.getDivRect(ee.getControl("layoutx2")).y - 51; 
-    ee.setRect(root,null,null,null,h);
-}    
-rect = eb.getDivRectSetting(root);
-ee.setRect(root.parentNode,null,null,null,rect.y + rect.h);
-rect = eb.getDivRectSetting(root.parentNode);
-ee.setRect(root.parentNode.parentNode,null,null,null,rect.y + rect.h);
-
-
-g5.p2.p2.p2sub.p1.c_chat.c_chat.c_chatRoot.start(showUserPage.defaultChatRoomId);
-if (showUserPage.privateChatRoomRights) {
-    g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
-}
-        
-g5.tiledV(g5.p2PersonSub.p1,0);
-g5.changeP2(1);
-g5.p2PersonSub.init();
-g5.p2PersonSub.changePage(1);
-g5.p3.p8.init();
-//eb.processDock();
-
-
-
-]]></script3>
-    </taskSetItem>
-    <taskSetItem name="showUserPageOld">
-      <script1>//userName/userId
-if (g5.currentPageIndex == 1) {
-    g5.changeP2(-1);
-}
-
-eio.appendString16(g5.token);
-if (showUserPage.userName == "") {
-    eio.appendString16("uid");
-    eio.appendString16(showUserPage.userId+"");
-} else {
-    eio.appendString16("uname");
-    eio.appendString16(showUserPage.userName);
-}
-</script1>
-      <script2><![CDATA[var token = eio.readString16();
-var options = eio.readString16();
-var userValue = eio.readString16();
-if (options == "uid") userValue = parseInt(userValue);
-
-var sql,sqlResult;  
-
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-db.read(sqlResult);
-if (db.getString(sqlResult, "sessionId").length < 5) {
-    eio.appendString8("F");
-    eio.appendString8("上次登录时间太久或者您更换了系统");
-    es.logCommon("用户token登录失败,token=" + token);
-    return;
-}
-var myUserId = db.getString(sqlResult,"id");  
-
-//query user information
-if (options == "uname") {
-    sql = "select *,CONVERT(VARCHAR(50), regDatetime, 120) as regDatetimeF from userInfo where userName = '" + db.encode(userValue) + "'";
-} else {
-    sql = "select *,CONVERT(VARCHAR(50), regDatetime, 120) as regDatetimeF from userInfo where id = " + userValue + "";
-}
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-if (!db.read(sqlResult)) {
-    eio.appendString8("F");
-    eio.appendString8("该用户不存在");
-    return;
-}
-eio.appendString8("T");
-var userId = db.getString(sqlResult,"id");
-eio.appendString8(db.getString(sqlResult,"id"));
-eio.appendString16(db.getString(sqlResult,"userName"));
-eio.appendString16(db.getString(sqlResult,"nickName"));
-eio.appendString16(db.getString(sqlResult,"regDatetimeF"));
-eio.appendString16(db.getString(sqlResult,"photo"));
-eio.appendString16(db.getString(sqlResult,"titleBg"));
-eio.appendString16(db.getString(sqlResult,"note"));
-eio.appendString16(db.getString(sqlResult,"homePage"));
-eio.appendString16(db.getString(sqlResult,"chatRoomVideo"));
-eio.appendString16(db.getString(sqlResult,"followCount"));
-eio.appendString16(db.getString(sqlResult,"fansCount"));
-
-sql = 
-    "exec createDefaultChatRoom " + userId + "; " + 
-    "exec createDefaultPrivateChatRoom " + userId + "; " + 
-    "select * from follow where userId = " + myUserId + " and followId = " + userId + ";" +
-    "select * from blockList where userId=" + myUserId + " and blockUserId=" + userId + "; " +
-    "select * from blockList where userId=" + userId + " and blockUserId=" + myUserId + "; " +
-    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='DEF'; " +
-    "select * from chatRoomInfo where creatorId = " + userId + " and roomType='PIV'; " +
-    "select * from hostRecomd where hostUserId = " + userId + " order by orderSn; " +
-
-    "SELECT   dbo.chatRoomInfo.id, dbo.chatRoomInfo.creatorId, dbo.chatRoomInfo.roomType, dbo.chatRoomVip.status, " +
-    "                dbo.chatRoomVip.userId " +
-    "FROM      dbo.chatRoomVip INNER JOIN " +
-    "                dbo.chatRoomInfo ON dbo.chatRoomVip.chatRoomId = dbo.chatRoomInfo.id " +
-    "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
-    "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='ADM'; " +
-        
-    "SELECT   dbo.chatRoomInfo.id, dbo.chatRoomInfo.creatorId, dbo.chatRoomInfo.roomType, dbo.chatRoomVip.status, " +
-    "                dbo.chatRoomVip.userId " +
-    "FROM      dbo.chatRoomVip INNER JOIN " +
-    "                dbo.chatRoomInfo ON dbo.chatRoomVip.chatRoomId = dbo.chatRoomInfo.id " +
-    "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
-    "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='BLK'; " +
-
-    "SELECT   TOP (10) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
-    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " +
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType,  " +
-    "                dbo.tContent.likeCount, dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
-    "                dbo.userInfo.photo, DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds,  " +
-    "                tContent_1.userId AS reUserId, tContent_1.status AS reStatus, tContent_1.[content] AS reContent,  " +
-    "                tContent_1.photoCount AS rePhotoCount, tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2,  " +
-    "                tContent_1.photo3 AS rePhoto3, tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount,  " +
-    "                tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName,  " +
-    "                userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto, CASE WHEN forwardLink.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS isForward, CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward,  " +
-    "                CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike, CASE WHEN likeList_1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS reIsLike " +
-    "FROM      dbo.tContent LEFT OUTER JOIN " +
-    "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.forwardLink AS forwardLink_1 ON dbo.tContent.uplinkId = forwardLink_1.contentId AND  " +
-    "                forwardLink_1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " +
-    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " +
-    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " +
-    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and dbo.tContent.uplinkType<>'R' " +
-    "ORDER BY dbo.tContent.id DESC ";
-
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-if (db.read(sqlResult)) {
-    eio.appendString16("true");
-} else {
-    eio.appendString16("false");
-}
-db.nextResult(sqlResult);
-if (db.read(sqlResult)) {
-    eio.appendString16("T");
-} else {
-    eio.appendString16("F");
-}
-db.nextResult(sqlResult);
-if (db.read(sqlResult)) {
-    eio.appendString16("T");
-} else {
-    eio.appendString16("F");
-}
-db.nextResult(sqlResult);
-var pubRoomId;
-if (db.read(sqlResult)) {
-    pubRoomId = db.getString(sqlResult,"id");
-    eio.appendString16(pubRoomId);
-} else {
-    pubRoomId = "-1";
-    eio.appendString16(pubRoomId);
-}
-db.nextResult(sqlResult);
-var prvRoomId;
-if (db.read(sqlResult)) {
-    prvRoomId = db.getString(sqlResult,"id");
-    eio.appendString16(prvRoomId);
-} else {
-    prvRoomId = "-1";
-    eio.appendString16(prvRoomId);
-}
-db.nextResult(sqlResult);
-eio.appendDataSet(sqlResult, "id,regDatetime,orderSn,hostUserId,videoUrl,note", 0, 9999);
-db.nextResult(sqlResult);
-if (db.read(sqlResult)) {
-    eio.appendString16("T");
-} else {
-    eio.appendString16("F");
-}
-db.nextResult(sqlResult);
-if (db.read(sqlResult)) {
-    eio.appendString16("T");
-} else {
-    eio.appendString16("F");
-}
-db.nextResult(sqlResult);
-eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 
 sql = "select * from chatPrivate where roomId=" + prvRoomId + " and permitUserId=" + myUserId + "; ";
 if (userId == myUserId) {
@@ -23034,208 +23070,6 @@ eio.appendDataSet(sqlResult,
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
     0, 99999);
-}]]></script2>
-      <script3><![CDATA[if (eio.readString8() != "T") {
-    showTopic.busy = false;
-    return;
-}
-showTopic.data = eio.readDataSet();
-if (showTopic.data.rowCount >= 0) {
-    showTopic.lastId = showTopic.data.getData(0, showTopic.data.rowCount - 1);
-} else {
-    showTopic.lastId = "0";
-}
-if (eb.isEmpty(showTopic.items)) showTopic.items = new Array();
-showTopic.backTrace = eio.readDataSet();
-while (true) {
-    var tempData = eio.readDataSet();
-    if (!showTopic.backTrace.appendDataset(tempData)) break;
-}
-
-
-var i, item;
-var root = ee.getControl("panel22"); 
-var cy = eb.getDivRect(g5.p4).h-3;
-if (showTopic.needRefresh) {
-    for (i=0; i<showTopic.items.length; i++) ee.removeControl(showTopic.items[i]);
-    showTopic.items = new Array();
-} else {
-    if (showTopic.items.length>0) {
-        var rect = eb.getDivRect(showTopic.items[showTopic.items.length-1]);
-        cy = 2 + rect.y + rect.h;
-    }
-}
-
-var itemWidth = eb.getDivRect(root).w;
-var uType,dType;
-var lastCy = -1;
-for (i=showTopic.backTrace.rowCount-1; i >= 0; i--) {
-    if (i==showTopic.backTrace.rowCount-1) {
-        uType = " "
-    } else uType = "T";
-    dType = "T";
-    var item = createPanel(root, "page8_" + showTopic.backTrace.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadTwitterRecord(item, showTopic.backTrace, i);
-    item.v_mode = uType + dType;
-    g5.renderTwitter(item);        
-    showTopic.items.push(item);
-    lastCy = cy;
-    cy += 0 + eb.getDivRect(item).h;    
-}
-
-var scrollY;
-if (lastCy<0) {
-    scrollY = cy - eb.getDivRect(g5.p4).h;
-} else {
-    scrollY = cy - eb.getDivRect(g5.p4).h;
-    //scrollY = lastCy - eb.getDivRect(g5.p4).h;
-}
-scrollY += 2;
-
-var item = null;
-for (i=0; i< showTopic.data.rowCount; i++) {
-    uType = " "; dType = " ";
-    if ((i==0) &amp;&amp; (showTopic.backTrace.rowCount>0)) {
-        uType="T"; dType = " ";
-    }
-    if (i==0) dType += "x";
-    item = createPanel(root, "page8_" + showTopic.data.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadTwitterRecord(item, showTopic.data, i);
-    item.v_mode = uType + dType;
-    g5.renderTwitter(item);        
-    showTopic.items.push(item);
-    cy += 0 + eb.getDivRect(item).h;    
-}
-if (item!=null) {
-    var ch = $g("divRoot").offsetHeight;
-    var h = cy + ch - eb.getDivRect(item).h - 50; 
-    eb.setDivRect(g5.p2,null,null,null,h);
-    eb.setDivRect(g5.p2.p9,null,null,null,h);
-} else {
-    eb.setDivRect(g5.p2,null,null,null,cy+200);
-    eb.setDivRect(g5.p2.p9,null,null,null,cy+200);
-}
-showTopic.scrollY = scrollY;
-eb.processDock();
-
-showTopic.needRefresh = false;
-showTopic.busy = false;
-
-var dTime = (new Date()).getTime() - showTopic.startTime;
-if (dTime>50) {
-    if (g5.currentPageIndex == 7) g5.changeP2(-1);
-    g5.changeP2(7);
-    g5.mainDiv.scrollTop = showTopic.scrollY;
-} else {
-    setTimeout(function() { 
-        if (g5.currentPageIndex == 7) g5.changeP2(-1);
-        g5.changeP2(7);
-        g5.mainDiv.scrollTop = showTopic.scrollY;
-    }, 50-dTime);
-}
-                        
-]]></script3>
-    </taskSetItem>
-    <taskSetItem name="showTopicOld">
-      <script1><![CDATA[//topicId,lastId
-if (eb.isEmpty(showTopic.busy)) showTopic.busy = false;
-if (showTopic.busy) return;
-showTopic.busy = true;
-showTopic.startTime = new Date();
-
-eio.appendString16(g5.token);
-if (ee.getControl("panel22").eeChildren.length<=0) {
-    showTopic.needRefresh = true;
-}
-if (showTopic.needRefresh) {
-    eio.appendString16("T");
-    eio.appendString16(showTopic.topicId);
-    eio.appendString16("0");
-} else {
-    eio.appendString16("F");
-    eio.appendString16(showTopic.topicId);
-    eio.appendString16(showTopic.lastId);
-}
-
-
-]]></script1>
-      <script2><![CDATA[var token = eio.readString16();
-var needRefresh = eio.readString16();
-var topicId = parseInt(eio.readString16());
-var lastId = parseInt(eio.readString16());
-var sql,sqlResult;  
-
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-db.read(sqlResult);
-if (db.getString(sqlResult, "sessionId").length < 5) {
-    eio.appendString8("F");
-    eio.appendString8("上次登录时间太久或者您更换了系统");
-    es.logCommon("用户token登录失败,token=" + token);
-    return;
-} 
-var userName =db.getString(sqlResult,"userName");
-var userId = db.getString(sqlResult,"id");
-var sql1 = "";
-if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
-    sql1 = "and dbo.tContent.id < " + lastId + " ";
-}
-
-sql =
-    "SELECT   TOP (20) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
-    "                dbo.tContent.userId, dbo.tContent.status, dbo.tContent.[content], dbo.tContent.photoCount, dbo.tContent.photo1,  " +
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.uplinkId, dbo.tContent.uplinkType,  " +
-    "                dbo.tContent.likeCount, dbo.tContent.reCount, dbo.tContent.fwCount, dbo.userInfo.userName, dbo.userInfo.nickName,  " +
-    "                dbo.userInfo.photo, DATEDIFF(second, tContent_1.regDatetime, GETDATE()) AS reSeconds,  " +
-    "                tContent_1.userId AS reUserId, tContent_1.status AS reStatus, tContent_1.[content] AS reContent,  " +
-    "                tContent_1.photoCount AS rePhotoCount, tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2,  " +
-    "                tContent_1.photo3 AS rePhoto3, tContent_1.photo4 AS rePhoto4, tContent_1.likeCount AS reLikeCount,  " +
-    "                tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount, userInfo_1.userName AS reUserName,  " +
-    "                userInfo_1.nickName AS reNickName, userInfo_1.photo AS rePhoto, CASE WHEN forwardLink.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS isForward, CASE WHEN forwardLink_1.id IS NULL THEN 0 ELSE 1 END AS reIsForward,  " +
-    "                CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike, CASE WHEN likeList_1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS reIsLike " +
-    "FROM      dbo.tContent LEFT OUTER JOIN " +
-    "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.forwardLink AS forwardLink_1 ON dbo.tContent.uplinkId = forwardLink_1.contentId AND  " +
-    "                forwardLink_1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.userInfo ON dbo.tContent.userId = dbo.userInfo.id LEFT OUTER JOIN " +
-    "                dbo.userInfo AS userInfo_1 RIGHT OUTER JOIN " +
-    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId ON dbo.tContent.uplinkId = tContent_1.id " +
-    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType<>'F' AND dbo.tContent.uplinkType<>'L' AND dbo.tContent.status<>'DEL') OR (dbo.tContent.id = " + topicId + ") " +
-    "ORDER BY dbo.tContent.id ";
-es.logCommon(sql);
-
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    es.logWarning("数据库执行错误, sql=" + sql);
-    return;
-}
-eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
-
-sql = "exec [twitterSource] " + userId + "," + topicId;
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    return;
-}
-eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
-while (db.nextResult(sqlResult)) {
-eio.appendDataSet(sqlResult,"id,seconds,userId,content,photo1,reCount,fwCount,likeCount,userName,nickName,photo" +
-    ",reSeconds,reContent,rePhoto1,reUserId,reUserName,reNickName,rePhoto,status,uplinkType,uplinkId"+
-    ",reReCount,reFwCount,isForward,reIsForward,isLike,reIsLike,reLikeCount,photo2,photo3,photo4,rePhoto2,rePhoto3,rePhoto4", 0, 99999); 
 }]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     showTopic.busy = false;
@@ -26173,7 +26007,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="76">
+  <g5Items count="77">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -26318,6 +26152,8 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         this.block2 = ds.getData(x+15,idx); //被别人屏蔽
         this.email = ds.getData(x+16,idx);
         this.isFollow = this.follow=="1";
+        this.isBlock1 = this.block1=="1";
+        this.isBlock2 = this.block2=="1";
     }
     this.setDataset = function(ds, x, idx) {
         ds.setData(x+0,idx,this.id);
@@ -26483,6 +26319,18 @@ function() {
     <item name="iconBell" type="10">
       <varValue><![CDATA["<g><path d=\"M21.697 16.468c-.02-.016-2.14-1.64-2.103-6.03.02-2.532-.812-4.782-2.347-6.335C15.872 2.71 14.01 1.94 12.005 1.93h-.013c-2.004.01-3.866.78-5.242 2.174-1.534 1.553-2.368 3.802-2.346 6.334.037 4.33-2.02 5.967-2.102 6.03-.26.193-.366.53-.265.838.102.308.39.515.712.515h4.92c.102 2.31 1.997 4.16 4.33 4.16s4.226-1.85 4.327-4.16h4.922c.322 0 .61-.206.71-.514.103-.307-.003-.645-.263-.838zM12 20.478c-1.505 0-2.73-1.177-2.828-2.658h5.656c-.1 1.48-1.323 2.66-2.828 2.66zM4.38 16.32c.74-1.132 1.548-3.028 1.524-5.896-.018-2.16.644-3.982 1.913-5.267C8.91 4.05 10.397 3.437 12 3.43c1.603.008 3.087.62 4.18 1.728 1.27 1.285 1.933 3.106 1.915 5.267-.024 2.868.785 4.765 1.525 5.896H4.38z\"></path></g>";
 ]]></varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="icon" type="10">
+      <varValue><![CDATA[{
+heart1: "<g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z\"></path></g>",
+heart2: "<g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z\"></path></g>",
+
+
+
+end:""
+}]]></varValue>
       <functionParam />
       <functionCode />
     </item>
@@ -26736,8 +26584,7 @@ root.c_titleText.id = root.id + "_titleText";
 root.c_titleText.v_userName = root.v_userInfo.userName;
 c.style.cursor="pointer";
 ee.setOnClick(root.c_titleText,function(sender,event) {
-    showUserPage.userName=sender.v_userName;
-    showUserPage();
+    g5.p2.p2.show(root.v_userInfo);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 ee.setOnMouseEnter(root.c_titleText,function(sender,e){
@@ -27196,8 +27043,8 @@ c.style.borderRadius = "50%";
 root.v_btn3 = c;
 root.changeButton3 = function() {
     if (!this.v_content.isLike) {
-        this.v_content.isLike="1";
-        this.v_btn3.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:#e23c70;fill: currentcolor;vertical-align:middle;\"><g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z\"></path></g></svg>";        
+        this.v_content.isLike=true;
+        this.v_btn3.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:#e23c70;fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart2 + "</svg>";        
         if (!eb.isEmpty(this.c_label3)) {
             var sTemp = ee.getText(this.c_label3);
             if (sTemp.length<=0) {
@@ -27207,8 +27054,8 @@ root.changeButton3 = function() {
             ee.setTextColor(this.c_label3, "#e23c70");
         }
     } else if (this.v_content.isLike) {
-        this.v_content.isLike="0";
-        this.v_btn3.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z\"></path></g></svg>";        
+        this.v_content.isLike=false;
+        this.v_btn3.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart1 + "</svg>";        
         if (!eb.isEmpty(this.c_label3)) {
             var sTemp = ee.getText(this.c_label3);
             if (sTemp.length<=0) {
@@ -28246,6 +28093,11 @@ if (root.v_photo.substr(0,4) == "?YTB") {
         c = createPanel(root, root.id+"_clk", "rgba(255,255,255,0.01)", 0,0,rect.w,h);
         c.style.cursor = "pointer";
         ee.setOnClick(c, function(sender, event) {
+            if (!sender.parentNode.parentNode.c_player.unMute) {
+                ee.setVisible(sender, false);
+                window.event? window.event.cancelBubble = true : event.stopPropagation();
+                return;
+            }
             sender.parentNode.parentNode.c_player.unMute();
             ee.setVisible(sender, false);
             if (sender.parentNode.parentNode.c_player!=g5.player.currentPlayer) {
