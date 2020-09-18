@@ -2157,6 +2157,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2179,15 +2180,6 @@ sender.show = function(v_userInfo, userId, userName) {
         showUserPage.userId = null;
     }
     showUserPage.onComplete = function() {
-        //ee.setVisible(ee.getControl("panel18"), false);
-        //ee.setVisible(ee.getControl("panel21"), false);
-        //ee.setRect(ee.getControl("panel69"), null,null,null,20);
-        //ee.setVisible(ee.getControl("panel69"), false);
-        //ee.setVisible(ee.getControl("layoutx6"), false);
-        //ee.setVisible(ee.getControl("layoutx7"), false);
-        //ee.setVisible(ee.getControl("panel72"), false);
-        //ee.setImage(ee.getControl("panel23"), "/twitterG/main/user.png");
-        //ee.setImage(ee.getControl("panel20"), "/twitterG/main/empty.png");
         var i;
         if (sender.v_userInfo == null) {
             sender.showByUserInfo(showUserPage.v_userInfo);
@@ -2980,7 +2972,7 @@ sender.v_p3PageIndex = 0;
 sender.v_p3PageSize = 10;
 sender.updateP3 = function() {
     if (showUserPageP3.busy) return;
-    showUserPageP3.userId = showUserPage.id;
+    showUserPageP3.userId = g5.p2.p2.v_userInfo.id;
     showUserPageP3.pageIndex = this.v_p3PageIndex; this.v_p3PageIndex++;
     showUserPageP3.pageSize = this.v_p3PageSize;
     showUserPageP3.onComplete = function(dataset) {
@@ -3336,7 +3328,7 @@ sender.init = function() {
 sender.loadMore = function() {
     if (showUserPageLoadMore.busy) return;
     this.v_pageIndex++;
-    showUserPageLoadMore.userId = showUserPage.id;
+    showUserPageLoadMore.userId = g5.p2.p2.v_userInfo.id;
     showUserPageLoadMore.pageIndex = this.v_pageIndex;
     showUserPageLoadMore.pageSize = this.v_pageSize;
     showUserPageLoadMore.onComplete = function(dataset) {
@@ -3344,21 +3336,21 @@ sender.loadMore = function() {
         var root = sender;
         var itemWidth = eb.getDivRect(root).w;
         var cy = 0;
-        if (g5.itemsPageUser.length>0) {
-            var r = eb.getDivRect(g5.itemsPageUser[g5.itemsPageUser.length-1]);
+        if (g5.p2.p2.p1Items.length>0) {
+            var r = eb.getDivRect(g5.p2.p2.p1Items[g5.p2.p2.p1Items.length-1]);
             cy = r.y + r.h;
         }
         var item = null;
         for (i=0; i< dataset.rowCount; i++) {
-            for (j=0; j<g5.itemsPageUser.length; j++) {
-                if (g5.itemsPageUser[j].v_contentId == dataset.getData(0,i)) break;    
+            for (j=0; j<g5.p2.p2.p1Items.length; j++) {
+                if (g5.p2.p2.p1Items[j].v_contentId == dataset.getData(0,i)) break;    
             }
-            if (j<g5.itemsPageUser.length) continue;
+            if (j<g5.p2.p2.p1Items.length) continue;
             item = createPanel(root, "puser_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
             item.v_mode = "   x";
             g5.renderTwitter(item);
-            g5.itemsPageUser.push(item);
+            g5.p2.p2.p1Items.push(item);
             cy += 0 + eb.getDivRect(item).h;
             item.style.borderLeft="";    
             item.style.borderRight="";    
@@ -7401,9 +7393,142 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <dockY>fill</dockY>
       <height>780</height>
       <heightRatio>1</heightRatio>
-      <layerName><![CDATA[P2->9->话题页面]]></layerName>
+      <layerName><![CDATA[P2->9->推文页]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate><![CDATA[sender.v_items = new Array();
+
+sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId) {
+    if (showTopic.busy) return;
+    
+    for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+    sender.v_items = new Array();
+    
+    if (eb.isEmpty(v_content)) {
+        this.v_content = null;
+        showTopic.topicId = contentId;
+        showTopic.needRefresh = true;
+    } else {
+        this.preShow(v_content, v_reContent, v_userInfo, v_reUserInfo);
+        showTopic.topicId = v_content.id;
+        showTopic.needRefresh = true;
+    }
+    showTopic.onComplete = function(datasetFw, datasetBk) {
+        var i, item;
+        var root = sender;
+        if (sender.v_content == null) {
+            g5.p4.changePage("a2");
+        }
+        var cy = eb.getDivRect(g5.p4).h-3;
+      
+        for (i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+        sender.v_items = new Array();
+        
+        var itemWidth = eb.getDivRect(root).w;
+        var uType,dType;
+        var lastCy = -1;
+        for (i=datasetBk.rowCount-1; i >= 0; i--) {
+            if (i==datasetBk.rowCount-1) {
+                uType = " "
+            } else uType = "T";
+            dType = "T";
+            var item = createPanel(root, "page8_" + datasetBk.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadTwitterRecord(item, datasetBk, i);
+            item.v_mode = uType + dType;
+            g5.renderTwitter(item);        
+            sender.v_items.push(item);
+            lastCy = cy;
+            cy += 0 + eb.getDivRect(item).h;    
+        }
+        
+        var scrollY;
+        if (lastCy<0) {
+            scrollY = cy - eb.getDivRect(g5.p4).h;
+        } else {
+            scrollY = cy - eb.getDivRect(g5.p4).h;
+            //scrollY = lastCy - eb.getDivRect(g5.p4).h;
+        }
+        scrollY += 2;
+        
+        var item = null;
+        for (i=0; i< datasetFw.rowCount; i++) {
+            uType = " "; dType = " ";
+            if ((i==0) &amp;&amp; (datasetBk.rowCount>0)) {
+                uType="T"; dType = " ";
+            }
+            if (i==0) dType += "x";
+            item = createPanel(root, "page8_" + datasetFw.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadTwitterRecord(item, datasetFw, i);
+            item.v_mode = uType + dType;
+            g5.renderTwitter(item);        
+            sender.v_items.push(item);
+            cy += 0 + eb.getDivRect(item).h;    
+        }
+        if (item!=null) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = cy + ch - eb.getDivRect(item).h - 50; 
+            eb.setDivRect(g5.p2,null,null,null,h);
+            eb.setDivRect(g5.p2.p9,null,null,null,h);
+        } else {
+            eb.setDivRect(g5.p2,null,null,null,cy+200);
+            eb.setDivRect(g5.p2.p9,null,null,null,cy+200);
+        }
+        eb.processDock();
+        
+        showTopic.needRefresh = false;
+        
+        g5.mainDiv.scrollTop = scrollY;
+        if (sender.v_content != null) return;
+        
+        var dTime = (new Date()).getTime() - showTopic.startTime;
+        if (dTime>50) {
+            if (g5.currentPageIndex == 7) g5.changeP2(-1);
+            g5.changeP2(7);
+            g5.mainDiv.scrollTop = scrollY;
+        } else {
+            setTimeout(function() { 
+                if (g5.currentPageIndex == 7) g5.changeP2(-1);
+                g5.changeP2(7);
+                g5.mainDiv.scrollTop = scrollY;
+            }, 50-dTime);
+        }
+    }
+    showTopic();
+}
+
+sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    this.v_content = v_content;
+    this.v_reContent = v_reContent;
+    this.v_userInfo = v_userInfo;
+    this.v_reUserInfo = v_reUserInfo;
+    
+    g5.p4.changePage("a2");
+    var cy = eb.getDivRect(g5.p4).h-1;
+    var itemWidth = eb.getDivRect(this).w;
+    item = createPanel(this, "page8_" + v_content.id, "", 0, cy, itemWidth, 5);
+    item.v_content = v_content;
+    item.v_reContent = v_reContent;
+    item.v_userInfo = v_userInfo;
+    item.v_reUserInfo = v_reUserInfo;
+    item.v_mode = "  x";
+    g5.renderTwitter(item);        
+    sender.v_items.push(item);
+    
+    g5.changeP2(7);
+}
+
+sender.loadMore = function() {
+    //nouse
+    if (sender.v_items.length>0) {
+        var rect = eb.getDivRect(sender.v_items[sender.v_items.length-1]);
+        cy = 2 + rect.y + rect.h;
+    }
+    showTopic.lastId = datasetFw.getData(0, datasetFw.rowCount - 1);
+}
+
+
+
+]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -15154,7 +15279,6 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -15486,8 +15610,7 @@ sender.init(0);
       <backgroundColor>FFC080</backgroundColor>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
-      <layerName><![CDATA[  a2->看回复]]></layerName>
-      <layerVisible>false</layerVisible>
+      <layerName><![CDATA[  a2->推文页]]></layerName>
       <left>3</left>
       <leftRatio>0.00506756756756757</leftRatio>
       <onCreate>sender.style.boxSizing="border-box";
@@ -22974,7 +23097,7 @@ if (!eb.isEmpty(refreshHostRecomd.onComplete)) {
 </script3>
     </taskSetItem>
     <taskSetItem name="showTopic">
-      <script1><![CDATA[//topicId,lastId
+      <script1><![CDATA[//topicId,lastId,onComplete(data,backTrace)
 if (eb.isEmpty(showTopic.busy)) showTopic.busy = false;
 if (showTopic.busy) return;
 showTopic.busy = true;
@@ -23108,106 +23231,23 @@ eio.appendDataSet(sqlResult,
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
     0, 99999);
 }]]></script2>
-      <script3><![CDATA[if (eio.readString8() != "T") {
+      <script3>if (eio.readString8() != "T") {
     showTopic.busy = false;
     return;
 }
 showTopic.data = eio.readDataSet();
-if (showTopic.data.rowCount >= 0) {
-    showTopic.lastId = showTopic.data.getData(0, showTopic.data.rowCount - 1);
-} else {
-    showTopic.lastId = "0";
-}
-if (eb.isEmpty(showTopic.items)) showTopic.items = new Array();
 showTopic.backTrace = eio.readDataSet();
 while (true) {
     var tempData = eio.readDataSet();
     if (!showTopic.backTrace.appendDataset(tempData)) break;
 }
-
-
-var i, item;
-var root = ee.getControl("panel22"); 
-var cy = eb.getDivRect(g5.p4).h-3;
-if (showTopic.needRefresh) {
-    for (i=0; i<showTopic.items.length; i++) ee.removeControl(showTopic.items[i]);
-    showTopic.items = new Array();
-} else {
-    if (showTopic.items.length>0) {
-        var rect = eb.getDivRect(showTopic.items[showTopic.items.length-1]);
-        cy = 2 + rect.y + rect.h;
-    }
-}
-
-var itemWidth = eb.getDivRect(root).w;
-var uType,dType;
-var lastCy = -1;
-for (i=showTopic.backTrace.rowCount-1; i >= 0; i--) {
-    if (i==showTopic.backTrace.rowCount-1) {
-        uType = " "
-    } else uType = "T";
-    dType = "T";
-    var item = createPanel(root, "page8_" + showTopic.backTrace.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadTwitterRecord(item, showTopic.backTrace, i);
-    item.v_mode = uType + dType;
-    g5.renderTwitter(item);        
-    showTopic.items.push(item);
-    lastCy = cy;
-    cy += 0 + eb.getDivRect(item).h;    
-}
-
-var scrollY;
-if (lastCy<0) {
-    scrollY = cy - eb.getDivRect(g5.p4).h;
-} else {
-    scrollY = cy - eb.getDivRect(g5.p4).h;
-    //scrollY = lastCy - eb.getDivRect(g5.p4).h;
-}
-scrollY += 2;
-
-var item = null;
-for (i=0; i< showTopic.data.rowCount; i++) {
-    uType = " "; dType = " ";
-    if ((i==0) &amp;&amp; (showTopic.backTrace.rowCount>0)) {
-        uType="T"; dType = " ";
-    }
-    if (i==0) dType += "x";
-    item = createPanel(root, "page8_" + showTopic.data.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadTwitterRecord(item, showTopic.data, i);
-    item.v_mode = uType + dType;
-    g5.renderTwitter(item);        
-    showTopic.items.push(item);
-    cy += 0 + eb.getDivRect(item).h;    
-}
-if (item!=null) {
-    var ch = $g("divRoot").offsetHeight;
-    var h = cy + ch - eb.getDivRect(item).h - 50; 
-    eb.setDivRect(g5.p2,null,null,null,h);
-    eb.setDivRect(g5.p2.p9,null,null,null,h);
-} else {
-    eb.setDivRect(g5.p2,null,null,null,cy+200);
-    eb.setDivRect(g5.p2.p9,null,null,null,cy+200);
-}
-showTopic.scrollY = scrollY;
-eb.processDock();
-
-showTopic.needRefresh = false;
+showTopic.onComplete(showTopic.data, showTopic.backTrace);
 showTopic.busy = false;
 
-var dTime = (new Date()).getTime() - showTopic.startTime;
-if (dTime>50) {
-    if (g5.currentPageIndex == 7) g5.changeP2(-1);
-    g5.changeP2(7);
-    g5.mainDiv.scrollTop = showTopic.scrollY;
-} else {
-    setTimeout(function() { 
-        if (g5.currentPageIndex == 7) g5.changeP2(-1);
-        g5.changeP2(7);
-        g5.mainDiv.scrollTop = showTopic.scrollY;
-    }, 50-dTime);
-}
+
+
                         
-]]></script3>
+</script3>
     </taskSetItem>
     <taskSetItem name="searchUser">
       <script1>var searchString = ee.getEditText(ee.getControl("edit5"));
@@ -26044,7 +26084,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="77">
+  <g5Items count="76">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -26052,16 +26092,6 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </item>
     <item name="imgUrl" type="10">
       <varValue>"/incoming/";</varValue>
-      <functionParam />
-      <functionCode />
-    </item>
-    <item name="itemsHome" type="10">
-      <varValue>new Array(); //home</varValue>
-      <functionParam />
-      <functionCode />
-    </item>
-    <item name="itemsPageUser" type="10">
-      <varValue>new Array();</varValue>
       <functionParam />
       <functionCode />
     </item>
@@ -26246,6 +26276,10 @@ function() {
         if (this.photo2.length>0) this.photos.push(this.photo2);
         if (this.photo3.length>0) this.photos.push(this.photo3);
         if (this.photo4.length>0) this.photos.push(this.photo4);
+        this.reCount = this.reCount=="" ? "0":this.reCount;
+        this.fwCount = this.fwCount=="" ? "0":this.fwCount;
+        this.likeCount = this.likeCount=="" ? "0":this.likeCount;
+        this.unlikeCount = this.unlikeCount=="" ? "0":this.unlikeCount;
     }
     this.setDataset = function(ds, x, idx) {
         ds.setData(x+0,idx,this.id);
@@ -26478,10 +26512,7 @@ eb.setAniEvent(root,1,function(){}, function(sender) {
 if ((root.v_mode.charAt(2) != "x") &amp;&amp; (root.v_content.status!="DEL"))  {
     root.style.cursor = "pointer"; 
     ee.setOnClick(root,function(sender,event) {
-        showTopic.topicId = sender.v_content.id;
-        showTopic.needRefresh = true;
-        showTopic();
-        g5.changeP2(-1);
+        g5.p2.p9.show(root.v_content,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
     });
     ee.setOnMouseEnter(root, function(sender,e){
         sender.style.backgroundColor = "rgb(245,248,250)";
@@ -26714,10 +26745,10 @@ if (root.v_content.photos.length>0) {
 }
 
 if (root.v_mode.charAt(2)=="x") {
-    root.v_content.uplinkType = "";
+    //root.v_content.uplinkType = "";
 }
 if (root.v_mode.substr(0,2)!="  ") {
-    root.v_content.uplinkType = "";
+    //root.v_content.uplinkType = "";
 }
 if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_content.photos.length>0) &amp;&amp; (root.v_reContent.photos.length>0)) {
     c = createPanel(root, root.id+"_panel2", "", 75, cy-7, mainWidth-2, 146);
@@ -27016,7 +27047,7 @@ c.style.cursor="pointer";
 var initColor = "rgb(101,119,134)";
 root.changeButton2 = function() {
     if (!this.v_content.isForward) {
-        this.v_content.isForward="1";
+        this.v_content.isForward=true;
         this.v_btn2.initColor="#17bf63";
         this.v_btn2.childNodes[0].style.color=this.v_btn2.initColor;
         if (!eb.isEmpty(this.c_label2)) {
@@ -27042,7 +27073,7 @@ root.changeButton2 = function() {
         }
     }
 }
-if (root.v_content.isForward=="1") {
+if (root.v_content.isForward) {
     initColor = "#17bf63";
 }
 c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:"+initColor+";fill: currentcolor;vertical-align:middle;\">"+g5.iconForward+"</svg>"
@@ -27137,22 +27168,19 @@ root.v_btn4 = c;
 
 //3 label
 if (root.v_mode.charAt(2) != "x") {
-    if (root.v_content.reCount=="0") root.v_content.reCount="";
-    if (root.v_content.fwCount=="0") root.v_content.fwCount="";
-    if (root.v_content.likeCount=="0") root.v_content.likeCount="";
     c = createPanel(root, root.id+"_panel3", "", b1+35, cy+7, 40, 22);
     root.c_label1 = c;
-    addText(c, root.v_content.reCount, "left", "middle", "Arial", 12, "657786", "");
+    addText(c, root.v_content.reCount=="0" ? "":root.v_content.reCount, "left", "middle", "Arial", 12, "657786", "");
     c = createPanel(root, root.id+"_panel4", "", b2+35, cy+7, 40, 22);
     root.c_label2 = c;
-    if (root.v_content.isForward=="1") {
-        addText(c, root.v_content.fwCount, "left", "middle", "Arial", 12, "17bf63", "");
+    if (root.v_content.isForward) {
+        addText(c, root.v_content.fwCount=="0" ? "":root.v_content.fwCount, "left", "middle", "Arial", 12, "17bf63", "");
     } else {
-        addText(c, root.v_content.fwCount, "left", "middle", "Arial", 12, "657786", "");
+        addText(c, root.v_content.fwCount=="0" ? "":root.v_content.fwCount, "left", "middle", "Arial", 12, "657786", "");
     }
     c = createPanel(root, root.id+"_panel5", "", b3+35, cy+7, 40, 22);
     root.c_label3 = c;
-    addText(c, root.v_content.likeCount, "left", "middle", "Arial", 12, "657786", "");
+    addText(c, root.v_content.likeCount ? "":root.v_content.likeCount, "left", "middle", "Arial", 12, "657786", "");
 }
 //final
 root.changeButton3(); root.changeButton3();
@@ -27767,7 +27795,7 @@ if (pageIndex == 0) {
     ee.setRect(ee.getControl("panel38"),0,0,eb.getDivRect(g5.p4).w,null);
     ee.setRect(g5.p4, null,null,null,eb.getDivRect(ee.getControl("panel38")).h);
     g5.refreshMain(true);
-    ee.showAni(ee.getControl("panel22"), 0);
+    ee.showAni(g5.p2.p9, 0);
     if (pageState!="") {
         history.pushState(pageState,"","?p=7&amp;c=" + showTopic.topicId);
     }
@@ -27888,10 +27916,7 @@ if (eb.isEmpty(p)) {
     g5.changeP2(6);
     showChatList();
 } else if (p=="7") {
-    showTopic.topicId = g5.getQueryString("c");
-    showTopic.needRefresh = true;
-    showTopic();
-    g5.changeP2(-1);
+    g5.p2.p9.show(null,null,null,null,g5.getQueryString("c"));
     g5.notPushHis = true;
 } else if (p=="9") {
     g5.notPushHis = true;
@@ -28021,6 +28046,37 @@ if (g5.itemsHome.length>0) {
 }]]></functionCode>
     </item>
     <item name="syncTwitter" type="20">
+      <varValue />
+      <functionParam>v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
+      <functionCode><![CDATA[var task = new Array();
+task.push(g5.p1.v_items);
+task.push(g5.p2.p1Items);
+task.push(g5.p2.p3Items);
+
+task.push(g5.p5.v_items);
+
+
+
+
+var task = ["page1_","puser_","page8_","sech_"];
+var item;
+for (var i=0; i<task.length; i++) {
+    item = $g(task[i]+contentId);
+    if (!eb.isEmpty(item)) {
+        if (buttonNumber==2) item.changeButton2();
+        if (buttonNumber==3) item.changeButton3();
+    }
+    item = $g(task[i]+contentId+"L");
+    if (!eb.isEmpty(item)) {
+        if (buttonNumber==2) item.changeButton2();
+        if (buttonNumber==3) item.changeButton3();
+    }
+}
+
+
+]]></functionCode>
+    </item>
+    <item name="syncTwitterOld" type="20">
       <varValue />
       <functionParam>contentId,buttonNumber</functionParam>
       <functionCode><![CDATA[var task = ["page1_","puser_","page8_","sech_"];
@@ -28227,11 +28283,11 @@ player.dy = 99999;
 var screenC = eb.getDivRect(ee.getControl("divRoot")).h/2;
 var items;
 if (g5.currentPageIndex == 0) {
-    items = g5.itemsHome;
+    items = g5.p2.p1.v_items;
 } else if (g5.currentPageIndex == 1) {
-    items = g5.itemsPageUser;
+    items = g5.p2.p2.p1Items;
 } else if (g5.currentPageIndex == 7) {
-    items = showTopic.items;
+    items = g5.p2.p9.v_items;
 } else return;
 for (var i = 0; i < items.length; i++) {
     //if (g5.p2PersonSub.currentPageIndex!=1) break;
