@@ -409,9 +409,7 @@ sender.addEventListener("mousewheel",function(event){
       <heightRatio>0.0805604203152364</heightRatio>
       <left>46</left>
       <leftRatio>0.153333333333333</leftRatio>
-      <onClick>newTwitter.uplinkType = "N";
-newTwitter.uplinkId = 0;
-g5.popBlack.a3.show("发言");</onClick>
+      <onClick>g5.popBlack.a3.showNew();</onClick>
       <sizeRatio>0.207207207207207</sizeRatio>
       <text>发言</text>
       <top>489</top>
@@ -801,8 +799,7 @@ for (var i=0; i<items.length; i++) {
     }
 }
 
-showUserPage.userName = g5.myUserInfo.userName;
-showUserPage();
+g5.p2.p2.show(g5.myUserInfo);
 
 ]]></onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
@@ -1017,7 +1014,6 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -1053,9 +1049,7 @@ sender.style.borderRadius = "24px";
       <heightRatio>0.0980735551663748</heightRatio>
       <left>120</left>
       <leftRatio>0.4</leftRatio>
-      <onClick>newTwitter.uplinkType = "N";
-newTwitter.uplinkId = 0;
-g5.popBlack.a3.show("发言");</onClick>
+      <onClick>g5.popBlack.a3.showNew();</onClick>
       <onCreate><![CDATA[sender.baseColor1 = "rgb(29, 161, 242)";
 //sender.style.backgroundColor = sender.baseColor1;
 //ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 8px 8px;fill:#ffffff;vertical-align:middle;\">"+g5.iconNew+"</svg>");
@@ -1300,9 +1294,7 @@ for (var i=0; i<items.length; i++) {
     }
 }
 
-showUserPage.userName = g5.myUserInfo.userName;
-showUserPage();
-
+g5.p2.p2.show(g5.myUserInfo);
 ]]></onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconFace+"</svg>");
@@ -1584,6 +1576,29 @@ sender.loadNew = function() {
     this.loadFromServer();
 }
 
+sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    var item;
+    var root = sender;
+    var itemWidth = eb.getDivRect(root).w;
+    var cy = eb.getDivRect(g5.p4).h;
+    cy+=eb.getDivRect(g5.p2.p1.a1).h;
+    if (this.v_items.length>0) {
+        cy = eb.getDivRect(this.v_items[0]).y;
+    }
+    item = createPanel(root, "page1_" + v_content.id, "", 0, cy, itemWidth, 5);
+    item.v_content = v_content;
+    item.v_reContent = v_reContent;
+    item.v_userInfo = v_userInfo;
+    item.v_reUserInfo = v_reUserInfo;
+    item.v_mode = "";
+    g5.renderTwitter(item);
+    root.v_items.splice(0, 0, item);
+    cy = eb.getDivRect(item).h;
+    g5.batchMoveY(this.v_items, 1, cy);
+    eb.setDivRect(this, null,null,null,eb.getDivRect(this).h + cy);
+    eb.setDivRect(this.parentNode, null,null,null,eb.getDivRect(this.parentNode).h + cy);
+}
+
 sender.loadFromServer = function() {
     updateHomepage.onComplete = function(dataset) {
         var i, item;
@@ -1622,7 +1637,7 @@ sender.loadFromServer = function() {
             if (dataset.rowCount>0) {
                 if (dataset.rowCount<root.v_items.length) {
                     var dy = cy - eb.getDivRect(root.v_items[dataset.rowCount]).y; 
-                    g5.homepageMoveY(dataset.rowCount,dy);
+                    g5.batchMoveY(root.v_items,dataset.rowCount,dy);
                 }
             }
             var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
@@ -7409,9 +7424,9 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         showTopic.topicId = contentId;
         showTopic.needRefresh = true;
     } else {
-        this.preShow(v_content, v_reContent, v_userInfo, v_reUserInfo);
         showTopic.topicId = v_content.id;
         showTopic.needRefresh = true;
+        this.preShow(v_content, v_reContent, v_userInfo, v_reUserInfo);
     }
     showTopic.onComplete = function(datasetFw, datasetBk) {
         var i, item;
@@ -7462,7 +7477,10 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             item.v_mode = uType + dType;
             g5.renderTwitter(item);        
             sender.v_items.push(item);
-            cy += 0 + eb.getDivRect(item).h;    
+            if (i==0) {
+                g5.mainDiv.scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
+            }
+            cy += eb.getDivRect(item).h;    
         }
         if (item!=null) {
             var ch = $g("divRoot").offsetHeight;
@@ -7477,19 +7495,23 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         
         showTopic.needRefresh = false;
         
-        g5.mainDiv.scrollTop = scrollY;
-        if (sender.v_content != null) return;
+        if (sender.v_content == null) {
+            g5.changeP2(7);
+            return;
+        } else {
+            return;
+        }
         
         var dTime = (new Date()).getTime() - showTopic.startTime;
         if (dTime>50) {
             if (g5.currentPageIndex == 7) g5.changeP2(-1);
             g5.changeP2(7);
-            g5.mainDiv.scrollTop = scrollY;
+            //g5.mainDiv.scrollTop = scrollY;
         } else {
             setTimeout(function() { 
                 if (g5.currentPageIndex == 7) g5.changeP2(-1);
                 g5.changeP2(7);
-                g5.mainDiv.scrollTop = scrollY;
+                //g5.mainDiv.scrollTop = scrollY;
             }, 50-dTime);
         }
     }
@@ -7497,6 +7519,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
 }
 
 sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    if (v_content.uplinkType=="L") v_content.uplinkType = "";
     this.v_content = v_content;
     this.v_reContent = v_reContent;
     this.v_userInfo = v_userInfo;
@@ -7507,12 +7530,14 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     var itemWidth = eb.getDivRect(this).w;
     item = createPanel(this, "page8_" + v_content.id, "", 0, cy, itemWidth, 5);
     item.v_content = v_content;
+    item.v_content.photos = new Array();
     item.v_reContent = v_reContent;
     item.v_userInfo = v_userInfo;
     item.v_reUserInfo = v_reUserInfo;
     item.v_mode = "  x";
     g5.renderTwitter(item);        
     sender.v_items.push(item);
+    g5.mainDiv.scrollTop = 0;
     
     g5.changeP2(7);
 }
@@ -15279,6 +15304,7 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -15611,6 +15637,7 @@ sender.init(0);
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a2->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>3</left>
       <leftRatio>0.00506756756756757</leftRatio>
       <onCreate>sender.style.boxSizing="border-box";
@@ -18602,7 +18629,13 @@ sender.c_title = ee.getControl("panel47");
 sender.c_button = ee.getControl("panel220");
 
 sender.show = function(title) {
-    ee.setText(this.c_title, title)
+    this.init(title);
+    ee.showAni(this, 0);
+}
+
+sender.init = function(titleText) {
+    if (eb.isEmpty(titleText)) titleText = "";
+    ee.setText(this.c_title, titleText)
     ee.setEditText(this.c_input, "");
     this.c_photos.v_photos = new Array();
     g5.refreshPhoto(this.c_photos);
@@ -18611,8 +18644,8 @@ sender.show = function(title) {
     var cirText = ee.getControl("panel45");
     cir.refresh(0);
     ee.setText(cirText, "");    
-    ee.showAni(this, 0);
 }
+
 
 sender.check = function() {
     this.c_button.setEnabled(
@@ -18621,7 +18654,60 @@ sender.check = function() {
     );    
 }
 
-]]></onCreate>
+sender.showNew = function() {
+    this.init("发言");
+    this.onComplete = function() {
+        if (newTwitter.busy) return;
+        newTwitter.uplinkType = "N";
+        newTwitter.uplinkId = 0;
+        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.photos = sender.c_photos.v_photos;
+        newTwitter.onComplete = function(contentId) {
+            ee.showAni(sender, 1);
+            g5.p2.p1.loadNew();
+        }
+        newTwitter();
+    }
+    ee.showAni(this, 0);
+}
+
+sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
+    this.init("回复发言");
+    this.onComplete = function() {
+        if (newTwitter.busy) return;
+        newTwitter.uplinkType = "R";
+        newTwitter.uplinkId = v_content.id;
+        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.photos = sender.c_photos.v_photos;
+        newTwitter.onComplete = function(contentId) {
+            ee.showAni(sender, 1);
+            var newContent = new g5.ContentInfo();
+            newContent.id = contentId;
+            newContent.seconds = 0;
+            newContent.status = "IDL";
+            newContent.uplinkType = "R";
+            newContent.uplinkId = v_content.id;
+            newContent.content = newTwitter.content;
+            newContent.photos = newTwitter.photos;
+            newContent.reCount = 0;
+            newContent.fwCount = 0;
+            newContent.likeCount = 0;
+            newContent.unlikeCount = 0;
+            newContent.isForward = false;
+            newContent.isLike = false;
+            newContent.isUnlike = false;
+            g5.p2.p1.insert(newContent,v_content.clone(),g5.myUserInfo,v_userInfo);
+            v_content.reCount++;
+            g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
+        }
+        newTwitter();
+    }
+    ee.showAni(this, 0);
+}
+
+sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
+    //函数代码
+}]]></onCreate>
       <sizeRatio>1.1484962406015</sizeRatio>
       <top>92</top>
       <topRatio>0.115577889447236</topRatio>
@@ -19063,13 +19149,17 @@ sender.onpointermove = function(event) {
       <left>412</left>
       <leftRatio>0.774436090225564</leftRatio>
       <onClick><![CDATA[if (!sender.v_enabled) return;
-newTwitter.content = ee.getEditText(sender.parentNode.c_input);
-newTwitter.photos = sender.parentNode.c_photos.v_photos;
-if ((newTwitter.content.length<=0) &amp;&amp; (newTwitter.photos.length<=0)) {
+var content = ee.getEditText(sender.parentNode.c_input);
+var photos = sender.parentNode.c_photos.v_photos;
+if ((content.length<=0) &amp;&amp; (photos.length<=0)) {
     g5.alert1("提示", "发言内容不能为空，您至少要留有文字或者至少一张图片或者视频。");
     return;
 }
-newTwitter();]]></onClick>
+//newTwitter();
+
+if (sender.parentNode.onComplete) {
+    sender.parentNode.onComplete();
+}]]></onClick>
       <onCreate>sender.bgColorDisabled = "#8ed0f9";
 sender.bgColorEnabled = "#1da1f2";
 sender.bgColorHot = "#1a91da";
@@ -21000,7 +21090,7 @@ sender.v_mode = "-";
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="56">
+  <taskSet count="57">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName 
@@ -21406,19 +21496,20 @@ getOtherUserInfo.onComplete();
 </script3>
     </taskSetItem>
     <taskSetItem name="newTwitter">
-      <script1><![CDATA[//content,uplinkType,uplinkId,busy,photos(array)
-if (eb.isEmpty(newTwitter.busy)) newTwitter.busy = false;
-if (eb.isEmpty(newTwitter.photos)) newTwitter.photos = new Array();
+      <script1><![CDATA[//busy,content,uplinkType,uplinkId,busy,photos(array),onComplete(contentId)
 if (newTwitter.busy) return;
+newTwitter.busy = true;
+
+if (eb.isEmpty(newTwitter.photos)) newTwitter.photos = new Array();
 
 var text = newTwitter.content;
 if (newTwitter.uplinkType!="L") {
     if ((text.length<=0) &amp;&amp; (newTwitter.photos.length<=0)) {
         g5.alert1("发言内容不符合要求", "发言内容不能为空");
+        newTwitter.busy = false;
         return;
     }
 }
-newTwitter.busy = true;
 
 eio.appendString16(g5.token);
 eio.appendString16(text);
@@ -21480,16 +21571,23 @@ sql = "exec twitterNew " +
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
-} else {
-    eio.appendString8("T");
-}                      
-
-]]></script2>
-      <script3>newTwitter.busy = false;
-if (eio.readString8() == "F") {
-    g5.alert1("提示", eio.readString8());
     return;
 }
+db.read(sqlResult);
+eio.appendString8("T");
+eio.appendString16(db.getString(sqlResult,"contentId"));
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    newTwitter.busy = false;
+    return;
+}
+newTwitter.contentId = eio.readString16();
+if (newTwitter.onComplete) newTwitter.onComplete(newTwitter.contentId);
+newTwitter.busy = false;
+return;
+
 ee.showAni(ee.getControl("panel42"), 1);
 
 g5.p2.p1.a1.init();
@@ -24488,7 +24586,7 @@ g5.changeP3(6);
 ]]></script3>
     </taskSetItem>
     <taskSetItem name="likeContent">
-      <script1>//contentId
+      <script1>//contentId,onComplete
 likeContent.busy = true;
 eio.appendString16(g5.token);
 eio.appendString16(likeContent.contentId);
@@ -24536,13 +24634,71 @@ if (!db.executeNoneQuery("DB", sql)) {
 }                      
 
 ]]></script2>
-      <script3>newTwitter.busy = false;
-if (eio.readString8() == "F") {
+      <script3>if (eio.readString8() == "F") {
     g5.alert1("提示", eio.readString8());
+    likeContent.busy = false;
     return;
 }
-g5.syncTwitter(likeContent.contentId,3);
+likeContent.onComplete();
+likeContent.busy = false;
+</script3>
+    </taskSetItem>
+    <taskSetItem name="unlikeContent">
+      <script1>//contentId,onComplete
+unlikeContent.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(unlikeContent.contentId);
 
+
+
+
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var contentId = parseInt(eio.readString16());
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName = db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能点踩，您如果需要使用这个功能请注册正式用户。");
+    return;
+}
+
+sql = "exec twitterUnlike " +
+    userId + 
+    "," + contentId;
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}                      
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    unlikeContent.busy = false;
+    return;
+}
+unlikeContent.onComplete();
+unlikeContent.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="changePassword">
@@ -26084,7 +26240,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="76">
+  <g5Items count="77">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -26248,10 +26404,20 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
       <functionCode />
     </item>
     <item name="ContentInfo" type="10">
-      <varValue><![CDATA[//"id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,
-//likeCount,unlikeCount,isForward,isLike,isUnlike," +
-function() {
+      <varValue><![CDATA[function() {
     this.size = 17;
+    this.init = function() {
+        this.photos = new Array();
+        if (this.photo1.length>0) this.photos.push(this.photo1);
+        if (this.photo2.length>0) this.photos.push(this.photo2);
+        if (this.photo3.length>0) this.photos.push(this.photo3);
+        if (this.photo4.length>0) this.photos.push(this.photo4);
+        this.reCount = parseInt(this.reCount=="" ? "0":this.reCount);
+        this.fwCount = parseInt(this.fwCount=="" ? "0":this.fwCount);
+        this.likeCount = parseInt(this.likeCount=="" ? "0":this.likeCount);
+        this.unlikeCount = parseInt(this.unlikeCount=="" ? "0":this.unlikeCount);
+        this.seconds = parseInt(this.seconds=="" ? "0":this.seconds);
+    }
     this.loadFromDataset = function(ds, x, idx) {
         this.id = ds.getData(x+0,idx);    
         this.seconds = ds.getData(x+1,idx);    
@@ -26270,16 +26436,7 @@ function() {
         this.isForward = ds.getData(x+14,idx)=="1";
         this.isLike = ds.getData(x+15,idx)=="1";
         this.isUnlike = ds.getData(x+16,idx)=="1";
-
-        this.photos = new Array();
-        if (this.photo1.length>0) this.photos.push(this.photo1);
-        if (this.photo2.length>0) this.photos.push(this.photo2);
-        if (this.photo3.length>0) this.photos.push(this.photo3);
-        if (this.photo4.length>0) this.photos.push(this.photo4);
-        this.reCount = this.reCount=="" ? "0":this.reCount;
-        this.fwCount = this.fwCount=="" ? "0":this.fwCount;
-        this.likeCount = this.likeCount=="" ? "0":this.likeCount;
-        this.unlikeCount = this.unlikeCount=="" ? "0":this.unlikeCount;
+        this.init();
     }
     this.setDataset = function(ds, x, idx) {
         ds.setData(x+0,idx,this.id);
@@ -26299,6 +26456,28 @@ function() {
         ds.setData(x+14,idx,this.isForward?"1":"0");
         ds.setData(x+15,idx,this.isLike?"1":"0");
         ds.setData(x+16,idx,this.isUnlike?"1":"0");
+    }
+    this.clone = function() {
+        var r = new g5.ContentInfo();
+        r.id = this.id;
+        r.seconds = this.seconds;
+        r.status = this.status;
+        r.uplinkType = this.uplinkType;
+        r.uplinkId = this.uplinkId;
+        r.content = this.content;
+        r.photo1 = this.photo1;
+        r.photo2 = this.photo2;
+        r.photo3 = this.photo3;
+        r.photo4 = this.photo4;
+        r.reCount = this.reCount;
+        r.fwCount = this.fwCount;
+        r.likeCount = this.likeCount;
+        r.unlikeCount = this.unlikeCount;
+        r.isForward = this.isForward;
+        r.isLike = this.isLike;
+        r.isUnlike = this.isUnlike;
+        r.init();
+        return r;
     }
 }
 ]]></varValue>
@@ -26397,7 +26576,7 @@ function() {
       <varValue><![CDATA[{
 heart1: "<g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z\"></path></g>",
 heart2: "<g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z\"></path></g>",
-
+unlike: "<g><path d=\"M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v1.91l.01.01L1 14c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z\"></path></g>",
 
 
 end:""
@@ -26767,10 +26946,8 @@ if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_content.photos.length>
     });
     c.v_uplinkId = root.v_content.uplinkId
     ee.setOnClick(c,function(sender,event) {
-        showTopic.topicId = sender.v_uplinkId;
-        showTopic.needRefresh = true;
-        showTopic();
-        g5.changeP2(-1);
+        root.v_reContent.uplinkType = "";
+        g5.p2.p9.show(root.v_reContent,null,root.v_reUserInfo, null);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     //rePhoto
@@ -26862,10 +27039,8 @@ if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_content.photos.length>
     });
     c.v_uplinkId = root.v_content.uplinkId
     ee.setOnClick(c,function(sender,event) {
-        showTopic.topicId = sender.v_uplinkId;
-        showTopic.needRefresh = true;
-        showTopic();
-        g5.changeP2(-1);
+        root.v_reContent.uplinkType = "";
+        g5.p2.p9.show(root.v_reContent,null,root.v_reUserInfo, null);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     
@@ -27015,7 +27190,7 @@ if (root.v_mode.charAt(2) == "x") {
     }
 }
 
-//4 button
+//button1
 cy-=11;
 var b1=76;
 var b2=76+parseInt((w-76*2-20)/3);
@@ -27033,11 +27208,9 @@ ee.setOnMouseLeave(c, function(sender,event) {
     sender.style.backgroundColor = "";
     sender.childNodes[0].style.color = "rgb(101,119,134)";
 });
-root.v_btn1 = c;
+root.c_button1 = c;
 ee.setOnClick(c,function(sender,event) {
-    newTwitter.uplinkType = "R";
-    newTwitter.uplinkId = sender.parentNode.v_content.id;
-    g5.popBlack.a3.show("回复发言");
+    g5.popBlack.a3.showRe(root.v_content.clone(),root.v_reContent.clone(),root.v_userInfo,root.v_reUserInfo);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 
@@ -27104,36 +27277,37 @@ ee.setOnClick(c,function(sender,event) {
 c = createPanel(root, root.id+"_sbutton03", "", b3, cy, 36, 36);
 c.style.cursor="pointer";
 c.style.borderRadius = "50%";
-root.v_btn3 = c;
-root.changeButton3 = function() {
-    if (!this.v_content.isLike) {
-        this.v_content.isLike=true;
-        this.v_btn3.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:#e23c70;fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart2 + "</svg>";        
-        if (!eb.isEmpty(this.c_label3)) {
-            var sTemp = ee.getText(this.c_label3);
-            if (sTemp.length<=0) {
-                sTemp="1";
-            } else sTemp=parseInt(sTemp)+1;
-            ee.setText(this.c_label3,sTemp);
-            ee.setTextColor(this.c_label3, "#e23c70");
-        }
-    } else if (this.v_content.isLike) {
-        this.v_content.isLike=false;
-        this.v_btn3.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart1 + "</svg>";        
-        if (!eb.isEmpty(this.c_label3)) {
-            var sTemp = ee.getText(this.c_label3);
-            if (sTemp.length<=0) {
-                sTemp="";
-            } else sTemp=parseInt(sTemp)-1;
-            if (sTemp==0) sTemp = "";
-            ee.setText(this.c_label3,sTemp);
-            ee.setTextColor(this.c_label3, "rgb(101,119,134)");
-        }
+root.c_button3 = c;
+c.v_styleIndex = 0;
+c.v_enabled = true;
+c.init = function(styleIndex) {
+    if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+    this.v_styleIndex = styleIndex;
+    if (this.v_styleIndex == 0) {
+        this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart1 + "</svg>";        
+        this.v_defaultColor = "rgb(101,119,134)";
+    } else {
+        this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:#e23c70;fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart2 + "</svg>";        
+        this.v_defaultColor = "#e23c70";
     }
 }
 ee.setOnClick(c,function(sender,event) {
-    likeContent.contentId = sender.parentNode.v_content.id;
-    likeContent();
+    while(1) {
+        if (!sender.v_enabled) break;
+        if (likeContent.busy) break;
+        likeContent.contentId = sender.parentNode.v_content.id;
+        likeContent.onComplete = function() {
+            root.c_button3.v_enabled = true;
+        }
+        likeContent();
+        sender.v_enabled = false;
+        var contentClone = root.v_content.clone();
+        contentClone.isLike = !contentClone.isLike;
+        contentClone.likeCount += contentClone.isLike ? 1:-1;
+        if (contentClone.likeCount<0) contentClone.likeCount = 0;
+        g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
+        break;
+    }
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 ee.setOnMouseEnter(c, function(sender,event) {
@@ -27142,35 +27316,70 @@ ee.setOnMouseEnter(c, function(sender,event) {
 });    
 ee.setOnMouseLeave(c, function(sender,event) {
     sender.style.backgroundColor = "";
-    if (!sender.parentNode.v_content.isLike) {
-        sender.childNodes[0].style.color = "rgb(101,119,134)";
-    } else {
-        sender.childNodes[0].style.color = "#e23c70";
-    } 
+    sender.childNodes[0].style.color = sender.v_defaultColor;
 });
+c.init(root.v_content.isLike ? 1:0);
 
+//button4
 c = createPanel(root, root.id+"_sbutton04", "", b4, cy, 36, 36);
 c.style.cursor="pointer";
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v1.91l.01.01L1 14c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z\"></path></g></svg>";
 c.style.borderRadius = "50%";
+root.c_button4 = c;
+c.v_styleIndex = 0;
+c.v_enabled = true;
+c.init = function(styleIndex) {
+    if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+    this.v_styleIndex = styleIndex;
+    this.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">"+g5.icon.unlike+"</svg>";
+    if (this.v_styleIndex == 0) {
+        this.v_defaultColor = "rgb(101,119,134)";
+    } else {
+        this.v_defaultColor = "rgb(29,161,242)";
+    }
+    this.childNodes[0].style.color = this.v_defaultColor;
+}
+ee.setOnClick(c,function(sender,event) {
+    while(1) {
+        if (!sender.v_enabled) break;
+        if (unlikeContent.busy) break;
+        unlikeContent.contentId = sender.parentNode.v_content.id;
+        unlikeContent.onComplete = function() {
+            root.c_button4.v_enabled = true;
+        }
+        unlikeContent();
+        sender.v_enabled = false;
+        var contentClone = root.v_content.clone();
+        contentClone.isUnlike = !contentClone.isUnlike;
+        contentClone.unlikeCount += contentClone.isUnlike ? 1:-1;
+        if (contentClone.unlikeCount<0) contentClone.unlikeCount = 0;
+        g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
+        break;
+    }
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#dfeffa";
-    sender.childNodes[0].style.color = "rgb(29,161,242)";
 });    
 ee.setOnMouseLeave(c, function(sender,event) {
     sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = "rgb(101,119,134)";
 });
-ee.setOnClick(c,function(sender,event) {
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
-});
-root.v_btn4 = c;
+c.init(root.v_content.isUnlike ? 1:0);
 
-//3 label
+//4 label
 if (root.v_mode.charAt(2) != "x") {
+    //label1
     c = createPanel(root, root.id+"_panel3", "", b1+35, cy+7, 40, 22);
     root.c_label1 = c;
-    addText(c, root.v_content.reCount=="0" ? "":root.v_content.reCount, "left", "middle", "Arial", 12, "657786", "");
+    c.init = function(text) {
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
+    }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.reCount);
+    //label2
     c = createPanel(root, root.id+"_panel4", "", b2+35, cy+7, 40, 22);
     root.c_label2 = c;
     if (root.v_content.isForward) {
@@ -27178,15 +27387,57 @@ if (root.v_mode.charAt(2) != "x") {
     } else {
         addText(c, root.v_content.fwCount=="0" ? "":root.v_content.fwCount, "left", "middle", "Arial", 12, "657786", "");
     }
+    //label3
     c = createPanel(root, root.id+"_panel5", "", b3+35, cy+7, 40, 22);
     root.c_label3 = c;
-    addText(c, root.v_content.likeCount ? "":root.v_content.likeCount, "left", "middle", "Arial", 12, "657786", "");
+    c.v_styleIndex = 0;
+    c.init = function(styleIndex,text) {
+        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+        this.v_styleIndex = styleIndex;
+        if (this.v_styleIndex == 0) {
+            ee.setTextColor(this, "rgb(101,119,134)");
+        } else {
+            ee.setTextColor(this, "#e23c70");
+        }
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
+    }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.isLike ? 1:0, root.v_content.likeCount);
+    //label4
+    c = createPanel(root, root.id+"_label4", "", b4+35, cy+7-1, 40, 22);
+    root.c_label4 = c;
+    c.v_styleIndex = 0;
+    c.init = function(styleIndex,text) {
+        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+        this.v_styleIndex = styleIndex;
+        if (this.v_styleIndex == 0) {
+            this.v_defaultColor = "rgb(101,119,134)";
+        } else {
+            this.v_defaultColor = "rgb(29,161,242)";
+        }
+        ee.setTextColor(this, this.v_defaultColor);
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
+    }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.isUnlike ? 1:0, root.v_content.unlikeCount);
+} else {
+    root.c_label1 = null;
+    root.c_label2 = null;
+    root.c_label3 = null;
+    root.c_label4 = null;
 }
-//final
-root.changeButton3(); root.changeButton3();
+
 
 //set total height
-rect = eb.getDivRect(root.v_btn1);
+rect = eb.getDivRect(root.c_button1);
 eb.setDivRect(root, null, null, null, rect.y + rect.h + 7);
 eb.processDock();
 if (!eb.isEmpty(root.c_photos)) {
@@ -27203,6 +27454,88 @@ if (!eb.isEmpty(root.c_rePhotos)) {
 }
 
 return root;]]></functionCode>
+    </item>
+    <item name="modifyTwitter" type="20">
+      <varValue />
+      <functionParam>root,v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
+      <functionCode>//root,v_content,v_reContent,v_userInfo,v_reUserInfo
+if (root.v_content.isLike != v_content.isLike) {
+    root.v_content.isLike = v_content.isLike;
+    root.c_button3.init(root.v_content.isLike ? 1:0);
+    if (root.c_label3) root.c_label3.init(root.v_content.isLike ? 1:0);
+}
+
+if (root.v_content.likeCount != v_content.likeCount) {
+    root.v_content.likeCount = v_content.likeCount;
+    if (root.c_label3) root.c_label3.init(null, root.v_content.likeCount);
+}
+
+if (root.v_content.isUnlike != v_content.isUnlike) {
+    root.v_content.isUnlike = v_content.isUnlike;
+    root.c_button4.init(root.v_content.isUnlike ? 1:0);
+    if (root.c_label4) root.c_label4.init(root.v_content.isUnlike ? 1:0);
+}
+
+if (root.v_content.unlikeCount != v_content.unlikeCount) {
+    root.v_content.unlikeCount = v_content.unlikeCount;
+    if (root.c_label4) root.c_label4.init(null, root.v_content.unlikeCount);
+}
+
+if (root.v_content.reCount != v_content.reCount) {
+    root.v_content.reCount = v_content.reCount;
+    if (root.c_label1) root.c_label1.init(root.v_content.reCount);
+}
+
+
+</functionCode>
+    </item>
+    <item name="syncTwitter" type="20">
+      <varValue />
+      <functionParam>v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
+      <functionCode><![CDATA[var task = new Array();
+task.push(g5.p2.p1.v_items);
+task.push(g5.p2.p2.p1Items);
+task.push(g5.p2.p2.p3Items);
+task.push(g5.p2.p9.v_items);
+task.push(g5.p2.p5.v_items);
+task.push(g5.p2.p11.c_pages.c1.v_items);
+task.push(g5.p2.p11.c_pages.c2.v_items);
+task.push(g5.p2.p11.c_pages.c4.v_items);
+task.push(g5.p2.p11.c_pages.c5.v_items);
+
+var items,item;
+for (var i=0; i<task.length; i++) {
+    items = task[i];
+    for (var j=0; j<items.length; j++) {
+        item = items[j];
+        if (item.v_content.id != v_content.id) continue;
+        g5.modifyTwitter(item,v_content,v_reContent,v_userInfo,v_reUserInfo);
+    }
+}
+
+
+]]></functionCode>
+    </item>
+    <item name="syncTwitterOld" type="20">
+      <varValue />
+      <functionParam>contentId,buttonNumber</functionParam>
+      <functionCode><![CDATA[var task = ["page1_","puser_","page8_","sech_"];
+var item;
+for (var i=0; i<task.length; i++) {
+    item = $g(task[i]+contentId);
+    if (!eb.isEmpty(item)) {
+        if (buttonNumber==2) item.changeButton2();
+        if (buttonNumber==3) item.changeButton3();
+    }
+    item = $g(task[i]+contentId+"L");
+    if (!eb.isEmpty(item)) {
+        if (buttonNumber==2) item.changeButton2();
+        if (buttonNumber==3) item.changeButton3();
+    }
+}
+
+
+]]></functionCode>
     </item>
     <item name="loadUserRecord" type="20">
       <varValue />
@@ -28034,68 +28367,16 @@ if (g5.itemsHome.length>0) {
     eb.setDivRect(ee.getControl("panel41"),null,null,null,rect.y+rect.h);
 }]]></functionCode>
     </item>
-    <item name="homepageMoveY" type="20">
+    <item name="batchMoveY" type="20">
       <varValue />
-      <functionParam>index,dy</functionParam>
-      <functionCode><![CDATA[for (var i=index; i<g5.itemsHome.length; i++) {
-    ee.setRect(g5.itemsHome[i],null,eb.getDivRect(g5.itemsHome[i]).y+dy,null,null);
+      <functionParam>items,index,dy</functionParam>
+      <functionCode><![CDATA[for (var i=index; i<items.length; i++) {
+    ee.setRect(items[i],null,eb.getDivRect(items[i]).y+dy,null,null);
 }
-if (g5.itemsHome.length>0) {
-    var rect = eb.getDivRect(g5.itemsHome[g5.itemsHome.length-1]);
+if (items.length>0) {
+    var rect = eb.getDivRect(items[items.length-1]);
     eb.setDivRect(ee.getControl("panel41"),null,null,null,rect.y+rect.h);
 }]]></functionCode>
-    </item>
-    <item name="syncTwitter" type="20">
-      <varValue />
-      <functionParam>v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
-      <functionCode><![CDATA[var task = new Array();
-task.push(g5.p1.v_items);
-task.push(g5.p2.p1Items);
-task.push(g5.p2.p3Items);
-
-task.push(g5.p5.v_items);
-
-
-
-
-var task = ["page1_","puser_","page8_","sech_"];
-var item;
-for (var i=0; i<task.length; i++) {
-    item = $g(task[i]+contentId);
-    if (!eb.isEmpty(item)) {
-        if (buttonNumber==2) item.changeButton2();
-        if (buttonNumber==3) item.changeButton3();
-    }
-    item = $g(task[i]+contentId+"L");
-    if (!eb.isEmpty(item)) {
-        if (buttonNumber==2) item.changeButton2();
-        if (buttonNumber==3) item.changeButton3();
-    }
-}
-
-
-]]></functionCode>
-    </item>
-    <item name="syncTwitterOld" type="20">
-      <varValue />
-      <functionParam>contentId,buttonNumber</functionParam>
-      <functionCode><![CDATA[var task = ["page1_","puser_","page8_","sech_"];
-var item;
-for (var i=0; i<task.length; i++) {
-    item = $g(task[i]+contentId);
-    if (!eb.isEmpty(item)) {
-        if (buttonNumber==2) item.changeButton2();
-        if (buttonNumber==3) item.changeButton3();
-    }
-    item = $g(task[i]+contentId+"L");
-    if (!eb.isEmpty(item)) {
-        if (buttonNumber==2) item.changeButton2();
-        if (buttonNumber==3) item.changeButton3();
-    }
-}
-
-
-]]></functionCode>
     </item>
     <item name="refreshPhoto" type="20">
       <varValue />
