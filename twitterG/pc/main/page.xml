@@ -1014,6 +1014,7 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -1698,7 +1699,9 @@ sender.init = function() {
     ee.setVisible(this.c_photos, false);
     ee.setEditText(this.c_edit, "");
     ee.setRect(this.c_edit, null,null,null,53);
+    var oldH = eb.getDivRect(this).h;
     ee.setRect(this, null,null,null,110);
+    g5.batchMoveY(g5.p2.p1.v_items,0,110-oldH);
     if (this.c_button.setEnabled) this.c_button.setEnabled(false);
     if (ee.getControl("panel53").refresh) {
         ee.getControl("panel53").refresh(0/200);
@@ -1798,7 +1801,7 @@ if (text.length<180) {
     var dy = newHeight - oldHeight;
     if (dy == 0) return;
     ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
-    g5.homepageMoveY(0,dy);
+    g5.batchMoveY(g5.p2.p1.v_items,0,dy);
     eb.processDock();
 }
 
@@ -1902,7 +1905,7 @@ g5.popBlack2.a1.show(function(ytbVideo) {
     if (ee.getControl("panel7").style.visibility=="hidden") {
         ee.setVisible(ee.getControl("panel7"), true);
         ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+462-140);
-        g5.homepageMoveY(0,462-140);
+        g5.batchMoveY(g5.p2.p1.v_items,0,462-140);
         eb.processDock();
     }
 });
@@ -1996,12 +1999,32 @@ sender.refresh = function(progress) {
       <left>482</left>
       <leftRatio>0.803333333333333</leftRatio>
       <onClick>if (!sender.v_enabled) return;
-newTwitter.content = ee.getEditText(ee.getControl("edit7"));
+
+if (newTwitter.busy) return;
 newTwitter.uplinkType = "N";
 newTwitter.uplinkId = 0;
+newTwitter.content = ee.getEditText(ee.getControl("edit7"));
 newTwitter.photos = ee.getControl("panel7").v_photos;
+newTwitter.onComplete = function(contentId) {
+    var newContent = new g5.ContentInfo();
+    newContent.id = contentId;
+    newContent.seconds = 0;
+    newContent.status = "IDL";
+    newContent.uplinkType = "N";
+    newContent.uplinkId = 0;
+    newContent.content = newTwitter.content;
+    newContent.photos = newTwitter.photos;
+    newContent.reCount = 0;
+    newContent.fwCount = 0;
+    newContent.likeCount = 0;
+    newContent.unlikeCount = 0;
+    newContent.isForward = false;
+    newContent.isLike = false;
+    newContent.isUnlike = false;
+    g5.p2.p1.insert(newContent,new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
+}
 newTwitter();
-
+sender.parentNode.init();
 </onClick>
       <onCreate>sender.bgColorDisabled = "#8ed0f9";
 sender.bgColorEnabled = "#1da1f2";
@@ -2118,7 +2141,7 @@ c.onchange = function() {
                         if (ee.getControl("panel7").style.visibility=="hidden") {
                             ee.setVisible(ee.getControl("panel7"), true);
                             ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+462-140);
-                            g5.homepageMoveY(0,462-140);
+                            g5.batchMoveY(g5.p2.p1.v_items,0,462-140);
                             eb.processDock();
                         }
                         ee.getControl("panel1").check();
@@ -2172,7 +2195,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2368,6 +2390,57 @@ sender.showByUserInfo = function(v_userInfo) {
     g5.changeP2(1);
 }
 
+sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    if (v_content.uplinkType != "R") {
+        this.insertAtPage(1, v_content, v_reContent, v_userInfo, v_reUserInfo);
+    }
+    if (!this.v_p3Init) {
+        this.insertAtPage(3, v_content, v_reContent, v_userInfo, v_reUserInfo);
+    }
+}
+
+sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    var items, item, root, cy;
+    var itemWidth = eb.getDivRect(this).w;
+    v_content = v_content.clone();
+    v_reContent = v_reContent.clone();
+    if (pageIndex == 1) {
+        root = this.p2sub.p1;
+        items = this.p1Items;
+    } else if (pageIndex == 3) {
+        root = this.p2sub.p3;
+        items = this.p3Items;
+    }
+    if (v_userInfo.id != showUserPage.v_userInfo.id) return;
+    
+    if (pageIndex == 1) {
+        var rect = eb.getDivRect(ee.getControl("panel73"),null,cy,null,null);
+        cy = rect.y + rect.h;
+    } else if (pageIndex == 3) {
+        cy = 0;
+    }
+    if (items.length>0) {
+        cy = eb.getDivRect(items[0]).y;
+    }
+    if (pageIndex == 1) {
+        item = createPanel(root, "page1_" + v_content.id, "", 0, cy, itemWidth, 5);
+    } else if (pageIndex == 3) {
+        item = createPanel(root, "puser3_" + v_content.id, "", 0, cy, itemWidth, 5);
+    }
+    item.v_content = v_content;
+    item.v_reContent = v_reContent;
+    item.v_userInfo = v_userInfo;
+    item.v_reUserInfo = v_reUserInfo;
+    item.v_mode = "";
+    g5.renderTwitter(item);
+    items.splice(0, 0, item);
+    cy = eb.getDivRect(item).h;
+    g5.batchMoveY(items, 1, cy);
+    eb.setDivRect(root, null,null,null,eb.getDivRect(root).h + cy);
+    if (pageIndex == this.p2sub.currentPageIndex) {
+        g5.resizeV(root.parentNode, 3);
+    }    
+}
 
 
 
@@ -2907,7 +2980,6 @@ sender.p3 = ee.getControl("panel284");
 sender.buttonLine = ee.getControl("panel281");
 sender.chat = ee.getControl("panel19");
 sender.chatVideo = ee.getControl("panel264");
-sender.p3Items = new Array();
 sender.changePage = function(pageIndex) {
     var rect,div;
     if (this.currentPageIndex == 1) {
@@ -2960,7 +3032,7 @@ sender.changePage = function(pageIndex) {
         g5.player.stop();
         this.button3.init(1);
         this.button3.appendChild(this.buttonLine);
-        if (this.p3Items.length<=0) {
+        if (this.parentNode.p3Items.length<=0) {
             this.updateP3();
             ee.setVisible(this.p3, true);
         } else {
@@ -2975,11 +3047,12 @@ sender.changePage = function(pageIndex) {
 sender.init = function() {
     this.currentPageIndex = -1;
     this.p2ChatRect = null;
-    for (var i=0; i<this.p3Items.length; i++) {
-        ee.removeControl(this.p3Items[i]);
+    for (var i=0; i<this.parentNode.p3Items.length; i++) {
+        ee.removeControl(this.parentNode.p3Items[i]);
     }
-    this.p3Items = new Array();
+    this.parentNode.p3Items = new Array();
     this.v_p3PageIndex = 0;
+    this.parentNode.v_p3Init = true;
 }
 
 
@@ -2987,6 +3060,7 @@ sender.v_p3PageIndex = 0;
 sender.v_p3PageSize = 10;
 sender.updateP3 = function() {
     if (showUserPageP3.busy) return;
+    this.parentNode.v_p3Init = false;
     showUserPageP3.userId = g5.p2.p2.v_userInfo.id;
     showUserPageP3.pageIndex = this.v_p3PageIndex; this.v_p3PageIndex++;
     showUserPageP3.pageSize = this.v_p3PageSize;
@@ -2995,20 +3069,20 @@ sender.updateP3 = function() {
         var root = sender.p3; 
         var itemWidth = eb.getDivRect(root).w;
         var cy = 0;
-        if (sender.p3Items.length>0) {
-            var r = eb.getDivRect(sender.p3Items[sender.p3Items.length-1]);
+        if (sender.parentNode.p3Items.length>0) {
+            var r = eb.getDivRect(sender.parentNode.p3Items[sender.parentNode.p3Items.length-1]);
             cy = r.y + r.h;
         }
         var item = null;
         for (i=0; i< dataset.rowCount; i++) {
-            for (j=0; j<sender.p3Items; j++) {
-                if (sender.p3Items[j].v_contentId == dataset.getData(0,i)) break;    
+            for (j=0; j<sender.parentNode.p3Items; j++) {
+                if (sender.parentNode.p3Items[j].v_contentId == dataset.getData(0,i)) break;    
             }
             item = createPanel(root, "puser3_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
             item.v_mode = "   x";
             g5.renderTwitter(item);
-            sender.p3Items.push(item);
+            sender.parentNode.p3Items.push(item);
             cy += eb.getDivRect(item).h;
             item.style.borderLeft="";    
             item.style.borderRight="";    
@@ -3017,7 +3091,7 @@ sender.updateP3 = function() {
             var ch = $g("divRoot").offsetHeight;
             var h = cy + ch - eb.getDivRect(item).h - 51; 
             ee.setRect(root,null,null,null,h);
-        } else if (sender.p3Items.length<=0) {
+        } else if (sender.parentNode.p3Items.length<=0) {
             var ch = $g("divRoot").offsetHeight;
             var h = ch + eb.getDivRect(ee.getControl("layoutx2")).y - 51; 
             ee.setRect(root,null,null,null,h);
@@ -3030,8 +3104,8 @@ sender.updateP3 = function() {
 
 ]]></onCreate>
       <sizeRatio>0.623333333333333</sizeRatio>
-      <top>469</top>
-      <topRatio>0.601282051282051</topRatio>
+      <top>468</top>
+      <topRatio>0.6</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -18696,7 +18770,8 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.isForward = false;
             newContent.isLike = false;
             newContent.isUnlike = false;
-            g5.p2.p1.insert(newContent,v_content.clone(),g5.myUserInfo,v_userInfo);
+            g5.p2.p1.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
+            g5.p2.p2.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
             v_content.reCount++;
             g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
         }
@@ -21568,7 +21643,8 @@ sql = "exec twitterNew " +
     ",'" + db.encode(photos[3]) + "'" +
     ",'" + db.encode(uplinkType) + "'" +
     "," + db.encode(uplinkId);
-if (!db.executeNoneQuery("DB", sql)) {
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
     return;
@@ -26479,6 +26555,23 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         r.init();
         return r;
     }
+    this.id = "0";
+    this.seconds = 0;
+    this.status = "";    
+    this.uplinkType = "";    
+    this.uplinkId = "0";
+    this.content = "";
+    this.photo1 = "";
+    this.photo2 = "";
+    this.photo3 = "";
+    this.photo4 = "";
+    this.reCount = 0;
+    this.fwCount = 0;
+    this.likeCount = 0;
+    this.unlikeCount = 0;
+    this.isForward = false;
+    this.isLike = false;
+    this.isUnlike = false;
 }
 ]]></varValue>
       <functionParam />
