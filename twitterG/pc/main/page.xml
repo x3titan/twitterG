@@ -2195,7 +2195,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -17736,6 +17735,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17887,6 +17887,7 @@ ee.showAni(ee.getControl("panel117"), 0);
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>374</left>
       <leftRatio>0.315611814345992</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -17911,11 +17912,41 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
         ee.setRect(this, rect.x - 10, rect.y+rect.h+10, null, null);
     }
     this.setMode(v_content.isForward);
-    
+    v_content = v_content.clone();
+    v_reContent = v_reContent.clone();
+    ee.setOnClick(this.c_button1, function(button1, event) {
+        if (newTwitter.busy) return;
+        newTwitter.content="";
+        newTwitter.uplinkType="L";
+        newTwitter.uplinkId = v_content.id;
+        newTwitter.photos=new Array();
+        newTwitter.onComplete = function(contentId) {
+        }
+        newTwitter();
+        sender.close();
+        if (v_content.isForward) {
+            v_content.isForward = false;
+            v_content.fwCount--;
+            if (v_content.fwCount<0) v_content.fwCount = 0;
+        } else {
+            v_content.isForward = true;
+            v_content.fwCount++;
+        }
+        g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
+        if (v_content.isForward) {
+            //del
+        } else {
+            //add
+            
+        }
+    });
     ee.setVisible(this.parentNode, true);
     ee.showAni(this, 0);
 }
 
+sender.close = function() {
+    ee.showAni(this, 1);
+}
 ]]></onCreate>
       <sizeRatio>0.605882352941176</sizeRatio>
       <top>335</top>
@@ -17934,13 +17965,6 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
       <heightRatio>0.485436893203884</heightRatio>
       <left>0</left>
       <note>c_button1</note>
-      <onClick>ee.showAni(ee.getControl("panel124"), 1);
-newTwitter.content="";
-newTwitter.photo1="";
-newTwitter.uplinkType="L";
-newTwitter();
-
-</onClick>
       <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.icon.forward+"</svg> <div id='panel125label' style='display:inline;'>转发</div>");]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
@@ -26829,10 +26853,57 @@ if (root.v_content.status=="DEL") {
     eb.processDock()
     return root;
 }
+//if (root.v_content.uplinkType == "L") {
+//    //direct forward
+//    c = createPanel(root, root.id+"_forward01", "", 50, cy, 400, 19); cy+=22;
+//    var sTemp = "<svg viewBox=\"0 -2 34 34\" style='height: 1.25rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg>";
+//    sTemp += " <div id='"+root.id+"_fwL01' style='display:inline;'>";
+//    if (g5.userName==root.v_userInfo.userName) {
+//        sTemp += "你";
+//    } else {
+//        sTemp += root.v_userInfo.nickName + " ";
+//    }
+//    sTemp += "转发了</div>";    
+//    addText(c, sTemp, "left", "middle", "微软雅黑", 10, "#657786", "normal");
+//    c.fw=$g(root.id+"_fwL01");
+//    c.userName = root.v_userInfo.userName;
+//    ee.setOnClick(c,function(sender,event) {
+//        g5.p2.p2.show(root.v_userInfo);
+//        window.event? window.event.cancelBubble = true : event.stopPropagation();
+//    });
+//    ee.setOnMouseEnter(c,function(sender,e){
+//        sender.fw.style.textDecoration="underline";
+//    });
+//    ee.setOnMouseLeave(c,function(sender,e){
+//        sender.fw.style.textDecoration="";
+//    });
+
+//    root.v_userInfo = root.v_reUserInfo;
+//    //root.v_userInfo.userName = root.v_reUserInfo.userName;
+//    //root.v_userInfo.nickName = root.v_reUserInfo.nickName;
+//    //root.v_userInfo.photo = root.v_reUserInfo.photo;
+    
+//    root.id = root.id.substr(0,root.id.length-(root.v_content.id+"").length) + root.v_content.uplinkId + "L";
+//    var uid = root.v_content.uplinkId;
+//    var utp = root.v_content.uplinkType;
+//    root.v_content = root.v_reContent;
+//    root.v_content.uplinkType = utp;
+//    root.v_content.uplinkId = uid;
+//    //root.v_content.seconds = root.v_reContent.seconds;
+//    //root.v_content.id = root.v_content.uplinkId;
+//    //root.v_photo1 = root.v_reContent.photo1;
+//    ////root.v_content = root.v_reContent;
+//    //root.v_content.reCount = root.v_reContent.reCount;
+//    //root.v_content.fwCount = root.v_reContent.fwCount;
+//    //root.v_content.likeCount = root.v_reContent.likeCount;
+//    //root.v_content.isForward = root.v_reContent.isForward;
+//    //root.v_content.isLike = root.v_reContent.isLike
+//}
+
 if (root.v_content.uplinkType == "L") {
     //direct forward
     c = createPanel(root, root.id+"_forward01", "", 50, cy, 400, 19); cy+=22;
-    var sTemp = "<svg viewBox=\"0 -2 34 34\" style='height: 1.25rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg>";
+    var sTemp = "<svg viewBox=\"0 -2 34 34\" style='height: 1.25rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.icon.forward+"</svg>";
     sTemp += " <div id='"+root.id+"_fwL01' style='display:inline;'>";
     if (g5.userName==root.v_userInfo.userName) {
         sTemp += "你";
@@ -26875,6 +26946,7 @@ if (root.v_content.uplinkType == "L") {
     //root.v_content.isForward = root.v_reContent.isForward;
     //root.v_content.isLike = root.v_reContent.isLike
 }
+
 
 //avata image box
 c = createPanel(root, root.id+"_panel13", "", 16, cy, 50, 50);
@@ -27605,6 +27677,16 @@ if (root.v_content.reCount != v_content.reCount) {
     if (root.c_label1) root.c_label1.init(root.v_content.reCount);
 }
 
+if (root.v_content.isForward != v_content.isForward) {
+    root.v_content.isForward = v_content.isForward;
+    root.c_button2.init(root.v_content.isForward ? 1:0);
+    if (root.c_label2) root.c_label2.init(root.v_content.isForward ? 1:0);
+}
+
+if (root.v_content.fwCount != v_content.fwCount) {
+    root.v_content.fwCount = v_content.fwCount;
+    if (root.c_label2) root.c_label2.init(null, root.v_content.fwCount);
+}
 
 </functionCode>
     </item>
