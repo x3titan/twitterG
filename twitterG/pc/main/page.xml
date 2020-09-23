@@ -2195,6 +2195,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -17735,7 +17736,6 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17887,19 +17887,36 @@ ee.showAni(ee.getControl("panel117"), 0);
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>374</left>
       <leftRatio>0.315611814345992</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
-      <onCreate>sender.style.borderRadius = "6px";
+      <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel125");
+sender.c_button2 = ee.getControl("panel126");
+
+sender.style.borderRadius = "6px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
-sender.setMode=function(mode) {
-    if (mode=="0") {
-        $g("panel125label").innerHTML = "转发";
-    } else if (mode=="1") {
+sender.setMode=function(isForward) {
+    if (isForward) {
         $g("panel125label").innerHTML = "取消转发";
+    } else {
+        $g("panel125label").innerHTML = "转发";
     }
-}</onCreate>
+}
+
+sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
+    var rect = g5.getRectAbs(refDiv);
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        ee.setRect(this, rect.x - 10, rect.y - eb.getDivRect(this).h - 10, null, null);
+    } else {
+        ee.setRect(this, rect.x - 10, rect.y+rect.h+10, null, null);
+    }
+    this.setMode(v_content.isForward);
+    
+    ee.setVisible(this.parentNode, true);
+    ee.showAni(this, 0);
+}
+
+]]></onCreate>
       <sizeRatio>0.605882352941176</sizeRatio>
       <top>335</top>
       <topRatio>0.420854271356784</topRatio>
@@ -17916,6 +17933,7 @@ sender.setMode=function(mode) {
       <height>50</height>
       <heightRatio>0.485436893203884</heightRatio>
       <left>0</left>
+      <note>c_button1</note>
       <onClick>ee.showAni(ee.getControl("panel124"), 1);
 newTwitter.content="";
 newTwitter.photo1="";
@@ -17923,7 +17941,7 @@ newTwitter.uplinkType="L";
 newTwitter();
 
 </onClick>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.iconForward+"</svg> <div id='panel125label' style='display:inline;'>转发</div>");]]></onCreate>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.icon.forward+"</svg> <div id='panel125label' style='display:inline;'>转发</div>");]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.294117647058824</sizeRatio>
@@ -17942,6 +17960,7 @@ newTwitter();
       <height>50</height>
       <heightRatio>0.485436893203884</heightRatio>
       <left>0</left>
+      <note>c_button2</note>
       <onClick>newTwitter.uplinkType = "F";
 g5.popBlack.a3.show("带评论转发");</onClick>
       <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> 带评论转发");]]></onCreate>
@@ -26316,7 +26335,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="77">
+  <g5Items count="76">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -26577,11 +26596,6 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
       <functionParam />
       <functionCode />
     </item>
-    <item name="iconForward" type="10">
-      <varValue><![CDATA["<g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g>";]]></varValue>
-      <functionParam />
-      <functionCode />
-    </item>
     <item name="iconArrowRight" type="10">
       <varValue><![CDATA["<g><path d=\"M17.207 11.293l-7.5-7.5c-.39-.39-1.023-.39-1.414 0s-.39 1.023 0 1.414L15.086 12l-6.793 6.793c-.39.39-.39 1.023 0 1.414.195.195.45.293.707.293s.512-.098.707-.293l7.5-7.5c.39-.39.39-1.023 0-1.414z\"></path></g>";]]></varValue>
       <functionParam />
@@ -26670,6 +26684,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
 heart1: "<g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z\"></path></g>",
 heart2: "<g><path d=\"M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z\"></path></g>",
 unlike: "<g><path d=\"M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v1.91l.01.01L1 14c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z\"></path></g>",
+forward: "<g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g>",
 
 
 end:""
@@ -27310,61 +27325,60 @@ ee.setOnClick(c,function(sender,event) {
 //button2
 c = createPanel(root, root.id+"_sbutton02", "", b2, cy, 36, 36);
 c.style.cursor="pointer";
-var initColor = "rgb(101,119,134)";
-root.changeButton2 = function() {
-    if (!this.v_content.isForward) {
-        this.v_content.isForward=true;
-        this.v_btn2.initColor="#17bf63";
-        this.v_btn2.childNodes[0].style.color=this.v_btn2.initColor;
-        if (!eb.isEmpty(this.c_label2)) {
-            var sTemp = ee.getText(this.c_label2);
-            if (sTemp.length<=0) {
-                sTemp="1";
-            } else sTemp=parseInt(sTemp)+1;
-            ee.setText(this.c_label2,sTemp);
-            ee.setTextColor(this.c_label2, this.v_btn2.initColor);
-        }
-    } else if (this.v_content.isForward) {
-        this.v_content.isForward="0";
-        this.v_btn2.initColor="rgb(101,119,134)";
-        this.v_btn2.childNodes[0].style.color=this.v_btn2.initColor;
-        if (!eb.isEmpty(this.c_label2)) {
-            var sTemp = ee.getText(this.c_label2);
-            if (sTemp.length<=0) {
-                sTemp="";
-            } else sTemp=parseInt(sTemp)-1;
-            if (sTemp==0) sTemp = "";
-            ee.setText(this.c_label2,sTemp);
-            ee.setTextColor(this.c_label2, this.v_btn2.initColor);
-        }
-    }
-}
-if (root.v_content.isForward) {
-    initColor = "#17bf63";
-}
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:"+initColor+";fill: currentcolor;vertical-align:middle;\">"+g5.iconForward+"</svg>"
 c.style.borderRadius = "50%";
-c.initColor=initColor;
+root.c_button2 = c;
+c.v_styleIndex = 0;
+c.v_enabled = true;
+c.init = function(styleIndex) {
+    if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+    this.v_styleIndex = styleIndex;
+    this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">" + g5.icon.forward + "</svg>";        
+    if (this.v_styleIndex == 0) {
+        this.v_defaultColor = "rgb(101,119,134)";
+    } else {
+        this.v_defaultColor = "#17bf63";
+    }
+    this.childNodes[0].style.color = this.v_defaultColor;
+}
+ee.setOnClick(c,function(sender,event) {
+    while(1) {
+        if (!sender.v_enabled) break;
+        //if (likeContent.busy) break;
+        //likeContent.contentId = sender.parentNode.v_content.id;
+        //likeContent.onComplete = function() {
+        //    root.c_button3.v_enabled = true;
+        //}
+        //likeContent();
+        //sender.v_enabled = false;
+        //var contentClone = root.v_content.clone();
+        //contentClone.isLike = !contentClone.isLike;
+        //contentClone.likeCount += contentClone.isLike ? 1:-1;
+        //if (contentClone.likeCount<0) contentClone.likeCount = 0;
+        //g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
+        
+        g5.popup1.p2.show(sender, root.v_content, root.v_reContent, root.v_userInfo, root.v_reUserInfo);
+        break;
+        
+        ee.setVisible(ee.getControl("panel40"), true);
+        var e = event || window.event;
+        ee.setRect(ee.getControl("panel124"), e.clientX - eb.getDivRect(ee.getControl("panel124")).w +20, e.clientY - 20, null, null);
+        ee.getControl("panel124").setMode(sender.parentNode.v_isForward);
+        ee.showAni(ee.getControl("panel124"), 0);
+        newTwitter.uplinkId = sender.parentNode.v_content.id;
+        newTwitter.userPage = sender.userPage;
+        break;
+    }
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#def2eb";
     sender.childNodes[0].style.color = "#17bf63";
 });    
 ee.setOnMouseLeave(c, function(sender,event) {
     sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = sender.initColor;
+    sender.childNodes[0].style.color = sender.v_defaultColor;
 });
-root.v_btn2 = c;
-c.userPage=root.v_mode.charAt(3);
-ee.setOnClick(c,function(sender,event) {
-    ee.setVisible(ee.getControl("panel40"), true);
-    var e = event || window.event;
-    ee.setRect(ee.getControl("panel124"), e.clientX - eb.getDivRect(ee.getControl("panel124")).w +20, e.clientY - 20, null, null);
-    ee.getControl("panel124").setMode(sender.parentNode.v_isForward);
-    ee.showAni(ee.getControl("panel124"), 0);
-    newTwitter.uplinkId = sender.parentNode.v_content.id;
-    newTwitter.userPage = sender.userPage;
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
-});
+c.init(root.v_content.isForward ? 1:0);
 
 //button3
 c = createPanel(root, root.id+"_sbutton03", "", b3, cy, 36, 36);
@@ -27473,13 +27487,25 @@ if (root.v_mode.charAt(2) != "x") {
     addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
     c.init(root.v_content.reCount);
     //label2
-    c = createPanel(root, root.id+"_panel4", "", b2+35, cy+7, 40, 22);
+    c = createPanel(root, root.id+"_panel5", "", b2+35, cy+7, 40, 22);
     root.c_label2 = c;
-    if (root.v_content.isForward) {
-        addText(c, root.v_content.fwCount=="0" ? "":root.v_content.fwCount, "left", "middle", "Arial", 12, "17bf63", "");
-    } else {
-        addText(c, root.v_content.fwCount=="0" ? "":root.v_content.fwCount, "left", "middle", "Arial", 12, "657786", "");
+    c.v_styleIndex = 0;
+    c.init = function(styleIndex,text) {
+        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+        this.v_styleIndex = styleIndex;
+        if (this.v_styleIndex == 0) {
+            ee.setTextColor(this, "#657786)");
+        } else {
+            ee.setTextColor(this, "#17bf63");
+        }
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
     }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.isForward ? 1:0, root.v_content.fwCount);
     //label3
     c = createPanel(root, root.id+"_panel5", "", b3+35, cy+7, 40, 22);
     root.c_label3 = c;
