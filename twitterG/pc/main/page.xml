@@ -17918,7 +17918,13 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
         if (newTwitter.busy) return;
         newTwitter.content="";
         newTwitter.uplinkType="L";
-        newTwitter.uplinkId = v_content.id;
+        var realContentId;
+        if (v_content.uplinkType=="L") {
+            realContentId = v_content.id.substr(0, v_content.id.length-1);
+        } else {
+            realContentId = v_content.id;
+        }
+        newTwitter.uplinkId = realContentId;
         newTwitter.photos=new Array();
         newTwitter.onComplete = function(contentId) {
         }
@@ -17928,6 +17934,7 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
             v_content.isForward = false;
             v_content.fwCount--;
             if (v_content.fwCount<0) v_content.fwCount = 0;
+            g5.deleteTwitter(realContentId + "L");
         } else {
             v_content.isForward = true;
             v_content.fwCount++;
@@ -17936,6 +17943,7 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
             v_newContent.uplinkType = "L";
             g5.p2.p2.insert(v_newContent, v_content, g5.myUserInfo, v_userInfo);
         }
+        v_content.id = realContentId;
         g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
     });
     ee.setVisible(this.parentNode, true);
@@ -26357,7 +26365,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="76">
+  <g5Items count="77">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -26902,6 +26910,7 @@ if (root.v_content.uplinkType == "L") {
     //direct forward
     root.v_content = root.v_reContent.clone();
     root.v_content.uplinkType = "L";
+    root.v_content.id += "L";
     var uiTemp = root.v_userInfo;
     root.v_userInfo = root.v_reUserInfo;
     root.v_reUserInfo = uiTemp;
@@ -27692,6 +27701,41 @@ for (var i=0; i<task.length; i++) {
         item = items[j];
         if (item.v_content.id != v_content.id) continue;
         g5.modifyTwitter(item,v_content,v_reContent,v_userInfo,v_reUserInfo);
+    }
+}
+
+
+]]></functionCode>
+    </item>
+    <item name="deleteTwitter" type="20">
+      <varValue />
+      <functionParam>contentId</functionParam>
+      <functionCode><![CDATA[var task = new Array();
+task.push(g5.p2.p1.v_items);
+task.push(g5.p2.p2.p1Items);
+task.push(g5.p2.p2.p3Items);
+task.push(g5.p2.p9.v_items);
+task.push(g5.p2.p5.v_items);
+task.push(g5.p2.p11.c_pages.c1.v_items);
+task.push(g5.p2.p11.c_pages.c2.v_items);
+task.push(g5.p2.p11.c_pages.c4.v_items);
+task.push(g5.p2.p11.c_pages.c5.v_items);
+
+var items,item;
+var i=0;
+for (var i=0; i<task.length; i++) {
+    items = task[i];
+    var j=0;
+    while (j < items.length) {
+        item = items[j];
+        if (item.v_content.id != contentId) {
+            j++;
+            continue;
+        }
+        var rect = eb.getDivRect(item);
+        ee.removeControl(item);
+        items.splice(j,1);
+        g5.batchMoveY(items, j, - rect.h);
     }
 }
 
