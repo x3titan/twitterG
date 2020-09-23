@@ -1586,7 +1586,7 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     if (this.v_items.length>0) {
         cy = eb.getDivRect(this.v_items[0]).y;
     }
-    item = createPanel(root, "page1_" + v_content.id, "", 0, cy, itemWidth, 5);
+    item = createPanel(root, "p2p1_" + v_content.id, "", 0, cy, itemWidth, 5);
     item.v_content = v_content;
     item.v_reContent = v_reContent;
     item.v_userInfo = v_userInfo;
@@ -1619,7 +1619,7 @@ sender.loadFromServer = function() {
         }
         var item = null;
         for (i=0; i< dataset.rowCount; i++) {
-            item = createPanel(root, "page1_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            item = createPanel(root, "p2p1_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
             if (item.v_content.status == "DEL") {
                 ee.removeControl(item);
@@ -2423,9 +2423,9 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
         cy = eb.getDivRect(items[0]).y;
     }
     if (pageIndex == 1) {
-        item = createPanel(root, "page1_" + v_content.id, "", 0, cy, itemWidth, 5);
+        item = createPanel(root, "p2p2p1_" + v_content.id, "", 0, cy, itemWidth, 5);
     } else if (pageIndex == 3) {
-        item = createPanel(root, "puser3_" + v_content.id, "", 0, cy, itemWidth, 5);
+        item = createPanel(root, "p2p2p3_" + v_content.id, "", 0, cy, itemWidth, 5);
     }
     item.v_content = v_content;
     item.v_reContent = v_reContent;
@@ -3078,7 +3078,7 @@ sender.updateP3 = function() {
             for (j=0; j<sender.parentNode.p3Items; j++) {
                 if (sender.parentNode.p3Items[j].v_contentId == dataset.getData(0,i)) break;    
             }
-            item = createPanel(root, "puser3_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            item = createPanel(root, "p2p2p3_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
             item.v_mode = "   x";
             g5.renderTwitter(item);
@@ -17888,8 +17888,8 @@ ee.showAni(ee.getControl("panel117"), 0);
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>374</left>
-      <leftRatio>0.315611814345992</leftRatio>
+      <left>372</left>
+      <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
       <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel125");
 sender.c_button2 = ee.getControl("panel126");
@@ -17946,6 +17946,9 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
         v_content.id = realContentId;
         g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
     });
+    ee.setOnClick(this.c_button2, function(button2, event) {
+        g5.popBlack.a3.showFw(v_content.clone(),v_reContent.clone(),v_userInfo,v_reUserInfo);
+    });
     ee.setVisible(this.parentNode, true);
     ee.showAni(this, 0);
 }
@@ -17955,8 +17958,8 @@ sender.close = function() {
 }
 ]]></onCreate>
       <sizeRatio>0.605882352941176</sizeRatio>
-      <top>335</top>
-      <topRatio>0.420854271356784</topRatio>
+      <top>341</top>
+      <topRatio>0.428391959798995</topRatio>
       <width>170</width>
       <widthRatio>0.143459915611814</widthRatio>
     </control>
@@ -17991,8 +17994,6 @@ sender.close = function() {
       <heightRatio>0.485436893203884</heightRatio>
       <left>0</left>
       <note>c_button2</note>
-      <onClick>newTwitter.uplinkType = "F";
-g5.popBlack.a3.show("带评论转发");</onClick>
       <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> 带评论转发");]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
@@ -18830,7 +18831,40 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
 }
 
 sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
-    //函数代码
+    this.init("带评论转发");
+    v_content = v_content.clone();
+    v_reContent = v_reContent.clone();
+    this.onComplete = function() {
+        if (newTwitter.busy) return;
+        newTwitter.uplinkType = "F";
+        newTwitter.uplinkId = v_content.id;
+        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.photos = sender.c_photos.v_photos;
+        newTwitter.onComplete = function(contentId) {
+            ee.showAni(sender, 1);
+            var newContent = new g5.ContentInfo();
+            newContent.id = contentId;
+            newContent.seconds = 0;
+            newContent.status = "IDL";
+            newContent.uplinkType = "F";
+            newContent.uplinkId = v_content.id;
+            newContent.content = newTwitter.content;
+            newContent.photos = newTwitter.photos;
+            newContent.reCount = 0;
+            newContent.fwCount = 0;
+            newContent.likeCount = 0;
+            newContent.unlikeCount = 0;
+            newContent.isForward = false;
+            newContent.isLike = false;
+            newContent.isUnlike = false;
+            g5.p2.p1.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
+            g5.p2.p2.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
+            v_content.fwCount++;
+            g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
+        }
+        newTwitter();
+    }
+    ee.showAni(this, 0);
 }]]></onCreate>
       <sizeRatio>1.1484962406015</sizeRatio>
       <top>92</top>
