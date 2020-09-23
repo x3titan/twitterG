@@ -17931,14 +17931,12 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
         } else {
             v_content.isForward = true;
             v_content.fwCount++;
+            v_newContent = new g5.ContentInfo();
+            v_newContent.id = v_content.id + "L";
+            v_newContent.uplinkType = "L";
+            g5.p2.p2.insert(v_newContent, v_content, g5.myUserInfo, v_userInfo);
         }
         g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
-        if (v_content.isForward) {
-            //del
-        } else {
-            //add
-            
-        }
     });
     ee.setVisible(this.parentNode, true);
     ee.showAni(this, 0);
@@ -26902,20 +26900,25 @@ if (root.v_content.status=="DEL") {
 
 if (root.v_content.uplinkType == "L") {
     //direct forward
+    root.v_content = root.v_reContent.clone();
+    root.v_content.uplinkType = "L";
+    var uiTemp = root.v_userInfo;
+    root.v_userInfo = root.v_reUserInfo;
+    root.v_reUserInfo = uiTemp;
     c = createPanel(root, root.id+"_forward01", "", 50, cy, 400, 19); cy+=22;
     var sTemp = "<svg viewBox=\"0 -2 34 34\" style='height: 1.25rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.icon.forward+"</svg>";
     sTemp += " <div id='"+root.id+"_fwL01' style='display:inline;'>";
-    if (g5.userName==root.v_userInfo.userName) {
+    if (g5.myUserInfo.userName==root.v_reUserInfo.userName) {
         sTemp += "你";
     } else {
-        sTemp += root.v_userInfo.nickName + " ";
+        sTemp += root.v_reUserInfo.nickName + " ";
     }
     sTemp += "转发了</div>";    
     addText(c, sTemp, "left", "middle", "微软雅黑", 10, "#657786", "normal");
     c.fw=$g(root.id+"_fwL01");
     c.userName = root.v_userInfo.userName;
     ee.setOnClick(c,function(sender,event) {
-        g5.p2.p2.show(root.v_userInfo);
+        g5.p2.p2.show(root.v_reUserInfo);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     ee.setOnMouseEnter(c,function(sender,e){
@@ -26924,29 +26927,7 @@ if (root.v_content.uplinkType == "L") {
     ee.setOnMouseLeave(c,function(sender,e){
         sender.fw.style.textDecoration="";
     });
-
-    root.v_userInfo = root.v_reUserInfo;
-    //root.v_userInfo.userName = root.v_reUserInfo.userName;
-    //root.v_userInfo.nickName = root.v_reUserInfo.nickName;
-    //root.v_userInfo.photo = root.v_reUserInfo.photo;
-    
-    root.id = root.id.substr(0,root.id.length-(root.v_content.id+"").length) + root.v_content.uplinkId + "L";
-    var uid = root.v_content.uplinkId;
-    var utp = root.v_content.uplinkType;
-    root.v_content = root.v_reContent;
-    root.v_content.uplinkType = utp;
-    root.v_content.uplinkId = uid;
-    //root.v_content.seconds = root.v_reContent.seconds;
-    //root.v_content.id = root.v_content.uplinkId;
-    //root.v_photo1 = root.v_reContent.photo1;
-    ////root.v_content = root.v_reContent;
-    //root.v_content.reCount = root.v_reContent.reCount;
-    //root.v_content.fwCount = root.v_reContent.fwCount;
-    //root.v_content.likeCount = root.v_reContent.likeCount;
-    //root.v_content.isForward = root.v_reContent.isForward;
-    //root.v_content.isLike = root.v_reContent.isLike
 }
-
 
 //avata image box
 c = createPanel(root, root.id+"_panel13", "", 16, cy, 50, 50);
