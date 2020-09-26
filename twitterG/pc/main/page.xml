@@ -17828,9 +17828,11 @@ sender.c_button2 = ee.getControl("panel111");
 sender.style.borderRadius = "6px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
 
-sender.show = function(refDiv, content, userInfo) {
-    this.v_content = content.clone();
-    this.v_userInfo = userInfo;
+sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    this.v_content = v_content.clone();
+    this.v_reContent = v_reContent.clone();
+    this.v_userInfo = v_userInfo;
+    this.v_reUserInfo = v_reUserInfo;
     var rect = g5.getRectAbs(refDiv);
     if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
         ee.setRect(this, rect.x - 50, rect.y - eb.getDivRect(this).h - 10, null, null);
@@ -17849,33 +17851,7 @@ ee.setOnClick(sender.c_button1, function(c_button1, event) {
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","确认删除","#ffffff","#ffffff","#ffffff","")],
         function() {
-            var v_content = sender.v_content;
-            var v_userInfo = sender.v_userInfo;
-            if (v_content.uplinkType == "L") {
-                if (newTwitter.busy) return;
-                newTwitter.content="";
-                newTwitter.uplinkType="L";
-                var realContentId;
-                realContentId = v_content.id.substr(0, v_content.id.length-1);
-                newTwitter.uplinkId = realContentId;
-                newTwitter.photos=new Array();
-                newTwitter.onComplete = function(contentId) {
-                }
-                newTwitter();
-                v_content.isForward = false;
-                v_content.fwCount--;
-                if (v_content.fwCount<0) v_content.fwCount = 0;
-                g5.deleteTwitter(realContentId + "L");
-                v_content.id = realContentId;
-                g5.syncTwitter(v_content,null,v_userInfo,null);
-            } else {
-                if (delTwitter.busy) return;
-                delTwitter.contentId = v_content.id;
-                delTwitter.onComplete = function() {
-                }
-                delTwitter();
-                g5.deleteTwitter(v_content.id);
-            }
+            g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
         }
     );
 });]]></onCreate>
@@ -26450,7 +26426,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="77">
+  <g5Items count="81">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -27066,7 +27042,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
 root.v_btn1 = c;
 ee.setOnClick(c,function(sender,event) {
     if (sender.parentNode.v_userInfo.id==g5.myUserInfo.id) {
-        g5.popup1.p1.show(sender, root.v_content, root.v_userInfo);
+        g5.popup1.p1.show(sender, root.v_content, root.v_reContent, root.v_userInfo, root.v_reUserInfo);
     } else {
         g5.popup1.p3.show(sender, root.v_content, root.v_userInfo);
     }
@@ -27135,7 +27111,18 @@ if (root.v_mode.charAt(2)=="x") {
 if (root.v_mode.substr(0,2)!="  ") {
     //root.v_content.uplinkType = "";
 }
-if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_content.photos.length>0) &amp;&amp; (root.v_reContent.photos.length>0)) {
+
+if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_reContent.status == "DEL")) {
+    c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  此发言不可用。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock();
+    cy+=20;
+} else if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_content.photos.length>0) &amp;&amp; (root.v_reContent.photos.length>0)) {
     c = createPanel(root, root.id+"_panel2", "", 75, cy-7, mainWidth-2, 146);
     cy += 146 + 10;
     var p1w = mainWidth-2;
@@ -27731,8 +27718,137 @@ for (var i=0; i<task.length; i++) {
     </item>
     <item name="deleteTwitter" type="20">
       <varValue />
-      <functionParam>contentId</functionParam>
-      <functionCode><![CDATA[var task = new Array();
+      <functionParam>v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
+      <functionCode><![CDATA[v_content = v_content.clone();
+v_reContent = v_reContent.clone();
+
+if (v_content.uplinkType == "L") {
+    if (newTwitter.busy) return;
+    newTwitter.content="";
+    newTwitter.uplinkType="L";
+    var realContentId;
+    realContentId = v_content.id.substr(0, v_content.id.length-1);
+    newTwitter.uplinkId = realContentId;
+    newTwitter.photos=new Array();
+    newTwitter.onComplete = function(contentId) {
+    }
+    newTwitter();
+    v_content.isForward = false;
+    v_content.fwCount--;
+    if (v_content.fwCount<0) v_content.fwCount = 0;
+    g5.contentDel(realContentId + "L", function() {
+    });
+    v_content.id = realContentId;
+    g5.syncTwitter(v_content,null,v_userInfo,null);
+    return;
+}
+
+if (delTwitter.busy) return;
+delTwitter.contentId = v_content.id;
+delTwitter.onComplete = function() {
+}
+delTwitter();
+g5.contentDel(v_content.id, function() {
+    var buffs = g5.contentGetAllBuff();
+    var i, j, items, item, newContent, newReContent;
+    for (i=0; i<buffs.length; i++) {
+        items = buffs[i];
+        j = 0;
+        while (j<items.length) {
+            item = items[j];
+            //downlink L
+            if (item.v_content.id == v_content.id + "L") {
+                var rect = eb.getDivRect(item);
+                ee.removeControl(item);
+                items.splice(j,1);
+                g5.batchMoveY(items,j,-rect.h);
+                continue;
+            }
+            //downlink R F
+            if (item.v_reContent.id == v_content.id) {
+                if (item.v_content.uplinkType == "F") {
+                    newContent = item.v_content.clone();
+                    newReContent = item.v_reContent.clone();
+                    newReContent.status = "DEL";
+                    g5.contentRenew(items, j, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
+                }
+            }
+            //uplink
+            if (v_content.uplinkType != "N") {
+                if (item.v_content.id == v_reContent.id) {
+                    newContent = item.v_content.clone();
+                    newReContent = item.v_reContent.clone();
+                    if (v_content.uplinkType == "R") {
+                        if (newContent.reCount>0) newContent.reCount--;
+                    } else if (v_content.uplinkType == "F") {
+                        if (newContent.fwCount>0) newContent.fwCount--;
+                    }
+                    g5.modifyTwitter(item, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
+                }
+            }
+            j++;
+        }
+    }
+});
+
+
+
+
+]]></functionCode>
+    </item>
+    <item name="contentDel" type="20">
+      <varValue />
+      <functionParam>contentId, onComplete</functionParam>
+      <functionCode><![CDATA[var task = g5.contentGetAllBuff();
+var currentPage = g5.contentGetCurrentBuff();
+
+var items,item;
+var i=0;
+var hasAni = false;
+for (var i=0; i<task.length; i++) {
+    items = task[i];
+    var j=0;
+    while (j < items.length) {
+        item = items[j];
+        if (item.v_content.id != contentId) {
+            j++;
+            continue;
+        }
+        var rect = eb.getDivRect(item);
+        if (currentPage == items) {
+            eb.setAni2(item,1,"disappear", "rightFlyOut", "null", 0, true);
+            var aniItem = item;
+            var aniItems = items;
+            var aniItemIndex = j;
+            var aniHeight = rect.h;
+            eb.setAniEvent(aniItem,1,function(){}, function(sender) {
+                ee.removeControl(aniItem);
+                aniItems.splice(aniItemIndex,1);
+                g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
+                if (onComplete) onComplete();
+            });
+            ee.showAni(aniItem, 1);
+            hasAni = true;
+            break;
+        } else {
+            ee.removeControl(item);
+            items.splice(j,1);
+            g5.batchMoveY(items, j, - rect.h);
+        }
+    }
+}
+if (!hasAni) {
+    if (onComplete) onComplete();
+}
+
+
+
+]]></functionCode>
+    </item>
+    <item name="contentGetAllBuff" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode>var task = new Array();
 task.push(g5.p2.p1.v_items);
 task.push(g5.p2.p2.p1Items);
 task.push(g5.p2.p2.p3Items);
@@ -27742,7 +27858,16 @@ task.push(g5.p2.p11.c_pages.c1.v_items);
 task.push(g5.p2.p11.c_pages.c2.v_items);
 task.push(g5.p2.p11.c_pages.c4.v_items);
 task.push(g5.p2.p11.c_pages.c5.v_items);
-var currentPage = null;
+return task;
+
+
+
+</functionCode>
+    </item>
+    <item name="contentGetCurrentBuff" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode>var currentPage = null;
 if (g5.currentPageIndex == 0) {
     currentPage = g5.p2.p1.v_items;
 } else if (g5.currentPageIndex == 1) {
@@ -27766,48 +27891,30 @@ if (g5.currentPageIndex == 0) {
         currentPage = g5.p2.p11.c_pages.c5.v_items;
     }
 }
-
-var items,item;
-var i=0;
-for (var i=0; i<task.length; i++) {
-    items = task[i];
-    var j=0;
-    while (j < items.length) {
-        item = items[j];
-        if (item.v_content.id != contentId) {
-            j++;
-            continue;
-        }
-        var rect = eb.getDivRect(item);
-        if (currentPage == items) {
-            eb.setAni2(item,1,"disappear", "rightFlyOut", "null", 0, true);
-            var aniItem = item;
-            var aniItems = items;
-            var aniItemIndex = j;
-            var aniHeight = rect.h;
-            eb.setAniEvent(aniItem,1,function(){}, function(sender) {
-                ee.removeControl(aniItem);
-                aniItems.splice(aniItemIndex,1);
-                g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
-            });
-            ee.showAni(aniItem, 1);
-            break;
-        } else {
-            ee.removeControl(item);
-            items.splice(j,1);
-            g5.batchMoveY(items, j, - rect.h);
-        }
-    }
-}
-return;
-eb.setAni2(root,1,"disappear", "rightFlyOut", "null", 0, true);
-eb.setAniEvent(root,1,function(){}, function(sender) {
-    g5.deletePage1(sender);
-});
-
-
-
-]]></functionCode>
+return currentPage;</functionCode>
+    </item>
+    <item name="contentRenew" type="20">
+      <varValue />
+      <functionParam>items, index, v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
+      <functionCode>var item = items[index];
+var root = item.parentNode;
+var rect = eb.getDivRect(item);
+var itemId = item.id;
+var itemMode = item.v_mode;
+ee.removeControl(item);
+item = createPanel(root, itemId, "", 0, rect.y, rect.w, 5);
+item.v_mode = itemMode;
+item.v_content = v_content;
+item.v_reContent = v_reContent;
+item.v_userInfo = v_userInfo;
+item.v_reUserInfo = v_reUserInfo;
+g5.renderTwitter(item);
+item.style.borderLeft="";    
+item.style.borderRight="";    
+items[index] = item;
+var newRect = eb.getDivRect(item);
+g5.batchMoveY(items, index, newRect.h - rect.h);
+</functionCode>
     </item>
     <item name="syncTwitterOld" type="20">
       <varValue />
