@@ -7490,7 +7490,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
 
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId) {
     if (showTopic.busy) return;
-    
+   
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
     
@@ -7498,9 +7498,14 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         this.v_content = null;
         showTopic.topicId = contentId;
         showTopic.needRefresh = true;
+        this.v_preShow = false;
     } else {
+        v_content = v_content.clone();
+        if (eb.isEmpty(v_reContent)) v_reContent = new g5.ContentInfo();
+        if (eb.isEmpty(v_reUserInfo)) v_reUserInfo = new g5.UserInfo();
         showTopic.topicId = v_content.id;
         showTopic.needRefresh = true;
+        this.v_preShow = true;
         this.preShow(v_content, v_reContent, v_userInfo, v_reUserInfo);
     }
     showTopic.onComplete = function(datasetFw, datasetBk) {
@@ -7511,9 +7516,15 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         }
         var cy = eb.getDivRect(g5.p4).h-3;
       
-        for (i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+        var preShowItem;
+        if (sender.v_preShow) {
+            preShowItem = sender.v_items[0];
+        } else {
+            for (i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+            g5.changeP2(7);
+        }
         sender.v_items = new Array();
-        
+                
         var itemWidth = eb.getDivRect(root).w;
         var uType,dType;
         var lastCy = -1;
@@ -7541,19 +7552,25 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         scrollY += 2;
         
         var item = null;
+        var scrollTop = 0;
         for (i=0; i< datasetFw.rowCount; i++) {
             uType = " "; dType = " ";
             if ((i==0) &amp;&amp; (datasetBk.rowCount>0)) {
                 uType="T"; dType = " ";
             }
-            if (i==0) dType += "x";
-            item = createPanel(root, "page8_" + datasetFw.getData(0,i), "", 0, cy, itemWidth, 5);
-            g5.loadTwitterRecord(item, datasetFw, i);
-            item.v_mode = uType + dType;
-            g5.renderTwitter(item);        
+            if (sender.v_preShow &amp;&amp; i==0) {
+                item = preShowItem;
+                ee.setRect(item,null,cy,null,null);
+            } else {
+                if (i==0) dType += "x";
+                item = createPanel(root, "page8_" + datasetFw.getData(0,i), "", 0, cy, itemWidth, 5);
+                g5.loadTwitterRecord(item, datasetFw, i);
+                item.v_mode = uType + dType;
+                g5.renderTwitter(item);        
+            }
             sender.v_items.push(item);
             if (i==0) {
-                g5.mainDiv.scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
+                scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
             }
             cy += eb.getDivRect(item).h;    
         }
@@ -7566,29 +7583,10 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             eb.setDivRect(g5.p2,null,null,null,cy+200);
             eb.setDivRect(g5.p2.p9,null,null,null,cy+200);
         }
+        g5.mainDiv.scrollTop = scrollTop;
         eb.processDock();
         
         showTopic.needRefresh = false;
-        
-        if (sender.v_content == null) {
-            g5.changeP2(7);
-            return;
-        } else {
-            return;
-        }
-        
-        var dTime = (new Date()).getTime() - showTopic.startTime;
-        if (dTime>50) {
-            if (g5.currentPageIndex == 7) g5.changeP2(-1);
-            g5.changeP2(7);
-            //g5.mainDiv.scrollTop = scrollY;
-        } else {
-            setTimeout(function() { 
-                if (g5.currentPageIndex == 7) g5.changeP2(-1);
-                g5.changeP2(7);
-                //g5.mainDiv.scrollTop = scrollY;
-            }, 50-dTime);
-        }
     }
     showTopic();
 }
@@ -7605,11 +7603,15 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     var itemWidth = eb.getDivRect(this).w;
     item = createPanel(this, "page8_" + v_content.id, "", 0, cy, itemWidth, 5);
     item.v_content = v_content;
-    item.v_content.photos = new Array();
+    //item.v_content.photos = new Array();
     item.v_reContent = v_reContent;
     item.v_userInfo = v_userInfo;
     item.v_reUserInfo = v_reUserInfo;
-    item.v_mode = "  x";
+    if (v_content.uplinkType=="N") {
+        item.v_mode = "  x";
+    } else {
+        item.v_mode = "T x";
+    }
     g5.renderTwitter(item);        
     sender.v_items.push(item);
     g5.mainDiv.scrollTop = 0;
