@@ -2195,6 +2195,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2411,6 +2412,7 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
         root = this.p2sub.p3;
         items = this.p3Items;
     }
+    if (!showUserPage.v_userInfo) return;
     if (v_userInfo.id != showUserPage.v_userInfo.id) return;
     
     if (pageIndex == 1) {
@@ -7483,7 +7485,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 
@@ -19581,7 +19582,7 @@ sender.show = function() {
 }</onCreate>
       <sizeRatio>0.658959537572254</sizeRatio>
       <top>284</top>
-      <topRatio>0.35929648241206</topRatio>
+      <topRatio>0.35678391959799</topRatio>
       <width>346</width>
       <widthRatio>0.291983122362869</widthRatio>
     </control>
@@ -26594,11 +26595,12 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
       <varValue><![CDATA[function() {
     this.size = 17;
     this.init = function() {
-        this.photos = new Array();
-        if (this.photo1.length>0) this.photos.push(this.photo1);
-        if (this.photo2.length>0) this.photos.push(this.photo2);
-        if (this.photo3.length>0) this.photos.push(this.photo3);
-        if (this.photo4.length>0) this.photos.push(this.photo4);
+        if (this.photos.length<=0) {
+            if (this.photo1.length>0) this.photos.push(this.photo1);
+            if (this.photo2.length>0) this.photos.push(this.photo2);
+            if (this.photo3.length>0) this.photos.push(this.photo3);
+            if (this.photo4.length>0) this.photos.push(this.photo4);
+        }
         this.reCount = parseInt(this.reCount=="" ? "0":this.reCount);
         this.fwCount = parseInt(this.fwCount=="" ? "0":this.fwCount);
         this.likeCount = parseInt(this.likeCount=="" ? "0":this.likeCount);
@@ -26663,6 +26665,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         r.isForward = this.isForward;
         r.isLike = this.isLike;
         r.isUnlike = this.isUnlike;
+        for (var i=0; i<this.photos.length; i++) r.photos.push(this.photos[i]);
         r.init();
         return r;
     }
@@ -26683,6 +26686,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     this.isForward = false;
     this.isLike = false;
     this.isUnlike = false;
+    this.photos = new Array();
 }
 ]]></varValue>
       <functionParam />
