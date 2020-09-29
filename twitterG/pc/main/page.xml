@@ -18835,7 +18835,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
     this.onComplete = function() {
         if (newTwitter.busy) return;
         var realContentId = v_content.id;
-        if (realContentId.charAt(realContentId.length-1)=="F") realContentId = realContentId.substr(0, realContentId.length-1);
+        if (realContentId.charAt(realContentId.length-1)=="L") realContentId = realContentId.substr(0, realContentId.length-1);
         newTwitter.uplinkType = "R";
         newTwitter.uplinkId = realContentId;
         newTwitter.content = ee.getEditText(sender.c_input);
@@ -18873,8 +18873,10 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
     v_reContent = v_reContent.clone();
     this.onComplete = function() {
         if (newTwitter.busy) return;
+        var realContentId = v_content.id;
+        if (realContentId.charAt(realContentId.length-1)=="L") realContentId = realContentId.substr(0, realContentId.length-1);
         newTwitter.uplinkType = "F";
-        newTwitter.uplinkId = v_content.id;
+        newTwitter.uplinkId = realContentId;
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
@@ -18884,7 +18886,7 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.seconds = 0;
             newContent.status = "IDL";
             newContent.uplinkType = "F";
-            newContent.uplinkId = v_content.id;
+            newContent.uplinkId = realContentId;
             newContent.content = newTwitter.content;
             newContent.photos = newTwitter.photos;
             newContent.reCount = 0;
