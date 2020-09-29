@@ -2307,19 +2307,26 @@ sender.showByUserInfo = function(v_userInfo) {
     var cy = eb.getDivRect(ee.getControl("panel21")).y + eb.getDivRect(ee.getControl("panel21")).h;
     var vspace = 2;
     cy += vspace;
+    //note
     if (v_userInfo.note != "") {
+        ee.setRect(ee.getControl("panel69"), null, null, null, 5);
         eb.getDivRect(ee.getControl("panel69")).y = cy;
         ee.setText(ee.getControl("panel69"), v_userInfo.note);
         ee.setVisible(ee.getControl("panel69"), true);
         ee.setRect(ee.getControl("panel69"),null,null,null, eb.getDivRect(ee.getControl("panel69").label).h);
         cy += vspace + eb.getDivRect(ee.getControl("panel69")).h;
+    } else {
+        ee.setVisible(ee.getControl("panel69"), false);
     }
+    //homepage
     if (v_userInfo.homePage != "") {
         eb.setDivRect(ee.getControl("layoutx6"),null,cy,null,null);
         ee.setText(ee.getControl("layoutxitem12"), v_userInfo.homePage);
         ee.getControl("layoutxitem12").homePage = v_userInfo.homePage;
         ee.setVisible(ee.getControl("layoutx6"), true);
         cy += vspace + eb.getDivRect(ee.getControl("layoutx6")).h;
+    } else {
+        ee.setVisible(ee.getControl("layoutx6"), false);
     }
     
     eb.setDivRect(ee.getControl("layoutx7"),null,cy,null,null);
@@ -7485,6 +7492,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 
@@ -18315,7 +18323,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18766,7 +18773,6 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>326</left>
       <leftRatio>0.275105485232068</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -18828,8 +18834,10 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
     this.init("回复发言");
     this.onComplete = function() {
         if (newTwitter.busy) return;
+        var realContentId = v_content.id;
+        if (realContentId.charAt(realContentId.length-1)=="F") realContentId = realContentId.substr(0, realContentId.length-1);
         newTwitter.uplinkType = "R";
-        newTwitter.uplinkId = v_content.id;
+        newTwitter.uplinkId = realContentId;
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
@@ -18839,7 +18847,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.seconds = 0;
             newContent.status = "IDL";
             newContent.uplinkType = "R";
-            newContent.uplinkId = v_content.id;
+            newContent.uplinkId = realContentId;
             newContent.content = newTwitter.content;
             newContent.photos = newTwitter.photos;
             newContent.reCount = 0;
@@ -26608,6 +26616,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         this.likeCount = parseInt(this.likeCount=="" ? "0":this.likeCount);
         this.unlikeCount = parseInt(this.unlikeCount=="" ? "0":this.unlikeCount);
         this.seconds = parseInt(this.seconds=="" ? "0":this.seconds);
+        this.startTime = parseInt((new Date()).getTime()/1000)-this.seconds
     }
     this.loadFromDataset = function(ds, x, idx) {
         this.id = ds.getData(x+0,idx);    
@@ -26669,6 +26678,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         r.isUnlike = this.isUnlike;
         for (var i=0; i<this.photos.length; i++) r.photos.push(this.photos[i]);
         r.init();
+        r.startTime = this.startTime;
         return r;
     }
     this.id = "0";
@@ -26689,6 +26699,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     this.isLike = false;
     this.isUnlike = false;
     this.photos = new Array();
+    this.init();
 }
 ]]></varValue>
       <functionParam />
@@ -27015,7 +27026,6 @@ if (root.v_mode.charAt(2) != "x") {
 addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
 if (root.v_mode.charAt(2) != "x") {
     root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
-    root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_content.seconds
 }
 c.v_username = root.v_userInfo.userName;
 root.c_titleText = c.label.rows[0].cells[0].childNodes[0];
@@ -28264,46 +28274,20 @@ return y;]]></functionCode>
       <varValue />
       <functionParam>refresh</functionParam>
       <functionCode><![CDATA[//process time
-if (!eb.isEmpty(g5.itemsHome)) {
-    for (var i=0; i<g5.itemsHome.length; i++) {
-        var now = parseInt((new Date()).getTime()/1000);    
-        var time = now-g5.itemsHome[i].v_startTime;
-        if (time>=24*60*60) break;
-        time=g5.getMins(time);
-        if (!eb.isEmpty(g5.itemsHome[i].v_timeLabel)) {
-            if (g5.itemsHome[i].v_timeLabel.innerHTML!=time) {
-                g5.itemsHome[i].v_timeLabel.innerHTML = time;
-            }
+var currentItems = g5.contentGetCurrentBuff();
+if (!currentItems) currentItems = new Array();
+for (var i=0; i<currentItems.length; i++) {
+    var item = currentItems[i];
+    var now = parseInt((new Date()).getTime()/1000);    
+    var time = now-item.v_content.startTime;
+    if (time>=24*60*60) continue;
+    time=g5.getMins(time);
+    if (item.v_timeLabel) {
+        if (item.v_timeLabel.innerHTML!=time) {
+            item.v_timeLabel.innerHTML = time;
         }
     }
 }
-if (!eb.isEmpty(g5.itemsPageUser)) {
-    for (var i=0; i<g5.itemsPageUser.length; i++) {
-        var now = parseInt((new Date()).getTime()/1000);    
-        var time = now-g5.itemsPageUser[i].v_startTime;
-        if (time>=24*60*60) break;
-        time=g5.getMins(time);
-        if (!eb.isEmpty(g5.itemsPageUser[i].v_timeLabel)) {
-            if (g5.itemsPageUser[i].v_timeLabel.innerHTML!=time) {
-                g5.itemsPageUser[i].v_timeLabel.innerHTML = time;
-            }
-        }
-    }
-}
-if (!eb.isEmpty(showTopic.items)) {
-    for (var i=0; i<showTopic.items.length; i++) {
-        var now = parseInt((new Date()).getTime()/1000);    
-        var time = now-showTopic.items[i].v_startTime;
-        if (time>=24*60*60) break;
-        time=g5.getMins(time);
-        if (!eb.isEmpty(showTopic.items[i].v_timeLabel)) {
-            if (showTopic.items[i].v_timeLabel.innerHTML!=time) {
-                showTopic.items[i].v_timeLabel.innerHTML = time;
-            }
-        }
-    }
-}
-  
 
 var cw = $g("divRoot").offsetWidth;    
 if (eb.isEmpty(refresh)) refresh = false;
@@ -28714,11 +28698,14 @@ if (g5.myUserInfo.titleBg == "") {
       <varValue />
       <functionParam>seconds</functionParam>
       <functionCode><![CDATA[seconds = parseInt(seconds);
-if (seconds<60) return seconds+"秒";
+var a;
+if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + "秒";
 if (seconds<60*60) {
-    return parseInt(seconds/60) + "分" + (seconds%60) + "秒";
+    a = seconds%60;
+    return parseInt(seconds/60) + "分" + (a<10 ? "0"+a:a) + "秒";
 } else if (seconds<60*60*24) {
-    return parseInt(seconds/60/60) + "小时" + parseInt((seconds%(60*60))/60) + "分钟";
+    a = parseInt((seconds%(60*60))/60);
+    return parseInt(seconds/60/60) + "小时" + (a<10 ? "0"+a:a) + "分钟";
 } else {
     var time = new Date((new Date()).getTime()-seconds*1000);
     return (time.getMonth()+1) + "月" + (time.getDate()+1) + "日";
