@@ -17746,7 +17746,6 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17924,7 +17923,6 @@ ee.setOnClick(sender.c_button1, function(c_button1, event) {
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -17971,7 +17969,7 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
             v_content.isForward = false;
             v_content.fwCount--;
             if (v_content.fwCount<0) v_content.fwCount = 0;
-            g5.deleteTwitter(realContentId + "L");
+            g5.contentDel(realContentId + "L", function() {});
         } else {
             v_content.isForward = true;
             v_content.fwCount++;
@@ -18323,6 +18321,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18773,6 +18772,7 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>326</left>
       <leftRatio>0.275105485232068</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -28280,6 +28280,7 @@ var currentItems = g5.contentGetCurrentBuff();
 if (!currentItems) currentItems = new Array();
 for (var i=0; i<currentItems.length; i++) {
     var item = currentItems[i];
+    if (!item.v_content) continue;
     var now = parseInt((new Date()).getTime()/1000);    
     var time = now-item.v_content.startTime;
     if (time>=24*60*60) continue;
