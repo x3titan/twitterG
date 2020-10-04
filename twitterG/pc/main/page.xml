@@ -17954,15 +17954,23 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
         if (newTwitter.busy) return;
         newTwitter.content="";
         newTwitter.uplinkType="L";
-        var realContentId;
+        var contentIdB;
         if (v_content.exUplinkType=="L") {
-            realContentId = v_content.exContentId;
+            contentIdB = v_content.exContentId;
         } else {
-            realContentId = v_content.id;
+            contentIdB = v_content.id;
         }
-        newTwitter.uplinkId = realContentId;
+        newTwitter.uplinkId = contentIdB;
         newTwitter.photos=new Array();
         newTwitter.onComplete = function(contentId) {
+            if (v_content.isForward) {
+                var v_newContent = v_content.clone();
+                v_newContent.exContentId = v_newContent.id;
+                v_newContent.id = contentId;
+                v_newContent.exUplinkType = "L";
+                v_newContent.exUserInfo = g5.myUserInfo;
+                g5.p2.p2.insert(v_newContent, v_reContent, v_userInfo, v_reUserInfo);
+            }
         }
         newTwitter();
         sender.close();
@@ -17970,16 +17978,12 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
             v_content.isForward = false;
             v_content.fwCount--;
             if (v_content.fwCount<0) v_content.fwCount = 0;
-            g5.contentDel(realContentId + "L", function() {});
+            g5.contentDel(g5.contentGetMyDownlinkId(contentIdB, "L"), function() {});
         } else {
             v_content.isForward = true;
             v_content.fwCount++;
-            v_newContent = new g5.ContentInfo();
-            v_newContent.id = v_content.id + "L";
-            v_newContent.uplinkType = "L";
-            g5.p2.p2.insert(v_newContent, v_content, g5.myUserInfo, v_userInfo);
         }
-        v_content.id = realContentId;
+        v_content.id = contentIdB;
         g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
     });
     ee.setOnClick(this.c_button2, function(button2, event) {
@@ -26493,7 +26497,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="81">
+  <g5Items count="82">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -27939,6 +27943,30 @@ for (var i=0; i<task.length; i++) {
 if (!hasAni) {
     if (onComplete) onComplete();
 }
+
+
+
+]]></functionCode>
+    </item>
+    <item name="contentGetMyDownlinkId" type="20">
+      <varValue />
+      <functionParam>contentId, linkType</functionParam>
+      <functionCode><![CDATA[if (!linkType) linkType = "L";
+var task = g5.contentGetAllBuff();
+var items,item;
+var i,j;
+for (var i=0; i<task.length; i++) {
+    items = task[i];
+    for (j=0; j<items.length; j++) {
+        item = items[j];
+        if (item.v_content.exUplinkType != linkType) continue;
+        if (item.v_content.exUserInfo.id != g5.myUserInfo.id) continue;
+        if (item.v_content.exContentId != contentId) continue;
+        return item.v_content.id;
+    }
+}
+return 0;
+
 
 
 
