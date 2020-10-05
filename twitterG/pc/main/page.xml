@@ -21850,7 +21850,7 @@ if (lastId == 0) {
 }
 
 sql =
-    "SELECT   TOP (15) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
+    "SELECT   TOP (15) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " +
     "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
     "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL  " +
@@ -21883,7 +21883,9 @@ sql =
     "                exUserInfo.titleBg AS exTitleBg, exUserInfo.homePage AS exHomePage, exUserInfo.followCount AS exFollowCount,  " +
     "                exUserInfo.fansCount AS exFansCount, CASE WHEN exFollow.id IS NULL THEN 0 ELSE 1 END AS exIsFollow,  " +
     "                CASE WHEN exBlockList1.id IS NULL THEN 0 ELSE 1 END AS exIsBlock1, CASE WHEN exBlockList2.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId " +
+    "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId,  " +
+    "                CASE WHEN exforwardLink.id IS NULL THEN 0 ELSE 1 END AS exIsForward, CASE WHEN exlikeList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike " +
     "FROM      dbo.blockList AS rBlockList RIGHT OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
@@ -21910,7 +21912,14 @@ sql =
     "                dbo.follow AS exFollow ON exUserInfo.id = exFollow.followId AND exFollow.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS exBlockList1 ON exUserInfo.id = exBlockList1.blockUserId AND  " +
     "                exBlockList1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.blockList AS exBlockList2 ON exUserInfo.id = exBlockList2.userId AND exBlockList2.blockUserId = " + userId + " " +
+    "                dbo.blockList AS exBlockList2 ON exUserInfo.id = exBlockList2.userId AND  " +
+    "                exBlockList2.blockUserId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink AS exForwardLink ON dbo.tContent.exContentId = exForwardLink.contentId AND  " +
+    "                exForwardLink.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
+    "                exLikeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND  " +
+    "                exUnlikeList.userId = " + userId + " " +
     "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
     "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) " + 
     "  AND dbo.tContent.status<>'DEL' " + sql1 +
@@ -21931,7 +21940,7 @@ eio.appendDataSet(sqlResult,
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
     "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
-    "exUplinkType,exContentId",
+    "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     0, 99999);
 
 ]]></script2>
@@ -22307,7 +22316,7 @@ var myUserId = db.getString(sqlResult,"id");
 
 var top = "TOP (" + ((pageIndex+1) * pageSize) + ")";
 var sql =
-    "SELECT   " + top + " dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
+    "SELECT   " + top + " dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " +
     "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
     "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL  " +
@@ -22327,7 +22336,7 @@ var sql =
     "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
     "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
-    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,     " +
+    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
     "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
     "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
@@ -22340,7 +22349,9 @@ var sql =
     "                exUserInfo.titleBg AS exTitleBg, exUserInfo.homePage AS exHomePage, exUserInfo.followCount AS exFollowCount,  " +
     "                exUserInfo.fansCount AS exFansCount, CASE WHEN exFollow.id IS NULL THEN 0 ELSE 1 END AS exIsFollow,  " +
     "                CASE WHEN exBlockList1.id IS NULL THEN 0 ELSE 1 END AS exIsBlock1, CASE WHEN exBlockList2.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId " +
+    "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId,  " +
+    "                CASE WHEN exforwardLink.id IS NULL THEN 0 ELSE 1 END AS exIsForward, CASE WHEN exlikeList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike " +
     "FROM      dbo.blockList AS rBlockList RIGHT OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
@@ -22366,7 +22377,13 @@ var sql =
     "                dbo.follow AS exFollow ON exUserInfo.id = exFollow.followId AND exFollow.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS exBlockList1 ON exUserInfo.id = exBlockList1.blockUserId AND  " +
     "                exBlockList1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.blockList AS exBlockList2 ON exUserInfo.id = exBlockList2.userId AND exBlockList2.blockUserId = " + userId + " " +
+    "                dbo.blockList AS exBlockList2 ON exUserInfo.id = exBlockList2.userId AND  " +
+    "                exBlockList2.blockUserId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink AS exForwardLink ON dbo.tContent.exContentId = exForwardLink.contentId AND  " +
+    "                exForwardLink.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
+    "                exLikeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + userId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and dbo.tContent.uplinkType<>'R' " +
     "ORDER BY dbo.tContent.id DESC ";
 
@@ -22385,7 +22402,7 @@ eio.appendDataSet(sqlResult,
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
     "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
-    "exUplinkType,exContentId",
+    "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     pageIndex*pageSize, pageSize); 
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
@@ -22437,7 +22454,7 @@ var myUserId = db.getString(sqlResult,"id");
 //query twitter
 var top = "TOP (" + ((pageIndex+1) * pageSize) + ")";
 sql = 
-    "SELECT   " + top + " dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
+    "SELECT   " + top + " dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " +
     "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
     "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL  " +
@@ -22463,8 +22480,17 @@ sql =
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
     "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow,  " +
     "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail " +
-    "FROM      dbo.blockList AS rBlockList FULL OUTER JOIN " +
+    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail, dbo.tContent.exUserId, exUserInfo.status AS exStatus,  " +
+    "                exUserInfo.regDatetime AS exRegDatetime, exUserInfo.lastAccessTime AS exLastAccessTime,  " +
+    "                exUserInfo.userName AS exUserName, exUserInfo.mobile AS exMobile, exUserInfo.email AS exEmail,  " +
+    "                exUserInfo.nickName AS exNickName, exUserInfo.note AS exNote, exUserInfo.photo AS exPhoto,  " +
+    "                exUserInfo.titleBg AS exTitleBg, exUserInfo.homePage AS exHomePage, exUserInfo.followCount AS exFollowCount,  " +
+    "                exUserInfo.fansCount AS exFansCount, CASE WHEN exFollow.id IS NULL THEN 0 ELSE 1 END AS exIsFollow,  " +
+    "                CASE WHEN exBlockList1.id IS NULL THEN 0 ELSE 1 END AS exIsBlock1, CASE WHEN exBlockList2.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId,  " +
+    "                CASE WHEN exforwardLink.id IS NULL THEN 0 ELSE 1 END AS exIsForward, CASE WHEN exlikeList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike " +
+    "FROM      dbo.blockList AS rBlockList RIGHT OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
     "                dbo.follow AS rFollow ON userInfo_1.id = rFollow.followId AND rFollow.userId = " + userId + " ON  " +
@@ -22484,7 +22510,18 @@ sql =
     "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " ON  " +
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
-    "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
+    "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.userInfo AS exUserInfo ON exUserInfo.id = dbo.tContent.exUserId LEFT OUTER JOIN " +
+    "                dbo.follow AS exFollow ON exUserInfo.id = exFollow.followId AND exFollow.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS exBlockList1 ON exUserInfo.id = exBlockList1.blockUserId AND  " +
+    "                exBlockList1.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS exBlockList2 ON exUserInfo.id = exBlockList2.userId AND  " +
+    "                exBlockList2.blockUserId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink AS exForwardLink ON dbo.tContent.exContentId = exForwardLink.contentId AND  " +
+    "                exForwardLink.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
+    "                exLikeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + userId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") " +
     "ORDER BY dbo.tContent.id DESC ";
     
@@ -22498,8 +22535,10 @@ eio.appendString8("T");
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
+    "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     pageIndex*pageSize, pageSize); 
 
 ]]></script2>
@@ -22577,7 +22616,16 @@ sql =
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
     "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow,  " +
     "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail " +
+    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail, dbo.tContent.exUserId, exUserInfo.status AS exStatus,  " +
+    "                exUserInfo.regDatetime AS exRegDatetime, exUserInfo.lastAccessTime AS exLastAccessTime,  " +
+    "                exUserInfo.userName AS exUserName, exUserInfo.mobile AS exMobile, exUserInfo.email AS exEmail,  " +
+    "                exUserInfo.nickName AS exNickName, exUserInfo.note AS exNote, exUserInfo.photo AS exPhoto,  " +
+    "                exUserInfo.titleBg AS exTitleBg, exUserInfo.homePage AS exHomePage, exUserInfo.followCount AS exFollowCount,  " +
+    "                exUserInfo.fansCount AS exFansCount, CASE WHEN exFollow.id IS NULL THEN 0 ELSE 1 END AS exIsFollow,  " +
+    "                CASE WHEN exBlockList1.id IS NULL THEN 0 ELSE 1 END AS exIsBlock1, CASE WHEN exBlockList2.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId,  " +
+    "                CASE WHEN exforwardLink.id IS NULL THEN 0 ELSE 1 END AS exIsForward, CASE WHEN exlikeList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike " +
     "FROM      dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
     "                dbo.follow AS rFollow ON userInfo_1.id = rFollow.followId AND rFollow.userId = " + myUserId + " ON  " +
@@ -22598,8 +22646,20 @@ sql =
     "                dbo.unlikeList ON dbo.tContent.id = dbo.unlikeList.contentId AND dbo.unlikeList.userId = " + myUserId + " ON  " +
     "                dbo.forwardLink.contentId = dbo.tContent.id AND dbo.forwardLink.userId = " + myUserId + " ON  " +
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + myUserId + " ON  " +
-    "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId FULL OUTER JOIN " +
-    "                dbo.blockList AS rBlockList ON userInfo_1.id = rBlockList.blockUserId AND rBlockList.userId = " + myUserId + " " +
+    "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId LEFT OUTER JOIN " +
+    "                dbo.blockList AS rBlockList ON userInfo_1.id = rBlockList.blockUserId AND rBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.userInfo AS exUserInfo ON exUserInfo.id = dbo.tContent.exUserId LEFT OUTER JOIN " +
+    "                dbo.follow AS exFollow ON exUserInfo.id = exFollow.followId AND exFollow.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS exBlockList1 ON exUserInfo.id = exBlockList1.blockUserId AND  " +
+    "                exBlockList1.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS exBlockList2 ON exUserInfo.id = exBlockList2.userId AND  " +
+    "                exBlockList2.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink AS exForwardLink ON dbo.tContent.exContentId = exForwardLink.contentId AND  " +
+    "                exForwardLink.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
+    "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND  " +
+    "                exUnlikeList.userId = " + myUserId + " " +
     "WHERE   (dbo.bookMark.userId = " + myUserId + ") " +
     "ORDER BY dbo.bookMark.id DESC; ";
 
@@ -22613,8 +22673,10 @@ eio.appendString8("T");
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
+    "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     pageIndex*pageSize, pageSize);
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
@@ -23187,7 +23249,7 @@ if (options == "user") {
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "WHERE   (tContent.status<>'DEL') " + cond + " " +
+    "WHERE   (tContent.status<>'DEL') and (tContent.uplinkType<>'L') " + cond + " " +
     orderby;
 }
 
@@ -27078,28 +27140,20 @@ if (root.v_content.fwCount != v_content.fwCount) {
     <item name="syncTwitter" type="20">
       <varValue />
       <functionParam>v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
-      <functionCode><![CDATA[var task = new Array();
-task.push(g5.p2.p1.v_items);
-task.push(g5.p2.p2.p1Items);
-task.push(g5.p2.p2.p3Items);
-task.push(g5.p2.p9.v_items);
-task.push(g5.p2.p5.v_items);
-task.push(g5.p2.p11.c_pages.c1.v_items);
-task.push(g5.p2.p11.c_pages.c2.v_items);
-task.push(g5.p2.p11.c_pages.c4.v_items);
-task.push(g5.p2.p11.c_pages.c5.v_items);
+      <functionCode><![CDATA[var task = g5.contentGetAllBuff();
 
 var items,item;
-var id1,id2;
-id2 = v_content.id;
-if (id2.charAt(id2.length-1) == "L") id2 = id2.substr(0,id2.length-1);
+var contentId;
+if (v_content.exUplinkType == "L") {
+    contentId = v_content.exContentId;
+} else {
+    contentId = v_content.id;
+}
 for (var i=0; i<task.length; i++) {
     items = task[i];
     for (var j=0; j<items.length; j++) {
         item = items[j];
-        id1 = item.v_content.id;
-        if (id1.charAt(id1.length-1) == "L") id1 = id1.substr(0,id1.length-1);
-        if (id1!=id2) continue;
+        if ((item.v_content.id!=contentId)&amp;&amp;(item.v_content.exContentId!=contentId)) continue;
         if (eb.isEmpty(v_reContent)) v_reContent = item.v_reContent.clone();
         if (eb.isEmpty(v_userInfo)) v_userInfo = item.v_userInfo;
         if (eb.isEmpty(v_reUserInfo)) v_reUserInfo = item.v_reUserInfo;
