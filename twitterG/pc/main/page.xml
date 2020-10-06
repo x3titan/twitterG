@@ -18882,10 +18882,14 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
     v_reContent = v_reContent.clone();
     this.onComplete = function() {
         if (newTwitter.busy) return;
-        var realContentId = v_content.id;
-        if (realContentId.charAt(realContentId.length-1)=="L") realContentId = realContentId.substr(0, realContentId.length-1);
+        var contentIdB;
+        if (v_content.exUplinkType=="L") {
+            contentIdB = v_content.exContentId;
+        } else {
+            contentIdB = v_content.id;
+        }
         newTwitter.uplinkType = "F";
-        newTwitter.uplinkId = realContentId;
+        newTwitter.uplinkId = contentIdB;
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
@@ -18895,7 +18899,7 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.seconds = 0;
             newContent.status = "IDL";
             newContent.uplinkType = "F";
-            newContent.uplinkId = realContentId;
+            newContent.uplinkId = contentIdB;
             newContent.content = newTwitter.content;
             newContent.photos = newTwitter.photos;
             newContent.reCount = 0;
@@ -26921,7 +26925,13 @@ ee.setOnClick(c,function(sender,event) {
     while(1) {
         if (!sender.v_enabled) break;
         if (likeContent.busy) break;
-        likeContent.contentId = sender.parentNode.v_content.id;
+        var contentIdB;
+        if (root.v_content.exUplinkType=="L") {
+            contentIdB = root.v_content.exContentId;
+        } else {
+            contentIdB = root.v_content.id;
+        }
+        likeContent.contentId = contentIdB;
         likeContent.onComplete = function() {
             root.c_button3.v_enabled = true;
         }
@@ -26968,7 +26978,13 @@ ee.setOnClick(c,function(sender,event) {
     while(1) {
         if (!sender.v_enabled) break;
         if (unlikeContent.busy) break;
-        unlikeContent.contentId = sender.parentNode.v_content.id;
+        var contentIdB;
+        if (root.v_content.exUplinkType=="L") {
+            contentIdB = root.v_content.exContentId;
+        } else {
+            contentIdB = root.v_content.id;
+        }
+        unlikeContent.contentId = contentIdB;
         unlikeContent.onComplete = function() {
             root.c_button4.v_enabled = true;
         }
