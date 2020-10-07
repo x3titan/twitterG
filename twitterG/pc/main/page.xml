@@ -7510,8 +7510,14 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         this.v_preShow = false;
     } else {
         v_content = v_content.clone();
-        if (eb.isEmpty(v_reContent)) v_reContent = new g5.ContentInfo();
+        if (eb.isEmpty(v_reContent)) {
+            v_reContent = new g5.ContentInfo();
+        } else v_reContent = v_reContent.clone();
         if (eb.isEmpty(v_reUserInfo)) v_reUserInfo = new g5.UserInfo();
+        if (v_content.exUplinkType=="L") {
+            v_content.id = v_content.exContentId;
+            v_content.exUplinkType = "";
+        }
         showTopic.topicId = v_content.id;
         showTopic.needRefresh = true;
         this.v_preShow = true;
@@ -17747,7 +17753,6 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17830,7 +17835,6 @@ if (sender.v_closeCount>=4) {
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -18328,6 +18332,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18778,6 +18783,7 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>326</left>
       <leftRatio>0.275105485232068</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -26501,7 +26507,8 @@ ee.setOnMouseLeave(c, function(sender,event) {
 });
 root.v_btn1 = c;
 ee.setOnClick(c,function(sender,event) {
-    if (sender.parentNode.v_userInfo.id==g5.myUserInfo.id) {
+    if ((sender.parentNode.v_userInfo.id==g5.myUserInfo.id)||
+        ((sender.parentNode.v_content.exUplinkType=="L")&amp;&amp;(sender.parentNode.v_content.exUserInfo.id==g5.myUserInfo.id))) {
         g5.popup1.p1.show(sender, root.v_content, root.v_reContent, root.v_userInfo, root.v_reUserInfo);
     } else {
         g5.popup1.p3.show(sender, root.v_content, root.v_userInfo);
@@ -27186,13 +27193,11 @@ for (var i=0; i<task.length; i++) {
       <functionCode><![CDATA[v_content = v_content.clone();
 v_reContent = v_reContent.clone();
 
-if (v_content.uplinkType == "L") {
+if (v_content.exUplinkType == "L") {
     if (newTwitter.busy) return;
     newTwitter.content="";
     newTwitter.uplinkType="L";
-    var realContentId;
-    realContentId = v_content.id.substr(0, v_content.id.length-1);
-    newTwitter.uplinkId = realContentId;
+    newTwitter.uplinkId = v_content.exContentId;
     newTwitter.photos=new Array();
     newTwitter.onComplete = function(contentId) {
     }
@@ -27200,9 +27205,9 @@ if (v_content.uplinkType == "L") {
     v_content.isForward = false;
     v_content.fwCount--;
     if (v_content.fwCount<0) v_content.fwCount = 0;
-    g5.contentDel(realContentId + "L", function() {
+    g5.contentDel(v_content.id, function() {
     });
-    v_content.id = realContentId;
+    v_content.id = v_content.exContentId;
     g5.syncTwitter(v_content,null,v_userInfo,null);
     return;
 }
@@ -27221,7 +27226,7 @@ g5.contentDel(v_content.id, function() {
         while (j<items.length) {
             item = items[j];
             //downlink L
-            if (item.v_content.id == v_content.id + "L") {
+            if (item.v_content.exContentId == v_content.id) {
                 var rect = eb.getDivRect(item);
                 ee.removeControl(item);
                 items.splice(j,1);
