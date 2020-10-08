@@ -7493,7 +7493,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 
@@ -7586,6 +7585,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             sender.v_items.push(item);
             if (i==0) {
                 scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
+                sender.v_reIndex = sender.v_items.length;
             }
             cy += eb.getDivRect(item).h;    
         }
@@ -7631,7 +7631,33 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     sender.v_items.push(item);
     g5.mainDiv.scrollTop = 0;
     
+    g5.changeP2(-1);
     g5.changeP2(7);
+}
+
+sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    var item;
+    var root = sender;
+    var itemWidth = eb.getDivRect(root).w;
+    var cy = eb.getDivRect(g5.p4).h;
+    cy+=eb.getDivRect(g5.p2.p1.a1).h;
+    if (this.v_items.length>0) {
+        cy = eb.getDivRect(this.v_items[this.v_reIndex-1]).y + eb.getDivRect(this.v_items[this.v_reIndex-1]).h;
+    }
+    item = createPanel(root, "page8_" + v_content.id, "", 0, cy, itemWidth, 5);
+    item.v_content = v_content;
+    item.v_reContent = v_reContent;
+    item.v_userInfo = v_userInfo;
+    item.v_reUserInfo = v_reUserInfo;
+    item.v_mode = "";
+    g5.renderTwitter(item);
+    root.v_items.splice(this.v_reIndex, 0, item);
+    cy = eb.getDivRect(item).h;
+    g5.batchMoveY(this.v_items, this.v_reIndex+1, cy);
+    eb.setDivRect(this, null,null,null,eb.getDivRect(this).h + cy);
+    if (g5.currentPageIndex==7) {
+        eb.setDivRect(this.parentNode, null,null,null,eb.getDivRect(this.parentNode).h + cy);
+    }
 }
 
 sender.loadMore = function() {
@@ -17753,6 +17779,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17835,6 +17862,7 @@ if (sender.v_closeCount>=4) {
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -18874,6 +18902,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.isUnlike = false;
             g5.p2.p1.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
             g5.p2.p2.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
+            g5.p2.p9.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
             v_content.reCount++;
             g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
         }
