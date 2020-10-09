@@ -375,7 +375,6 @@ sender.addEventListener("mousewheel",function(event){
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -2022,7 +2021,12 @@ newTwitter.onComplete = function(contentId) {
     newContent.isForward = false;
     newContent.isLike = false;
     newContent.isUnlike = false;
-    g5.p2.p1.insert(newContent,new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
+    g5.p2.p1.insert(newContent.clone(),new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
+    if (showUserPage.v_userInfo) {
+        if (showUserPage.v_userInfo.id == g5.myUserInfo.id) {
+            g5.p2.p2.insert(newContent.clone(),new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
+        }
+    }
 }
 newTwitter();
 sender.parentNode.init();
@@ -7493,6 +7497,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 
@@ -18862,7 +18867,27 @@ sender.showNew = function() {
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
             ee.showAni(sender, 1);
-            g5.p2.p1.loadNew();
+            var newContent = new g5.ContentInfo();
+            newContent.id = contentId;
+            newContent.seconds = 0;
+            newContent.status = "IDL";
+            newContent.uplinkType = "N";
+            newContent.uplinkId = 0;
+            newContent.content = newTwitter.content;
+            newContent.photos = newTwitter.photos;
+            newContent.reCount = 0;
+            newContent.fwCount = 0;
+            newContent.likeCount = 0;
+            newContent.unlikeCount = 0;
+            newContent.isForward = false;
+            newContent.isLike = false;
+            newContent.isUnlike = false;
+            g5.p2.p1.insert(newContent.clone(),new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
+            if (showUserPage.v_userInfo) {
+                if (showUserPage.v_userInfo.id == g5.myUserInfo.id) {
+                    g5.p2.p2.insert(newContent.clone(),new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
+                }
+            }
         }
         newTwitter();
     }
@@ -18904,7 +18929,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             g5.p2.p2.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
             g5.p2.p9.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
             v_content.reCount++;
-            g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
+            g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
         }
         newTwitter();
     }
@@ -21978,7 +22003,7 @@ eio.appendDataSet(sqlResult,
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
-    "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
     "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     0, 99999);
 
@@ -22205,7 +22230,7 @@ eio.appendDataSet(sqlResult,
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
-    "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
     "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     0, 99999);
 
@@ -22440,7 +22465,7 @@ eio.appendDataSet(sqlResult,
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
-    "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
     "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     pageIndex*pageSize, pageSize); 
 ]]></script2>
@@ -22576,7 +22601,7 @@ eio.appendDataSet(sqlResult,
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
-    "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
     "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     pageIndex*pageSize, pageSize); 
 
@@ -22714,7 +22739,7 @@ eio.appendDataSet(sqlResult,
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
-    "exId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
     "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     pageIndex*pageSize, pageSize);
 ]]></script2>
@@ -26006,7 +26031,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
       <varValue>function() {
     this.size = 17;
     this.loadFromDataset = function(ds, x, idx) {
-        this.id = ds.getData(x+0,idx);    
+        this.id = ds.getData(x+0,idx);
         this.status = ds.getData(x+1,idx);    
         this.regDatetime = ds.getData(x+2,idx);    
         this.lastAccessTime = ds.getData(x+3,idx);    
@@ -26026,6 +26051,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         this.isFollow = this.follow=="1";
         this.isBlock1 = this.block1=="1";
         this.isBlock2 = this.block2=="1";
+        g5.writeLog(this.id+","+this.userName);
     }
     this.setDataset = function(ds, x, idx) {
         ds.setData(x+0,idx,this.id);
