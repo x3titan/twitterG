@@ -375,6 +375,7 @@ sender.addEventListener("mousewheel",function(event){
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -20376,7 +20377,6 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20455,21 +20455,15 @@ if (sender.v_closeCount>=4) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>254</left>
       <leftRatio>0.214345991561181</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
 </onClick>
-      <onCreate><![CDATA[sender.show = function(userId, refDiv) {
-    this.userId = userId;
+      <onCreate><![CDATA[sender.show = function(refDiv, v_userInfo) {
+    this.v_userInfo = v_userInfo
     this.refDiv = refDiv;
-    getUserInfo2.userId = userId;
-    getUserInfo2.onComplete = function(userInfo) {
-        sender.v_userInfo = userInfo;
-        sender.refresh();
-    }
-    getUserInfo2();
+    this.refresh();
 }
 
 sender.refresh = function() {
@@ -26050,7 +26044,6 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         this.isFollow = this.follow=="1";
         this.isBlock1 = this.block1=="1";
         this.isBlock2 = this.block2=="1";
-        g5.writeLog(this.id+","+this.userName);
     }
     this.setDataset = function(ds, x, idx) {
         ds.setData(x+0,idx,this.id);
@@ -26488,7 +26481,7 @@ if (root.v_userInfo.photo == "") {
 c.style.cursor="pointer";
 c.style.borderRadius = "50%";
 ee.setOnClick(c,function(sender,event) {
-    ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+    ee.getControl("panel280").show(root.c_photo, root.v_userInfo);
     //showUserPage.userName=sender.parentNode.v_userName;
     //showUserPage();
     //if (sender.v_timer!=null) {
