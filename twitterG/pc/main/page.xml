@@ -2037,6 +2037,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2045,6 +2046,37 @@ sender.p3Items = new Array();
 sender.show = function(v_userInfo, userId, userName) {
     if (showUserPage.busy) return;
     
+    var needRefresh = true;
+    if (this.v_userInfo) {
+        if (v_userInfo) {
+            if (v_userInfo.id == this.v_userInfo.id) {
+                needRefresh = false;
+            }
+        } else if (userId) { 
+            if (userId == this.v_userInfo.id) {
+                needRefresh = false;
+            }
+        } else if (userName) {
+            if (userName == this.v_userInfo.userName) {
+                needRefresh = false;
+            }
+        }
+    }
+    if (!needRefresh) {
+        var root = g5.p2.p2.p2sub.p1;
+        rect = eb.getDivRectSetting(root.parentNode);
+        ee.setRect(root.parentNode.parentNode,null,null,null,rect.y + rect.h);
+        g5.p2.p2.p2sub.p1.c_chat.c_chat.c_chatRoot.start(showUserPage.defaultChatRoomId);
+        if (showUserPage.privateChatRoomRights) {
+            g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
+        }
+        g5.tiledV(g5.p2PersonSub.p1,0);
+        //g5.p2PersonSub.init();
+        //g5.p2PersonSub.changePage(1);
+        g5.p3.p8.init();
+        g5.changeP2(1);
+        return;
+    }
     if (!eb.isEmpty(v_userInfo)) {
         this.showByUserInfo(v_userInfo);
         showUserPage.userName = "";
@@ -5150,6 +5182,15 @@ sender.init(0);
 sender.maxRefreshTime = 50000;
 sender.running = false;
 sender.start = function(roomId) {
+    if (this.v_roomId == roomId) {
+        this.clearTimer();
+        if (showUserPage.isChatRoomPubBlack) return;
+        this.v_tfId = setInterval(function() {
+            sender.timeFragment();    
+        }, 500);
+        this.running = true;
+        return;
+    }
     this.v_roomId = roomId;
     this.firstRun = true;
     this.currentRefreshTime = this.minRefreshTime;
@@ -5168,10 +5209,10 @@ sender.start = function(roomId) {
 }
 sender.stop = function() {
     this.clearTimer();
-    for (var i=0; i<this.v_items.length; i++) {
-        ee.removeControl(this.v_items[i]);
-    }
-    this.v_items = new Array();
+    //for (var i=0; i<this.v_items.length; i++) {
+    //    ee.removeControl(this.v_items[i]);
+    //}
+    //this.v_items = new Array();
     this.running = false;
 }
 
@@ -7332,7 +7373,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 
@@ -7483,7 +7523,7 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     cy+=eb.getDivRect(g5.p2.p1.a1).h;
     if (this.v_items.length>0) {
         cy = eb.getDivRect(this.v_items[this.v_reIndex-1]).y + eb.getDivRect(this.v_items[this.v_reIndex-1]).h;
-    }
+    } else this.v_reIndex = 1;
     item = createPanel(root, "page8_" + v_content.id, "", 0, cy, itemWidth, 5);
     item.v_content = v_content;
     item.v_reContent = v_reContent;
