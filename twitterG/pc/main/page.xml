@@ -152,6 +152,7 @@ function EDataSet() {
     }
     
 }
+
 ]]></onPageCreate>
       <pageTitle>拳头聊天室</pageTitle>
       <top>0</top>
@@ -849,6 +850,7 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -2065,8 +2067,6 @@ sender.show = function(v_userInfo, userId, userName) {
         if (showUserPage.privateChatRoomRights) {
             g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
         }
-        g5.tiledV(g5.p2PersonSub.p1,0);
-        g5.p3.p8.init();
         g5.changeP2(1);
         return;
     }
@@ -5228,10 +5228,6 @@ sender.start = function(roomId) {
 }
 sender.stop = function() {
     this.clearTimer();
-    //for (var i=0; i<this.v_items.length; i++) {
-    //    ee.removeControl(this.v_items[i]);
-    //}
-    //this.v_items = new Array();
     this.running = false;
 }
 
@@ -11319,7 +11315,6 @@ eb.initMouseEvent(sender);
       <height>623</height>
       <heightRatio>0.862880886426593</heightRatio>
       <layerName><![CDATA[p3.p8->个人页右侧]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel295");
 sender.p2 = ee.getControl("panel307");
@@ -12239,6 +12234,14 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
 sender.maxRefreshTime = 60000;
 sender.running = false;
 sender.start = function(roomId) {
+    if (this.v_roomId == roomId) {
+        this.clearTimer();
+        this.v_tfId = setInterval(function() {
+            sender.timeFragment();    
+        }, 500);
+        this.running = true;
+        return;
+    }
     this.v_roomId = roomId;
     this.firstRun = true;
     this.currentRefreshTime = this.minRefreshTime;
@@ -12262,10 +12265,6 @@ sender.start = function(roomId) {
 }
 sender.stop = function() {
     this.clearTimer();
-    for (var i=0; i<this.v_items.length; i++) {
-        ee.removeControl(this.v_items[i]);
-    }
-    this.v_items = new Array();
     this.running = false;
 }
 
@@ -12297,7 +12296,7 @@ sender.refresh = function(force) {
                 if (item.v_chatStatus == "CMD") {
                     if (!root.firstRun) {
                         if (item.v_msgContent == "PrvReq") {
-                            if (g5.myUserInfo.id == showUserPage.id) {
+                            if (g5.myUserInfo.id == showUserPage.v_userInfo.id) {
                                 g5.p3.p8.p1.appendJoinRequest(item.v_userInfo);
                             }
                         } else if (item.v_msgContent == "PrvDel") {
@@ -12397,7 +12396,7 @@ sender.renderMsg = function(root) {
     if (root.v_chatStatus == "SYS") {
         user = "<span style='background-color:#48ccfe;border-radius:3px;font-weight:bold;color:#4e4e4e'> 系统提示 </span>";
         textColor = "0061a2";    
-    } else if (root.v_userInfo.id == showUserPage.id) {
+    } else if (root.v_userInfo.id == showUserPage.v_userInfo.id) {
         user = "<span style='background-color:#fcd801;border-radius:3px;font-weight:bold'> " + user + " </span>";    
     } else {
         user = "<font color='#6f6f6f'><b>" + user + "</b></font>";
@@ -12975,7 +12974,7 @@ sender._input.addEventListener("keydown", function(event) {
       <left>233</left>
       <leftRatio>0.84115523465704</leftRatio>
       <onClick><![CDATA[if (!showUserPage.privateChatRoomRights) {
-    g5.chatPrvRequest(showUserPage.privateChatRoomId,showUserPage.nickName,showUserPage.userName);
+    g5.chatPrvRequest(showUserPage.privateChatRoomId,showUserPage.v_userInfo.nickName,showUserPage.v_userInfo.userName);
     return;
 }
 
@@ -22215,6 +22214,7 @@ showUserPage.isChatRoomPubAdmin = eio.readString16() == "T";
 showUserPage.isChatRoomPubBlack = eio.readString16() == "T";
 showUserPage.dataset = eio.readDataSet();
 showUserPage.privateChatRoomRights = eio.readString16() == "T";
+showUserPage.privateChatRoomRights = showUserPage.privateChatRoomRights || (g5.myUserInfo.id==showUserPage.v_userInfo.id);
 if (showUserPage.id == g5.myUserInfo.id) {
     showUserPage.privateChatRoomRights = true;
 }
