@@ -31,6 +31,9 @@ setInterval(function() {g5.refreshMain();}, 100);
 setInterval(function() {
     g5.processVideo();
 }, 1000);
+setInterval(function() {
+    g5.refreshScroll();
+}, 500);
 
 
 
@@ -178,13 +181,16 @@ function EDataSet() {
       <heightRatio>1</heightRatio>
       <left>0</left>
       <note>mainDiv</note>
-      <onCreate><![CDATA[sender.addEventListener("mousewheel",function(event){
+      <onCreate><![CDATA[
+/*
+sender.addEventListener("mousewheel",function(event){
     return true;
     g5.mainDiv.onWheel(event.wheelDelta);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
     event.returnValue = false;
     return false;
 },false);
+*/
 
 eb.addEvent(sender, "scroll", function() {
     var viewPortH = $g("divRoot").offsetHeight;
@@ -206,16 +212,15 @@ eb.addEvent(sender, "scroll", function() {
 }, false);
 
 sender.onWheel = function(wheelDelta) {
-    //var d1 = parseFloat(ee.getEditText(ee.getControl("edit15")));
-    //var d2 = parseFloat(ee.getEditText(ee.getControl("edit17")));
-    //var d3 = parseFloat(ee.getEditText(ee.getControl("edit16")));
     d1 = 0.5; d2 = 0.8; d3 = 30; 
     
     var mouseType = this.getMouseType(wheelDelta);
     
     var viewPortH = $g("divRoot").offsetHeight;
+    var eeDivRoot = $g("divRoot");
     var p2h = eb.getDivRect(g5.p2).h;
-    if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 6000) {
+    //if ((p2h-viewPortH-g5.mainDiv.scrollTop) < 6000) {
+    if ((p2h-viewPortH-document.documentElement.scrollTop) < 6000) {
         if (g5.currentPageIndex == 0) {
             g5.p2.p1.loadMore();
         } else if (g5.currentPageIndex == 10) {
@@ -364,6 +369,7 @@ sender.scrollAniProcess = function() {
       <note>p1</note>
       <onCreate>sender.style.position="fixed";
 sender.addEventListener("mousewheel",function(event){
+    return true;
     g5.mainDiv.onWheel(event.wheelDelta);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
     event.returnValue = false;
@@ -25817,7 +25823,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="83">
+  <g5Items count="84">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -27794,6 +27800,40 @@ ee.setRect(g5.pLine1, left+p1w,null,null,null);
 ee.setRect(g5.pLine2, left+p1w+p2w,null,null,null);
 
 eb.processDock();]]></functionCode>
+    </item>
+    <item name="refreshScroll" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode><![CDATA[var viewPortH = eb.getClientSize().h;
+var eeDivRoot = $g("divRoot");
+var p2h = eb.getDivRect(g5.p2).h;
+if ((p2h-viewPortH-document.documentElement.scrollTop) < 6000) {
+    if (g5.currentPageIndex == 0) {
+        g5.p2.p1.loadMore();
+    } else if (g5.currentPageIndex == 10) {
+        if (g5.p2.p11.currentPage == "c1") {
+            g5.p2.p11.c_pages.c1.loadMore();
+        } else if (g5.p2.p11.currentPage == "c2") {
+            g5.p2.p11.c_pages.c2.loadMore();
+        } else if (g5.p2.p11.currentPage == "c3") {
+            g5.p2.p11.c_pages.c3.loadMore();
+        } else if (g5.p2.p11.currentPage == "c4") {
+            g5.p2.p11.c_pages.c4.loadMore();
+        } else if (g5.p2.p11.currentPage == "c5") {
+            g5.p2.p11.c_pages.c5.loadMore();
+        }
+    } else if (g5.currentPageIndex == 4) {
+        g5.p2.p5.loadMore();
+    } else if (g5.currentPageIndex == 1) {
+        if (g5.p2.p2.p2sub.currentPageIndex == 1) {
+            g5.p2.p2.p2sub.p1.loadMore();
+        } else if (g5.p2.p2.p2sub.currentPageIndex == 3) {
+            g5.p2.p2.p2sub.updateP3();
+        }
+    }
+}
+
+]]></functionCode>
     </item>
     <item name="changeP1" type="20">
       <varValue />
