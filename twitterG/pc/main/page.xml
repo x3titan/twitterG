@@ -11332,6 +11332,7 @@ eb.initMouseEvent(sender);
       <height>623</height>
       <heightRatio>0.862880886426593</heightRatio>
       <layerName><![CDATA[p3.p8->个人页右侧]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel295");
 sender.p2 = ee.getControl("panel307");
@@ -17702,7 +17703,8 @@ eb.initMouseEvent(sender);
         ee.showAni(sender.eeChildren[i], 1);
     }
 }]]></onClick>
-      <onCreate><![CDATA[sender.style.zIndex=100;
+      <onCreate><![CDATA[sender.style.position = "fixed";
+sender.style.zIndex=100;
 sender.p1 = ee.getControl("panel149");
 sender.p2 = ee.getControl("panel124");
 sender.p3 = ee.getControl("panel213");
@@ -20295,7 +20297,6 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20303,7 +20304,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
     }
 }]]></onClick>
       <onCreate><![CDATA[sender.style.zIndex=100;
-
+sender.style.position = "fixed";
 sender.addEventListener("mousewheel",function(event){
     for (var i=0; i<sender.eeChildren.length; i++) {
         if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20374,7 +20375,6 @@ if (sender.v_closeCount>=4) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>254</left>
       <leftRatio>0.214345991561181</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
@@ -20836,7 +20836,12 @@ sender.onpointermove = function(event) {
 ]]></onClick>
       <onCreate>sender.style.zIndex=100;
 sender.a1 = ee.getControl("panel402");
-</onCreate>
+sender.style.position = "fixed";
+sender.addEventListener("mousewheel", function(e) {
+    window.event? window.event.cancelBubble = true : e.stopPropagation();
+    e.returnValue = false;
+    return false;
+});</onCreate>
       <sizeRatio>0.671729957805907</sizeRatio>
       <top>0</top>
       <width>1185</width>
@@ -28533,6 +28538,7 @@ while (true) {
     result.x+=rect.x-div.scrollLeft;
     result.y+=rect.y-div.scrollTop;
 }
+result.y -= document.documentElement.scrollTop;
 return result;</functionCode>
     </item>
     <item name="writeLog" type="20">
