@@ -2673,7 +2673,7 @@ sender.init = function(photoString) {
     );
 } else if (sender.v_index==3) {
     //编辑个人资料
-    ee.showAni(ee.getControl("panel54"), 0);
+    g5.popBlack.a8.show();
 }
 </onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
@@ -16821,872 +16821,6 @@ sender.onpointermove = function(event) {
       <width>68</width>
       <widthRatio>0.356020942408377</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel54">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <aniAlpha>appear:渐变出现</aniAlpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>stretch</backgroundImgMode>
-      <backgroundSkin>body5</backgroundSkin>
-      <dockX>center</dockX>
-      <dockY>center</dockY>
-      <height>645</height>
-      <heightRatio>0.810301507537688</heightRatio>
-      <layerName><![CDATA[Root->编辑个人信息]]></layerName>
-      <left>292</left>
-      <leftRatio>0.246413502109705</leftRatio>
-      <onAniStart>sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);
-sender.refreshProgress(ee.getControl("edit3"), ee.getControl("panel230"), 160);
-sender.refreshProgress(ee.getControl("edit4"), ee.getControl("panel233"), 50);
-</onAniStart>
-      <onCreate><![CDATA[sender.c_button = ee.getControl("panel49");
-
-sender.refreshProgress = function(edit, pdiv, maxValue) {
-    var text = ee.getEditText(edit);
-    if (text.length<(maxValue*0.8)) {
-        pdiv.v_color = "#29a5f2";
-        pdiv.v_r = "9";
-        pdiv.refresh(text.length/maxValue);
-        ee.setTextColor(pdiv.parentNode, "rgb(101, 119, 134)");
-        this.c_button.setEnabled(true);        
-    } else if (text.length<=maxValue) {
-        pdiv.v_color = "#ffad1f";
-        pdiv.v_r = "12";
-        pdiv.refresh(text.length/maxValue);    
-        ee.setTextColor(pdiv.parentNode, "#ffad1f");
-        this.c_button.setEnabled(true);        
-    } else {
-        pdiv.v_color = "#e0245e";
-        pdiv.v_r = "14";
-        pdiv.refresh((text.length-maxValue)/maxValue);    
-        ee.setTextColor(pdiv.parentNode, "#e0245e");
-        this.c_button.setEnabled(false);        
-    }
-    ee.setText(pdiv.parentNode, text.length + "/" + maxValue);    
-}
-
-ee.setVisible(ee.getControl("panel225"), false);
-ee.setVisible(ee.getControl("panel230"), false);
-ee.setVisible(ee.getControl("panel233"), false);]]></onCreate>
-      <sizeRatio>1.075</sizeRatio>
-      <top>75</top>
-      <topRatio>0.0942211055276382</topRatio>
-      <width>600</width>
-      <widthRatio>0.506329113924051</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel56">
-      <backgroundImg>close.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>39</height>
-      <heightRatio>0.0598802395209581</heightRatio>
-      <left>13</left>
-      <leftRatio>0.0219435736677116</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
-      <sizeRatio>0.689655172413793</sizeRatio>
-      <top>10</top>
-      <topRatio>0.0149700598802395</topRatio>
-      <width>55</width>
-      <widthRatio>0.0909090909090909</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel58">
-      <backgroundColor>0E5079</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <height>171</height>
-      <heightRatio>0.265116279069767</heightRatio>
-      <left>8</left>
-      <leftRatio>0.0133333333333333</leftRatio>
-      <outerLeft>8</outerLeft>
-      <outerRight>8</outerRight>
-      <sizeRatio>0.292808219178082</sizeRatio>
-      <top>55</top>
-      <topRatio>0.0852713178294574</topRatio>
-      <width>584</width>
-      <widthRatio>0.973333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel58/panel5">
-      <backgroundColor>008080</backgroundColor>
-      <backgroundImg>upload.png</backgroundImg>
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <dockY>center</dockY>
-      <height>51</height>
-      <heightRatio>0.298245614035088</heightRatio>
-      <left>263</left>
-      <leftRatio>0.450342465753425</leftRatio>
-      <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxSqr = 700*700;
-sender.compressRatio = 0.85;
-
-sender.style.borderRadius = "50%";
-
-ee.setOnMouseEnter(sender, function(sender,event) {
-    sender.style.backgroundColor = "rgba(0,0,0,0.3)";
-});    
-ee.setOnMouseLeave(sender, function(sender,event) {
-    sender.style.backgroundColor = "";
-});
-
-
-//implementation
-var c = document.createElement("input");
-c.setAttribute("type", "file");
-c.setAttribute("accept", "image/*");
-c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
-sender.insertBefore(c, sender.childNodes[0]);
-sender.c_file = c;
-
-c.onchange = function() {
-    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
-        var file = sender.c_file.files[0];
-        var pos = file.name.lastIndexOf(".");
-        var fileExt = pos<0 ? "" : file.name.substring(pos);
-        
-        //onUserSelectedFile(file.name,fileExt)
-        fileExt = fileExt.toLowerCase();
-        if ((fileExt != ".bmp") &amp;&amp;
-            (fileExt != ".jpg") &amp;&amp;
-            (fileExt != ".jpeg") &amp;&amp;
-            (fileExt != ".png") &amp;&amp;
-            (fileExt != ".tif") &amp;&amp;
-            (fileExt != ".tiff")) return;
-        
-        var reader = new FileReader();
-        reader.onload = function (event) {
-            var blob = new Blob([event.target.result]); 
-            window.URL = window.URL || window.webkitURL;
-            var blobURL = window.URL.createObjectURL(blob); 
-            var image = new Image();
-            image.src = blobURL;
-            image.onload = function() {
-                sender.v_data = sender.resize(image);
-                if (sender.v_data) {
-                    //upload immediately
-                    uploadImage.data = sender.v_data;
-                    uploadImage.controlName = sender.id;
-                    uploadImage.onComplete = function(newFileName) {
-                        getUserInfo();
-                        return;
-                    }
-                    uploadImage();
-                    sender.v_data = "";
-                }
-            }
-        }
-        reader.readAsArrayBuffer(file);
-    } else {
-        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
-    }
-}
-
-sender.resize = function (img) {
-    var canvas = document.createElement("canvas");
-    var imgW = img.width;
-    var imgH = img.height;
-    var dw,dh;
-    if (imgW*imgH>this.maxSqr) {
-        var ratio = imgW / imgH;
-        var y = Math.sqrt(this.maxSqr/ratio);
-        canvas.width = parseInt(ratio*y);
-        canvas.height = parseInt(y);
-    } else {
-        canvas.width = imgW;
-        canvas.height = imgH;
-    }
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
-}
-]]></onCreate>
-      <sizeRatio>0.894736842105263</sizeRatio>
-      <top>60</top>
-      <topRatio>0.350877192982456</topRatio>
-      <width>57</width>
-      <widthRatio>0.0976027397260274</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel55">
-      <backgroundImg>user.png</backgroundImg>
-      <height>119</height>
-      <heightRatio>0.184496124031008</heightRatio>
-      <left>29</left>
-      <leftRatio>0.0483333333333333</leftRatio>
-      <lockRatio>true</lockRatio>
-      <onCreate>sender.style.borderRadius = "50%";
-sender.style.borderWidth = "4px";
-sender.style.borderColor = "#ffffff";
-sender.style.borderStyle = "solid";</onCreate>
-      <sizeRatio>1</sizeRatio>
-      <top>179</top>
-      <topRatio>0.277519379844961</topRatio>
-      <width>119</width>
-      <widthRatio>0.198333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel55/panel4">
-      <backgroundColor>008080</backgroundColor>
-      <backgroundImg>upload.png</backgroundImg>
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <dockY>center</dockY>
-      <height>51</height>
-      <heightRatio>0.428571428571429</heightRatio>
-      <left>28</left>
-      <leftRatio>0.235294117647059</leftRatio>
-      <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxWidth = 200;
-sender.maxHeight = 200;
-sender.compressRatio = 0.90;
-
-sender.style.borderRadius = "50%";
-
-ee.setOnMouseEnter(sender, function(sender,event) {
-    sender.style.backgroundColor = "rgba(0,0,0,0.3)";
-});    
-ee.setOnMouseLeave(sender, function(sender,event) {
-    sender.style.backgroundColor = "";
-});
-
-
-//implementation
-var c = document.createElement("input");
-c.setAttribute("type", "file");
-c.setAttribute("accept", "image/*");
-c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
-sender.insertBefore(c, sender.childNodes[0]);
-sender.c_file = c;
-
-c.onchange = function() {
-    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
-        var file = sender.c_file.files[0];
-        var pos = file.name.lastIndexOf(".");
-        var fileExt = pos<0 ? "" : file.name.substring(pos);
-        
-        //onUserSelectedFile(file.name,fileExt)
-        fileExt = fileExt.toLowerCase();
-        if ((fileExt != ".bmp") &amp;&amp;
-            (fileExt != ".jpg") &amp;&amp;
-            (fileExt != ".jpeg") &amp;&amp;
-            (fileExt != ".png") &amp;&amp;
-            (fileExt != ".tif") &amp;&amp;
-            (fileExt != ".tiff")) return;
-        
-        var reader = new FileReader();
-        reader.onload = function (event) {
-            var blob = new Blob([event.target.result]); 
-            window.URL = window.URL || window.webkitURL;
-            var blobURL = window.URL.createObjectURL(blob); 
-            var image = new Image();
-            image.src = blobURL;
-            image.onload = function() {
-                sender.v_data = sender.resize(image);
-                if (sender.v_data) {
-                    //upload immediately
-                    uploadImage.data = sender.v_data;
-                    uploadImage.controlName = sender.id;
-                    uploadImage.onComplete = function(newFileName) {
-                        getUserInfo();
-                        return;
-                    }
-                    uploadImage();
-                    sender.v_data = "";
-                }
-            }
-        }
-        reader.readAsArrayBuffer(file);
-    } else {
-        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
-    }
-}
-
-sender.resize = function (img) {
-    var canvas = document.createElement("canvas");
-    var width = img.width;
-    var height = img.height;
-    if(width > height) {
-        if(width > sender.maxWidth) {
-            height = Math.round(height *= sender.maxWidth / width);
-            width = sender.maxWidth
-        }
-    }else{
-        if(height > sender.maxHeight) {
-            width = Math.round(width *= sender.maxHeight / height);
-            height = sender.maxHeight
-        }
-    }
-    canvas.width = width;
-    canvas.height = height;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, width, height);
-    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
-}
-]]></onCreate>
-      <outerBottom>6</outerBottom>
-      <outerRight>6</outerRight>
-      <sizeRatio>0.894736842105263</sizeRatio>
-      <top>31</top>
-      <topRatio>0.260504201680672</topRatio>
-      <width>57</width>
-      <widthRatio>0.478991596638655</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel140">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fontBold>true</fontBold>
-      <fontColor>404040</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>18</fontSize>
-      <height>34</height>
-      <heightRatio>0.0523952095808383</heightRatio>
-      <left>66</left>
-      <leftRatio>0.11</leftRatio>
-      <sizeRatio>0.0857843137254902</sizeRatio>
-      <text>个人信息</text>
-      <top>11</top>
-      <topRatio>0.0164670658682635</topRatio>
-      <width>408</width>
-      <widthRatio>0.68</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel224">
-      <backgroundColor>00C0C0</backgroundColor>
-      <cursor>move</cursor>
-      <dockY>top</dockY>
-      <height>58</height>
-      <heightRatio>0.089922480620155</heightRatio>
-      <left>54</left>
-      <leftRatio>0.09</leftRatio>
-      <onCreate><![CDATA[sender.v_down = false;
-sender.style.backgroundColor = "rgba(255,255,255,0.01)";
-sender.onpointerdown = function(event) {
-    var sender = event.target;
-    sender.v_down = true;
-    sender.v_x = event.clientX;
-    sender.v_y = event.clientY;
-    sender.setPointerCapture(event.pointerId);
-}
-sender.onpointerup = function(event) {
-    var sender = event.target;
-    sender.v_down = false;
-    sender.releasePointerCapture(event.pointerId);
-}
-sender.onpointermove = function(event) {
-    var sender = event.target;
-    if (sender.v_down) {
-        var dx = event.clientX - sender.v_x;
-        var dy = event.clientY - sender.v_y;
-        var rect = eb.getDivRect(sender.parentNode);
-        var rectP = eb.getDivRect(sender.parentNode.parentNode);
-        if (rect.x+dx<0) dx = null;
-        if (rect.x+dx+rect.w>=rectP.w) dx = null;
-        if (dx!=null) {
-            sender.v_x = event.clientX;
-            dx = rect.x+dx;
-        }
-        if (rect.y+dy<0) dy = null;
-        if (rect.y+dy+rect.h>=rectP.h) dy = null;
-        if (dy!=null) {
-            sender.v_y = event.clientY;
-            dy = rect.y+dy;
-        }
-        ee.setRect(sender.parentNode, dx, dy, null, null);
-    }
-}
-
-
-]]></onCreate>
-      <sizeRatio>0.21969696969697</sizeRatio>
-      <top>0</top>
-      <width>264</width>
-      <widthRatio>0.44</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel59">
-      <backgroundColor>F5F8FA</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>66</height>
-      <heightRatio>0.102325581395349</heightRatio>
-      <left>28</left>
-      <leftRatio>0.0466666666666667</leftRatio>
-      <onCreate>sender.style.borderRadius = "4px";
-</onCreate>
-      <sizeRatio>0.121546961325967</sizeRatio>
-      <top>310</top>
-      <topRatio>0.48062015503876</topRatio>
-      <width>543</width>
-      <widthRatio>0.905</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel59/panel63">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>28</height>
-      <heightRatio>0.424242424242424</heightRatio>
-      <left>9</left>
-      <leftRatio>0.0165745856353591</leftRatio>
-      <sizeRatio>0.142857142857143</sizeRatio>
-      <text>用户名</text>
-      <top>0</top>
-      <width>196</width>
-      <widthRatio>0.360957642725599</widthRatio>
-    </control>
-    <control type="Edit" pathname="/divRoot/panel54/panel59/edit2">
-      <backgroundSkin>empty</backgroundSkin>
-      <dockX>fill</dockX>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>41</height>
-      <heightRatio>0.621212121212121</heightRatio>
-      <inputFont>微软雅黑</inputFont>
-      <inputFontSize>14</inputFontSize>
-      <left>0</left>
-      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);</onChange>
-      <sizeRatio>0.0755064456721915</sizeRatio>
-      <top>25</top>
-      <topRatio>0.378787878787879</topRatio>
-      <width>543</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel59/edit2/panel64">
-      <backgroundColor>657786</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>2</height>
-      <heightRatio>0.0487804878048781</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00368324125230203</sizeRatio>
-      <top>39</top>
-      <topRatio>0.951219512195122</topRatio>
-      <width>543</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel59/panel60">
-      <fontColor>657786</fontColor>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>right</hAlign>
-      <height>40</height>
-      <heightRatio>0.606060606060606</heightRatio>
-      <left>446</left>
-      <leftRatio>0.821362799263352</leftRatio>
-      <sizeRatio>0.465116279069767</sizeRatio>
-      <text>0/20</text>
-      <top>0</top>
-      <width>86</width>
-      <widthRatio>0.158379373848987</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel59/panel60/panel225">
-      <backgroundColor>EAEAF4</backgroundColor>
-      <height>40</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
-sender.v_x = parseInt(eb.getDivRect(sender).w/2);
-sender.v_y = parseInt(eb.getDivRect(sender).h/2);
-sender.v_r = 9;
-sender.v_color = "#29a5f2";
-sender.v_bgColor = "#ecf0f3";
-sender.v_width = "4px";
-sender.v_progress = "0.0001";
-sender.refresh = function(progress) {
-    var path = this.childNodes[0].childNodes[0];
-    path.style.stroke=sender.v_bgColor;
-    path.style.strokeWidth=sender.v_width;
-    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
-    path.setAttribute("d", des.join(" "));
-    
-    if (!eb.isEmpty(progress)) this.v_progress = progress;
-    this.v_progress = Math.min(0.9999,this.v_progress);
-    this.v_progress = Math.max(0.0001,this.v_progress);
-    path = this.childNodes[0].childNodes[1];
-    var ag = 90+360-this.v_progress*360;  
-    var ag = ag*(Math.PI/180);
-    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
-    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
-    var opt = window.Number(this.v_progress>0.5);
-    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
-    path.style.stroke=sender.v_color;
-    path.style.strokeWidth=sender.v_width;
-    path.setAttribute("d", des.join(" "));
-}
-
-
-
-]]></onCreate>
-      <sizeRatio>1.02564102564103</sizeRatio>
-      <text>圆形进度条</text>
-      <top>0</top>
-      <width>39</width>
-      <widthRatio>0.453488372093023</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel226">
-      <backgroundColor>F5F8FA</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>132</height>
-      <heightRatio>0.204651162790698</heightRatio>
-      <left>28</left>
-      <leftRatio>0.0466666666666667</leftRatio>
-      <onCreate>sender.style.borderRadius = "4px";</onCreate>
-      <sizeRatio>0.243093922651934</sizeRatio>
-      <top>394</top>
-      <topRatio>0.610852713178295</topRatio>
-      <width>543</width>
-      <widthRatio>0.905</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel226/panel229">
-      <fontColor>657786</fontColor>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>right</hAlign>
-      <height>40</height>
-      <heightRatio>0.303030303030303</heightRatio>
-      <left>431</left>
-      <leftRatio>0.793738489871087</leftRatio>
-      <sizeRatio>0.396039603960396</sizeRatio>
-      <text>0/160</text>
-      <top>0</top>
-      <width>101</width>
-      <widthRatio>0.186003683241252</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel226/panel229/panel230">
-      <backgroundColor>EAEAF4</backgroundColor>
-      <height>40</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
-sender.v_x = parseInt(eb.getDivRect(sender).w/2);
-sender.v_y = parseInt(eb.getDivRect(sender).h/2);
-sender.v_r = 9;
-sender.v_color = "#29a5f2";
-sender.v_bgColor = "#ecf0f3";
-sender.v_width = "4px";
-sender.v_progress = "0.0001";
-sender.refresh = function(progress) {
-    var path = this.childNodes[0].childNodes[0];
-    path.style.stroke=sender.v_bgColor;
-    path.style.strokeWidth=sender.v_width;
-    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
-    path.setAttribute("d", des.join(" "));
-    
-    if (!eb.isEmpty(progress)) this.v_progress = progress;
-    this.v_progress = Math.min(0.9999,this.v_progress);
-    this.v_progress = Math.max(0.0001,this.v_progress);
-    path = this.childNodes[0].childNodes[1];
-    var ag = 90+360-this.v_progress*360;  
-    var ag = ag*(Math.PI/180);
-    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
-    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
-    var opt = window.Number(this.v_progress>0.5);
-    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
-    path.style.stroke=sender.v_color;
-    path.style.strokeWidth=sender.v_width;
-    path.setAttribute("d", des.join(" "));
-}
-
-
-
-]]></onCreate>
-      <sizeRatio>1.02564102564103</sizeRatio>
-      <text>圆形进度条</text>
-      <top>0</top>
-      <width>39</width>
-      <widthRatio>0.386138613861386</widthRatio>
-    </control>
-    <control type="Edit" pathname="/divRoot/panel54/panel226/edit3">
-      <backgroundSkin>empty</backgroundSkin>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>103</height>
-      <heightRatio>0.78030303030303</heightRatio>
-      <inputFont>微软雅黑</inputFont>
-      <inputFontSize>12</inputFontSize>
-      <left>0</left>
-      <multiLine>true</multiLine>
-      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit3"), ee.getControl("panel230"), 160);</onChange>
-      <onCreate>sender._input.style.resize = "none";</onCreate>
-      <sizeRatio>0.189686924493554</sizeRatio>
-      <text>添加你的简介</text>
-      <top>29</top>
-      <topRatio>0.21969696969697</topRatio>
-      <vAlign>top</vAlign>
-      <width>543</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel226/edit3/panel66">
-      <backgroundColor>657786</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>2</height>
-      <heightRatio>0.0194174757281553</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00368324125230203</sizeRatio>
-      <top>101</top>
-      <topRatio>0.980582524271845</topRatio>
-      <width>543</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel226/panel65">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>28</height>
-      <heightRatio>0.212121212121212</heightRatio>
-      <left>9</left>
-      <leftRatio>0.0165745856353591</leftRatio>
-      <sizeRatio>0.168674698795181</sizeRatio>
-      <text>简介</text>
-      <top>0</top>
-      <width>166</width>
-      <widthRatio>0.305709023941068</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel227">
-      <backgroundColor>F5F8FA</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>73</height>
-      <heightRatio>0.113178294573643</heightRatio>
-      <left>28</left>
-      <leftRatio>0.0466666666666667</leftRatio>
-      <onCreate>sender.style.borderRadius = "4px";</onCreate>
-      <sizeRatio>0.134438305709024</sizeRatio>
-      <top>542</top>
-      <topRatio>0.84031007751938</topRatio>
-      <width>543</width>
-      <widthRatio>0.905</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel227/panel232">
-      <fontColor>657786</fontColor>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>right</hAlign>
-      <height>40</height>
-      <heightRatio>0.547945205479452</heightRatio>
-      <left>433</left>
-      <leftRatio>0.797421731123389</leftRatio>
-      <sizeRatio>0.404040404040404</sizeRatio>
-      <text>0/50</text>
-      <top>0</top>
-      <width>99</width>
-      <widthRatio>0.18232044198895</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel227/panel232/panel233">
-      <backgroundColor>EAEAF4</backgroundColor>
-      <height>40</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
-sender.v_x = parseInt(eb.getDivRect(sender).w/2);
-sender.v_y = parseInt(eb.getDivRect(sender).h/2);
-sender.v_r = 9;
-sender.v_color = "#29a5f2";
-sender.v_bgColor = "#ecf0f3";
-sender.v_width = "4px";
-sender.v_progress = "0.0001";
-sender.refresh = function(progress) {
-    var path = this.childNodes[0].childNodes[0];
-    path.style.stroke=sender.v_bgColor;
-    path.style.strokeWidth=sender.v_width;
-    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
-    path.setAttribute("d", des.join(" "));
-    
-    if (!eb.isEmpty(progress)) this.v_progress = progress;
-    this.v_progress = Math.min(0.9999,this.v_progress);
-    this.v_progress = Math.max(0.0001,this.v_progress);
-    path = this.childNodes[0].childNodes[1];
-    var ag = 90+360-this.v_progress*360;  
-    var ag = ag*(Math.PI/180);
-    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
-    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
-    var opt = window.Number(this.v_progress>0.5);
-    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
-    path.style.stroke=sender.v_color;
-    path.style.strokeWidth=sender.v_width;
-    path.setAttribute("d", des.join(" "));
-}
-
-
-
-]]></onCreate>
-      <sizeRatio>1.02564102564103</sizeRatio>
-      <text>圆形进度条</text>
-      <top>0</top>
-      <width>39</width>
-      <widthRatio>0.393939393939394</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel227/panel67">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>28</height>
-      <heightRatio>0.383561643835616</heightRatio>
-      <left>11</left>
-      <leftRatio>0.0202578268876611</leftRatio>
-      <sizeRatio>0.106870229007634</sizeRatio>
-      <text>网站</text>
-      <top>0</top>
-      <width>262</width>
-      <widthRatio>0.482504604051565</widthRatio>
-    </control>
-    <control type="Edit" pathname="/divRoot/panel54/panel227/edit4">
-      <backgroundSkin>empty</backgroundSkin>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>38</height>
-      <heightRatio>0.520547945205479</heightRatio>
-      <inputFont>微软雅黑</inputFont>
-      <inputFontSize>14</inputFontSize>
-      <left>0</left>
-      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit4"), ee.getControl("panel233"), 100);</onChange>
-      <sizeRatio>0.0699815837937385</sizeRatio>
-      <text>添加你的网站</text>
-      <top>35</top>
-      <topRatio>0.479452054794521</topRatio>
-      <width>543</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel227/edit4/panel68">
-      <backgroundColor>657786</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>2</height>
-      <heightRatio>0.0526315789473684</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00368324125230203</sizeRatio>
-      <top>36</top>
-      <topRatio>0.947368421052632</topRatio>
-      <width>543</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel54/panel49">
-      <backgroundColor>8ED0F9</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontColor>FFFFFF</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <height>33</height>
-      <heightRatio>0.0511627906976744</heightRatio>
-      <left>491</left>
-      <leftRatio>0.818333333333333</leftRatio>
-      <onClick><![CDATA[if (!sender.v_enabled) return;
-if (updateUserInfo.busy) return;
-
-updateUserInfo.nickName = ee.getEditText(ee.getControl("edit2"));
-updateUserInfo.note = ee.getEditText(ee.getControl("edit3"));
-updateUserInfo.homePage = ee.getEditText(ee.getControl("edit4"));
-
-if (updateUserInfo.nickName.length<3) {
-    g5.alert1(
-        "昵称不符合要求",
-        "昵称或者姓名不能少于3个英文字母或汉字"
-    );
-    return;
-}
-if (updateUserInfo.nickName.length>20) {
-    g5.alert1(
-        "昵称不符合要求",
-        "昵称的长度不能大于20"
-    );
-    return;
-}
-if (updateUserInfo.note.length>160) {
-    g5.alert1(
-        "简介不符合要求",
-        "简介的长度不能大于160"
-    );
-    return;
-}
-if (updateUserInfo.homePage.length>50) {
-    g5.alert1(
-        "网站不符合要求",
-        "网站地址的长度不能大于50"
-    );
-    return;
-}
-
-updateUserInfo.onComplete = function() {
-    ee.showAni(ee.getControl("panel54"), 1);
-    getUserInfo();
-    if (g5.currentPageIndex == 1) showUserPage();
-    g5.popBlack.a7.show(
-        "提示", "修改您的用户信息完成",
-        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
-        //[new g5.BStyle("","#e8f5fe","#d2ecfc","确定","确定","确定","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-        function() {}
-    );
-}
-updateUserInfo();]]></onClick>
-      <onCreate>sender.bgColorDisabled = "#8ed0f9";
-sender.bgColorEnabled = "#1da1f2";
-sender.bgColorHot = "#1a91da";
-sender.bgColorDown = "#1781c2";
-sender.v_enabled = true;
-sender.setEnabled = function(enabled) {
-    this.v_enabled = enabled;
-    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
-}
-sender.setEnabled(false);
-
-sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorEnabled;
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorDown;
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-}
-eb.initMouseEvent(sender);
-
-
-
-
-
-
-
-</onCreate>
-      <sizeRatio>0.397590361445783</sizeRatio>
-      <text>保存</text>
-      <top>15</top>
-      <topRatio>0.0232558139534884</topRatio>
-      <width>83</width>
-      <widthRatio>0.138333333333333</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel40">
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundSkin>empty</backgroundSkin>
@@ -18278,7 +17412,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18296,7 +17429,7 @@ sender.a4 = ee.getControl("panel10");
 sender.a5 = ee.getControl("panel217");
 sender.a6  = ee.getControl("panel257");
 sender.a7 = ee.getControl("panel344");
-sender.a8 = ee.getControl("panel402");
+sender.a8 = ee.getControl("panel54");
 sender.addEventListener("mousewheel", function(e) {
     window.event? window.event.cancelBubble = true : e.stopPropagation();
     e.returnValue = false;
@@ -20287,6 +19420,879 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <topRatio>0.0710900473933649</topRatio>
       <width>36</width>
       <widthRatio>0.0942408376963351</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <backgroundSkin>body5</backgroundSkin>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>645</height>
+      <heightRatio>0.810301507537688</heightRatio>
+      <layerName><![CDATA[  a8->编辑个人信息]]></layerName>
+      <left>292</left>
+      <leftRatio>0.246413502109705</leftRatio>
+      <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
+      <onAniStart>
+      </onAniStart>
+      <onCreate><![CDATA[sender.c_button = ee.getControl("panel49");
+
+sender.show = function() {
+    sender.refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);
+    sender.refreshProgress(ee.getControl("edit3"), ee.getControl("panel230"), 160);
+    sender.refreshProgress(ee.getControl("edit4"), ee.getControl("panel233"), 50);
+    ee.setVisible(this.parentNode, true);
+    ee.showAni(this, 0);
+}
+
+sender.refreshProgress = function(edit, pdiv, maxValue) {
+    var text = ee.getEditText(edit);
+    if (text.length<(maxValue*0.8)) {
+        pdiv.v_color = "#29a5f2";
+        pdiv.v_r = "9";
+        pdiv.refresh(text.length/maxValue);
+        ee.setTextColor(pdiv.parentNode, "rgb(101, 119, 134)");
+        this.c_button.setEnabled(true);        
+    } else if (text.length<=maxValue) {
+        pdiv.v_color = "#ffad1f";
+        pdiv.v_r = "12";
+        pdiv.refresh(text.length/maxValue);    
+        ee.setTextColor(pdiv.parentNode, "#ffad1f");
+        this.c_button.setEnabled(true);        
+    } else {
+        pdiv.v_color = "#e0245e";
+        pdiv.v_r = "14";
+        pdiv.refresh((text.length-maxValue)/maxValue);    
+        ee.setTextColor(pdiv.parentNode, "#e0245e");
+        this.c_button.setEnabled(false);        
+    }
+    ee.setText(pdiv.parentNode, text.length + "/" + maxValue);    
+}
+
+ee.setVisible(ee.getControl("panel225"), false);
+ee.setVisible(ee.getControl("panel230"), false);
+ee.setVisible(ee.getControl("panel233"), false);]]></onCreate>
+      <sizeRatio>1.075</sizeRatio>
+      <top>75</top>
+      <topRatio>0.0942211055276382</topRatio>
+      <width>600</width>
+      <widthRatio>0.506329113924051</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel56">
+      <backgroundImg>close.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>39</height>
+      <heightRatio>0.0598802395209581</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0219435736677116</leftRatio>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.689655172413793</sizeRatio>
+      <top>10</top>
+      <topRatio>0.0149700598802395</topRatio>
+      <width>55</width>
+      <widthRatio>0.0909090909090909</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel58">
+      <backgroundColor>0E5079</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>171</height>
+      <heightRatio>0.265116279069767</heightRatio>
+      <left>8</left>
+      <leftRatio>0.0133333333333333</leftRatio>
+      <outerLeft>8</outerLeft>
+      <outerRight>8</outerRight>
+      <sizeRatio>0.292808219178082</sizeRatio>
+      <top>55</top>
+      <topRatio>0.0852713178294574</topRatio>
+      <width>584</width>
+      <widthRatio>0.973333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel58/panel5">
+      <backgroundColor>008080</backgroundColor>
+      <backgroundImg>upload.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>51</height>
+      <heightRatio>0.298245614035088</heightRatio>
+      <left>263</left>
+      <leftRatio>0.450342465753425</leftRatio>
+      <onClick>sender.c_file.click();</onClick>
+      <onCreate><![CDATA[sender.maxSqr = 700*700;
+sender.compressRatio = 0.85;
+
+sender.style.borderRadius = "50%";
+
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "rgba(0,0,0,0.3)";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+
+
+//implementation
+var c = document.createElement("input");
+c.setAttribute("type", "file");
+c.setAttribute("accept", "image/*");
+c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
+sender.insertBefore(c, sender.childNodes[0]);
+sender.c_file = c;
+
+c.onchange = function() {
+    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
+        var file = sender.c_file.files[0];
+        var pos = file.name.lastIndexOf(".");
+        var fileExt = pos<0 ? "" : file.name.substring(pos);
+        
+        //onUserSelectedFile(file.name,fileExt)
+        fileExt = fileExt.toLowerCase();
+        if ((fileExt != ".bmp") &amp;&amp;
+            (fileExt != ".jpg") &amp;&amp;
+            (fileExt != ".jpeg") &amp;&amp;
+            (fileExt != ".png") &amp;&amp;
+            (fileExt != ".tif") &amp;&amp;
+            (fileExt != ".tiff")) return;
+        
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var blob = new Blob([event.target.result]); 
+            window.URL = window.URL || window.webkitURL;
+            var blobURL = window.URL.createObjectURL(blob); 
+            var image = new Image();
+            image.src = blobURL;
+            image.onload = function() {
+                sender.v_data = sender.resize(image);
+                if (sender.v_data) {
+                    //upload immediately
+                    uploadImage.data = sender.v_data;
+                    uploadImage.controlName = sender.id;
+                    uploadImage.onComplete = function(newFileName) {
+                        getUserInfo();
+                        return;
+                    }
+                    uploadImage();
+                    sender.v_data = "";
+                }
+            }
+        }
+        reader.readAsArrayBuffer(file);
+    } else {
+        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
+    }
+}
+
+sender.resize = function (img) {
+    var canvas = document.createElement("canvas");
+    var imgW = img.width;
+    var imgH = img.height;
+    var dw,dh;
+    if (imgW*imgH>this.maxSqr) {
+        var ratio = imgW / imgH;
+        var y = Math.sqrt(this.maxSqr/ratio);
+        canvas.width = parseInt(ratio*y);
+        canvas.height = parseInt(y);
+    } else {
+        canvas.width = imgW;
+        canvas.height = imgH;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
+}
+]]></onCreate>
+      <sizeRatio>0.894736842105263</sizeRatio>
+      <top>60</top>
+      <topRatio>0.350877192982456</topRatio>
+      <width>57</width>
+      <widthRatio>0.0976027397260274</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel55">
+      <backgroundImg>user.png</backgroundImg>
+      <height>119</height>
+      <heightRatio>0.184496124031008</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0483333333333333</leftRatio>
+      <lockRatio>true</lockRatio>
+      <onCreate>sender.style.borderRadius = "50%";
+sender.style.borderWidth = "4px";
+sender.style.borderColor = "#ffffff";
+sender.style.borderStyle = "solid";</onCreate>
+      <sizeRatio>1</sizeRatio>
+      <top>179</top>
+      <topRatio>0.277519379844961</topRatio>
+      <width>119</width>
+      <widthRatio>0.198333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel55/panel4">
+      <backgroundColor>008080</backgroundColor>
+      <backgroundImg>upload.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>51</height>
+      <heightRatio>0.428571428571429</heightRatio>
+      <left>28</left>
+      <leftRatio>0.235294117647059</leftRatio>
+      <onClick>sender.c_file.click();</onClick>
+      <onCreate><![CDATA[sender.maxWidth = 200;
+sender.maxHeight = 200;
+sender.compressRatio = 0.90;
+
+sender.style.borderRadius = "50%";
+
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "rgba(0,0,0,0.3)";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+
+
+//implementation
+var c = document.createElement("input");
+c.setAttribute("type", "file");
+c.setAttribute("accept", "image/*");
+c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
+sender.insertBefore(c, sender.childNodes[0]);
+sender.c_file = c;
+
+c.onchange = function() {
+    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
+        var file = sender.c_file.files[0];
+        var pos = file.name.lastIndexOf(".");
+        var fileExt = pos<0 ? "" : file.name.substring(pos);
+        
+        //onUserSelectedFile(file.name,fileExt)
+        fileExt = fileExt.toLowerCase();
+        if ((fileExt != ".bmp") &amp;&amp;
+            (fileExt != ".jpg") &amp;&amp;
+            (fileExt != ".jpeg") &amp;&amp;
+            (fileExt != ".png") &amp;&amp;
+            (fileExt != ".tif") &amp;&amp;
+            (fileExt != ".tiff")) return;
+        
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var blob = new Blob([event.target.result]); 
+            window.URL = window.URL || window.webkitURL;
+            var blobURL = window.URL.createObjectURL(blob); 
+            var image = new Image();
+            image.src = blobURL;
+            image.onload = function() {
+                sender.v_data = sender.resize(image);
+                if (sender.v_data) {
+                    //upload immediately
+                    uploadImage.data = sender.v_data;
+                    uploadImage.controlName = sender.id;
+                    uploadImage.onComplete = function(newFileName) {
+                        getUserInfo();
+                        return;
+                    }
+                    uploadImage();
+                    sender.v_data = "";
+                }
+            }
+        }
+        reader.readAsArrayBuffer(file);
+    } else {
+        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
+    }
+}
+
+sender.resize = function (img) {
+    var canvas = document.createElement("canvas");
+    var width = img.width;
+    var height = img.height;
+    if(width > height) {
+        if(width > sender.maxWidth) {
+            height = Math.round(height *= sender.maxWidth / width);
+            width = sender.maxWidth
+        }
+    }else{
+        if(height > sender.maxHeight) {
+            width = Math.round(width *= sender.maxHeight / height);
+            height = sender.maxHeight
+        }
+    }
+    canvas.width = width;
+    canvas.height = height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
+}
+]]></onCreate>
+      <outerBottom>6</outerBottom>
+      <outerRight>6</outerRight>
+      <sizeRatio>0.894736842105263</sizeRatio>
+      <top>31</top>
+      <topRatio>0.260504201680672</topRatio>
+      <width>57</width>
+      <widthRatio>0.478991596638655</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel140">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>18</fontSize>
+      <height>34</height>
+      <heightRatio>0.0523952095808383</heightRatio>
+      <left>66</left>
+      <leftRatio>0.11</leftRatio>
+      <sizeRatio>0.0857843137254902</sizeRatio>
+      <text>个人信息</text>
+      <top>11</top>
+      <topRatio>0.0164670658682635</topRatio>
+      <width>408</width>
+      <widthRatio>0.68</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel224">
+      <backgroundColor>00C0C0</backgroundColor>
+      <cursor>move</cursor>
+      <dockY>top</dockY>
+      <height>58</height>
+      <heightRatio>0.089922480620155</heightRatio>
+      <left>54</left>
+      <leftRatio>0.09</leftRatio>
+      <onCreate><![CDATA[sender.v_down = false;
+sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.21969696969697</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>0.44</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel59">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>66</height>
+      <heightRatio>0.102325581395349</heightRatio>
+      <left>28</left>
+      <leftRatio>0.0466666666666667</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";
+</onCreate>
+      <sizeRatio>0.121546961325967</sizeRatio>
+      <top>310</top>
+      <topRatio>0.48062015503876</topRatio>
+      <width>543</width>
+      <widthRatio>0.905</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel59/panel63">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.424242424242424</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0165745856353591</leftRatio>
+      <sizeRatio>0.142857142857143</sizeRatio>
+      <text>用户名</text>
+      <top>0</top>
+      <width>196</width>
+      <widthRatio>0.360957642725599</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel112/panel54/panel59/edit2">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>41</height>
+      <heightRatio>0.621212121212121</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>14</inputFontSize>
+      <left>0</left>
+      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit2"), ee.getControl("panel225"), 20);</onChange>
+      <sizeRatio>0.0755064456721915</sizeRatio>
+      <top>25</top>
+      <topRatio>0.378787878787879</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel59/edit2/panel64">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0487804878048781</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00368324125230203</sizeRatio>
+      <top>39</top>
+      <topRatio>0.951219512195122</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel59/panel60">
+      <fontColor>657786</fontColor>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>40</height>
+      <heightRatio>0.606060606060606</heightRatio>
+      <left>446</left>
+      <leftRatio>0.821362799263352</leftRatio>
+      <sizeRatio>0.465116279069767</sizeRatio>
+      <text>0/20</text>
+      <top>0</top>
+      <width>86</width>
+      <widthRatio>0.158379373848987</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel59/panel60/panel225">
+      <backgroundColor>EAEAF4</backgroundColor>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
+sender.v_x = parseInt(eb.getDivRect(sender).w/2);
+sender.v_y = parseInt(eb.getDivRect(sender).h/2);
+sender.v_r = 9;
+sender.v_color = "#29a5f2";
+sender.v_bgColor = "#ecf0f3";
+sender.v_width = "4px";
+sender.v_progress = "0.0001";
+sender.refresh = function(progress) {
+    var path = this.childNodes[0].childNodes[0];
+    path.style.stroke=sender.v_bgColor;
+    path.style.strokeWidth=sender.v_width;
+    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
+    path.setAttribute("d", des.join(" "));
+    
+    if (!eb.isEmpty(progress)) this.v_progress = progress;
+    this.v_progress = Math.min(0.9999,this.v_progress);
+    this.v_progress = Math.max(0.0001,this.v_progress);
+    path = this.childNodes[0].childNodes[1];
+    var ag = 90+360-this.v_progress*360;  
+    var ag = ag*(Math.PI/180);
+    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
+    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
+    var opt = window.Number(this.v_progress>0.5);
+    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
+    path.style.stroke=sender.v_color;
+    path.style.strokeWidth=sender.v_width;
+    path.setAttribute("d", des.join(" "));
+}
+
+
+
+]]></onCreate>
+      <sizeRatio>1.02564102564103</sizeRatio>
+      <text>圆形进度条</text>
+      <top>0</top>
+      <width>39</width>
+      <widthRatio>0.453488372093023</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel226">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>132</height>
+      <heightRatio>0.204651162790698</heightRatio>
+      <left>28</left>
+      <leftRatio>0.0466666666666667</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";</onCreate>
+      <sizeRatio>0.243093922651934</sizeRatio>
+      <top>394</top>
+      <topRatio>0.610852713178295</topRatio>
+      <width>543</width>
+      <widthRatio>0.905</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel226/panel229">
+      <fontColor>657786</fontColor>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>40</height>
+      <heightRatio>0.303030303030303</heightRatio>
+      <left>431</left>
+      <leftRatio>0.793738489871087</leftRatio>
+      <sizeRatio>0.396039603960396</sizeRatio>
+      <text>0/160</text>
+      <top>0</top>
+      <width>101</width>
+      <widthRatio>0.186003683241252</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel226/panel229/panel230">
+      <backgroundColor>EAEAF4</backgroundColor>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
+sender.v_x = parseInt(eb.getDivRect(sender).w/2);
+sender.v_y = parseInt(eb.getDivRect(sender).h/2);
+sender.v_r = 9;
+sender.v_color = "#29a5f2";
+sender.v_bgColor = "#ecf0f3";
+sender.v_width = "4px";
+sender.v_progress = "0.0001";
+sender.refresh = function(progress) {
+    var path = this.childNodes[0].childNodes[0];
+    path.style.stroke=sender.v_bgColor;
+    path.style.strokeWidth=sender.v_width;
+    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
+    path.setAttribute("d", des.join(" "));
+    
+    if (!eb.isEmpty(progress)) this.v_progress = progress;
+    this.v_progress = Math.min(0.9999,this.v_progress);
+    this.v_progress = Math.max(0.0001,this.v_progress);
+    path = this.childNodes[0].childNodes[1];
+    var ag = 90+360-this.v_progress*360;  
+    var ag = ag*(Math.PI/180);
+    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
+    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
+    var opt = window.Number(this.v_progress>0.5);
+    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
+    path.style.stroke=sender.v_color;
+    path.style.strokeWidth=sender.v_width;
+    path.setAttribute("d", des.join(" "));
+}
+
+
+
+]]></onCreate>
+      <sizeRatio>1.02564102564103</sizeRatio>
+      <text>圆形进度条</text>
+      <top>0</top>
+      <width>39</width>
+      <widthRatio>0.386138613861386</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel112/panel54/panel226/edit3">
+      <backgroundSkin>empty</backgroundSkin>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>103</height>
+      <heightRatio>0.78030303030303</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>12</inputFontSize>
+      <left>0</left>
+      <multiLine>true</multiLine>
+      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit3"), ee.getControl("panel230"), 160);</onChange>
+      <onCreate>sender._input.style.resize = "none";</onCreate>
+      <sizeRatio>0.189686924493554</sizeRatio>
+      <text>添加你的简介</text>
+      <top>29</top>
+      <topRatio>0.21969696969697</topRatio>
+      <vAlign>top</vAlign>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel226/edit3/panel66">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0194174757281553</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00368324125230203</sizeRatio>
+      <top>101</top>
+      <topRatio>0.980582524271845</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel226/panel65">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.212121212121212</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0165745856353591</leftRatio>
+      <sizeRatio>0.168674698795181</sizeRatio>
+      <text>简介</text>
+      <top>0</top>
+      <width>166</width>
+      <widthRatio>0.305709023941068</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel227">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>73</height>
+      <heightRatio>0.113178294573643</heightRatio>
+      <left>28</left>
+      <leftRatio>0.0466666666666667</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";</onCreate>
+      <sizeRatio>0.134438305709024</sizeRatio>
+      <top>542</top>
+      <topRatio>0.84031007751938</topRatio>
+      <width>543</width>
+      <widthRatio>0.905</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel227/panel232">
+      <fontColor>657786</fontColor>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>40</height>
+      <heightRatio>0.547945205479452</heightRatio>
+      <left>433</left>
+      <leftRatio>0.797421731123389</leftRatio>
+      <sizeRatio>0.404040404040404</sizeRatio>
+      <text>0/50</text>
+      <top>0</top>
+      <width>99</width>
+      <widthRatio>0.18232044198895</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel227/panel232/panel233">
+      <backgroundColor>EAEAF4</backgroundColor>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
+sender.v_x = parseInt(eb.getDivRect(sender).w/2);
+sender.v_y = parseInt(eb.getDivRect(sender).h/2);
+sender.v_r = 9;
+sender.v_color = "#29a5f2";
+sender.v_bgColor = "#ecf0f3";
+sender.v_width = "4px";
+sender.v_progress = "0.0001";
+sender.refresh = function(progress) {
+    var path = this.childNodes[0].childNodes[0];
+    path.style.stroke=sender.v_bgColor;
+    path.style.strokeWidth=sender.v_width;
+    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
+    path.setAttribute("d", des.join(" "));
+    
+    if (!eb.isEmpty(progress)) this.v_progress = progress;
+    this.v_progress = Math.min(0.9999,this.v_progress);
+    this.v_progress = Math.max(0.0001,this.v_progress);
+    path = this.childNodes[0].childNodes[1];
+    var ag = 90+360-this.v_progress*360;  
+    var ag = ag*(Math.PI/180);
+    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
+    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
+    var opt = window.Number(this.v_progress>0.5);
+    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
+    path.style.stroke=sender.v_color;
+    path.style.strokeWidth=sender.v_width;
+    path.setAttribute("d", des.join(" "));
+}
+
+
+
+]]></onCreate>
+      <sizeRatio>1.02564102564103</sizeRatio>
+      <text>圆形进度条</text>
+      <top>0</top>
+      <width>39</width>
+      <widthRatio>0.393939393939394</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel227/panel67">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.383561643835616</heightRatio>
+      <left>11</left>
+      <leftRatio>0.0202578268876611</leftRatio>
+      <sizeRatio>0.106870229007634</sizeRatio>
+      <text>网站</text>
+      <top>0</top>
+      <width>262</width>
+      <widthRatio>0.482504604051565</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel112/panel54/panel227/edit4">
+      <backgroundSkin>empty</backgroundSkin>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>38</height>
+      <heightRatio>0.520547945205479</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>14</inputFontSize>
+      <left>0</left>
+      <onChange>ee.getControl("panel54").refreshProgress(ee.getControl("edit4"), ee.getControl("panel233"), 100);</onChange>
+      <sizeRatio>0.0699815837937385</sizeRatio>
+      <text>添加你的网站</text>
+      <top>35</top>
+      <topRatio>0.479452054794521</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel227/edit4/panel68">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0526315789473684</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00368324125230203</sizeRatio>
+      <top>36</top>
+      <topRatio>0.947368421052632</topRatio>
+      <width>543</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel54/panel49">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>33</height>
+      <heightRatio>0.0511627906976744</heightRatio>
+      <left>491</left>
+      <leftRatio>0.818333333333333</leftRatio>
+      <onClick><![CDATA[if (!sender.v_enabled) return;
+if (updateUserInfo.busy) return;
+
+updateUserInfo.nickName = ee.getEditText(ee.getControl("edit2"));
+updateUserInfo.note = ee.getEditText(ee.getControl("edit3"));
+updateUserInfo.homePage = ee.getEditText(ee.getControl("edit4"));
+
+if (updateUserInfo.nickName.length<3) {
+    g5.alert1(
+        "昵称不符合要求",
+        "昵称或者姓名不能少于3个英文字母或汉字"
+    );
+    return;
+}
+if (updateUserInfo.nickName.length>20) {
+    g5.alert1(
+        "昵称不符合要求",
+        "昵称的长度不能大于20"
+    );
+    return;
+}
+if (updateUserInfo.note.length>160) {
+    g5.alert1(
+        "简介不符合要求",
+        "简介的长度不能大于160"
+    );
+    return;
+}
+if (updateUserInfo.homePage.length>50) {
+    g5.alert1(
+        "网站不符合要求",
+        "网站地址的长度不能大于50"
+    );
+    return;
+}
+
+updateUserInfo.onComplete = function() {
+    ee.showAni(ee.getControl("panel54"), 1);
+    getUserInfo();
+    if (g5.currentPageIndex == 1) showUserPage();
+    g5.popBlack.a7.show(
+        "提示", "修改您的用户信息完成",
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
+        //[new g5.BStyle("","#e8f5fe","#d2ecfc","确定","确定","确定","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+        function() {}
+    );
+}
+updateUserInfo();]]></onClick>
+      <onCreate>sender.bgColorDisabled = "#8ed0f9";
+sender.bgColorEnabled = "#1da1f2";
+sender.bgColorHot = "#1a91da";
+sender.bgColorDown = "#1781c2";
+sender.v_enabled = true;
+sender.setEnabled = function(enabled) {
+    this.v_enabled = enabled;
+    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+}
+sender.setEnabled(false);
+
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorEnabled;
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorDown;
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+}
+eb.initMouseEvent(sender);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.397590361445783</sizeRatio>
+      <text>保存</text>
+      <top>15</top>
+      <topRatio>0.0232558139534884</topRatio>
+      <width>83</width>
+      <widthRatio>0.138333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268">
       <backgroundColor>FFFFFF</backgroundColor>
