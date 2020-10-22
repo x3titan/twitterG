@@ -1381,7 +1381,6 @@ sender.p12 = ee.getControl("panel355");</onCreate>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.a1 = ee.getControl("panel1");
 sender.v_items = new Array();
@@ -1418,13 +1417,15 @@ sender.activePage = function() {
     ee.setRect(g5.p4.a1,0,0,eb.getDivRect(g5.p4).w,null);
     ee.setRect(g5.p4, null,null,null,eb.getDivRect(g5.p4.a1).h);
     ee.setRect(g5.p2,null,null,null,eb.getDivRect(this).h+1);
-    document.documentElement.scrollTop = this.v_lastScrollTop;
-    ee.showAni(ee.getControl("panel41"), 0);
+    //document.documentElement.scrollTop = this.v_lastScrollTop;
+    ee.showAni(this, 0);
     g5.pushHistory("");
+    g5.writeLog("restore main:" + document.documentElement.scrollTop);
 }
 
 sender.close = function() {
     sender.v_lastScrollTop = document.documentElement.scrollTop;
+    g5.writeLog("save main:" + document.documentElement.scrollTop);
     ee.setVisible(g5.p4, false);
     ee.setVisible(this, false);
     g5.changeP3(-1);
@@ -20332,6 +20333,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20411,6 +20413,7 @@ if (sender.v_closeCount>=4) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>254</left>
       <leftRatio>0.214345991561181</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
@@ -27903,8 +27906,7 @@ this.currentIndex = pageIndex;</functionCode>
     <item name="changeP2" type="20">
       <varValue />
       <functionParam>pageIndex</functionParam>
-      <functionCode><![CDATA[//if ((pageIndex<0) || (pageIndex>=7)) return false;
-if (g5.currentPageIndex == pageIndex) return true;
+      <functionCode><![CDATA[if (g5.currentPageIndex == pageIndex) return true;
 var root = ee.getControl("panel135");
 var url = window.location.href;
 var a = url.indexOf("?");
@@ -28109,7 +28111,8 @@ g5.currentP3Index = pageIndex;</functionCode>
     <item name="processUrl" type="20">
       <varValue />
       <functionParam />
-      <functionCode>var p = g5.getQueryString("p");
+      <functionCode>g5.notPushHistory = true;
+var p = g5.getQueryString("p");
 if (eb.isEmpty(p)) {
     g5.notPushHis = true;
     g5.changeP2(0);
@@ -28135,7 +28138,9 @@ if (eb.isEmpty(p)) {
 } else if (p=="11") {
     g5.notPushHis = true;
     g5.p2.p12.show();
-}</functionCode>
+}
+g5.notPushHistory = false;
+</functionCode>
     </item>
     <item name="refreshUserInfo" type="20">
       <varValue />
@@ -28712,13 +28717,15 @@ return text.substr(0,i+1) + "...";]]></functionCode>
     <item name="pushHistory" type="20">
       <varValue />
       <functionParam>param</functionParam>
-      <functionCode><![CDATA[var url = window.location.href;
+      <functionCode><![CDATA[if (g5.notPushHistory) return;
+var url = window.location.href;
 var a = url.indexOf("?");
 if (a>=0) url = url.substr(0,a+1);
 var pageState = {title:"", url:url};
-if (pageState!="") {
-    history.pushState(pageState,"","?" + param);
-}]]></functionCode>
+if (param != "") param = "?" + param;
+history.pushState(pageState,"",param);
+
+]]></functionCode>
     </item>
   </g5Items>
 </page>
