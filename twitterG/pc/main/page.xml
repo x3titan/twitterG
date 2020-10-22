@@ -1409,6 +1409,7 @@ sender.init = function() {
 }
 
 sender.activePage = function() {
+    g5.pushHistory("");
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
@@ -1417,10 +1418,9 @@ sender.activePage = function() {
     ee.setRect(g5.p4.a1,0,0,eb.getDivRect(g5.p4).w,null);
     ee.setRect(g5.p4, null,null,null,eb.getDivRect(g5.p4.a1).h);
     ee.setRect(g5.p2,null,null,null,eb.getDivRect(this).h+1);
-    //document.documentElement.scrollTop = this.v_lastScrollTop;
-    ee.showAni(this, 0);
-    g5.pushHistory("");
+    document.documentElement.scrollTop = sender.v_lastScrollTop;
     g5.writeLog("restore main:" + document.documentElement.scrollTop);
+    ee.showAni(this, 0);
 }
 
 sender.close = function() {
@@ -2191,6 +2191,7 @@ sender.close = function() {
 }
 
 sender.activePage = function() {
+    g5.pushHistory("p=1&amp;u=" + escape(g5.p2.p2.v_userInfo.userName));
     if (this.v_needRefresh) {
         document.documentElement.scrollTop = 0;
     } else {
@@ -2202,7 +2203,6 @@ sender.activePage = function() {
     ee.showAni(ee.getControl("panel16"), 0);
     g5.changeP3(8);
     g5.p4.changePage("a6");
-    g5.pushHistory("p=1&amp;u=" + escape(g5.p2.p2.v_userInfo.userName));
 }
 
 
@@ -28722,7 +28722,7 @@ var url = window.location.href;
 var a = url.indexOf("?");
 if (a>=0) url = url.substr(0,a+1);
 var pageState = {title:"", url:url};
-if (param != "") param = "?" + param;
+param = "?" + param;
 history.pushState(pageState,"",param);
 
 ]]></functionCode>
