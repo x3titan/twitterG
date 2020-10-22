@@ -1385,6 +1385,8 @@ sender.p12 = ee.getControl("panel355");</onCreate>
       <left>0</left>
       <onCreate><![CDATA[sender.a1 = ee.getControl("panel1");
 sender.v_items = new Array();
+sender.v_lastScrollTop = 0;
+
 sender.update = function(v_content,v_userInfo,v_reContent,v_reUserInfo) {
     var i;
     for (i=0; i<this.v_items.length; i++) {
@@ -1405,6 +1407,28 @@ sender.init = function() {
     updateHomepage.contentId = 0
     updateHomepage.isForward = true;
     this.loadFromServer();
+}
+
+sender.activePage = function() {
+    g5.pageMode = 0;
+    g5.refreshMain(true);
+    ee.setVisible(g5.p4, true);
+    g5.p4.changePage("a1");
+    g5.changeP3(9);
+    ee.setRect(g5.p4.a1,0,0,eb.getDivRect(g5.p4).w,null);
+    ee.setRect(g5.p4, null,null,null,eb.getDivRect(g5.p4.a1).h);
+    ee.setRect(g5.p2,null,null,null,eb.getDivRect(this).h+1);
+    document.documentElement.scrollTop = this.v_lastScrollTop;
+    ee.showAni(ee.getControl("panel41"), 0);
+    g5.pushHistory("");
+}
+
+sender.close = function() {
+    sender.v_lastScrollTop = document.documentElement.scrollTop;
+    ee.setVisible(g5.p4, false);
+    ee.setVisible(this, false);
+    g5.changeP3(-1);
+    g5.player.stop();
 }
 
 sender.loadMore = function() {
@@ -2155,7 +2179,7 @@ sender.show = function(v_userInfo, userId, userName) {
 }
 
 sender.close = function() {
-    this.v_lastScrollTop = g5.mainDiv.scrollTop;
+    this.v_lastScrollTop = document.documentElement.scrollTop;
     ee.setVisible(g5.p4, false);
     g5.player.stop();
     g5.p2.p2.p2sub.p1.c_chat.c_chat.c_chatRoot.stop();
@@ -2167,9 +2191,9 @@ sender.close = function() {
 
 sender.activePage = function() {
     if (this.v_needRefresh) {
-        g5.mainDiv.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
     } else {
-        g5.mainDiv.scrollTop = this.v_lastScrollTop;
+        document.documentElement.scrollTop = this.v_lastScrollTop;
     }
     g5.pageMode = 0;
     g5.refreshMain(true);
@@ -7510,7 +7534,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             eb.setDivRect(g5.p2,null,null,null,cy+200);
             eb.setDivRect(g5.p2.p9,null,null,null,cy+200);
         }
-        g5.mainDiv.scrollTop = scrollTop;
+        document.documentElement.scrollTop = scrollTop;
         eb.processDock();
         
         showTopic.needRefresh = false;
@@ -7541,7 +7565,7 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     }
     g5.renderTwitter(item);        
     sender.v_items.push(item);
-    g5.mainDiv.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
     
     g5.changeP2(-1);
     g5.changeP2(7);
@@ -20406,10 +20430,9 @@ sender.refresh = function() {
     } else {
         ee.setImage(c,"url:" + g5.imgUrl + this.v_userInfo.photo,"trim","","")
     }
-    ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.parentNode.v_userInfo.userName;
-        showUserPage();
-        ee.showAni(sender.parentNode, 1);
+    ee.setOnClick(c,function(senderButton,event) {
+        g5.p2.p2.show(sender.v_userInfo);
+        ee.showAni(senderButton.parentNode, 1);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     ee.setOnMouseEnter(c, function(sender,e) {
@@ -27893,13 +27916,7 @@ if (g5.notPushHis) {
     g5.notPushHis = false;
 }
 if (g5.currentPageIndex == 0) {
-    ee.setVisible(g5.p4, false);
-    ee.setVisible(ee.getControl("panel34"), false);
-    ee.setVisible(ee.getControl("panel41"), false);
-    g5.changeP3(-1);
-    g5.player.stop();
-    //ee.showAni(ee.getControl("panel41"), 1);
-    g5.mainDiv.lastScrollTop = g5.mainDiv.scrollTop;
+    g5.p2.p1.close();
 } else if (g5.currentPageIndex == 1) {
     g5.p2.p2.close();
 } else if (g5.currentPageIndex == 2) {
@@ -27938,21 +27955,7 @@ if (g5.currentPageIndex == 0) {
 }
 
 if (pageIndex == 0) {
-    if (eb.isEmpty(g5.mainDiv.lastScrollTop))g5.mainDiv.lastScrollTop = 0;
-    g5.mainDiv.scrollTop = g5.mainDiv.lastScrollTop;
-    g5.pageMode = 0;
-    g5.refreshMain(true);
-    ee.setVisible(g5.p4, true);
-    g5.p4.changePage("a1");
-    g5.changeP3(9);
-    ee.setVisible(ee.getControl("panel34"), true);
-    ee.setRect(ee.getControl("panel34"),0,0,eb.getDivRect(g5.p4).w,null);
-    ee.setRect(g5.p4, null,null,null,eb.getDivRect(ee.getControl("panel34")).h);
-    ee.setRect(root,null,null,null,eb.getDivRect(ee.getControl("panel41")).h+1);
-    ee.showAni(ee.getControl("panel41"), 0);
-    if (pageState!="") {
-        history.pushState(pageState,"","/twitterG/pc/main");
-    }
+    g5.p2.p1.activePage();
 } else if (pageIndex == 1) {
     g5.p2.p2.activePage();
 } else if (pageIndex == 2) {
