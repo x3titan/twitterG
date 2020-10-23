@@ -7433,6 +7433,26 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 
+sender.activePage = function() {
+    g5.pageMode = 0;
+    ee.setVisible(g5.p4, true);
+    g5.p4.changePage("a2");
+    ee.setRect(g5.p4.a2,0,0,eb.getDivRect(g5.p4).w,null);
+    ee.setRect(g5.p4, null,null,null,eb.getDivRect(g5.p4.a2).h);
+    g5.refreshMain(true);
+    ee.showAni(this, 0);
+    g5.pushHistory("p=7&amp;c=" + showTopic.topicId)
+}
+
+sender.close = function() {
+    ee.setVisible(g5.p4, false);
+    ee.setVisible(g5.p4.a2, false);
+    ee.setVisible(this, false);
+    g5.player.stop();
+}
+
+
+
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId) {
     if (showTopic.busy) return;
    
@@ -27939,10 +27959,7 @@ if (g5.currentPageIndex == 0) {
     ee.showAni(ee.getControl("layouty5"), 1);
     ee.showAni(ee.getControl("panel116"), 1);
 } else if (g5.currentPageIndex ==7) {
-    ee.setVisible(g5.p4, false);
-    ee.setVisible(ee.getControl("panel38"), false);
-    ee.setVisible(ee.getControl("panel22"), false);
-    g5.player.stop();
+    g5.p2.p9.close();
 } else if (g5.currentPageIndex == 9) {
     ee.setVisible(g5.p4, false);
     ee.showAni(ee.getControl("panel156"), 1);
@@ -27997,18 +28014,7 @@ if (pageIndex == 0) {
         history.pushState(pageState,"","?p=6");
     }
 } else if (pageIndex == 7) {
-    //g5.mainDiv.scrollTop = 0;
-    g5.pageMode = 0;
-    ee.setVisible(g5.p4, true);
-    g5.p4.changePage("a2");
-    ee.setVisible(ee.getControl("panel38"), true);
-    ee.setRect(ee.getControl("panel38"),0,0,eb.getDivRect(g5.p4).w,null);
-    ee.setRect(g5.p4, null,null,null,eb.getDivRect(ee.getControl("panel38")).h);
-    g5.refreshMain(true);
-    ee.showAni(g5.p2.p9, 0);
-    if (pageState!="") {
-        history.pushState(pageState,"","?p=7&amp;c=" + showTopic.topicId);
-    }
+    g5.p2.p9.activePage();
 } else if (pageIndex == 9) {
     g5.mainDiv.scrollTop = 0;
     g5.pageMode = 1;
