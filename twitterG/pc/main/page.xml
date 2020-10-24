@@ -7432,6 +7432,8 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
+sender.v_hisItems = new Array();
+
 
 sender.activePage = function() {
     g5.pageMode = 0;
@@ -7449,21 +7451,93 @@ sender.close = function() {
     ee.setVisible(g5.p4.a2, false);
     ee.setVisible(this, false);
     g5.player.stop();
-    //store
-    //showTopic.data
-    //showTopic.backTrace
-    //sender.v_items
-    //this height, p2height
-    // this.v_content = v_content;
-    //this.v_reContent = v_reContent;
-    //this.v_userInfo = v_userInfo;
-    //this.v_reUserInfo = v_reUserInfo;
+    this.save();
+}
+
+sender.HisItem = function() {
+    this.contentId = 0;
+    this.data = null;
+    this.backTrace = null;
+    this.v_items = null;
+    this.height = 0;
+    this.p2Height = 0;
+    this.v_content = null;
+    this.v_reContent = null;
+    this.v_userInfo = null;
+    this.v_reUserInfo = null;
+    this.scrollTop = 0;
 }
 
 
+sender.save = function() {
+    var cid = showTopic.topicId;
+    g5.writeLog("save cid=" + cid)
+    var idx = this._getIndexById(cid);
+    if (idx>=0) {
+        this.v_hisItems.splice(idx,1);
+    }
+    var item = new sender.HisItem();
+    item.contentId = cid;
+    item.data = showTopic.data;
+    item.backTrace = showTopic.backTrace;
+    item.v_items = this.v_items;
+    item.height = eb.getDivRect(this).h
+    item.p2Height  = eb.getDivRect(this.parentNode).h
+    item.v_content = this.v_content;
+    item.v_reContent = this.v_reContent;
+    item.v_userInfo = this.v_userInfo;
+    item.v_reUserInfo = this.v_reUserInfo;
+    item.scrollTop = document.documentElement.scrollTop;
+    
+    this.v_hisItems.push(item);
+    for (var i=0; i<this.v_items.length; i++) {
+        this.removeChild(this.v_items[i]);
+    }
+    this.v_items = new Array();
+}
+
+sender.load = function(cid) {
+    var idx = this._getIndexById(cid);
+    if (idx<0) return false;
+    g5.writeLog("load cid=" + cid)
+    var item = this.v_hisItems[idx];
+    this.v_hisItems.splice(idx,1);
+    
+    for (var i=0; i<this.v_items.length; i++) {
+        this.removeChild(this.v_items[i]);
+    }
+    this.v_items = new Array();
+    showTopic.topicId = cid;
+    showTopic.data = item.data;
+    showTopic.backTrace = item.backTrace;
+    this.v_items = item.v_items;
+    this.v_content = item.v_content;
+    this.v_reContent = item.v_reContent;
+    this.v_userInfo = item.v_userInfo;
+    this.v_reUserInfo = item.v_reUserInfo;
+    for (var i=0; i<this.v_items.length; i++) {
+        this.appendChild(this.v_items[i]);
+    }
+    g5.changeP2(7);
+    document.documentElement.scrollTop = item.scrollTop;
+    ee.setRect(this,null,null,null,item.height);
+    ee.setRect(this.parentNode,null,null,null,item.p2Height);
+    return true;
+}
+
+sender._getIndexById = function(contentId) {
+    for (var i=0; i<this.v_hisItems.length; i++) {
+        if (this.v_hisItems[i].contentId == contentId) return i;
+    }
+    return -1;
+}
+
 
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId) {
+    if (this.load(contentId)) return;
+    if (v_content) if (this.load(v_content.id)) return;
     if (showTopic.busy) return;
+    g5.changeP2(-1);
    
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
@@ -7488,6 +7562,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         this.v_preShow = true;
         this.preShow(v_content, v_reContent, v_userInfo, v_reUserInfo);
     }
+    var nohis = g5.notPushHistory;
     showTopic.onComplete = function(datasetFw, datasetBk) {
         var i, item;
         var root = sender;
@@ -7501,7 +7576,9 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             preShowItem = sender.v_items[0];
         } else {
             for (i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+            g5.notPushHistory = nohis;
             g5.changeP2(7);
+            g5.notPushHistory = false;
         }
         sender.v_items = new Array();
                 
@@ -7595,7 +7672,6 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     }
     g5.renderTwitter(item);        
     sender.v_items.push(item);
-    g5.changeP2(-1);
     g5.changeP2(7);
     document.documentElement.scrollTop = 0;
 }
@@ -8510,6 +8586,7 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p12->通知]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.c_topBlank = sender.eeChildren[0];
@@ -19489,8 +19566,6 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
-      <onAniStart>
-      </onAniStart>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
 event.returnValue = false;
 return false;
@@ -28187,6 +28262,19 @@ if (g5.myUserInfo.titleBg == "") {
 
 ]]></functionCode>
     </item>
+    <item name="pushHistory" type="20">
+      <varValue />
+      <functionParam>param</functionParam>
+      <functionCode><![CDATA[if (g5.notPushHistory) return;
+var url = window.location.href;
+var a = url.indexOf("?");
+if (a>=0) url = url.substr(0,a+1);
+var pageState = {title:"", url:url};
+param = "?" + param;
+history.pushState(pageState,"",param);
+
+]]></functionCode>
+    </item>
     <item name="setImage" type="20">
       <varValue />
       <functionParam>div, url, style, alt, title, delay</functionParam>
@@ -28728,19 +28816,6 @@ for (i = text.length-1; i>=0; i--) {
     len += text.charCodeAt(i)>0xff?2:1;
 }
 return text.substr(0,i+1) + "...";]]></functionCode>
-    </item>
-    <item name="pushHistory" type="20">
-      <varValue />
-      <functionParam>param</functionParam>
-      <functionCode><![CDATA[if (g5.notPushHistory) return;
-var url = window.location.href;
-var a = url.indexOf("?");
-if (a>=0) url = url.substr(0,a+1);
-var pageState = {title:"", url:url};
-param = "?" + param;
-history.pushState(pageState,"",param);
-
-]]></functionCode>
     </item>
   </g5Items>
 </page>
