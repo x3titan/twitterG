@@ -7537,14 +7537,19 @@ sender._getIndexById = function(contentId) {
     }
     return -1;
 }
-
-
+     
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId) {
     if (showTopic.busy) return;
     g5.changeP2(-1);
     if (this.load(contentId)) return;
-    if (v_content) if (this.load(v_content.id)) return;
-   
+    if (v_content) {
+        if (v_content.exUplinkType=="L") {
+            if (this.load(v_content.exContentId)) return;
+        } else {
+            if (this.load(v_content.id)) return;
+        }
+    }
+    
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
     
