@@ -1,5 +1,5 @@
 <page>
-  <controls count="543">
+  <controls count="544">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -5424,7 +5424,7 @@ sender.refreshContent = function(root, resize) {
     var user = g5.showCommonText(root.v_userInfo.nickName);
     if (root.v_chatStatus == "SYS") {
         user = "<font color='#a0a0a0'><b> 系统提示 </b></font>";;    
-    } else if (root.v_userInfo.id == showUserPage.id) {
+    } else if (root.v_userInfo.id == showUserPage.v_userInfo.id) {
         user = "<span style='background-color:#fcd801;border-radius:3px;font-weight:bold;color:#6e6e6e'> " + user + " </span>";    
     } else if (root.v_isAdmin) {
         user = "<span style='background-color:#48ccfe;border-radius:3px;font-weight:bold;color:#4e4e4e'> " + user + " </span>";  
@@ -16971,7 +16971,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17053,15 +17052,15 @@ if (sender.v_closeCount>=4) {
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>fill</backgroundImgMode>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>103</height>
-      <heightRatio>0.129396984924623</heightRatio>
+      <height>155</height>
+      <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel110");
 sender.c_button2 = ee.getControl("panel111");
+sender.c_button3 = ee.getControl("panel28");
 
 sender.style.borderRadius = "6px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
@@ -17093,7 +17092,7 @@ ee.setOnClick(sender.c_button1, function(c_button1, event) {
         }
     );
 });]]></onCreate>
-      <sizeRatio>0.476851851851852</sizeRatio>
+      <sizeRatio>0.717592592592593</sizeRatio>
       <top>192</top>
       <topRatio>0.241206030150754</topRatio>
       <width>216</width>
@@ -17139,6 +17138,39 @@ ee.setOnClick(sender.c_button1, function(c_button1, event) {
       <text> x 置顶到你的个人资料</text>
       <top>52</top>
       <topRatio>0.504854368932039</topRatio>
+      <width>216</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149/panel28">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.32258064516129</heightRatio>
+      <left>0</left>
+      <note>c_button3</note>
+      <onClick>setBookMark.operation = "add";
+setBookMark.contentId = sender.parentNode.v_content.id;
+setBookMark.onComplete = function() {
+    g5.alert1(
+        "增加（标记）书签",
+        "您已经将此发言标记为书签，点击书签可以随时查看。"
+    );
+}
+setBookMark();
+</onClick>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+    g5.icon.bookMark +
+    "</svg> <div style='display:inline;'>添加发言到书签</div>");    ]]></onCreate>
+      <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
+      <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
+      <sizeRatio>0.231481481481481</sizeRatio>
+      <text> x 添加发言到书签</text>
+      <top>104</top>
+      <topRatio>0.670967741935484</topRatio>
       <width>216</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -17392,7 +17424,7 @@ setBookMark.onComplete = function() {
 setBookMark();
 </onClick>
       <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-    "<g><path d=\"M23.074 3.35H20.65V.927c0-.414-.337-.75-.75-.75s-.75.336-.75.75V3.35h-2.426c-.414 0-.75.337-.75.75s.336.75.75.75h2.425v2.426c0 .414.335.75.75.75s.75-.336.75-.75V4.85h2.424c.414 0 .75-.335.75-.75s-.336-.75-.75-.75zM19.9 10.744c-.415 0-.75.336-.75.75v9.782l-6.71-4.883c-.13-.095-.285-.143-.44-.143s-.31.048-.44.144l-6.71 4.883V5.6c0-.412.337-.75.75-.75h6.902c.414 0 .75-.335.75-.75s-.336-.75-.75-.75h-6.9c-1.242 0-2.25 1.01-2.25 2.25v17.15c0 .282.157.54.41.668.25.13.553.104.78-.062L12 17.928l7.458 5.43c.13.094.286.143.44.143.117 0 .234-.026.34-.08.252-.13.41-.387.41-.67V11.495c0-.414-.335-.75-.75-.75z\"></path></g>" +
+    g5.icon.bookMark +
     "</svg> <div style='display:inline;'>添加发言到书签</div>");    
 ]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
@@ -26367,6 +26399,7 @@ unlike: "<g><path d=\"M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-
 forward: "<g><path d=\"M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z\"></path></g>",
 trash: "<g><path d=\"M20.746 5.236h-3.75V4.25c0-1.24-1.01-2.25-2.25-2.25h-5.5c-1.24 0-2.25 1.01-2.25 2.25v.986h-3.75c-.414 0-.75.336-.75.75s.336.75.75.75h.368l1.583 13.262c.216 1.193 1.31 2.027 2.658 2.027h8.282c1.35 0 2.442-.834 2.664-2.072l1.577-13.217h.368c.414 0 .75-.336.75-.75s-.335-.75-.75-.75zM8.496 4.25c0-.413.337-.75.75-.75h5.5c.413 0 .75.337.75.75v.986h-7V4.25zm8.822 15.48c-.1.55-.664.795-1.18.795H7.854c-.517 0-1.083-.246-1.175-.75L5.126 6.735h13.74L17.32 19.732z\"></path><path d=\"M10 17.75c.414 0 .75-.336.75-.75v-7c0-.414-.336-.75-.75-.75s-.75.336-.75.75v7c0 .414.336.75.75.75zm4 0c.414 0 .75-.336.75-.75v-7c0-.414-.336-.75-.75-.75s-.75.336-.75.75v7c0 .414.336.75.75.75z\"></path></g>",
 pin: "<g><path d=\"M20.472 14.738c-.388-1.808-2.24-3.517-3.908-4.246l-.474-4.307 1.344-2.016c.258-.387.28-.88.062-1.286-.218-.406-.64-.66-1.102-.66H7.54c-.46 0-.884.254-1.1.66-.22.407-.197.9.06 1.284l1.35 2.025-.42 4.3c-1.667.732-3.515 2.44-3.896 4.222-.066.267-.043.672.222 1.01.14.178.46.474 1.06.474h3.858l2.638 6.1c.12.273.39.45.688.45s.57-.177.688-.45l2.638-6.1h3.86c.6 0 .92-.297 1.058-.474.265-.34.288-.745.228-.988zM12 20.11l-1.692-3.912h3.384L12 20.11zm-6.896-5.413c.456-1.166 1.904-2.506 3.265-2.96l.46-.153.566-5.777-1.39-2.082h7.922l-1.39 2.08.637 5.78.456.153c1.355.45 2.796 1.78 3.264 2.96H5.104z\"></path></g>",
+bookMark: "<g><path d=\"M23.074 3.35H20.65V.927c0-.414-.337-.75-.75-.75s-.75.336-.75.75V3.35h-2.426c-.414 0-.75.337-.75.75s.336.75.75.75h2.425v2.426c0 .414.335.75.75.75s.75-.336.75-.75V4.85h2.424c.414 0 .75-.335.75-.75s-.336-.75-.75-.75zM19.9 10.744c-.415 0-.75.336-.75.75v9.782l-6.71-4.883c-.13-.095-.285-.143-.44-.143s-.31.048-.44.144l-6.71 4.883V5.6c0-.412.337-.75.75-.75h6.902c.414 0 .75-.335.75-.75s-.336-.75-.75-.75h-6.9c-1.242 0-2.25 1.01-2.25 2.25v17.15c0 .282.157.54.41.668.25.13.553.104.78-.062L12 17.928l7.458 5.43c.13.094.286.143.44.143.117 0 .234-.026.34-.08.252-.13.41-.387.41-.67V11.495c0-.414-.335-.75-.75-.75z\"></path></g>",
 
 end:""
 }]]></varValue>
