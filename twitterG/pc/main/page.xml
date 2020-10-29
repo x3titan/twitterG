@@ -392,6 +392,7 @@ sender.addEventListener("mousewheel",function(event){
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -5311,7 +5312,7 @@ sender.loadData = function(panel,dataset,index) {
     panel.v_isBlockTime = dataset.getData(7,index) == "1";
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset, 8, index);
-    panel.v_isOwner = panel.v_userInfo.id == showUserPage.id;
+    panel.v_isOwner = panel.v_userInfo.id == showUserPage.v_userInfo.id;
 }
 sender.refresh = function(force) {
     if (!chatGet.busy) {
@@ -5458,7 +5459,7 @@ sender.refreshContent = function(root, resize) {
         var rect = eb.getDivRect(c.label);
         ee.setRect(c, null, null, null, rect.h);
     } else if (root.v_isBlack) {
-        if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin)) {
+        if ((showUserPage.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin)) {
             ee.setRect(c,null,null,null,0);
         } else if (root.v_mode == 0) {
             ee.setRect(c,null,null,null,10);
@@ -5503,7 +5504,7 @@ sender.refreshContent = function(root, resize) {
             eb.initMouseEvent(c);
         }
     } else if (root.v_chatStatus == "DEL") {
-        if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+        if ((showUserPage.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
             ee.setRect(c,null,null,null,0);
         } else if (root.v_mode == 0) {
             ee.setRect(c,null,null,null,10);
@@ -5628,7 +5629,7 @@ sender.renderMsg = function(root) {
         c.v_timer = null;
         root.c_photo = c;
         ee.setOnClick(c, function(sender, event) {
-            ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+            ee.getControl("panel280").show(sender, root.v_userInfo);
         });
         ee.setOnMouseEnter(c, function(sender,e) {
             sender.style.webkitFilter="brightness(80%)";
@@ -5682,7 +5683,7 @@ sender.renderMsg = function(root) {
         var style = new Array();
         var onClick = new Array();
         //delete
-        if ((showUserPage.id == g5.myUserInfo.id) || 
+        if ((showUserPage.v_userInfo.id == g5.myUserInfo.id) || 
             (showUserPage.isChatRoomPubAdmin &amp;&amp; !root.v_isAdmin) || 
             (root.v_userInfo.id == g5.myUserInfo.id)) {
             if (root.v_chatStatus == "IDL") {
@@ -5735,7 +5736,7 @@ sender.renderMsg = function(root) {
             }
         }
         //admin
-        if ((showUserPage.id == g5.myUserInfo.id) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!root.v_isBlack)) {
+        if ((showUserPage.v_userInfo.id == g5.myUserInfo.id) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!root.v_isBlack)) {
             if (root.v_isAdmin) {
                 style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除管理员","解除管理员","解除管理员","#404040","#404040","#404040",""));
                 onClick.push(
@@ -5753,7 +5754,7 @@ sender.renderMsg = function(root) {
             }
         }
         //blacklist
-        if (((showUserPage.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin)) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+        if (((showUserPage.v_userInfo.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin)) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
             if (root.v_isBlack) {
                 style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","解除屏蔽","解除屏蔽","解除屏蔽","#404040","#404040","#404040",""));
                 onClick.push(
@@ -5772,7 +5773,7 @@ sender.renderMsg = function(root) {
             }
         }
         //blocktime
-        if (((showUserPage.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin)) &amp;&amp;
+        if (((showUserPage.v_userInfo.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin)) &amp;&amp;
             (root.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!root.v_isAdmin) &amp;&amp; (!root.v_isBlack) &amp;&amp; (!root.v_isBlockTime)) {
             style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","禁言5分钟","禁言5分钟","禁言5分钟","#404040","#404040","#404040",""));
             onClick.push(
@@ -5820,7 +5821,7 @@ sender.renderMsg = function(root) {
             );
         }
         //unblock
-        if (((showUserPage.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin)) &amp;&amp;
+        if (((showUserPage.v_userInfo.id == g5.myUserInfo.id) || (showUserPage.isChatRoomPubAdmin)) &amp;&amp;
             (root.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!root.v_isAdmin) &amp;&amp; (!root.v_isBlack) &amp;&amp; (root.v_isBlockTime)) {
             style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消禁言","取消禁言","取消禁言","#404040","#404040","#404040",""));
             onClick.push(
@@ -5845,7 +5846,7 @@ sender.renderMsg = function(root) {
             );
         }
         if (style.length<=0) return;
-        if (root.v_isOwner &amp;&amp; (showUserPage.id != g5.myUserInfo.id)) return;
+        if (root.v_isOwner &amp;&amp; (showUserPage.v_userInfo.id != g5.myUserInfo.id)) return;
         g5.popup1.p4.show(sender, 170, style, onClick);
     });
     ee.setOnMouseEnter(c, function(sender,event) { 
@@ -5877,7 +5878,7 @@ sender.renderMsg = function(root) {
     ee.setVisible(c, false);
     ee.setOnMouseEnter(root, function(sender,event) { 
         var visible = true;
-        if ((showUserPage.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+        if ((showUserPage.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
             visible = false;
         };
         if (root.v_chatStatus == "SYS") {
@@ -8619,7 +8620,6 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p12->通知]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.c_topBlank = sender.eeChildren[0];
@@ -8747,6 +8747,7 @@ sender.renderItem = function(root) {
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     ee.setOnMouseEnter(c, function(sender,e) {
+        
         sender.style.webkitFilter="brightness(80%)";
         sender.style.filter="brightness(80%)";
         if (sender.v_timer!=null) clearTimeout(sender.v_timer);
@@ -11636,7 +11637,7 @@ sender.setSize = function(sizeMode) {
         ee.setVisible(this.c_buttons.eeChildren[0], false);
     } else if (sizeMode == "max") {
         g5.tiledV(g5.p3.p8.p1, 0);
-        if (g5.myUserInfo.id == showUserPage.id) {
+        if (g5.myUserInfo.id == showUserPage.v_userInfo.id) {
             ee.setVisible(this.c_buttons.eeChildren[0], true);
         }
         this.c_buttons.init();
@@ -12553,7 +12554,7 @@ sender.renderMsg = function(root) {
         c.v_timer = null;
         root.c_photo = c;
         ee.setOnClick(c, function(sender, event) {
-            ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
+            ee.getControl("panel280").show(sender, root.v_userInfo);
         });
         ee.setOnMouseEnter(c, function(sender,e) {
             sender.style.webkitFilter="brightness(80%)";
