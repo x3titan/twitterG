@@ -7765,27 +7765,23 @@ sender.loadMore = function() {
       <layerName><![CDATA[P2->10->设置]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onAniStart>sender.reset();
-ee.getControl("panel158").selected = true;
-sender.refresh();</onAniStart>
       <onCreate><![CDATA[sender.activePage = function() {
-    g5.mainDiv.scrollTop = 0;
+    g5.pushHistory("p=9");
+    document.documentElement.scrollTop = 0;
     g5.pageMode = 1;
     g5.refreshMain(true);
-    ee.showAni(ee.getControl("panel156"), 0);
+    this.reset();
+    this.selected = true;
+    ee.setVisible(this, true);
+    this.refresh();
     g5.changeP3(4);
-    if (pageState!="") {
-        history.pushState(pageState,"","?p=9");
-    }
 }
 
 sender.close = function() {
     ee.setVisible(g5.p4, false);
-    ee.showAni(ee.getControl("panel156"), 1);
+    ee.setVisible(this, false);
     g5.changeP3(-1);
 }
-
-
 
 sender.refresh = function() {
     for (var i=0; i<this.eeChildren.length; i++) {
@@ -7798,6 +7794,7 @@ sender.refresh = function() {
             this.eeChildren[i].style.backgroundColor = "";
         }
     }
+    g5.tiledResizeV(this, 2);
 }
 
 sender.reset = function() {
