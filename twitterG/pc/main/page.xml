@@ -874,7 +874,6 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -1382,6 +1381,7 @@ sender.p2 = ee.getControl("panel16");
 sender.p5 = ee.getControl("panel91");
 sender.p7 = ee.getControl("layouty5");
 sender.p9 = ee.getControl("panel22");
+sender.p10 = ee.getControl("panel156");
 sender.p11 = ee.getControl("panel335");
 sender.p12 = ee.getControl("panel355");</onCreate>
       <sizeRatio>1.3</sizeRatio>
@@ -1436,13 +1436,13 @@ sender.activePage = function() {
     ee.setRect(g5.p4, null,null,null,eb.getDivRect(g5.p4.a1).h);
     ee.setRect(g5.p2,null,null,null,eb.getDivRect(this).h+1);
     document.documentElement.scrollTop = sender.v_lastScrollTop;
-    g5.writeLog("restore main:" + document.documentElement.scrollTop);
+    //g5.writeLog("restore main:" + document.documentElement.scrollTop);
     ee.showAni(this, 0);
 }
 
 sender.close = function() {
     sender.v_lastScrollTop = document.documentElement.scrollTop;
-    g5.writeLog("save main:" + document.documentElement.scrollTop);
+    //g5.writeLog("save main:" + document.documentElement.scrollTop);
     ee.setVisible(g5.p4, false);
     ee.setVisible(this, false);
     g5.changeP3(-1);
@@ -7494,7 +7494,7 @@ sender.HisItem = function() {
 
 sender.save = function() {
     var cid = showTopic.topicId;
-    g5.writeLog("save cid=" + cid)
+    //g5.writeLog("save cid=" + cid)
     var idx = this._getIndexById(cid);
     if (idx>=0) {
         this.v_hisItems.splice(idx,1);
@@ -7518,17 +7518,17 @@ sender.save = function() {
     }
     this.v_items = new Array();
     
-    var status = "";
-    for (var i=0; i<this.v_hisItems.length; i++) {
-        status += this.v_hisItems[i].contentId + ",";
-    }
-    g5.writeLog(status, true);
+    //var status = "";
+    //for (var i=0; i<this.v_hisItems.length; i++) {
+    //    status += this.v_hisItems[i].contentId + ",";
+    //}
+    //g5.writeLog(status, true);
 }
 
 sender.load = function(cid) {
     var idx = this._getIndexById(cid);
     if (idx<0) return false;
-    g5.writeLog("load cid=" + cid)
+    //g5.writeLog("load cid=" + cid)
     var item = this.v_hisItems[idx];
     //this.v_hisItems.splice(idx,1);
     
@@ -7768,7 +7768,26 @@ sender.loadMore = function() {
       <onAniStart>sender.reset();
 ee.getControl("panel158").selected = true;
 sender.refresh();</onAniStart>
-      <onCreate><![CDATA[sender.refresh = function() {
+      <onCreate><![CDATA[sender.activePage = function() {
+    g5.mainDiv.scrollTop = 0;
+    g5.pageMode = 1;
+    g5.refreshMain(true);
+    ee.showAni(ee.getControl("panel156"), 0);
+    g5.changeP3(4);
+    if (pageState!="") {
+        history.pushState(pageState,"","?p=9");
+    }
+}
+
+sender.close = function() {
+    ee.setVisible(g5.p4, false);
+    ee.showAni(ee.getControl("panel156"), 1);
+    g5.changeP3(-1);
+}
+
+
+
+sender.refresh = function() {
     for (var i=0; i<this.eeChildren.length; i++) {
         if (eb.isEmpty(this.eeChildren[i].selected)) continue;
         if (this.eeChildren[i].selected) {
@@ -8620,6 +8639,7 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p12->通知]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.c_topBlank = sender.eeChildren[0];
@@ -28116,9 +28136,7 @@ if (g5.currentPageIndex == 0) {
 } else if (g5.currentPageIndex ==7) {
     g5.p2.p9.close();
 } else if (g5.currentPageIndex == 9) {
-    ee.setVisible(g5.p4, false);
-    ee.showAni(ee.getControl("panel156"), 1);
-    g5.changeP3(-1);
+    g5.p2.p10.close();
 } else if (g5.currentPageIndex == 10) {
     ee.setVisible(g5.p4, false);
     ee.setVisible(g5.p2.p11, false);
@@ -28171,14 +28189,7 @@ if (pageIndex == 0) {
 } else if (pageIndex == 7) {
     g5.p2.p9.activePage();
 } else if (pageIndex == 9) {
-    g5.mainDiv.scrollTop = 0;
-    g5.pageMode = 1;
-    g5.refreshMain(true);
-    ee.showAni(ee.getControl("panel156"), 0);
-    g5.changeP3(4);
-    if (pageState!="") {
-        history.pushState(pageState,"","?p=9");
-    }
+    g5.p2.p10.activePage();
 } else if (pageIndex == 10) {
     ee.setVisible(g5.p4, true);
     g5.p4.changePage("a3");
