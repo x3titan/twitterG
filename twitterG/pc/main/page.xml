@@ -27,7 +27,9 @@ g5.changeP3(-1);
 
 //searchUser();
 eb.processDock();
-setInterval(function() {g5.refreshMain();}, 100);
+setInterval(function() {
+    g5.refreshMain();
+}, 100);
 setInterval(function() {
     g5.processVideo();
 }, 1000);
@@ -1149,7 +1151,8 @@ sender.style.borderRadius = "50%";
       <heightRatio>0.0805604203152364</heightRatio>
       <left>127</left>
       <leftRatio>0.423333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+      <onClick><![CDATA[g5.writeLog("button click");
+var items = sender.parentNode.eeChildren;
 for (var i=0; i<items.length; i++) {
     if (eb.isEmpty(items[i].baseColor)) continue;
     if (items[i]==sender) {
@@ -2100,6 +2103,7 @@ sender.p1Items = new Array();
 sender.p3Items = new Array();
 
 sender.show = function(v_userInfo, userId, userName) {
+    g5.writeLog("begin show");
     if (showUserPage.busy) return;
     
     this.v_needRefresh = true;
@@ -2131,6 +2135,7 @@ sender.show = function(v_userInfo, userId, userName) {
             g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
         }
         g5.changeP2(1);
+        g5.writeLog("no refresh end");
         return;
     }
     if (!eb.isEmpty(v_userInfo)) {
@@ -11524,6 +11529,17 @@ sender.init = function() {
     g5.tiledV(this, 15);
     g5.resizeV(this,2);
 }
+
+sender.activePage = function() {
+    ee.setVisible(this, true);
+    g5.resizeV(this.parentNode, 1);
+}
+
+sender.close = function() {
+    ee.setVisible(this, false);
+}
+
+
 </onCreate>
       <sizeRatio>2.02931596091205</sizeRatio>
       <top>0</top>
@@ -28241,9 +28257,9 @@ if (g5.currentP3Index == 4) {
 } else if (g5.currentP3Index == 7) {
     ee.showAni(ee.getControl("panel231"), 1);
 } else if (g5.currentP3Index == 8) {
-    ee.setVisible(g5.p3.p8, false);
+    g5.p3.p8.close();
 } else if (g5.currentP3Index == 9) {
-    ee.showAni(g5.p3.p9, 1);
+    ee.setVisible(g5.p3.p9, false);
 } else if (g5.currentP3Index == 10) {
     ee.showAni(g5.p3.p10, 1);
 } else if (g5.currentP3Index == 11) {
@@ -28261,10 +28277,10 @@ if (pageIndex==4) {
 } else if(pageIndex==7) {
     ee.showAni(ee.getControl("panel231"), 0);
 } else if(pageIndex==8) {
-    ee.setVisible(g5.p3.p8, true);
+    g5.p3.p8.activePage();
 } else if(pageIndex==9) {
     g5.p3.p9.init();
-    ee.showAni(g5.p3.p9, 0);
+    ee.setVisible(g5.p3.p9, true);
 } else if(pageIndex==10) {
     g5.p3.p10.init();
     ee.showAni(g5.p3.p10, 0);
@@ -28753,8 +28769,10 @@ if (status) {
     ee.setText(ee.getControl("panel113"),text);
     return;
 }
+if (!g5.lastLogTime) g5.lastLogTime = new Date().getTime();
 var c = ee.getControl("panel37");
-c.setText(ee.getText(c) + "<br/>" + text);
+c.setText(ee.getText(c) + "<br/>" + text + "(" + ((new Date().getTime())-g5.lastLogTime) + "ms)");
+g5.lastLogTime = new Date().getTime();
 eb.processDock();
 
 ]]></functionCode>
