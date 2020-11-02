@@ -394,7 +394,6 @@ sender.addEventListener("mousewheel",function(event){
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -455,14 +454,7 @@ for (var i=0; i<items.length; i++) {
         ee.setTextColor(items[i], items[i].baseColor);
     }
 }
-if (g5.currentPageIndex==0) {
-    document.documentElement.scrollTop = 0;
-    return;
-}
-g5.changeP2(0);
-updateHomepage.needRefresh = true;
-updateHomepage();
-]]></onClick>
+g5.p2.p1.show();]]></onClick>
       <sizeRatio>0.738461538461539</sizeRatio>
       <top>7</top>
       <topRatio>0.0122591943957968</topRatio>
@@ -489,14 +481,7 @@ for (var i=0; i<items.length; i++) {
         ee.setTextColor(items[i], items[i].baseColor);
     }
 }
-if (g5.currentPageIndex==0) {
-    document.documentElement.scrollTop = 0;
-    return;
-}
-g5.changeP2(0);
-updateHomepage.needRefresh = true;
-updateHomepage();
-]]></onClick>
+g5.p2.p1.show();]]></onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>"+
     " " + ee.getText(sender));
@@ -876,6 +861,7 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -956,14 +942,7 @@ for (var i=0; i<items.length; i++) {
         ee.setTextColor(items[i], items[i].baseColor);
     }
 }
-if (g5.currentPageIndex==0) {
-    document.documentElement.scrollTop = 0;
-    return;
-}
-g5.changeP2(0);
-updateHomepage.needRefresh = true;
-updateHomepage();
-]]></onClick>
+g5.p2.p1.show();]]></onClick>
       <sizeRatio>0.973684210526316</sizeRatio>
       <top>16</top>
       <topRatio>0.0280210157618214</topRatio>
@@ -991,13 +970,7 @@ for (var i=0; i<items.length; i++) {
         ee.setTextColor(items[i], items[i].baseColor);
     }
 }
-if (g5.currentPageIndex==0) {
-    document.documentElement.scrollTop = 0;
-    return;
-}
-g5.changeP2(0);
-updateHomepage.needRefresh = true;
-updateHomepage();]]></onClick>
+g5.p2.p1.show();]]></onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -1405,6 +1378,17 @@ sender.p12 = ee.getControl("panel355");</onCreate>
       <onCreate><![CDATA[sender.a1 = ee.getControl("panel1");
 sender.v_items = new Array();
 sender.v_lastScrollTop = 0;
+
+sender.show = function() {
+    if (g5.currentPageIndex==0) {
+        document.documentElement.scrollTop = 0;
+        return;
+    }
+    g5.changeP2(0);
+    if (this.v_items.length>0) return;
+    updateHomepage.needRefresh = true;
+    updateHomepage();
+}
 
 sender.update = function(v_content,v_userInfo,v_reContent,v_reUserInfo) {
     var i;
