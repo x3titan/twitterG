@@ -6864,7 +6864,31 @@ sender.v_items = new Array();
 sender.v_status = "init";
 sender.v_pageIndex = 0;
 
+sender.close = function() {
+    this.v_lastScrollTop = document.documentElement.scrollTop;
+    ee.setVisible(g5.p4, false);
+    ee.setVisible(this, false)
+}
+
+sender.activePage = function() {
+    g5.pushHistory("p=4");
+    g5.pageMode = 0;
+    g5.refreshMain(true);
+    ee.setVisible(g5.p4, true);
+    g5.p4.changePage("a4");
+    ee.setVisible(g5.p2.p5, true)
+    g5.resizeV(this.parentNode, 1);
+}
+
 sender.show = function() {
+    this.v_needRefresh = sender.v_items.length<=0;
+    if (!this.v_needRefresh) {
+        g5.changeP2(4);
+        document.documentElement.scrollTop = this.v_lastScrollTop;
+        g5.resizeV(this.parentNode, 1);
+        return;
+    }
+    document.documentElement.scrollTop = 0;
     this.clear();
     g5.changeP2(4);
     this.c_topBlank.show();
@@ -28123,8 +28147,7 @@ if (g5.currentPageIndex == 0) {
     ee.setVisible(g5.p4, false);
     ee.showAni(ee.getControl("panel70"), 1);
 } else if (g5.currentPageIndex == 4) {
-    ee.setVisible(g5.p4, false);
-    ee.setVisible(g5.p2.p5, false)
+    g5.p2.p5.close();
 } else if (g5.currentPageIndex == 5) {
     ee.setVisible(g5.p4, false);
     ee.showAni(ee.getControl("panel97"), 1);
@@ -28160,15 +28183,7 @@ if (pageIndex == 0) {
     g5.refreshMain(true);
     ee.showAni(ee.getControl("panel70"), 0);
 } else if (pageIndex == 4) {
-    g5.mainDiv.scrollTop = 0;
-    g5.pageMode = 0;
-    g5.refreshMain(true);
-    ee.setVisible(g5.p4, true);
-    g5.p4.changePage("a4");
-    ee.setVisible(g5.p2.p5, true)
-    if (pageState!="") {
-        history.pushState(pageState,"","?p=4");
-    }
+    g5.p2.p5.activePage();
 } else if (pageIndex == 5) {
     g5.mainDiv.scrollTop = 0;
     g5.pageMode = 0;
