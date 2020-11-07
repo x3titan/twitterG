@@ -2018,8 +2018,10 @@ sender.p1Items = new Array();
 sender.p3Items = new Array();
 
 sender.show = function(v_userInfo, userId, userName) {
-    g5.writeLog("begin show");
     if (showUserPage.busy) return;
+    showUserPage.disabled = false;
+    showUserPageLoadMore.disabled = false;
+    showUserPageP3.disabled = false;
     
     this.v_needRefresh = true;
     if (this.v_userInfo) {
@@ -2050,7 +2052,6 @@ sender.show = function(v_userInfo, userId, userName) {
             g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
         }
         g5.changeP2(1);
-        g5.writeLog("no refresh end");
         return;
     }
     if (!eb.isEmpty(v_userInfo)) {
@@ -2065,8 +2066,9 @@ sender.show = function(v_userInfo, userId, userName) {
         this.v_userInfo = null;
         showUserPage.userName = userName;
         showUserPage.userId = null;
-    }
+    }                                     
     showUserPage.onComplete = function() {
+        if (showUserPage.disabled) return;
         var i;
         if (sender.v_userInfo == null) {
             sender.showByUserInfo(showUserPage.v_userInfo);
@@ -2122,6 +2124,9 @@ sender.show = function(v_userInfo, userId, userName) {
 }
 
 sender.close = function() {
+    showUserPage.disabled = true;
+    showUserPageLoadMore.disabled = true;
+    showUserPageP3.disabled = true;
     this.v_lastScrollTop = document.documentElement.scrollTop;
     ee.setVisible(g5.p4, false);
     g5.player.stop();
@@ -2948,6 +2953,7 @@ sender.updateP3 = function() {
     showUserPageP3.pageIndex = this.v_p3PageIndex; this.v_p3PageIndex++;
     showUserPageP3.pageSize = this.v_p3PageSize;
     showUserPageP3.onComplete = function(dataset) {
+        if (showUserPageP3.disabled) return;
         var i, j, item;
         var root = sender.p3; 
         var itemWidth = eb.getDivRect(root).w;
@@ -3303,6 +3309,7 @@ sender.loadMore = function() {
     showUserPageLoadMore.pageIndex = this.v_pageIndex;
     showUserPageLoadMore.pageSize = this.v_pageSize;
     showUserPageLoadMore.onComplete = function(dataset) {
+        if (showUserPageLoadMore.disabled) return;
         var i, j, item;
         var root = sender;
         var itemWidth = eb.getDivRect(root).w;
