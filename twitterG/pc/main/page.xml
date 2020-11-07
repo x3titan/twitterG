@@ -2045,8 +2045,6 @@ sender.show = function(v_userInfo, userId, userName) {
         var root = g5.p2.p2.p2sub.p1;
         rect = eb.getDivRectSetting(root.parentNode);
         ee.setRect(root.parentNode.parentNode,null,null,null,rect.y + rect.h);
-        
-        //////////////////////////
         g5.p2.p2.p2sub.p1.c_chat.c_chat.c_chatRoot.start(showUserPage.defaultChatRoomId);
         if (showUserPage.privateChatRoomRights) {
             g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
@@ -5186,6 +5184,7 @@ sender.start = function(roomId) {
     this.v_nohis = false;
     this.clearTimer();
     if (showUserPage.isChatRoomPubBlack) return;
+    chatGet.disabled = false;
     this.v_tfId = setInterval(function() {
         sender.timeFragment();    
     }, 500);
@@ -5193,6 +5192,7 @@ sender.start = function(roomId) {
     this.refresh();        
 }
 sender.stop = function() {
+    chatGet.disabled = true;
     this.clearTimer();
     this.running = false;
 }
@@ -5806,7 +5806,6 @@ sender.displayTime = function(time) {
     );
 }
 
-
 sender.timeFragment = function() {
     if (sender.v_mouseDown) return;
     if (sender.v_nohis) return;
@@ -5821,6 +5820,7 @@ sender.timeFragment = function() {
     chatGet.isNew = 0;
     chatGet.my = sender;
     chatGet.onComplete = function(dataset) {
+        if (chatGet.disabled) return;
         var cy = 0;
         var root = chatGet.my;
         if (root.v_items.length>0) {
@@ -12037,6 +12037,7 @@ sender.start = function(roomId) {
         ee.setText(ee.getControl("panel294"), "申请");
         return;
     }
+    chatGetPv.disabled = false;
     this.v_tfId = setInterval(function() {
         sender.timeFragment();    
     }, 500);
@@ -12044,6 +12045,7 @@ sender.start = function(roomId) {
     this.refresh();        
 }
 sender.stop = function() {
+    chatGetPv.disabled = true;
     this.clearTimer();
     this.running = false;
 }
@@ -12225,6 +12227,7 @@ sender.timeFragment = function() {
     chatGetPv.isNew = 0;
     chatGetPv.my = sender;
     chatGetPv.onComplete = function(dataset) {
+        if (chatGetPv.disabled) return;
         var cy = 0;
         var root = chatGetPv.my;
         if (root.v_items.length>0) {
