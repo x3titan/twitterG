@@ -7064,11 +7064,14 @@ sender.activePage = function() {
 }
 
 sender.close = function() {
+    showTopic.disabled = true;
     ee.setVisible(g5.p4, false);
     ee.setVisible(g5.p4.a2, false);
     ee.setVisible(this, false);
     g5.player.stop();
-    this.save();
+    if (this.loadComplete) {
+        this.save();
+    }
 }
 
 
@@ -7112,12 +7115,6 @@ sender.save = function() {
         this.removeChild(this.v_items[i]);
     }
     this.v_items = new Array();
-    
-    //var status = "";
-    //for (var i=0; i<this.v_hisItems.length; i++) {
-    //    status += this.v_hisItems[i].contentId + ",";
-    //}
-    //g5.writeLog(status, true);
 }
 
 sender.load = function(cid) {
@@ -7157,9 +7154,14 @@ sender._getIndexById = function(contentId) {
 }
      
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId) {
+    this.loadComplete = false;
+    showTopic.disabled = false;
     if (showTopic.busy) return;
     g5.changeP2(-1);
-    if (this.load(contentId)) return;
+    if (this.load(contentId)) {
+        this.loadComplete = true;
+        return;
+    }
     if (v_content) {
         if (v_content.exUplinkType=="L") {
             if (this.load(v_content.exContentId)) return;
@@ -7193,6 +7195,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
     }
     var nohis = g5.notPushHistory;
     showTopic.onComplete = function(datasetFw, datasetBk) {
+        if (showTopic.disabled) return;
         var i, item;
         var root = sender;
         if (sender.v_content == null) {
@@ -7274,6 +7277,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         eb.processDock();
         
         showTopic.needRefresh = false;
+        sender.loadComplete = true;
     }
     showTopic();
 }
