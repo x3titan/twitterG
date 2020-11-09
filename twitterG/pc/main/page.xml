@@ -7152,8 +7152,6 @@ sender._getIndexById = function(contentId) {
 }
      
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId) {
-    this.loadComplete = false;
-    showTopic.disabled = false;
     if (showTopic.busy) return;
     g5.changeP2(-1);
     if (this.load(contentId)) {
@@ -7193,7 +7191,12 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
     }
     var nohis = g5.notPushHistory;
     showTopic.onComplete = function(datasetFw, datasetBk) {
-        if (showTopic.disabled) return;
+        if (showTopic.disabled) {
+            g5.writeLog("break response");
+            return;
+        } else {
+            g5.writeLog("showTopic response");
+        }
         var i, item;
         var root = sender;
         if (sender.v_content == null) {
@@ -7277,6 +7280,8 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         showTopic.needRefresh = false;
         sender.loadComplete = true;
     }
+    showTopic.disabled = false;
+    this.loadComplete = false;
     showTopic();
 }
 
