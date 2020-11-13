@@ -2281,7 +2281,7 @@ sender.showByUserInfo = function(v_userInfo) {
 }
 
 sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
-    if (v_content.uplinkType != "R") {
+    if ((v_content.uplinkType != "R") || (v_content.exUplinkType=="L")) {
         this.insertAtPage(1, v_content, v_reContent, v_userInfo, v_reUserInfo);
     }
     if (!this.v_p3Init) {
@@ -2302,8 +2302,9 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
         items = this.p3Items;
     }
     if (!showUserPage.v_userInfo) return;
-    if (v_userInfo.id != showUserPage.v_userInfo.id) return;
-    
+    if (v_content.exUplinkType == "L") {
+        if (v_content.exUserInfo.id != showUserPage.v_userInfo.id) return;
+    } else if (v_userInfo.id != showUserPage.v_userInfo.id) return;
     if (pageIndex == 1) {
         var rect = eb.getDivRect(ee.getControl("panel73"),null,cy,null,null);
         cy = rect.y + rect.h;
@@ -9800,10 +9801,14 @@ sender.init(0);
       <left>10</left>
       <leftRatio>0.0325732899022801</leftRatio>
       <multiLine>true</multiLine>
-      <onChange>var edit = sender.parentNode;
+      <onChange><![CDATA[var edit = sender.parentNode;
 var text = ee.getEditText(edit);
+if (text.length>500) text = text.substr(0,500);
+if (text.split("\n").length-1>10) {
+    text = text.substr(0, text.length-1);
+}
 edit.setText(text);
-</onChange>
+]]></onChange>
       <onCreate><![CDATA[sender.onHeightChange = function(sender, oldHeight, newHeight) {
     var dy = newHeight - oldHeight;
     if (dy==0) return;
@@ -11124,6 +11129,7 @@ eb.initMouseEvent(sender);
       <height>623</height>
       <heightRatio>0.862880886426593</heightRatio>
       <layerName><![CDATA[p3.p8->个人页右侧]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel295");
 sender.p2 = ee.getControl("panel307");
@@ -16243,7 +16249,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -16457,7 +16462,6 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
