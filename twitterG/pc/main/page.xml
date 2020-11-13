@@ -79,7 +79,36 @@ initLButton = function(button,text,dy,icon,size,dx) {
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
 
+//判断node节点是否属于root的分支节点，如果node是root自身也会返回true
+ee.isBranchNode = function(root, node) {
+    if (eb.isEmpty(root)) return false;
+    while (!eb.isEmpty(node)) {
+        if (node==root) return true;
+        node = node.parentNode;
+    }
+    return false;
+}
 
+//判断一个node节点是否是panel的ePage系统自建节点的一部分,panel和node相同也会返回true
+ee.isInternalNode = function(panel, node) {
+    if (eb.isEmpty(panel)) return false;
+    if (panel == node) return true;
+    if (panel.label) {
+        if (ee.isBranchNode(panel.label.parentNode, node)) return true;
+    }
+    if (panel._input) {
+        if (ee.isBranchNode(panel._input, node)) return true;
+    }
+    if (panel.img) {
+        if (ee.isBranchNode(panel.img, node)) return true;
+    }
+    if (panel.skin) {
+        for (var i=0; i<panel.skin.length; i++) {
+            if (ee.isBranchNode(panel.skin[i], node)) return true;
+        }
+    }
+    return false;
+}
 ]]></onPageCreate>
       <pageHead><![CDATA[<style>
 .scrollBar01::-webkit-scrollbar-track {
@@ -2011,6 +2040,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -16865,9 +16895,11 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
+      <onClick><![CDATA[if (!ee.isInternalNode(sender, event.target)) {
+    return;
+}
+for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
         ee.showAni(sender.eeChildren[i], 1);
     }
@@ -18886,11 +18918,11 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>645</height>
       <heightRatio>0.810301507537688</heightRatio>
       <layerName><![CDATA[  a8->编辑个人信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>292</left>
       <leftRatio>0.246413502109705</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
-      <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
+      <onClick>return;
+window.event? window.event.cancelBubble = true : event.stopPropagation();
 event.returnValue = false;
 return false;
 </onClick>
