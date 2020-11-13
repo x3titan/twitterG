@@ -2011,7 +2011,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2610,12 +2609,12 @@ sender.init = function(photoString) {
       <onClick>if (sender.v_index==0) {
     //屏蔽
     g5.popBlack.a6.show(
-        "取消屏蔽@"+showUserPage.userName+"？",
+        "取消屏蔽@"+showUserPage.v_userInfo.userName+"？",
         "该用户将能关注并查看你的发言",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")],
         function() {
-            blockUser.userId= showUserPage.id;
+            blockUser.userId= showUserPage.v_userInfo.id;
             blockUser.isBlock = 0;
             blockUser();
             blockUser.onComplete = function() {
@@ -2626,7 +2625,7 @@ sender.init = function(photoString) {
 } else if (sender.v_index==1) {
     //关注
     follow.follow = 1;
-    follow.userId = showUserPage.id;
+    follow.userId = showUserPage.v_userInfo.id;
     follow.onComplete = function() {
         ee.getControl("panel256").init(2);
     }
@@ -2634,13 +2633,13 @@ sender.init = function(photoString) {
 } else if (sender.v_index==2) {
     //正在关注
     g5.popBlack.a6.show(
-        "取消关注@"+showUserPage.userName+"？",
+        "取消关注@"+showUserPage.v_userInfo.userName+"？",
         "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
         function() {
             follow.follow = 0;
-            follow.userId = showUserPage.id;
+            follow.userId = showUserPage.v_userInfo.id;
             follow.onComplete = function() {
                 ee.getControl("panel256").init(1);
             }
@@ -5531,7 +5530,7 @@ sender.setBlockTime = function(userId, isBlockTime) {
 sender.renderMsg = function(root) {
     var c,rect;
     var cy = 2;
-    var mainWidth = eb.getDivRect(root).w;
+    var mainWidth = eb.getDivRect(root).w - 10;
     //photo
     if (root.v_chatStatus != "SYS") {
         c = createPanel(root, root.id+"_img", "", 24, cy, 25, 25);
@@ -16249,6 +16248,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -16462,6 +16462,7 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
