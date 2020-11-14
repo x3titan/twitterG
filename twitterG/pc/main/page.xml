@@ -8959,6 +8959,7 @@ ee.showAni(ee.getControl("panel27"), 0);
       <height>722</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p3.p3->私信聊天]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_chat = ee.getControl("layoutyitem12");</onCreate>
       <sizeRatio>2.35179153094463</sizeRatio>
@@ -16676,6 +16677,30 @@ sender.show = function(refDiv, content, userInfo) {
       <height>50</height>
       <heightRatio>0.24390243902439</heightRatio>
       <left>0</left>
+      <onClick>if (sender.parentNode.v_userInfo.isFollow) {
+    g5.popBlack.a6.show(
+        "取消关注@"+sender.parentNode.v_userInfo.userName+"？",
+        "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            follow.follow = 0;
+            follow.userId = sender.parentNode.v_userInfo.id;
+            follow.onComplete = function() {
+                ee.getControl("panel256").init(1);
+            }
+            follow();
+        }
+    );
+} else {
+    follow.follow = 1;
+    follow.userId = sender.parentNode.v_userInfo.id;
+    follow.onComplete = function() {
+        ee.getControl("panel256").init(2);
+    }
+    follow();
+}
+sender.parentNode.v_userInfo.isFollow = !sender.parentNode.v_userInfo.isFollow;</onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.151515151515152</sizeRatio>
@@ -16893,19 +16918,13 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick><![CDATA[if (!ee.isInternalNode(sender, event.target)) {
+      <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
 }
-for (var i=0; i<sender.eeChildren.length; i++) {
-    if (sender.eeChildren[i].style.visibility != "hidden") {
-        ee.showAni(sender.eeChildren[i], 1);
-    }
-}
-  
-]]></onClick>
-      <onCreate>sender.style.position = "fixed";
+sender.close();
+</onClick>
+      <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
 sender.a1 = ee.getControl("panel117");
 sender.a2 = ee.getControl("panel142");
@@ -16920,7 +16939,14 @@ sender.addEventListener("mousewheel", function(e) {
     e.returnValue = false;
     return false;
 });
-</onCreate>
+sender.close = function() {
+    for (var i=0; i<sender.eeChildren.length; i++) {
+        if (sender.eeChildren[i].style.visibility != "hidden") {
+            ee.showAni(sender.eeChildren[i], 1);
+        }
+    }
+}
+]]></onCreate>
       <sizeRatio>0.671729957805907</sizeRatio>
       <top>0</top>
       <width>1185</width>
@@ -17092,10 +17118,13 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
+      <onClick>if (!ee.isInternalNode(sender, event.target)) {
+    return;
+}
+sender.parentNode.close();</onClick>
       <onCreate><![CDATA[sender.c_photo = ee.getControl("panel75");
 sender.c_video = ee.getControl("panel76");
 
@@ -17227,6 +17256,7 @@ sender.close = function() {
       <heightRatio>0.795918367346939</heightRatio>
       <left>5</left>
       <leftRatio>0.0862068965517241</leftRatio>
+      <onClick>sender.parentNode.parentNode.close();</onClick>
       <outerBottom>5</outerBottom>
       <outerLeft>5</outerLeft>
       <outerRight>5</outerRight>
