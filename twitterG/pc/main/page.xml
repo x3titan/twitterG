@@ -8748,6 +8748,7 @@ sender.fLoad = function() {
     showChatList.onComplete = function(dataset) {
         sender.loadDataset(dataset);
         eb.processDock();
+        /*
         if (showChatList.defaultUserId!=null) {
             g5.p3.p3.c_chat.c_chatRoot.start(showChatList.defaultUserId);
             ee.setText(ee.getControl("panel118"), 
@@ -8762,32 +8763,42 @@ sender.fLoad = function() {
                 "<font color='#808080' style='font-size:9pt'>@" + root.eeChildren[0].userName + "</font>"
                 );
         }
+        */
     }
     showChatList();
 }
 
+sender.loadRecord = function(root, dataset, index) {
+    var x = 0;
+    root.v_maxId = dataset.getData(x, index); x++;
+    root.v_regDatetime = dataset.getData(x, index); x++;
+    root.v_content = dataset.getData(x, index); x++;
+    root.v_photo1 = dataset.getData(x, index); x++;
+    root.v_userInfo = new g5.UserInfo();
+    root.v_userInfo.loadFromDataset(dataset, x, index); x += root.v_userInfo.size;
+}
+
 sender.render = function(root) {
-    c.style.cursor="pointer";
-    c.userName = showChatList.dataset.getData(6,i);
-    c.nickName = showChatList.dataset.getData(5,i);
-    c.chatUserId = showChatList.dataset.getData(0,i);
-    ee.setOnClick(c,function(sender,event) {
+    var c;
+    root.style.cursor="pointer";
+    ee.setOnClick(root,function(sender,event) {
         g5.p3.p3.c_chat.c_chatRoot.start(sender.chatUserId);
         ee.setText(ee.getControl("panel118"), 
             "<b>" + sender.nickName + "</b><br>" +
             "<font color='#808080' style='font-size:9pt'>@" + sender.userName + "</font>"
             );
     });
-    c = createPanel($g(hd+"panel4"), hd+"panel2", "C0C0C0", 0, 75, 439, 1);
+    
+    c = createPanel(root, root.id + "panel2", "C0C0C0", 0, 75, 439, 1);
     eb.setDock(c,"fill","bottom");
     
     //avata
-    c = createPanel($g(hd+"panel4"), hd+"panel13", "", 15, 15, 45, 45);
+    c = createPanel(root, root.id + "panel13", "", 15, 15, 45, 45);
     c.v_timer = null;
-    if (showChatList.dataset.getData(7,i) == "") {
+    if (root.v_userInfo.photo == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
     } else {
-        ee.setImage(c,"url:" + g5.imgUrl + showChatList.dataset.getData(7,i),"trim","","")
+        ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
     }  
     c.style.cursor="pointer";
     c.style.borderRadius = "50%";
@@ -8809,20 +8820,20 @@ sender.render = function(root) {
         sender.style.filter="brightness(100%)";
     });
     
-    c = createPanel($g(hd+"panel4"), hd+"panel3", "", 70, 15, 190, 29);
-    addText(c, "<b>" + showChatList.dataset.getData(5,i) + "</b>" +
-        "<font color = '#A0A0A0'> @" + showChatList.dataset.getData(6,i) + "</font>",
+    c = createPanel(root, root.id + "panel3", "", 70, 15, 190, 29);
+    addText(c, "<b>" + root.v_userInfo.nickName + "</b>" +
+        "<font color = '#A0A0A0'> @" + root.v_userInfo.userName + "</font>",
         "left", "middle", "微软雅黑", 12, "000000", "normal");
     //eb.setFontSizeAuto(c, 24);
-    c = createPanel($g(hd+"panel4"), hd+"panel5", "", 70, 37, 190, 29);
-    s = showChatList.dataset.getData(3,i);
+    c = createPanel(root, root.id + "panel5", "", 70, 37, 190, 29);
+    s = root.v_content;
     if (s.length > 12) {
         s = s.substr(0,12) + "...";
     } 
     addText(c, s, "left", "middle", "微软雅黑", 12, "000000", "normal");
     //eb.setFontSizeAuto(c, 24);
-    c = createPanel($g(hd+"panel4"), hd+"panel6", "", 260, 15, 125, 30);
-    s = showChatList.dataset.getData(2,i);
+    c = createPanel(root, root.id + "panel6", "", 260, 15, 125, 30);
+    s = root.v_regDatetime;
     s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
     addText(c, s, "left", "middle", "微软雅黑", 12, "808080", "normal");
     //eb.setFontSizeAuto(c, 28);
@@ -8835,14 +8846,13 @@ sender.loadDataset = function(dataset) {
     var rect;
     rect = eb.getDivRect(root);
     var rw = rect.w;
-    while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
     for (i = 0; i < dataset.rowCount; i++) {
         for (j=0; j<this.v_items.length; j++) {
             if (this.v_items[j].v_userInfo.id == dataset.getData(3,i)) break;    
         }
         if (j<this.v_items.length) continue;
-        hd = "prvLst_" + i;
-        c = createPanel(root, hd+"panel4", "", 0, y, rw, 75);
+        hd = "prvLst_" + dataset.getData(3,i);
+        c = createPanel(root, hd, "", 0, y, rw, 75);
         y += 75;
         this.loadRecord(c, dataset, i);
         this.render(c);
@@ -8851,15 +8861,7 @@ sender.loadDataset = function(dataset) {
     ee.tiledResizeV(this, 2);
 }
 
-sender.loadRecord = function(root, dataset, index) {
-    var x = 0;
-    root.v_maxId = dataset.getData(x, index);
-    root.v_regDatetime = dataset.getData(x, index); x++;
-    root.v_content = dataset.getData(x, index); x++;
-    root.v_photo1 = dataset.getData(x, index); x++;
-    root.v_userInfo = new g5.UserInfo();
-    root.v_userInfo.loadFromDataset(dataset, x, index); x += root.v_userInfo.size;
-}
+
 
 
 
