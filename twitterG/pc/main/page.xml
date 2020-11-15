@@ -409,6 +409,7 @@ sender.addEventListener("mousewheel",function(event){
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -875,6 +876,7 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -8779,21 +8781,29 @@ sender.loadRecord = function(root, dataset, index) {
 }
 
 sender.render = function(root) {
-    var c;
+    var c, dw = eb.getDivRectSetting(root).w;
     root.style.cursor="pointer";
     ee.setOnClick(root,function(sender,event) {
+        return;
         g5.p3.p3.c_chat.c_chatRoot.start(sender.chatUserId);
         ee.setText(ee.getControl("panel118"), 
             "<b>" + sender.nickName + "</b><br>" +
             "<font color='#808080' style='font-size:9pt'>@" + sender.userName + "</font>"
             );
     });
+    ee.setOnMouseEnter(root, function(sender,e){
+        sender.style.backgroundColor = "rgb(245,248,250)";
+    });
+    ee.setOnMouseLeave(root, function(sender,e){
+        sender.style.backgroundColor = "#ffffff";
+    });
     
-    c = createPanel(root, root.id + "panel2", "C0C0C0", 0, 75, 439, 1);
+    c = createPanel(root, root.id + "panel2", "E6ECF0", 0, 75, 439, 1);
     eb.setDock(c,"fill","bottom");
     
     //avata
     c = createPanel(root, root.id + "panel13", "", 15, 15, 45, 45);
+    root.c_photo = c;
     c.v_timer = null;
     if (root.v_userInfo.photo == "") {
         ee.setImage(c,"/twitterG/main/user.png","trim","","")
@@ -8803,12 +8813,7 @@ sender.render = function(root) {
     c.style.cursor="pointer";
     c.style.borderRadius = "50%";
     ee.setOnClick(c,function(sender,event) {
-        showUserPage.userName=sender.parentNode.userName;
-        showUserPage();
-        if (sender.v_timer!=null) {
-            clearTimeout(sender.v_timer);
-            sender.v_timer = null;
-        }
+        ee.getControl("panel280").show(root.c_photo, root.v_userInfo);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     ee.setOnMouseEnter(c, function(sender,e) {
@@ -8820,19 +8825,19 @@ sender.render = function(root) {
         sender.style.filter="brightness(100%)";
     });
     
-    c = createPanel(root, root.id + "panel3", "", 70, 15, 190, 29);
+    c = createPanel(root, root.id + "panel3", "", 70, 15, dw-180, 29);
     addText(c, "<b>" + root.v_userInfo.nickName + "</b>" +
         "<font color = '#A0A0A0'> @" + root.v_userInfo.userName + "</font>",
         "left", "middle", "微软雅黑", 12, "000000", "normal");
     //eb.setFontSizeAuto(c, 24);
-    c = createPanel(root, root.id + "panel5", "", 70, 37, 190, 29);
+    c = createPanel(root, root.id + "panel5", "", 70, 37, dw-180, 29);
     s = root.v_content;
-    if (s.length > 12) {
-        s = s.substr(0,12) + "...";
+    if (s.length > 30) {
+        s = s.substr(0,30) + "...";
     } 
     addText(c, s, "left", "middle", "微软雅黑", 12, "000000", "normal");
     //eb.setFontSizeAuto(c, 24);
-    c = createPanel(root, root.id + "panel6", "", 260, 15, 125, 30);
+    c = createPanel(root, root.id + "panel6", "", dw-125, 15, 125, 30);
     s = root.v_regDatetime;
     s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
     addText(c, s, "left", "middle", "微软雅黑", 12, "808080", "normal");
@@ -15302,7 +15307,6 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -16608,10 +16612,10 @@ sender.init(0);
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel29">
       <backgroundColor>FFC080</backgroundColor>
+      <dockX>fill</dockX>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a7 -> 私信1]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -16622,7 +16626,7 @@ sender.style.borderLeft = "";
 sender.style.borderRight = "";</onCreate>
       <sizeRatio>0.0939716312056738</sizeRatio>
       <top>0</top>
-      <width>564</width>
+      <width>592</width>
       <widthRatio>0.952702702702703</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel29/panel30">
@@ -16667,6 +16671,7 @@ sender.style.borderRight = "";</onCreate>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel31">
       <backgroundColor>FFC080</backgroundColor>
+      <dockX>fill</dockX>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a8 -> 私信2]]></layerName>
@@ -16681,7 +16686,7 @@ sender.style.borderLeft = "";
 sender.style.borderRight = "";</onCreate>
       <sizeRatio>0.0939716312056738</sizeRatio>
       <top>0</top>
-      <width>564</width>
+      <width>592</width>
       <widthRatio>0.952702702702703</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel31/panel32">
