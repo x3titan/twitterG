@@ -8749,6 +8749,7 @@ sender.fLoad = function() {
     showChatList.pageSize = 20;
     showChatList.onComplete = function(dataset) {
         sender.loadDataset(dataset);
+        sender.v_needRefresh = false;
         eb.processDock();
         /*
         if (showChatList.defaultUserId!=null) {
@@ -8826,22 +8827,18 @@ sender.render = function(root) {
     });
     
     c = createPanel(root, root.id + "panel3", "", 70, 15, dw-180, 29);
+    s = root.v_regDatetime;
+    s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
     addText(c, "<b>" + root.v_userInfo.nickName + "</b>" +
-        "<font color = '#A0A0A0'> @" + root.v_userInfo.userName + "</font>",
+        "<font color = '#A0A0A0'> @" + root.v_userInfo.userName + "</font>" +
+        " · <font>" + s + "</font>",
         "left", "middle", "微软雅黑", 12, "000000", "normal");
-    //eb.setFontSizeAuto(c, 24);
     c = createPanel(root, root.id + "panel5", "", 70, 37, dw-180, 29);
     s = root.v_content;
     if (s.length > 30) {
         s = s.substr(0,30) + "...";
     } 
     addText(c, s, "left", "middle", "微软雅黑", 12, "000000", "normal");
-    //eb.setFontSizeAuto(c, 24);
-    c = createPanel(root, root.id + "panel6", "", dw-125, 15, 125, 30);
-    s = root.v_regDatetime;
-    s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
-    addText(c, s, "left", "middle", "微软雅黑", 12, "808080", "normal");
-    //eb.setFontSizeAuto(c, 28);
 }
 
 sender.loadDataset = function(dataset) {
@@ -8889,13 +8886,10 @@ sender.loadDataset = function(dataset) {
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate><![CDATA[sender.c_topBlank = sender.eeChildren[0];
-sender.c_noResult = sender.eeChildren[1];
-
-sender.v_headerName = "bookMark_";
+      <onCreate><![CDATA[sender.c_chat = ee.getControl("layoutyitem12");
 sender.v_items = new Array();
-sender.v_status = "init";
-sender.v_pageIndex = 0;
+sender.v_needRefresh = true;
+sender.v_lastScrollTop = 0;
 
 sender.close = function() {
     this.v_lastScrollTop = document.documentElement.scrollTop;
@@ -8904,7 +8898,7 @@ sender.close = function() {
 }
 
 sender.activePage = function() {
-    g5.pushHistory("p=4");
+    g5.pushHistory("p=13");
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
@@ -8913,18 +8907,28 @@ sender.activePage = function() {
     g5.resizeV(this.parentNode, 1);
 }
 
-sender.show = function() {
-    this.v_needRefresh = sender.v_items.length<=0;
+sender.show = function(v_userInfo) {
+    
+    g5.p3.p3.c_chat.c_chatRoot.start(showChatList.defaultUserId);
+    ee.setText(ee.getControl("panel118"), 
+        "<b>" + showChatList.defaultUserNickName + "</b><br>" +
+        "<font color='#808080' style='font-size:9pt'>@" + showChatList.defaultUserName + "</font>"
+        );
+    showChatList.defaultUserId = null;    
+    
     if (!this.v_needRefresh) {
-        g5.changeP2(4);
-        document.documentElement.scrollTop = this.v_lastScrollTop;
-        g5.resizeV(this.parentNode, 1);
+        g5.changeP2(12);
+        this.c_chat.scrollTop = this.v_lastScrollTop;
+        var rect = eb.getDivRectSetting(g5.p4);
+        ee.tiledV(this, 0, rect.h, 500); 
+        ee.tiledResizeV(this, 2);
         return;
     }
     document.documentElement.scrollTop = 0;
     this.clear();
-    g5.changeP2(4);
-    this.c_topBlank.show();
+    g5.changeP2(12);
+    var rect = eb.getDivRectSetting(g5.p4);
+    ee.tiledV(this, 0, rect.h, 500); 
     this.load();
 }
 
@@ -9101,358 +9105,11 @@ sender.addButton = function(root) {
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <fontBold>true</fontBold>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSize>100</fontSize>
-      <height>722</height>
-      <heightRatio>0.907035175879397</heightRatio>
-      <left>906</left>
-      <leftRatio>0.764556962025316</leftRatio>
-      <note>p3</note>
-      <onCreate>sender.p3 = ee.getControl("panel116");
-sender.p8 = ee.getControl("panel298");
-sender.p9 = ee.getControl("panel365");
-sender.p10 = ee.getControl("panel61");
-sender.p11 = ee.getControl("panel370");
-sender.p12 = ee.getControl("panel388");
-
-sender.style.position="fixed";
-sender.addEventListener("mousewheel",function(event){
-    return true;
-    g5.mainDiv.onWheel(event.wheelDelta);
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
-    event.returnValue = false;
-    return false;
-},false);
-</onCreate>
-      <sizeRatio>2.35179153094463</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>0.259071729957806</widthRatio>
-    </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel137/layouty3">
-      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
-      <aniPos>rightFlyIn:右侧飞入</aniPos>
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel35/layouty6">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <fieldCount>2</fieldCount>
-      <height>722</height>
-      <heightRatio>1</heightRatio>
-      <layerName>p3.p0</layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>2.35179153094463</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <heavy>10</heavy>
-      <heavyEnabled>false</heavyEnabled>
-      <height>66</height>
-      <heightRatio>0.0914127423822715</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.214983713355049</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel12">
-      <backgroundColor>C0C0C0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>2</height>
-      <heightRatio>0.0303030303030303</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.005</sizeRatio>
-      <top>64</top>
-      <topRatio>0.96969696969697</topRatio>
-      <width>400</width>
-      <widthRatio>1.30293159609121</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel13">
-      <height>45</height>
-      <heightRatio>0.681818181818182</heightRatio>
-      <left>12</left>
-      <leftRatio>0.0390879478827362</leftRatio>
-      <lockRatio>true</lockRatio>
-      <onClick>ee.setVisible(ee.getControl("panel26"), true);
-eb.setAlpha(ee.getControl("panel26"), 100);
-ee.showAni(ee.getControl("panel27"), 0);
-</onClick>
-      <sizeRatio>1</sizeRatio>
-      <top>8</top>
-      <topRatio>0.121212121212121</topRatio>
-      <width>45</width>
-      <widthRatio>0.146579804560261</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel13/panel14">
-      <backgroundImg>user.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>43</height>
-      <heightRatio>0.955555555555556</heightRatio>
-      <left>1</left>
-      <leftRatio>0.0222222222222222</leftRatio>
-      <outerBottom>1</outerBottom>
-      <outerLeft>1</outerLeft>
-      <outerRight>1</outerRight>
-      <outerTop>1</outerTop>
-      <sizeRatio>1</sizeRatio>
-      <top>1</top>
-      <topRatio>0.0222222222222222</topRatio>
-      <width>43</width>
-      <widthRatio>0.955555555555556</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel13/panel15">
-      <backgroundImg>cirMask.png</backgroundImg>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>45</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>1</sizeRatio>
-      <top>0</top>
-      <width>45</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel17">
-      <backgroundImg>config.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <height>54</height>
-      <heightRatio>0.819672131147541</heightRatio>
-      <left>266</left>
-      <leftRatio>0.865603644646925</leftRatio>
-      <onClick>searchUser();</onClick>
-      <sizeRatio>0.925925925925926</sizeRatio>
-      <top>5</top>
-      <topRatio>0.0819672131147541</topRatio>
-      <width>38</width>
-      <widthRatio>0.123006833712984</widthRatio>
-    </control>
-    <control type="Edit" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/edit5">
-      <backgroundSkin>edit1</backgroundSkin>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>36</height>
-      <heightRatio>0.545454545454545</heightRatio>
-      <inputFont>微软雅黑</inputFont>
-      <inputFontSize>14</inputFontSize>
-      <left>71</left>
-      <leftRatio>0.231270358306189</leftRatio>
-      <sizeRatio>0.131868131868132</sizeRatio>
-      <text>搜索用户</text>
-      <top>14</top>
-      <topRatio>0.212121212121212</topRatio>
-      <width>273</width>
-      <widthRatio>0.889250814332248</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6">
-      <backgroundColor>F0F0FA</backgroundColor>
-      <height>656</height>
-      <heightRatio>0.908587257617729</heightRatio>
-      <left>0</left>
-      <sizeRatio>2.13680781758958</sizeRatio>
-      <top>66</top>
-      <topRatio>0.0914127423822715</topRatio>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7">
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <fieldCount>2</fieldCount>
-      <height>656</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>2.13680781758958</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14">
-      <backgroundColor>f0f0f0</backgroundColor>
-      <heavy>10</heavy>
-      <heavyEnabled>false</heavyEnabled>
-      <height>60</height>
-      <heightRatio>0.0914634146341463</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.195439739413681</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutX" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8">
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <fieldCount>2</fieldCount>
-      <height>60</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.195439739413681</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem15">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontColor>1C94E0</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>60</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onClick>g5.changeP3(0);</onClick>
-      <sizeRatio>0.38961038961039</sizeRatio>
-      <text>用户</text>
-      <top>0</top>
-      <width>154</width>
-      <widthRatio>0.501628664495114</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem15/panel130">
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <height>1</height>
-      <heightRatio>0.0166666666666667</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00649350649350649</sizeRatio>
-      <top>59</top>
-      <topRatio>0.983333333333333</topRatio>
-      <width>154</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem15/panel132">
-      <backgroundColor>1C94E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <height>2</height>
-      <heightRatio>0.0333333333333333</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.012987012987013</sizeRatio>
-      <top>58</top>
-      <topRatio>0.966666666666667</topRatio>
-      <width>154</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem16">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>60</height>
-      <heightRatio>1</heightRatio>
-      <left>154</left>
-      <leftRatio>0.501628664495114</leftRatio>
-      <onClick>g5.changeP3(1);</onClick>
-      <sizeRatio>0.392156862745098</sizeRatio>
-      <text>发言</text>
-      <top>0</top>
-      <width>153</width>
-      <widthRatio>0.498371335504886</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem16/panel131">
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <height>1</height>
-      <heightRatio>0.0166666666666667</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.0065359477124183</sizeRatio>
-      <top>59</top>
-      <topRatio>0.983333333333333</topRatio>
-      <width>153</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem16/panel133">
-      <backgroundColor>1C94E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <height>2</height>
-      <heightRatio>0.0333333333333333</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.0130718954248366</sizeRatio>
-      <top>58</top>
-      <topRatio>0.966666666666667</topRatio>
-      <width>153</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem15">
-      <backgroundColor>d0d0d0</backgroundColor>
-      <height>596</height>
-      <heightRatio>0.908536585365854</heightRatio>
-      <left>0</left>
-      <sizeRatio>1.9413680781759</sizeRatio>
-      <top>60</top>
-      <topRatio>0.0914634146341463</topRatio>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem15/panel128">
-      <dockX>fill</dockX>
-      <height>596</height>
-      <heightRatio>1</heightRatio>
-      <layerName><![CDATA[P3->1->搜索结果：用户]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>1.9413680781759</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem15/panel129">
-      <dockX>fill</dockX>
-      <height>596</height>
-      <heightRatio>1</heightRatio>
-      <layerName><![CDATA[P3->2->搜索结果：发言]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>1.9413680781759</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <aniAlpha>appear:渐变出现</aniAlpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>stretch</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>722</height>
-      <heightRatio>1</heightRatio>
-      <layerName><![CDATA[p3.p3->私信聊天]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onCreate>sender.c_chat = ee.getControl("layoutyitem12");</onCreate>
-      <sizeRatio>2.35179153094463</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel137/panel116/layouty6">
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>722</height>
-      <heightRatio>1</heightRatio>
+      <height>780</height>
+      <heightRatio>0.925641025641026</heightRatio>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -9460,10 +9117,10 @@ sender.style.borderColor = "rgb(230,236,240)";
 sender.style.borderStyle = "solid";</onCreate>
       <sizeRatio>2.35179153094463</sizeRatio>
       <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
+      <width>600</width>
+      <widthRatio>0.511666666666667</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem11">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem11">
       <backgroundColor>f0f0f0</backgroundColor>
       <heavy>10</heavy>
       <heavyEnabled>false</heavyEnabled>
@@ -9473,10 +9130,10 @@ sender.style.borderStyle = "solid";</onCreate>
       <note>题头</note>
       <sizeRatio>0.159609120521173</sizeRatio>
       <top>0</top>
-      <width>307</width>
+      <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem11/panel118">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem11/panel118">
       <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
       <dockX>left</dockX>
@@ -9495,7 +9152,7 @@ sender.style.borderStyle = "solid";</onCreate>
       <width>250</width>
       <widthRatio>0.814332247557003</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem11/panel119">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem11/panel119">
       <backgroundColor>C0C0C0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
@@ -9506,14 +9163,14 @@ sender.style.borderStyle = "solid";</onCreate>
       <sizeRatio>0.00325732899022801</sizeRatio>
       <top>48</top>
       <topRatio>0.979591836734694</topRatio>
-      <width>307</width>
+      <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12">
       <autoScroll>true</autoScroll>
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>624</height>
+      <height>682</height>
       <heightRatio>0.864265927977839</heightRatio>
       <left>0</left>
       <note><![CDATA[c_chat->聊天区域]]></note>
@@ -9524,15 +9181,15 @@ sender.style.overflowX = "hidden";
       <sizeRatio>2.03257328990228</sizeRatio>
       <top>49</top>
       <topRatio>0.0678670360110803</topRatio>
-      <width>307</width>
+      <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutX" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12">
+    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12">
       <backgroundColor>F5FFF5</backgroundColor>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <fieldCount>2</fieldCount>
-      <height>624</height>
+      <height>682</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <onCreate>//sender.style.boxSizing="border-box";
@@ -9542,12 +9199,12 @@ sender.style.overflowX = "hidden";
 //sender.style.borderRadius = "10px";</onCreate>
       <sizeRatio>2.03257328990228</sizeRatio>
       <top>0</top>
-      <width>307</width>
+      <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem27">
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem27">
       <backgroundColor>f0f0f0</backgroundColor>
-      <height>624</height>
+      <height>682</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <note><![CDATA[c_chatRoot->聊天root]]></note>
@@ -9920,25 +9577,25 @@ sender.onpointerup = function(event) {
 ]]></onCreate>
       <sizeRatio>2.10810810810811</sizeRatio>
       <top>0</top>
-      <width>296</width>
+      <width>589</width>
       <widthRatio>0.964169381107492</widthRatio>
     </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem28">
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28">
       <backgroundColor>d0d0d0</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
-      <height>624</height>
+      <height>682</height>
       <heightRatio>1</heightRatio>
-      <left>296</left>
+      <left>589</left>
       <leftRatio>0.964169381107492</leftRatio>
       <sizeRatio>56.7272727272727</sizeRatio>
       <top>0</top>
       <width>11</width>
       <widthRatio>0.0358306188925081</widthRatio>
     </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14">
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>624</height>
+      <height>682</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
       <onCreate><![CDATA[sender.v_minValue = 0;
@@ -9989,7 +9646,7 @@ sender.onChange = function() {
       <width>10</width>
       <widthRatio>0.909090909090909</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem33">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem33">
       <backgroundColor>804040</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>28</height>
@@ -10000,7 +9657,7 @@ sender.onChange = function() {
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem33/panel362">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem33/panel362">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
@@ -10091,10 +9748,10 @@ sender.init(0);
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem34">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem34">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>567</height>
+      <height>625</height>
       <heightRatio>0.908653846153846</heightRatio>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
@@ -10110,7 +9767,7 @@ sender.style.borderBottom = "";
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem34/panel363">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem34/panel363">
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
@@ -10169,19 +9826,19 @@ sender.style.backgroundColor = "#fafaff";</onCreate>
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem35">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem35">
       <backgroundColor>804040</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>29</height>
       <heightRatio>0.046474358974359</heightRatio>
       <left>0</left>
       <sizeRatio>2.9</sizeRatio>
-      <top>595</top>
+      <top>653</top>
       <topRatio>0.953525641025641</topRatio>
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem35/panel364">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem35/panel364">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
@@ -10272,7 +9929,7 @@ sender.init(0);
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem13">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem13">
       <backgroundColor>f0f0f0</backgroundColor>
       <heavy>10</heavy>
       <heavyEnabled>false</heavyEnabled>
@@ -10281,12 +9938,12 @@ sender.init(0);
       <left>0</left>
       <note>功能按钮区</note>
       <sizeRatio>0.159609120521173</sizeRatio>
-      <top>673</top>
+      <top>731</top>
       <topRatio>0.93213296398892</topRatio>
-      <width>307</width>
+      <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem13/panel120">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem13/panel120">
       <backgroundColor>C0C0C0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
@@ -10296,10 +9953,10 @@ sender.init(0);
       <left>0</left>
       <sizeRatio>0.00325732899022801</sizeRatio>
       <top>0</top>
-      <width>307</width>
+      <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Edit" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem13/edit6">
+    <control type="Edit" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem13/edit6">
       <backgroundSkin>edit1</backgroundSkin>
       <dockX>fill</dockX>
       <fontBold>true</fontBold>
@@ -10388,16 +10045,16 @@ sender._input.addEventListener("keydown", function(event) {
       <text>有什么想说的？</text>
       <top>11</top>
       <topRatio>0.224489795918367</topRatio>
-      <width>247</width>
+      <width>540</width>
       <widthRatio>0.804560260586319</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/layouty6/layoutyitem13/panel121">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem13/panel121">
       <cursor>pointer</cursor>
       <dockX>right</dockX>
       <dockY>center</dockY>
       <height>32</height>
       <heightRatio>0.653061224489796</heightRatio>
-      <left>263</left>
+      <left>556</left>
       <leftRatio>0.856677524429967</leftRatio>
       <onClick><![CDATA[var msgContent = ee.getEditText(ee.getControl("edit6")).trim();
 if (msgContent.length<=0) {
@@ -10435,6 +10092,353 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <topRatio>0.163265306122449</topRatio>
       <width>37</width>
       <widthRatio>0.120521172638436</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontBold>true</fontBold>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>100</fontSize>
+      <height>722</height>
+      <heightRatio>0.907035175879397</heightRatio>
+      <left>906</left>
+      <leftRatio>0.764556962025316</leftRatio>
+      <note>p3</note>
+      <onCreate>sender.p3 = ee.getControl("panel116");
+sender.p8 = ee.getControl("panel298");
+sender.p9 = ee.getControl("panel365");
+sender.p10 = ee.getControl("panel61");
+sender.p11 = ee.getControl("panel370");
+sender.p12 = ee.getControl("panel388");
+
+sender.style.position="fixed";
+sender.addEventListener("mousewheel",function(event){
+    return true;
+    g5.mainDiv.onWheel(event.wheelDelta);
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    event.returnValue = false;
+    return false;
+},false);
+</onCreate>
+      <sizeRatio>2.35179153094463</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>0.259071729957806</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/panel134/panel137/layouty3">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+      <height>722</height>
+      <heightRatio>1</heightRatio>
+      <layerName>p3.p0</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>2.35179153094463</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>10</heavy>
+      <heavyEnabled>false</heavyEnabled>
+      <height>66</height>
+      <heightRatio>0.0914127423822715</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.214983713355049</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel12">
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>2</height>
+      <heightRatio>0.0303030303030303</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.005</sizeRatio>
+      <top>64</top>
+      <topRatio>0.96969696969697</topRatio>
+      <width>400</width>
+      <widthRatio>1.30293159609121</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel13">
+      <height>45</height>
+      <heightRatio>0.681818181818182</heightRatio>
+      <left>12</left>
+      <leftRatio>0.0390879478827362</leftRatio>
+      <lockRatio>true</lockRatio>
+      <onClick>ee.setVisible(ee.getControl("panel26"), true);
+eb.setAlpha(ee.getControl("panel26"), 100);
+ee.showAni(ee.getControl("panel27"), 0);
+</onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>8</top>
+      <topRatio>0.121212121212121</topRatio>
+      <width>45</width>
+      <widthRatio>0.146579804560261</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel13/panel14">
+      <backgroundImg>user.png</backgroundImg>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>43</height>
+      <heightRatio>0.955555555555556</heightRatio>
+      <left>1</left>
+      <leftRatio>0.0222222222222222</leftRatio>
+      <outerBottom>1</outerBottom>
+      <outerLeft>1</outerLeft>
+      <outerRight>1</outerRight>
+      <outerTop>1</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>1</top>
+      <topRatio>0.0222222222222222</topRatio>
+      <width>43</width>
+      <widthRatio>0.955555555555556</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel13/panel15">
+      <backgroundImg>cirMask.png</backgroundImg>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>45</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>1</sizeRatio>
+      <top>0</top>
+      <width>45</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/panel17">
+      <backgroundImg>config.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>54</height>
+      <heightRatio>0.819672131147541</heightRatio>
+      <left>266</left>
+      <leftRatio>0.865603644646925</leftRatio>
+      <onClick>searchUser();</onClick>
+      <sizeRatio>0.925925925925926</sizeRatio>
+      <top>5</top>
+      <topRatio>0.0819672131147541</topRatio>
+      <width>38</width>
+      <widthRatio>0.123006833712984</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem5/edit5">
+      <backgroundSkin>edit1</backgroundSkin>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.545454545454545</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>14</inputFontSize>
+      <left>71</left>
+      <leftRatio>0.231270358306189</leftRatio>
+      <sizeRatio>0.131868131868132</sizeRatio>
+      <text>搜索用户</text>
+      <top>14</top>
+      <topRatio>0.212121212121212</topRatio>
+      <width>273</width>
+      <widthRatio>0.889250814332248</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6">
+      <backgroundColor>F0F0FA</backgroundColor>
+      <height>656</height>
+      <heightRatio>0.908587257617729</heightRatio>
+      <left>0</left>
+      <sizeRatio>2.13680781758958</sizeRatio>
+      <top>66</top>
+      <topRatio>0.0914127423822715</topRatio>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+      <height>656</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>2.13680781758958</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavy>10</heavy>
+      <heavyEnabled>false</heavyEnabled>
+      <height>60</height>
+      <heightRatio>0.0914634146341463</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.195439739413681</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.195439739413681</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem15">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>1C94E0</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>g5.changeP3(0);</onClick>
+      <sizeRatio>0.38961038961039</sizeRatio>
+      <text>用户</text>
+      <top>0</top>
+      <width>154</width>
+      <widthRatio>0.501628664495114</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem15/panel130">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0166666666666667</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00649350649350649</sizeRatio>
+      <top>59</top>
+      <topRatio>0.983333333333333</topRatio>
+      <width>154</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem15/panel132">
+      <backgroundColor>1C94E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.012987012987013</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>154</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem16">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>154</left>
+      <leftRatio>0.501628664495114</leftRatio>
+      <onClick>g5.changeP3(1);</onClick>
+      <sizeRatio>0.392156862745098</sizeRatio>
+      <text>发言</text>
+      <top>0</top>
+      <width>153</width>
+      <widthRatio>0.498371335504886</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem16/panel131">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0166666666666667</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0065359477124183</sizeRatio>
+      <top>59</top>
+      <topRatio>0.983333333333333</topRatio>
+      <width>153</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem14/layoutx8/layoutxitem16/panel133">
+      <backgroundColor>1C94E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0130718954248366</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>153</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem15">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>596</height>
+      <heightRatio>0.908536585365854</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.9413680781759</sizeRatio>
+      <top>60</top>
+      <topRatio>0.0914634146341463</topRatio>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem15/panel128">
+      <dockX>fill</dockX>
+      <height>596</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[P3->1->搜索结果：用户]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.9413680781759</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/layouty3/layoutyitem6/layouty7/layoutyitem15/panel129">
+      <dockX>fill</dockX>
+      <height>596</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[P3->2->搜索结果：发言]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.9413680781759</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel137/panel116">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>722</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[p3.p3->私信聊天]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>sender.c_chat = ee.getControl("layoutyitem12");</onCreate>
+      <sizeRatio>2.35179153094463</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel116/panel36">
       <backgroundColor>C0C0C0</backgroundColor>
@@ -16616,6 +16620,7 @@ sender.init(0);
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a7 -> 私信1]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -16675,7 +16680,6 @@ sender.style.borderRight = "";</onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a8 -> 私信2]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
