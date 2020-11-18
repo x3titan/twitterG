@@ -1,5 +1,5 @@
 <page>
-  <controls count="529">
+  <controls count="517">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -8785,12 +8785,7 @@ sender.render = function(root) {
     var c, dw = eb.getDivRectSetting(root).w;
     root.style.cursor="pointer";
     ee.setOnClick(root,function(sender,event) {
-        return;
-        g5.p3.p3.c_chat.c_chatRoot.start(sender.chatUserId);
-        ee.setText(ee.getControl("panel118"), 
-            "<b>" + sender.nickName + "</b><br>" +
-            "<font color='#808080' style='font-size:9pt'>@" + sender.userName + "</font>"
-            );
+        g5.p2.p14.show(sender.v_userInfo);
     });
     ee.setOnMouseEnter(root, function(sender,e){
         sender.style.backgroundColor = "rgb(245,248,250)";
@@ -8890,208 +8885,61 @@ sender.loadDataset = function(dataset) {
 sender.v_items = new Array();
 sender.v_needRefresh = true;
 sender.v_lastScrollTop = 0;
+sender.v_userInfo = new g5.UserInfo();
+
+sender.activePage = function() {
+    g5.pushHistory("p=13&amp;u=" + escape(this.v_userInfo.userName));
+    g5.pageMode = 0;
+    g5.refreshMain(true);
+    ee.setVisible(g5.p4, true);
+    g5.p4.changePage("a8");
+    ee.setVisible(this, true);
+}
 
 sender.close = function() {
+    this.c_chat.stop();
     this.v_lastScrollTop = document.documentElement.scrollTop;
     ee.setVisible(g5.p4, false);
     ee.setVisible(this, false)
 }
 
-sender.activePage = function() {
-    g5.pushHistory("p=13");
-    g5.pageMode = 0;
-    g5.refreshMain(true);
-    ee.setVisible(g5.p4, true);
-    g5.p4.changePage("a4");
-    ee.setVisible(g5.p2.p5, true)
-    g5.resizeV(this.parentNode, 1);
+sender.showByUserName = function(userName) {
+    if (getOtherUserInfo2.busy) false;
+    getOtherUserInfo2.keyType = "userName";
+    getOtherUserInfo2.userKey = userName;
+    getOtherUserInfo2.onComplete = function(v_userInfo) {
+        sender.show(v_userInfo);
+    }
+    getOtherUserInfo2();
 }
 
 sender.show = function(v_userInfo) {
-    
-    g5.p3.p3.c_chat.c_chatRoot.start(showChatList.defaultUserId);
-    ee.setText(ee.getControl("panel118"), 
-        "<b>" + showChatList.defaultUserNickName + "</b><br>" +
-        "<font color='#808080' style='font-size:9pt'>@" + showChatList.defaultUserName + "</font>"
-        );
-    showChatList.defaultUserId = null;    
-    
+    ee.setRect(this,null,null,null,eb.getClientSize().h);
+    this.v_needRefresh = v_userInfo.id != this.v_userInfo.id;
+    /*
     if (!this.v_needRefresh) {
-        g5.changeP2(12);
+        g5.changeP2(13);
         this.c_chat.scrollTop = this.v_lastScrollTop;
         var rect = eb.getDivRectSetting(g5.p4);
-        ee.tiledV(this, 0, rect.h, 500); 
+        ee.setRect(ee.getControl("layoutyitem11"),null,null,null,rect.h);
+        ee.setRect(ee.getControl("layouty6"),0,null,null,null,null);
         ee.tiledResizeV(this, 2);
         return;
     }
-    document.documentElement.scrollTop = 0;
-    this.clear();
-    g5.changeP2(12);
+    */
+    this.v_userInfo = v_userInfo;
+    this.c_chat.start(this.v_userInfo.id);
+    ee.setText(ee.getControl("panel32"), 
+        "<b>" + this.v_userInfo.nickName + "</b><br>" +
+        "<font color='#808080' style='font-size:9pt'>@" + this.v_userInfo.userName + "</font>"
+        );
+    g5.changeP2(13);
     var rect = eb.getDivRectSetting(g5.p4);
-    ee.tiledV(this, 0, rect.h, 500); 
-    this.load();
+    ee.setRect(ee.getControl("layoutyitem11"),null,null,null,rect.h);
+    ee.setRect(ee.getControl("layouty6"),0,null,null,null,null);
+    ee.tiledResizeV(this, 2);
 }
 
-sender.clear = function() {
-    for (var i=0; i<this.v_items.length; i++) {
-        ee.removeControl(this.v_items[i]);
-    }
-    this.v_items = new Array();
-    ee.setVisible(this.c_noResult, false);
-}
-
-sender.load = function() {
-    if (this.v_items.length>0) return;
-    this.v_pageIndex = 0;
-    this.fLoad();
-}
-
-sender.loadMore = function() {
-    if (this.v_status != "normal") return;
-    this.v_pageIndex++;
-    this.fLoad();
-}
-
-sender.fLoad = function() {
-    if (showBookMark.busy) return;
-    showBookMark.pageIndex = this.v_pageIndex;
-    showBookMark.onComplete = function() {
-        var cy = 0;
-        var itemWidth = eb.getDivRectSetting(sender).w;
-        for (var i=0; i< showBookMark.dataset.rowCount; i++) {
-            var item = createPanel(sender, sender.v_headerName + showBookMark.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
-            item.v_mode = "";
-            g5.loadTwitterRecord(item, showBookMark.dataset, i);
-            if (item.v_content.status == "DEL") {
-                ee.removeControl(item);
-                continue;
-            }
-            for (var j=0; j<sender.v_items.length; j++) {
-                if (sender.v_items[j].v_content.id == item.v_content.id) {
-                    ee.removeControl(item);
-                    item = null;
-                    break;
-                }
-            }
-            if (item == null) continue;
-            g5.renderTwitter(item);
-            sender.addButton(item);
-            sender.v_items.push(item);
-            cy += eb.getDivRect(item).h;
-        }
-        if (showBookMark.dataset.rowCount<=0) {
-            sender.v_status = "noResult";
-            if (sender.v_items.length<=0) {
-                ee.setVisible(sender.c_noResult, true);
-            } else {
-                ee.setVisible(sender.c_noResult, false);
-                var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
-                addText(item, "没有更多的书签了", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
-                item.v_noResult = true;
-                sender.v_items.push(item);
-            }
-        } else {
-            sender.v_status = "normal";
-        }
-        g5.tiledV(sender,0,0,0);
-        g5.tiledResizeV(sender,2);   
-    }
-    showBookMark();
-}
-
-sender.addButton = function(root) {
-    var c = createPanel(root, root.id+"_bkmkDel", "", 480, 9, 70, 25);
-    root.c_bookMarkDelete = c;
-    
-    c.v_style = [
-        new g5.BStyle("","#e8f5fe","#d2ecfc","移除书签","移除书签","移除书签","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
-    ];
-    
-    c.init = function(index) {
-        this.v_index = index;
-        this.style.backgroundColor = this.v_style[index].color1;
-        ee.setText(this, this.v_style[index].text1);
-        ee.setTextColor(this, this.v_style[index].tColor1);
-        if (this.v_style[index].bdColor=="") {
-            this.style.borderWidth = "0px";
-        } else {
-            this.style.boxSizing="border-box";
-            this.style.borderWidth = "1px";
-            this.style.borderColor = this.v_style[index].bdColor;
-            this.style.borderStyle = "solid";
-        }
-        this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-    }
-    ee.setOnClick(c, function(button, event) {
-        if (setBookMark.busy) {
-            window.event? window.event.cancelBubble = true : event.stopPropagation();
-            return;
-        }
-        var root = button.parentNode;
-        setBookMark.operation = "del";
-        setBookMark.contentId = root.v_content.id;
-        setBookMark.onComplete = function() {
-            for (var i=0; i<sender.v_items.length; i++) {
-                if (sender.v_items[i] == root) {
-                    sender.v_items.splice(i,1);
-                    break;
-                }
-            }
-            ee.removeControl(root);
-            if (sender.v_items.length<=0) {
-                ee.setVisible(sender.c_noResult, true);
-            } else if (sender.v_items.length==1) {
-                if (sender.v_items[0].v_noResult) {
-                    ee.removeControl(sender.v_items[0]);
-                    sender.v_items = new Array();
-                    ee.setVisible(sender.c_noResult, true);
-                }
-            }
-            g5.tiledResizeV(g5.p2.p5,2);
-        }
-        setBookMark();
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });
-    ee.setOnMouseEnter(c, function(sender,event) { 
-        var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color2;
-        ee.setText(sender, s.text2);
-        ee.setTextColor(sender, s.tColor2);
-    });
-    ee.setOnMouseLeave(c, function(sender,event) { 
-        var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color1;
-        ee.setText(sender, s.text1);
-        ee.setTextColor(sender, s.tColor1);
-    });
-    c.eeMouseDown = function(sender,event,x,y) {
-        var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color3;
-        ee.setText(sender, s.text3);
-        ee.setTextColor(sender, s.tColor3);
-    }
-    c.eeMouseUp = function(sender,event,x,y) {
-        var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color2;
-        ee.setText(sender, s.text2);
-        ee.setTextColor(sender, s.tColor2);
-    }
-    eb.initMouseEvent(c);
-    c.init(0);
-    ee.setVisible(c, false);
-    
-    var e1 = root.eeOnMouseEnter;
-    var e2 = root.eeOnMouseLeave;
-    ee.setOnMouseEnter(root, function(sender,event) { 
-        ee.setVisible(sender.c_bookMarkDelete, true);
-        e1(sender,event);
-    });
-    ee.setOnMouseLeave(root, function(sender,event) { 
-        ee.setVisible(sender.c_bookMarkDelete, false);
-        e2(sender,event);
-    });
-    
-}
 
 
 
@@ -9109,109 +8957,55 @@ sender.addButton = function(root) {
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>780</height>
-      <heightRatio>0.925641025641026</heightRatio>
+      <heightRatio>1</heightRatio>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
 sender.style.borderColor = "rgb(230,236,240)";
 sender.style.borderStyle = "solid";</onCreate>
-      <sizeRatio>2.35179153094463</sizeRatio>
+      <sizeRatio>1.30434782608696</sizeRatio>
       <top>0</top>
       <width>600</width>
-      <widthRatio>0.511666666666667</widthRatio>
+      <widthRatio>0.996666666666667</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem11">
       <backgroundColor>f0f0f0</backgroundColor>
       <heavy>10</heavy>
       <heavyEnabled>false</heavyEnabled>
-      <height>49</height>
-      <heightRatio>0.0678670360110803</heightRatio>
+      <height>55</height>
+      <heightRatio>0.0705128205128205</heightRatio>
       <left>0</left>
-      <note>题头</note>
-      <sizeRatio>0.159609120521173</sizeRatio>
+      <note>题头空白</note>
+      <sizeRatio>0.0916666666666667</sizeRatio>
       <top>0</top>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem11/panel118">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>left</dockX>
-      <dockY>fill</dockY>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>49</height>
-      <heightRatio>1</heightRatio>
-      <left>20</left>
-      <leftRatio>0.0651465798045603</leftRatio>
-      <outerLeft>20</outerLeft>
-      <sizeRatio>0.196</sizeRatio>
-      <text>&amp;nbsp;</text>
-      <top>0</top>
-      <width>250</width>
-      <widthRatio>0.814332247557003</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem11/panel119">
-      <backgroundColor>C0C0C0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <height>1</height>
-      <heightRatio>0.0204081632653061</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.00325732899022801</sizeRatio>
-      <top>48</top>
-      <topRatio>0.979591836734694</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12">
-      <autoScroll>true</autoScroll>
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>682</height>
-      <heightRatio>0.864265927977839</heightRatio>
+      <height>676</height>
+      <heightRatio>0.874358974358974</heightRatio>
       <left>0</left>
       <note><![CDATA[c_chat->聊天区域]]></note>
-      <onCreate>sender.c_chatRoot = ee.getControl("layoutxitem27");
-
+      <onCreate><![CDATA[sender.style.overflowY = "scroll";
 sender.style.overflowX = "hidden";
-</onCreate>
-      <sizeRatio>2.03257328990228</sizeRatio>
-      <top>49</top>
-      <topRatio>0.0678670360110803</topRatio>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12">
-      <backgroundColor>F5FFF5</backgroundColor>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <fieldCount>2</fieldCount>
-      <height>682</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onCreate>//sender.style.boxSizing="border-box";
-//sender.style.borderWidth = "1px";
-//sender.style.borderColor = "rgb(230,236,240)";
-//sender.style.borderStyle = "solid";
-//sender.style.borderRadius = "10px";</onCreate>
-      <sizeRatio>2.03257328990228</sizeRatio>
-      <top>0</top>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem27">
-      <backgroundColor>f0f0f0</backgroundColor>
-      <height>682</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <note><![CDATA[c_chatRoot->聊天root]]></note>
-      <onCreate><![CDATA[sender.minRefreshTime = 3000;
+sender.className = "scrollBar01";
+
+sender.minRefreshTime = 3000;
 sender.maxRefreshTime = 60000;
 sender.running = false;
 sender.start = function(roomId) {
+    if (roomId == this.v_roomId) {
+        this.v_nohis = false;
+        this.clearTimer();
+        this.v_tfId = setInterval(function() {
+            sender.timeFragment();    
+        }, 500);
+        this.running = true;
+        this.refresh();        
+        return;
+    }
     this.v_roomId = roomId;
     this.firstRun = true;
     this.currentRefreshTime = this.minRefreshTime;
@@ -9219,7 +9013,6 @@ sender.start = function(roomId) {
     for (var i=0; i<this.v_items.length; i++) ee.removeControl(this.v_items[i]);
     this.v_items = new Array();
     this.v_nohis = false;
-    ee.getControl("layouty14").init(sender);
     this.clearTimer();
     this.v_tfId = setInterval(function() {
         sender.timeFragment();    
@@ -9229,10 +9022,6 @@ sender.start = function(roomId) {
 }
 sender.stop = function() {
     this.clearTimer();
-    for (var i=0; i<this.v_items.length; i++) {
-        ee.removeControl(this.v_items[i]);
-    }
-    this.v_items = new Array();
     this.running = false;
 }
 
@@ -9574,359 +9363,12 @@ sender.onpointerup = function(event) {
 
 
 
+
 ]]></onCreate>
-      <sizeRatio>2.10810810810811</sizeRatio>
-      <top>0</top>
-      <width>589</width>
-      <widthRatio>0.964169381107492</widthRatio>
-    </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28">
-      <backgroundColor>d0d0d0</backgroundColor>
-      <heavyEnabled>false</heavyEnabled>
-      <height>682</height>
-      <heightRatio>1</heightRatio>
-      <left>589</left>
-      <leftRatio>0.964169381107492</leftRatio>
-      <sizeRatio>56.7272727272727</sizeRatio>
-      <top>0</top>
-      <width>11</width>
-      <widthRatio>0.0358306188925081</widthRatio>
-    </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14">
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>682</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onCreate><![CDATA[sender.v_minValue = 0;
-sender.v_maxValue = 100;
-sender.v_pageSize = 10;
-sender.v_lineColor = "#e6ecf0";
-sender.v_div = null;
-sender.init = function(div) {
-    if (this.v_div != null) {
-        this.v_div.removeEventListener("mousewheel", this.onMouseWheel,false);
-    }
-    this.v_div = div;
-    div.addEventListener("mousewheel",this.onMouseWheel,false);
-    this.v_minValue = 0;
-    this.v_maxValue = div.scrollHeight;
-    this.v_pagesize = div.offsetHeight;
-    this.v_currentValue = div.scrollTop;
-    this.c_bar = this.eeChildren[1].eeChildren[0];
-    ee.setRect(this.c_bar, null,
-        parseInt(div.scrollTop/div.scrollHeight*this.eeChildren[1].offsetHeight),null,
-        parseInt(div.offsetHeight/div.scrollHeight*this.eeChildren[1].offsetHeight));
-}
-
-sender.onMouseWheel = function(event) {
-    div = sender.v_div;
-    if (event.wheelDelta<0) {
-        div.scrollTop += 20;
-    } else {
-        div.scrollTop -= 20;
-    }
-    ee.setRect(sender.c_bar, null,
-        parseInt(div.scrollTop/div.scrollHeight*sender.eeChildren[1].offsetHeight),null,
-        parseInt(div.offsetHeight/div.scrollHeight*sender.eeChildren[1].offsetHeight));
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
-    event.returnValue = false;
-    return false;
-}
-
-
-//implementation
-sender.onChange = function() {
-    this.v_div.scrollTop = this.c_bar.offsetTop/this.eeChildren[1].offsetHeight*this.v_div.scrollHeight;
-}
-]]></onCreate>
-      <outerRight>1</outerRight>
-      <sizeRatio>62.4</sizeRatio>
-      <top>0</top>
-      <width>10</width>
-      <widthRatio>0.909090909090909</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem33">
-      <backgroundColor>804040</backgroundColor>
-      <heavyEnabled>false</heavyEnabled>
-      <height>28</height>
-      <heightRatio>0.0448717948717949</heightRatio>
-      <left>0</left>
-      <sizeRatio>2.8</sizeRatio>
-      <top>0</top>
-      <width>10</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem33/panel362">
-      <backgroundColor>8ED0F9</backgroundColor>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <fontBold>true</fontBold>
-      <fontColor>1DA1F2</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <height>28</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onClick>var div = sender.parentNode.parentNode.v_div;
-div.scrollTop -= 20;
-var c = sender.parentNode.parentNode;
-ee.setRect(c.c_bar, null,
-    parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
-    parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));
-</onClick>
-      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
-    this.color1 = color1;
-    this.color2 = color2
-    this.color3 = color3;
-    this.text1 = text1;
-    this.text2 = text2;
-    this.text3 = text3;
-    this.tColor1 = tColor1;
-    this.tColor2 = tColor2;
-    this.tColor3 = tColor3;
-    this.bdColor = bdColor;
-}
-sender.v_style = [
-    new sender.BStyle("#fafaff", "#e6ecf0","#6e7f8d","","","","#000000","#ffffff","#ffffff","#e6ecf0")
-];
-
-sender.init = function(index) {
-    this.v_index = index;
-    this.style.backgroundColor = this.v_style[index].color1;
-    ee.setText(this, this.v_style[index].text1);
-    ee.setTextColor(this, this.v_style[index].tColor1);
-    if (this.v_style[index].bdColor=="") {
-        this.style.borderWidth = "0px";
-    } else {
-        this.style.boxSizing="border-box";
-        this.style.borderWidth = "1px";
-        this.style.borderColor = this.v_style[index].bdColor;
-        this.style.borderStyle = "solid";
-    }
-}
-
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color1;
-    ee.setText(sender, s.text1);
-    ee.setTextColor(sender, s.tColor1);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color3;
-    ee.setText(sender, s.text3);
-    ee.setTextColor(sender, s.tColor3);
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-}
-eb.initMouseEvent(sender);
-
-sender.init(0);
-
-
-
-
-
-
-
-</onCreate>
-      <sizeRatio>2.8</sizeRatio>
-      <text>.</text>
-      <top>0</top>
-      <width>10</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem34">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>625</height>
-      <heightRatio>0.908653846153846</heightRatio>
-      <left>0</left>
-      <onCreate>sender.style.boxSizing="border-box";
-sender.style.borderWidth = "1px";
-sender.style.borderColor = "#e6ecf0";
-sender.style.borderStyle = "solid";
-sender.style.borderTop = "";
-sender.style.borderBottom = "";
-</onCreate>
-      <sizeRatio>56.7</sizeRatio>
-      <top>28</top>
-      <topRatio>0.0448717948717949</topRatio>
-      <width>10</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem34/panel363">
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <height>17</height>
-      <heightRatio>0.0299823633156966</heightRatio>
-      <left>0</left>
-      <onCreate>sender.v_down = false;
-sender.onpointerdown = function(event) {
-    var sender = event.target;
-    sender.v_down = true;
-    sender.v_y = event.clientY;
-    sender.v_rect = eb.getDivRectSetting(sender);
-    sender.style.backgroundColor = "#6e7f8d";
-    sender.setPointerCapture(event.pointerId);
-}
-sender.onpointerup = function(event) {
-    var sender = event.target;
-    sender.v_down = false;
-    sender.style.backgroundColor = "#e6ecf0";
-    var div = sender.parentNode.parentNode.v_div;
-    var c = sender.parentNode.parentNode;
-    ee.setRect(c.c_bar, null,
-        parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
-        parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));        
-    sender.releasePointerCapture(event.pointerId);
-}
-sender.onpointermove = function(event) {
-    var sender = event.target;
-    if (sender.v_down) {
-        var dy = event.clientY - sender.v_y;
-        var rectP = eb.getDivRectSetting(sender.parentNode);
-        var y = sender.v_rect.y + dy;
-        y = Math.max(y,0);
-        y = Math.min(y, rectP.h - sender.v_rect.h);
-        ee.setRect(sender, null, y, null, null);
-        sender.parentNode.parentNode.onChange();
-    }
-}
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e6ecf0";
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#fafaff";
-});
-
-sender.style.boxSizing="border-box";
-sender.style.borderWidth = "1px";
-sender.style.borderColor = "#e6ecf0";
-sender.style.borderStyle = "solid";
-sender.style.borderLeft = "";
-sender.style.borderRight = "";
-sender.style.backgroundColor = "#fafaff";</onCreate>
-      <sizeRatio>1.7</sizeRatio>
-      <top>6</top>
-      <topRatio>0.0105820105820106</topRatio>
-      <width>10</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem35">
-      <backgroundColor>804040</backgroundColor>
-      <heavyEnabled>false</heavyEnabled>
-      <height>29</height>
-      <heightRatio>0.046474358974359</heightRatio>
-      <left>0</left>
-      <sizeRatio>2.9</sizeRatio>
-      <top>653</top>
-      <topRatio>0.953525641025641</topRatio>
-      <width>10</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12/layoutx12/layoutxitem28/layouty14/layoutyitem35/panel364">
-      <backgroundColor>8ED0F9</backgroundColor>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <fontBold>true</fontBold>
-      <fontColor>1DA1F2</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <height>29</height>
-      <heightRatio>1</heightRatio>
-      <left>0</left>
-      <onClick>var div = sender.parentNode.parentNode.v_div;
-div.scrollTop += 20;
-var c = sender.parentNode.parentNode;
-ee.setRect(c.c_bar, null,
-    parseInt(div.scrollTop/div.scrollHeight*c.eeChildren[1].offsetHeight),null,
-    parseInt(div.offsetHeight/div.scrollHeight*c.eeChildren[1].offsetHeight));
-</onClick>
-      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
-    this.color1 = color1;
-    this.color2 = color2
-    this.color3 = color3;
-    this.text1 = text1;
-    this.text2 = text2;
-    this.text3 = text3;
-    this.tColor1 = tColor1;
-    this.tColor2 = tColor2;
-    this.tColor3 = tColor3;
-    this.bdColor = bdColor;
-}
-sender.v_style = [
-    new sender.BStyle("#fafaff","#e6ecf0","#6e7f8d","","","","#000000","#ffffff","#ffffff","#e6ecf0")
-];
-
-sender.init = function(index) {
-    this.v_index = index;
-    this.style.backgroundColor = this.v_style[index].color1;
-    ee.setText(this, this.v_style[index].text1);
-    ee.setTextColor(this, this.v_style[index].tColor1);
-    if (this.v_style[index].bdColor=="") {
-        this.style.borderWidth = "0px";
-    } else {
-        this.style.boxSizing="border-box";
-        this.style.borderWidth = "1px";
-        this.style.borderColor = this.v_style[index].bdColor;
-        this.style.borderStyle = "solid";
-    }
-}
-
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color1;
-    ee.setText(sender, s.text1);
-    ee.setTextColor(sender, s.tColor1);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color3;
-    ee.setText(sender, s.text3);
-    ee.setTextColor(sender, s.tColor3);
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-}
-eb.initMouseEvent(sender);
-
-sender.init(0);
-
-
-
-
-
-
-
-</onCreate>
-      <sizeRatio>2.9</sizeRatio>
-      <text>.</text>
-      <top>0</top>
-      <width>10</width>
+      <sizeRatio>1.13666666666667</sizeRatio>
+      <top>55</top>
+      <topRatio>0.0628205128205128</topRatio>
+      <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem13">
@@ -10031,7 +9473,7 @@ sender._input.addEventListener("keydown", function(event) {
         sendChat1v1.chatUserId = chatGet1v1.chatUserId;
         sendChat1v1.content = msgContent;
         sendChat1v1.onComplete = function() {
-            g5.p3.p3.c_chat.c_chatRoot.refresh(true);
+            g5.p3.p3.c_chat.refresh(true);
         }
         sendChat1v1();        
                         
@@ -10070,7 +9512,7 @@ if (sendChat1v1.busy) return;
 sendChat1v1.chatUserId = chatGet1v1.chatUserId;
 sendChat1v1.content = msgContent;
 sendChat1v1.onComplete = function() {
-    g5.p3.p3.c_chat.c_chatRoot.refresh(true);
+    g5.p3.p3.c_chat.refresh(true);
 }
 sendChat1v1();
 
@@ -15311,6 +14753,7 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -16680,6 +16123,7 @@ sender.style.borderRight = "";</onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a8 -> 私信2]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -16703,12 +16147,13 @@ sender.style.borderRight = "";</onCreate>
       <height>53</height>
       <heightRatio>1</heightRatio>
       <left>51</left>
-      <leftRatio>0.0904255319148936</leftRatio>
+      <leftRatio>0.0861486486486486</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.53</sizeRatio>
+      <sizeRatio>0.101338432122371</sizeRatio>
       <text>...</text>
       <top>0</top>
-      <widthRatio>0.177304964539007</widthRatio>
+      <width>523</width>
+      <widthRatio>0.883445945945946</widthRatio>
     </control>
     <control type="Button" pathname="/divRoot/panel134/panel24/panel31/button4">
       <backgroundSkin1>LRBtn12</backgroundSkin1>
@@ -16889,7 +16334,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17233,7 +16677,6 @@ sender.close = function() {
       <height>205</height>
       <heightRatio>0.257537688442211</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.256540084388186</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -21414,7 +20857,7 @@ sender.v_mode = "-";
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="55">
+  <taskSet count="56">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName 
@@ -21643,6 +21086,97 @@ if (!eb.isEmpty(getUserInfo2.onComplete)) {
     getUserInfo2.onComplete = null;
 }
 getUserInfo2.busy = false;
+
+
+
+                        
+</script3>
+    </taskSetItem>
+    <taskSetItem name="getOtherUserInfo2">
+      <script1>//userKey,keyType(userName/userId),onComplete(v_userInfo)
+getOtherUserInfo2.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(getOtherUserInfo2.keyType);
+eio.appendString16(getOtherUserInfo2.userKey + "");
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var keyType = eio.readString16();
+var userKey = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName =db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
+
+if (keyType == "userName") {
+    sql = "select id from userInfo where userName = '" + db.encode(userKey) + "'; ";
+} else {
+    sql = "select id from userInfo where id = " + parseInt(userKey) + "; ";
+}
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    es.logWarning("用户不存在, sql=" + sql);
+    return;
+}
+var userId = db.getString(sqlResult,"id");
+
+sql =
+    "SELECT   TOP (100) PERCENT dbo.userInfo.id, dbo.userInfo.status, CONVERT(VARCHAR(50), dbo.userInfo.regDatetime, 120) " +
+    "                AS regDatetime, CONVERT(VARCHAR(50), dbo.userInfo.lastAccessTime, 120) AS lastAccessTime,  " +
+    "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
+    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount,  " +
+    "                CASE WHEN dbo.follow.id IS NULL THEN 0 ELSE 1 END AS isFollow, CASE WHEN dbo.blockList.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS isBlock1, CASE WHEN blockList_1.id IS NULL THEN 0 ELSE 1 END AS isBlock2 " +
+    "FROM      dbo.blockList RIGHT OUTER JOIN " +
+    "                dbo.userInfo LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.userInfo.id = dbo.follow.followId AND dbo.follow.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS blockList_1 ON dbo.userInfo.id = blockList_1.userId AND blockList_1.blockUserId = " + myUserId + " ON  " +
+    "                dbo.blockList.blockUserId = dbo.userInfo.id AND dbo.blockList.userId = " + myUserId + " " +
+    "WHERE dbo.userInfo.id = " + userId + ";";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage," +
+    "followCount,fansCount,isFollow,isBlock1,isBlock2", 0, 1);
+              ]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    getOtherUserInfo2.busy = false;
+    return;
+}
+getOtherUserInfo2.dataset = eio.readDataSet()
+getOtherUserInfo2.v_userInfo = new g5.UserInfo();
+getOtherUserInfo2.v_userInfo.loadFromDataset(getOtherUserInfo2.dataset, 0, 0);
+if (!eb.isEmpty(getOtherUserInfo2.onComplete)) {
+    getOtherUserInfo2.onComplete(getOtherUserInfo2.v_userInfo);
+    getOtherUserInfo2.onComplete = null;
+}
+getOtherUserInfo2.busy = false;
 
 
 
@@ -25907,7 +25441,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="83">
+  <g5Items count="84">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -28154,7 +27688,7 @@ if (eb.isEmpty(p)) {
     g5.p2.p13.show();
 } else if (p=="13") {
     g5.notPushHis = true;
-    g5.p2.p14.show();
+    g5.p2.p14.showByUserName(g5.getQueryString("u"));
 }
 g5.notPushHistory = false;
 </functionCode>
@@ -28226,6 +27760,33 @@ if (seconds<60*60) {
     var time = new Date((new Date()).getTime()-seconds*1000);
     return (time.getMonth()+1) + "月" + (time.getDate()+1) + "日";
 }]]></functionCode>
+    </item>
+    <item name="setFollow" type="20">
+      <varValue />
+      <functionParam>userId,isFollow</functionParam>
+      <functionCode>if (sender.parentNode.v_userInfo.isFollow) {
+    g5.popBlack.a6.show(
+        "取消关注@"+sender.parentNode.v_userInfo.userName+"？",
+        "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            follow.follow = 0;
+            follow.userId = sender.parentNode.v_userInfo.id;
+            follow.onComplete = function() {
+                ee.getControl("panel256").init(1);
+            }
+            follow();
+        }
+    );
+} else {
+    follow.follow = 1;
+    follow.userId = sender.parentNode.v_userInfo.id;
+    follow.onComplete = function() {
+        ee.getControl("panel256").init(2);
+    }
+    follow();
+}</functionCode>
     </item>
     <item name="showCommonText" type="20">
       <varValue />
