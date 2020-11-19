@@ -1393,6 +1393,7 @@ sender.p14 = ee.getControl("panel35");</onCreate>
       <onCreate><![CDATA[sender.a1 = ee.getControl("panel1");
 sender.v_items = new Array();
 sender.v_lastScrollTop = 0;
+sender.v_needRefresh = true;
 
 sender.show = function() {
     if (g5.currentPageIndex==0) {
@@ -1400,11 +1401,21 @@ sender.show = function() {
         return;
     }
     g5.changeP2(0);
-    if (this.v_items.length>0) return;
-    updateHomepage.needRefresh = true;
-    updateHomepage();
+    if (!this.v_needRefresh) {
+        if (this.v_items.length>0) return;
+    }
+    this.v_needRefresh = false;
+    this.init();
 }
 
+sender.refresh = function() {
+    if (g5.currentPageIndex == 0) {
+        this.v_needRefresh = false;
+        this.init();
+    } else {
+        this.v_needRefresh = true;
+    }
+}
 
 sender.update = function(v_content,v_userInfo,v_reContent,v_reUserInfo) {
     var i;
@@ -2096,7 +2107,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2240,6 +2250,18 @@ sender.activePage = function() {
     g5.p4.changePage("a6");
 }
 
+sender.setIsFollow = function(userId, isFollow) {
+    if (this.v_userInfo) {
+        if (this.v_userInfo.id == userId) {
+            this.v_userInfo.isFollow = isFollow;
+            if (v_userInfo.isFollow) {
+                ee.getControl("panel256").init(2);
+            } else {
+                ee.getControl("panel256").init(1);
+            }
+        }
+    }
+}
 
 sender.showByUserInfo = function(v_userInfo) {
     this.v_userInfo = v_userInfo;
@@ -16334,6 +16356,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -16677,6 +16700,7 @@ sender.close = function() {
       <height>205</height>
       <heightRatio>0.257537688442211</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.256540084388186</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -16732,30 +16756,9 @@ sender.show = function(refDiv, content, userInfo) {
       <height>50</height>
       <heightRatio>0.24390243902439</heightRatio>
       <left>0</left>
-      <onClick>if (sender.parentNode.v_userInfo.isFollow) {
-    g5.popBlack.a6.show(
-        "取消关注@"+sender.parentNode.v_userInfo.userName+"？",
-        "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
-        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
-        function() {
-            follow.follow = 0;
-            follow.userId = sender.parentNode.v_userInfo.id;
-            follow.onComplete = function() {
-                ee.getControl("panel256").init(1);
-            }
-            follow();
-        }
-    );
-} else {
-    follow.follow = 1;
-    follow.userId = sender.parentNode.v_userInfo.id;
-    follow.onComplete = function() {
-        ee.getControl("panel256").init(2);
-    }
-    follow();
-}
-sender.parentNode.v_userInfo.isFollow = !sender.parentNode.v_userInfo.isFollow;</onClick>
+      <onClick>g5.setFollow(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.isFollow,function(userId,isFollow) {
+});
+</onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.151515151515152</sizeRatio>
@@ -27763,8 +27766,57 @@ if (seconds<60*60) {
     </item>
     <item name="setFollow" type="20">
       <varValue />
-      <functionParam>userId,isFollow</functionParam>
-      <functionCode>if (sender.parentNode.v_userInfo.isFollow) {
+      <functionParam>userId,isFollow,onComplete</functionParam>
+      <functionCode><![CDATA[var collectUserInfoItems = function() {
+    var r = new Array();
+    r.push(g5.p2.p1.v_items);
+    r.push(g5.p2.p2.p1Items);
+    r.push(g5.p2.p2.p2Items);
+    r.push(g5.p2.p2.p2sub.chat.c_chat.c_chatRoot.v_items);
+    r.push(g5.p3.p8.p1.c_chatRoom.c_chatRoot.v_items);
+    r.push(g5.p2.p12.v_items);
+    r.push(g5.p2.p13.v_items);
+    r.push(g5.p2.p9.v_items);
+    r.push(g5.p2.p9.v_hisItems);
+    r.push(g5.p2.p5.v_items);
+    r.push(g5.p2.p11.c_pages.c1.v_items);
+    r.push(g5.p2.p11.c_pages.c2.v_items);
+    r.push(g5.p2.p11.c_pages.c3.v_items);
+    r.push(g5.p2.p11.c_pages.c4.v_items);
+    r.push(g5.p2.p11.c_pages.c5.v_items);
+    return r;
+}
+
+var sync = function(userId, isFollow) {
+    g5.p2.p1.refresh();
+    g5.p2.p2.setIsFollow(userId, isFollow);
+    var itemList = collectUserInfoItems();
+    var i,j;
+    for (i=0; i<itemList.length; i++) {
+        var items = itemList[i];
+        for (j=0; j<items.length; j++) {
+            if (items[j].v_userInfo) {
+                if (items[j].v_userInfo.id == userId) { 
+                    items[j].v_userInfo.isFollow = isFollow;
+                }
+            }
+            if (items[j].v_reUserInfo) {
+                if (items[j].v_reUserInfo.id == userId) { 
+                    items[j].v_reUserInfo.isFollow = isFollow;
+                }
+            }
+            if (items[j].v_content) {
+                if (items[j].v_content.exUserInfo) {
+                    if (items[j].v_content.exUserInfo.id == userId) { 
+                        items[j].v_content.exUserInfo.isFollow = isFollow;
+                    }
+                }
+            }
+        }
+    }
+}
+
+if (isFollow) {
     g5.popBlack.a6.show(
         "取消关注@"+sender.parentNode.v_userInfo.userName+"？",
         "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
@@ -27772,21 +27824,27 @@ if (seconds<60*60) {
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
         function() {
             follow.follow = 0;
-            follow.userId = sender.parentNode.v_userInfo.id;
+            follow.userId = userId;
             follow.onComplete = function() {
-                ee.getControl("panel256").init(1);
+                sync(userId, !isFollow);
+                if (onComplete) {
+                    onComplete(userId, !isFollow);
+                }
             }
             follow();
         }
     );
 } else {
     follow.follow = 1;
-    follow.userId = sender.parentNode.v_userInfo.id;
+    follow.userId = userId;
     follow.onComplete = function() {
-        ee.getControl("panel256").init(2);
+        sync(userId, !isFollow);
+        if (onComplete) {
+            onComplete(userId, !isFollow);
+        }
     }
     follow();
-}</functionCode>
+}]]></functionCode>
     </item>
     <item name="showCommonText" type="20">
       <varValue />
