@@ -1,5 +1,5 @@
 <page>
-  <controls count="509">
+  <controls count="513">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -1375,6 +1375,7 @@ sender.p12 = ee.getControl("panel355");
 sender.p13 = ee.getControl("panel33");
 sender.p14 = ee.getControl("panel35");
 sender.p15 = ee.getControl("panel97");
+sender.p16 = ee.getControl("panel101");
 </onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>-2</top>
@@ -9330,6 +9331,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p15->粉丝列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_lastScrollTop = 0;
 sender.v_items = new Array();
@@ -9402,6 +9404,124 @@ sender.show = function(v_userInfo) {
     showFansList();               
 }
 
+sender.setIsFollow = function(userId, isFollow) {
+    for (var i = 0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_userInfo.id != userId) continue;
+        if (this.v_items[i].v_userInfo.isFollow != isFollow) continue;
+        this.v_items[i].v_userInfo.isFollow = isFollow;
+        if (isFollow) {
+            this.v_items[i].button1.init(2);
+        } else {
+            this.v_items[i].button1.init(1);
+        }
+    }
+}
+
+
+sender.loadRecord = function(panel, dataset, index) {
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,0,index);
+}
+]]></onCreate>
+      <sizeRatio>1.3</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel101">
+      <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>780</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[p2.p16->关注列表]]></layerName>
+      <left>0</left>
+      <onCreate><![CDATA[sender.v_lastScrollTop = 0;
+sender.v_items = new Array();
+sender.v_userInfo = new g5.UserInfo();
+sender.c_title = ee.getControl("panel103");
+
+sender.activePage = function() {
+    g5.pushHistory("p=15&amp;u=" + escape(this.v_userInfo.userName));
+    g5.pageMode = 0;
+    g5.refreshMain(true);
+    ee.setVisible(g5.p4, true);
+    g5.p4.changePage("a10");
+    ee.setVisible(this, true)
+}
+
+sender.close = function() {
+    this.v_lastScrollTop = document.documentElement.scrollTop;
+    ee.setVisible(g5.p4, false);
+    ee.setVisible(this, false)
+}
+
+sender.showByUserName = function(userName) {
+    if (getOtherUserInfo2.busy) false;
+    getOtherUserInfo2.keyType = "userName";
+    getOtherUserInfo2.userKey = userName;
+    getOtherUserInfo2.onComplete = function(v_userInfo) {
+        sender.show(v_userInfo);
+    }
+    getOtherUserInfo2();
+}
+
+sender.show = function(v_userInfo) {
+    if (this.v_userInfo.id == v_userInfo.id) {
+        g5.changeP2(14);
+        document.documentElement.scrollTop = this.v_lastScrollTop;
+        ee.tiledResizeV(this, 2);
+        return;
+    }
+    ee.setText(this.c_title, 
+        v_userInfo.nickName+"<font color=#a0a0a0>@"+v_userInfo.userName+"</font>关注的用户("+v_userInfo.followCount+"人)");
+    if (showFansList.busy) return;
+    this.v_userInfo = v_userInfo;
+    document.documentElement.scrollTop = 0;
+    for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+    sender.v_items = new Array();
+    g5.changeP2(14);
+    showFansList.userId = v_userInfo.id;
+    showFansList.onComplete = function(dataset) {
+        var root = sender;
+        var cy = 0;
+        var itemWidth = eb.getDivRect(root).w;
+        for (var i=0; i<dataset.rowCount; i++) {
+            if (showFansList.userId == dataset.getData(0,i)) continue;
+            var item = createPanel(root, "fanl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            sender.loadRecord(item, dataset, i);
+            item.v_mode = "";
+            g5.renderUserBar(item);
+            cy += eb.getDivRect(item).h;
+            sender.v_items.push(item);
+        }
+        eb.processDock();
+        var rect = eb.getDivRectSetting(g5.p4);
+        ee.tiledV(sender, 0, rect.h, 500); 
+        if (sender.v_items.length>0) {
+            var rect1 = eb.getDivRect(sender.v_items[sender.v_items.length-1]);
+            ee.tiledV(sender, 0, rect.h, eb.getClientSize().h - eb.getDivRect(sender.v_items[sender.v_items.length-1]).h - rect.h + 2); 
+        }
+        ee.tiledResizeV(sender, 2);
+    }
+    showFansList();               
+}
+
+sender.setIsFollow = function(userId, isFollow) {
+    for (var i = 0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_userInfo.id != userId) continue;
+        if (this.v_items[i].v_userInfo.isFollow != isFollow) continue;
+        this.v_items[i].v_userInfo.isFollow = isFollow;
+        if (isFollow) {
+            this.v_items[i].button1.init(2);
+        } else {
+            this.v_items[i].button1.init(1);
+        }
+    }
+}
 
 
 sender.loadRecord = function(panel, dataset, index) {
@@ -14632,6 +14752,7 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -14644,6 +14765,7 @@ sender.a6 = ee.getControl("panel57");
 sender.a7 = ee.getControl("panel29");
 sender.a8 = ee.getControl("panel31");
 sender.a9 = ee.getControl("panel99");
+sender.a10 = ee.getControl("panel102");
 
 sender.currentPage = "";
 sender.changePage = function(pageName) {
@@ -14666,6 +14788,8 @@ sender.changePage = function(pageName) {
         ee.setVisible(this.a8, false);
     } else if (this.currentPage == "a9") {
         ee.setVisible(this.a9, false);
+    } else if (this.currentPage == "a10") {
+        ee.setVisible(this.a10, false);
     }
     this.currentPage = pageName;
     if (pageName == "") {
@@ -14691,6 +14815,8 @@ sender.changePage = function(pageName) {
         ee.setVisible(this.a8, true);
     } else if (this.currentPage == "a9") {
         ee.setVisible(this.a9, true);
+    } else if (this.currentPage == "a10") {
+        ee.setVisible(this.a10, true);
     }
     g5.tiledV(this,0,0,0);
     ee.setVisible(this, true);
@@ -16067,6 +16193,7 @@ sender.style.borderRight = "";</onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a9 -> 粉丝列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -16099,6 +16226,67 @@ sender.style.borderRight = "";</onCreate>
       <widthRatio>0.873310810810811</widthRatio>
     </control>
     <control type="Button" pathname="/divRoot/panel134/panel24/panel99/button5">
+      <backgroundSkin1>LRBtn12</backgroundSkin1>
+      <backgroundSkin2>twitterG008</backgroundSkin2>
+      <cursor>pointer</cursor>
+      <dockY>center</dockY>
+      <fontBold>true</fontBold>
+      <fontColor2>0000C0</fontColor2>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.735849056603774</heightRatio>
+      <left>7</left>
+      <leftRatio>0.0118243243243243</leftRatio>
+      <onClick>history.go(-1);</onClick>
+      <onCreate>initLButton(sender,"",1,g5.icon.back);
+</onCreate>
+      <sizeRatio>0.975</sizeRatio>
+      <text><![CDATA[<]]></text>
+      <top>7</top>
+      <topRatio>0.132075471698113</topRatio>
+      <width>40</width>
+      <widthRatio>0.0675675675675676</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel24/panel102">
+      <backgroundColor>FFC080</backgroundColor>
+      <dockX>fill</dockX>
+      <height>53</height>
+      <heightRatio>0.540816326530612</heightRatio>
+      <layerName><![CDATA[  a10 -> 关注列表]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";</onCreate>
+      <sizeRatio>0.089527027027027</sizeRatio>
+      <top>0</top>
+      <width>592</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel24/panel102/panel103">
+      <cursor>pointer</cursor>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>53</height>
+      <heightRatio>1</heightRatio>
+      <left>51</left>
+      <leftRatio>0.0861486486486486</leftRatio>
+      <onClick>g5.mainDiv.scrollTop = 0;</onClick>
+      <sizeRatio>0.102514506769826</sizeRatio>
+      <text>粉丝列表</text>
+      <top>0</top>
+      <width>517</width>
+      <widthRatio>0.873310810810811</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel134/panel24/panel102/button8">
       <backgroundSkin1>LRBtn12</backgroundSkin1>
       <backgroundSkin2>twitterG008</backgroundSkin2>
       <cursor>pointer</cursor>
@@ -27071,7 +27259,7 @@ c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
 addText(c, "@"+root.v_userInfo.userName, "left", "middle", "微软雅黑", 12, "6e7f8d", "normal");
 
 //note
-c = createPanel(root, root.id+"panel16", "", 77, cy, 480, 22);
+c = createPanel(root, root.id+"panel16", "", 77, cy, w-77-15, 22);
 addText(c, root.v_userInfo.note, "left", "top", "微软雅黑", 12, "14171a", "normal");
 eb.processDock();
 var rect = eb.getDivRect(c.label);
@@ -27130,10 +27318,11 @@ if (root.v_mode.charAt(0)=="x") {
     eb.initMouseEvent(c);
     root.changeButton();    
 } else {
-    c = createPanel(root, root.id+"button01", "", 420, 12, 128, 32);
+    c = createPanel(root, root.id+"button01", "", w-128-15, 14, 128, 28);
+    c.v_right = w-15;
     root.button1 = c;
     c.style.cursor="pointer";
-    addText(c, "...", "center", "middle", "微软雅黑", 12, "1DA1F2", "bold");
+    addText(c, "...", "center", "top", "微软雅黑", 11, "1DA1F2", "bold");
     c.v_style = [
         new g5.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff",""),
         new g5.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
@@ -27154,6 +27343,17 @@ if (root.v_mode.charAt(0)=="x") {
             this.style.borderStyle = "solid";
         }
         this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+        var w = 100;
+        if (index == 0) {
+            w = 90;
+        } else if (index == 1) {
+            w = 55;
+        } else if (index == 2) {
+            w = 90;
+        } else if (index == 3) {
+            w = 120;
+        }
+        ee.setRect(this, this.v_right-w,null,w,null);
     }
     ee.setOnMouseEnter(c, function(sender,event) { 
         var s =sender.v_style[sender.v_index];
@@ -27223,7 +27423,6 @@ if (root.v_mode.charAt(0)=="x") {
         } else if (sender.v_index==3) {
             //编辑个人资料
             g5.popBlack.a8.show();
-            return;
         }
         window.event? window.event.cancelBubble = true : event.stopPropagation();    
     });
@@ -27493,6 +27692,8 @@ if (g5.currentPageIndex == 0) {
     g5.p2.p14.close();
 } else if (g5.currentPageIndex == 14) {
     g5.p2.p15.close();
+} else if (g5.currentPageIndex == 15) {
+    g5.p2.p16.close();
 }
 
 if (pageIndex == 0) {
@@ -27545,6 +27746,8 @@ if (pageIndex == 0) {
     g5.p2.p14.activePage();
 } else if (pageIndex == 14) {
     g5.p2.p15.activePage();
+} else if (pageIndex == 15) {
+    g5.p2.p16.activePage();
 }
 g5.currentPageIndex = pageIndex;
 return true;]]></functionCode>
@@ -27655,6 +27858,9 @@ if (eb.isEmpty(p)) {
 } else if (p=="14") {
     g5.notPushHis = true;
     g5.p2.p15.showByUserName(g5.getQueryString("u"));
+} else if (p=="15") {
+    g5.notPushHis = true;
+    g5.p2.p16.showByUserName(g5.getQueryString("u"));
 }
 g5.notPushHistory = false;
 </functionCode>
@@ -27756,6 +27962,7 @@ if (seconds<60*60) {
 var sync = function(userId, isFollow) {
     g5.p2.p1.refresh();
     g5.p2.p2.setIsFollow(userId, isFollow);
+    g5.p2.p15.setIsFollow(userId, isFollow);
     var itemList = collectUserInfoItems();
     var i,j;
     for (i=0; i<itemList.length; i++) {
