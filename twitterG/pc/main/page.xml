@@ -1,5 +1,5 @@
 <page>
-  <controls count="513">
+  <controls count="524">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -6943,11 +6943,10 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
-
+sender.c_tabRoot = ee.getControl("panel119");
 
 sender.activePage = function() {
     g5.pageMode = 0;
@@ -7092,10 +7091,10 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
     var nohis = g5.notPushHistory;
     showTopic.onComplete = function(datasetFw, datasetBk) {
         if (showTopic.disabled) {
-            g5.writeLog("break response");
+            //g5.writeLog("break response");
             return;
         } else {
-            g5.writeLog("showTopic response");
+            //g5.writeLog("showTopic response");
         }
         var i, item;
         var root = sender;
@@ -7140,6 +7139,9 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             //scrollY = lastCy - eb.getDivRect(g5.p4).h;
         }
         scrollY += 2;
+        
+        ee.setRect(sender.c_tabRoot,null,cy,null,null);
+        cy += eb.getDivRectSetting(sender.c_tabRoot).h;
         
         var item = null;
         var scrollTop = 0;
@@ -7251,6 +7253,620 @@ sender.loadMore = function() {
 ]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel22/panel119">
+      <dockX>fill</dockX>
+      <height>374</height>
+      <heightRatio>0.47948717948718</heightRatio>
+      <left>0</left>
+      <note>c_tabRoot</note>
+      <onCreate><![CDATA[sender.currentPageIndex = -1;
+sender.button1 = ee.getControl("layoutxitem1");
+sender.button2 = ee.getControl("layoutxitem2");
+sender.button3 = ee.getControl("layoutxitem6");
+sender.button4 = ee.getControl("layoutxitem39");
+sender.p1 = ee.getControl("panel276");
+sender.p2 = ee.getControl("panel433");
+sender.p3 = ee.getControl("panel434");
+sender.p4 = ee.getControl("panel277");
+sender.buttonLine = ee.getControl("panel275");
+
+sender.changePage = function(pageIndex) {
+    var rect,div;
+    if (this.currentPageIndex == 1) {
+        this.button1.init(0);
+        ee.setVisible(this.p1, false);
+        this.p1ChatRect = eb.getDivRect(this.p1.c_chat.c_chat);
+        if (eb.isEmpty(this.p2ChatRect)) {
+            this.p2ChatRect = eb.getDivRect(this.p1.c_chat.c_chat);
+            this.p2ChatRect.h = 600;
+        }
+    } else if (this.currentPageIndex == 2) {
+        this.button2.init(0);
+        this.p2ChatRect = eb.getDivRect(this.p1.c_chat.c_chat);
+        ee.setVisible(this.p2, false);
+    } else if (this.currentPageIndex == 3) {
+        this.button3.init(0);
+        ee.setVisible(this.p3, false);
+    }
+    
+    if (pageIndex == 1) {
+        this.button1.init(1);
+        this.button1.appendChild(this.buttonLine);
+        if (eb.isEmpty(this.p1ChatRect)) {
+            this.p1ChatRect = eb.getDivRectSetting(this.p1.c_chat.c_chat);
+            this.p1ChatRect.h = 313;
+        }
+        ee.setRect(this.p1.c_chat.c_chat, null, this.p1ChatRect.y, null, this.p1ChatRect.h);
+        ee.changeParent(this.chat, this.p1, 1);
+        g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.v_userInfo.id == g5.myUserInfo.id);
+        this.chat.init();
+        this.chat.c_buttons.c_buttons.showButton3(true);
+        g5.tiledV(this.p1, 0);
+        ee.setVisible(this.p1, true);
+        g5.resizeV(this.p1, 4);
+    } else if (pageIndex == 2) {
+        this.button2.init(1);
+        this.button2.appendChild(this.buttonLine);
+        ee.setRect(this.p1.c_chat.c_chat, null, this.p2ChatRect.y, null, this.p2ChatRect.h);
+        ee.changeParent(this.chat, this.p2, 1);
+        g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.id == g5.myUserInfo.id);
+        this.chat.c_buttons.c_buttons.showButton3(false);
+        g5.tiledV(this.p2,10,1,0);
+        ee.setVisible(this.p2, true);
+        g5.tiledResizeV(this.chat, 5);
+        var ch = $g("divRoot").offsetHeight;
+        var h = ch + eb.getDivRect(this).y + eb.getDivRect(this).h - eb.getDivRect(this.chat.c_chat).h - 51 - 8; 
+        ee.setRect(this.parentNode,null,null,null,h);
+        g5.resizeV(this.parentNode.parentNode, 1);
+    } else if (pageIndex == 3) {
+        g5.player.stop();
+        this.button3.init(1);
+        this.button3.appendChild(this.buttonLine);
+        if (this.parentNode.p3Items.length<=0) {
+            this.updateP3();
+            ee.setVisible(this.p3, true);
+        } else {
+            ee.setVisible(this.p3, true);
+            g5.resizeV(this.p3, 4);
+        }
+    }
+    this.currentPageIndex = pageIndex;
+    eb.processDock();    
+}
+
+sender.init = function() {
+    this.currentPageIndex = -1;
+    this.p2ChatRect = null;
+    for (var i=0; i<this.parentNode.p3Items.length; i++) {
+        ee.removeControl(this.parentNode.p3Items[i]);
+    }
+    this.parentNode.p3Items = new Array();
+    this.v_p3PageIndex = 0;
+    this.parentNode.v_p3Init = true;
+}
+
+
+sender.v_p3PageIndex = 0;
+sender.v_p3PageSize = 10;
+sender.updateP3 = function() {
+    if (showUserPageP3.busy) return;
+    this.parentNode.v_p3Init = false;
+    showUserPageP3.userId = g5.p2.p2.v_userInfo.id;
+    showUserPageP3.pageIndex = this.v_p3PageIndex; this.v_p3PageIndex++;
+    showUserPageP3.pageSize = this.v_p3PageSize;
+    showUserPageP3.onComplete = function(dataset) {
+        if (showUserPageP3.disabled) return;
+        var i, j, item;
+        var root = sender.p3; 
+        var itemWidth = eb.getDivRect(root).w;
+        var cy = 0;
+        if (sender.parentNode.p3Items.length>0) {
+            var r = eb.getDivRect(sender.parentNode.p3Items[sender.parentNode.p3Items.length-1]);
+            cy = r.y + r.h;
+        }
+        var item = null;
+        for (i=0; i< dataset.rowCount; i++) {
+            for (j=0; j<sender.parentNode.p3Items; j++) {
+                if (sender.parentNode.p3Items[j].v_contentId == dataset.getData(0,i)) break;    
+            }
+            item = createPanel(root, "p2p2p3_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadTwitterRecord(item, dataset, i);
+            item.v_mode = "   x";
+            g5.renderTwitter(item);
+            sender.parentNode.p3Items.push(item);
+            cy += eb.getDivRect(item).h;
+            item.style.borderLeft="";    
+            item.style.borderRight="";    
+        }
+        if (item!=null) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = cy + ch - eb.getDivRect(item).h - 51; 
+            ee.setRect(root,null,null,null,h);
+        } else if (sender.parentNode.p3Items.length<=0) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = ch + eb.getDivRect(ee.getControl("layoutx2")).y - 51; 
+            ee.setRect(root,null,null,null,h);
+        }
+        //g5.tiledV(root, 0, 0, 0);
+        g5.resizeV(root.parentNode, 3);
+    }
+    showUserPageP3(); 
+}
+
+]]></onCreate>
+      <sizeRatio>0.623333333333333</sizeRatio>
+      <top>285</top>
+      <topRatio>0.365384615384615</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel22/panel119/layoutx1">
+      <dockX>fill</dockX>
+      <fieldCount>4</fieldCount>
+      <height>52</height>
+      <heightRatio>0.13903743315508</heightRatio>
+      <left>0</left>
+      <note><![CDATA[c_title->题头按钮组]]></note>
+      <onCreate>sender.style.boxSizing = "border-box";
+sender.style.borderBottomWidth = "1px";
+sender.style.borderBottomColor = "rgb(230,236,240)";
+sender.style.borderBottomStyle = "solid";
+</onCreate>
+      <sizeRatio>0.0866666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel22/panel119/layoutx1/layoutxitem1">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>52</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>g5.p2PersonSub.changePage(1);</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("","#e8f5fe","#d2ecfc","综合","综合","综合","#657786","#1da1f2","#1da1f2",""),
+    new sender.BStyle("","#e8f5fe","#d2ecfc","综合","综合","综合","#1da1f2","#1da1f2","#1da1f2","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.26</sizeRatio>
+      <text>回复</text>
+      <top>0</top>
+      <width>150</width>
+      <widthRatio>0.333333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel22/panel119/layoutx1/layoutxitem1/panel275">
+      <backgroundColor>1DA1F2</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>3</height>
+      <heightRatio>0.0576923076923077</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.015</sizeRatio>
+      <top>49</top>
+      <topRatio>0.942307692307692</topRatio>
+      <width>150</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel22/panel119/layoutx1/layoutxitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>52</height>
+      <heightRatio>1</heightRatio>
+      <left>150</left>
+      <leftRatio>0.333333333333333</leftRatio>
+      <onClick>g5.p2PersonSub.changePage(2);</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("","#e8f5fe","#d2ecfc","聊天室","聊天室","聊天室","#657786","#1da1f2","#1da1f2",""),
+    new sender.BStyle("","#e8f5fe","#d2ecfc","聊天室","聊天室","聊天室","#1da1f2","#1da1f2","#1da1f2","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.26</sizeRatio>
+      <text>转发(5人)</text>
+      <top>0</top>
+      <width>150</width>
+      <widthRatio>0.333333333333333</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel22/panel119/layoutx1/layoutxitem6">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>52</height>
+      <heightRatio>1</heightRatio>
+      <left>300</left>
+      <leftRatio>0.666666666666667</leftRatio>
+      <onClick>g5.p2PersonSub.changePage(3);</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("","#e8f5fe","#d2ecfc","发言和回复","发言和回复","发言和回复","#657786","#1da1f2","#1da1f2",""),
+    new sender.BStyle("","#e8f5fe","#d2ecfc","发言和回复","发言和回复","发言和回复","#1da1f2","#1da1f2","#1da1f2","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    ee.setText(sender, s.text3);
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.26</sizeRatio>
+      <text>点赞(5人)</text>
+      <top>0</top>
+      <width>150</width>
+      <widthRatio>0.333333333333333</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel22/panel119/layoutx1/layoutxitem39">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>52</height>
+      <heightRatio>1</heightRatio>
+      <left>450</left>
+      <leftRatio>0.75</leftRatio>
+      <sizeRatio>0.346666666666667</sizeRatio>
+      <text>点踩(5人)</text>
+      <top>0</top>
+      <width>150</width>
+      <widthRatio>0.25</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel22/panel119/panel276">
+      <bindControl>layoutx1</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <height>304</height>
+      <heightRatio>0.812834224598931</heightRatio>
+      <layerName><![CDATA[p1->回复]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate><![CDATA[sender.c_titleChat = ee.getControl("panel263");
+sender.c_video = ee.getControl("panel264");
+sender.c_chat = ee.getControl("panel19");
+sender.c_titleBlog = ee.getControl("panel73");
+
+
+sender.v_pageIndex = 0;
+sender.v_pageSize = 10;
+
+sender.init = function() {
+    this.v_pageIndex = 0;
+}
+
+sender.loadMore = function() {
+    if (showUserPageLoadMore.busy) return;
+    this.v_pageIndex++;
+    showUserPageLoadMore.userId = g5.p2.p2.v_userInfo.id;
+    showUserPageLoadMore.pageIndex = this.v_pageIndex;
+    showUserPageLoadMore.pageSize = this.v_pageSize;
+    showUserPageLoadMore.onComplete = function(dataset) {
+        if (showUserPageLoadMore.disabled) return;
+        var i, j, item;
+        var root = sender;
+        var itemWidth = eb.getDivRect(root).w;
+        var cy = 0;
+        if (g5.p2.p2.p1Items.length>0) {
+            var r = eb.getDivRect(g5.p2.p2.p1Items[g5.p2.p2.p1Items.length-1]);
+            cy = r.y + r.h;
+        }
+        var item = null;
+        for (i=0; i< dataset.rowCount; i++) {
+            for (j=0; j<g5.p2.p2.p1Items.length; j++) {
+                if (g5.p2.p2.p1Items[j].v_contentId == dataset.getData(0,i)) break;    
+            }
+            if (j<g5.p2.p2.p1Items.length) continue;
+            item = createPanel(root, "puser_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadTwitterRecord(item, dataset, i);
+            item.v_mode = "   x";
+            g5.renderTwitter(item);
+            g5.p2.p2.p1Items.push(item);
+            cy += 0 + eb.getDivRect(item).h;
+            item.style.borderLeft="";    
+            item.style.borderRight="";    
+        }
+        if (item!=null) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = cy + ch - eb.getDivRect(item).h - 51; 
+            ee.setRect(root,null,null,null,h);
+            g5.resizeV(root.parentNode, 3);
+        }
+    }
+    showUserPageLoadMore();
+}
+]]></onCreate>
+      <sizeRatio>0.506666666666667</sizeRatio>
+      <top>52</top>
+      <topRatio>0.13903743315508</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel22/panel119/panel433">
+      <bindControl>layoutx1</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <height>274</height>
+      <heightRatio>0.732620320855615</heightRatio>
+      <layerName><![CDATA[p2->转发]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.456666666666667</sizeRatio>
+      <top>52</top>
+      <topRatio>0.13903743315508</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel22/panel119/panel434">
+      <bindControl>layoutx1</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <height>132</height>
+      <heightRatio>0.352941176470588</heightRatio>
+      <layerName><![CDATA[p3->点赞]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.22</sizeRatio>
+      <top>52</top>
+      <topRatio>0.13903743315508</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel22/panel119/panel277">
+      <bindControl>layoutx1</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <height>304</height>
+      <heightRatio>0.812834224598931</heightRatio>
+      <layerName><![CDATA[p4->点踩]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate><![CDATA[sender.c_titleChat = ee.getControl("panel263");
+sender.c_video = ee.getControl("panel264");
+sender.c_chat = ee.getControl("panel19");
+sender.c_titleBlog = ee.getControl("panel73");
+
+
+sender.v_pageIndex = 0;
+sender.v_pageSize = 10;
+
+sender.init = function() {
+    this.v_pageIndex = 0;
+}
+
+sender.loadMore = function() {
+    if (showUserPageLoadMore.busy) return;
+    this.v_pageIndex++;
+    showUserPageLoadMore.userId = g5.p2.p2.v_userInfo.id;
+    showUserPageLoadMore.pageIndex = this.v_pageIndex;
+    showUserPageLoadMore.pageSize = this.v_pageSize;
+    showUserPageLoadMore.onComplete = function(dataset) {
+        if (showUserPageLoadMore.disabled) return;
+        var i, j, item;
+        var root = sender;
+        var itemWidth = eb.getDivRect(root).w;
+        var cy = 0;
+        if (g5.p2.p2.p1Items.length>0) {
+            var r = eb.getDivRect(g5.p2.p2.p1Items[g5.p2.p2.p1Items.length-1]);
+            cy = r.y + r.h;
+        }
+        var item = null;
+        for (i=0; i< dataset.rowCount; i++) {
+            for (j=0; j<g5.p2.p2.p1Items.length; j++) {
+                if (g5.p2.p2.p1Items[j].v_contentId == dataset.getData(0,i)) break;    
+            }
+            if (j<g5.p2.p2.p1Items.length) continue;
+            item = createPanel(root, "puser_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadTwitterRecord(item, dataset, i);
+            item.v_mode = "   x";
+            g5.renderTwitter(item);
+            g5.p2.p2.p1Items.push(item);
+            cy += 0 + eb.getDivRect(item).h;
+            item.style.borderLeft="";    
+            item.style.borderRight="";    
+        }
+        if (item!=null) {
+            var ch = $g("divRoot").offsetHeight;
+            var h = cy + ch - eb.getDivRect(item).h - 51; 
+            ee.setRect(root,null,null,null,h);
+            g5.resizeV(root.parentNode, 3);
+        }
+    }
+    showUserPageLoadMore();
+}
+]]></onCreate>
+      <sizeRatio>0.506666666666667</sizeRatio>
+      <top>52</top>
+      <topRatio>0.13903743315508</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -14752,6 +15368,7 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -16268,6 +16885,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a10 -> 关注列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
