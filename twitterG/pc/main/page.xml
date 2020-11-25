@@ -2342,9 +2342,8 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setOnMouseLeave(c.link01,function(sender,e){
             sender.style.textDecoration="";
         });
-        ee.setOnClick(c.link01, function(sender, event) {
-            showFollowList.userName = showUserPage.userName;
-            showFollowList();
+        ee.setOnClick(c.link01, function(senderLink, event) {
+            g5.p2.p16.show(sender.v_userInfo);
         });
     }
     if (v_userInfo.fansCount>0) {
@@ -9438,6 +9437,7 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p16->关注列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_lastScrollTop = 0;
 sender.v_items = new Array();
@@ -9471,27 +9471,27 @@ sender.showByUserName = function(userName) {
 
 sender.show = function(v_userInfo) {
     if (this.v_userInfo.id == v_userInfo.id) {
-        g5.changeP2(14);
+        g5.changeP2(15);
         document.documentElement.scrollTop = this.v_lastScrollTop;
         ee.tiledResizeV(this, 2);
         return;
     }
     ee.setText(this.c_title, 
         v_userInfo.nickName+"<font color=#a0a0a0>@"+v_userInfo.userName+"</font>关注的用户("+v_userInfo.followCount+"人)");
-    if (showFansList.busy) return;
+    if (showFollowList.busy) return;
     this.v_userInfo = v_userInfo;
     document.documentElement.scrollTop = 0;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
-    g5.changeP2(14);
-    showFansList.userId = v_userInfo.id;
-    showFansList.onComplete = function(dataset) {
+    g5.changeP2(15);
+    showFollowList.userId = v_userInfo.id;
+    showFollowList.onComplete = function(dataset) {
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
         for (var i=0; i<dataset.rowCount; i++) {
-            if (showFansList.userId == dataset.getData(0,i)) continue;
-            var item = createPanel(root, "fanl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            if (showFollowList.userId == dataset.getData(0,i)) continue;
+            var item = createPanel(root, "flwl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
             item.v_mode = "";
             g5.renderUserBar(item);
@@ -9507,7 +9507,7 @@ sender.show = function(v_userInfo) {
         }
         ee.tiledResizeV(sender, 2);
     }
-    showFansList();               
+    showFollowList();               
 }
 
 sender.setIsFollow = function(userId, isFollow) {
@@ -14752,7 +14752,6 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -16095,36 +16094,41 @@ sender.style.borderRight = "";</onCreate>
       <hAlign>left</hAlign>
       <height>53</height>
       <heightRatio>1</heightRatio>
-      <left>51</left>
-      <leftRatio>0.0861486486486486</leftRatio>
+      <left>54</left>
+      <leftRatio>0.0912162162162162</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
       <sizeRatio>0.53</sizeRatio>
       <text>私信</text>
       <top>0</top>
       <widthRatio>0.168918918918919</widthRatio>
     </control>
-    <control type="Button" pathname="/divRoot/panel134/panel24/panel29/button1">
-      <backgroundSkin1>LRBtn12</backgroundSkin1>
-      <backgroundSkin2>twitterG008</backgroundSkin2>
+    <control type="Panel" pathname="/divRoot/panel134/panel24/panel29/panel109">
       <cursor>pointer</cursor>
       <dockY>center</dockY>
-      <fontBold>true</fontBold>
-      <fontColor2>0000C0</fontColor2>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>39</height>
-      <heightRatio>0.735849056603774</heightRatio>
-      <left>7</left>
-      <leftRatio>0.0118243243243243</leftRatio>
-      <onClick>history.go(-1);</onClick>
-      <onCreate>initLButton(sender,"",1,g5.icon.back);
-</onCreate>
-      <sizeRatio>0.975</sizeRatio>
+      <height>33</height>
+      <heightRatio>0.622641509433962</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0337837837837838</leftRatio>
+      <onClick>history.go(-1);
+window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:6px 0px 0px 6px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.icon.back+"</svg>";
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
-      <top>7</top>
-      <topRatio>0.132075471698113</topRatio>
-      <width>40</width>
-      <widthRatio>0.0675675675675676</widthRatio>
+      <top>10</top>
+      <topRatio>0.188679245283019</topRatio>
+      <width>33</width>
+      <widthRatio>0.0557432432432432</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel31">
       <backgroundColor>FFC080</backgroundColor>
@@ -16155,37 +16159,42 @@ sender.style.borderRight = "";</onCreate>
       <hAlign>left</hAlign>
       <height>53</height>
       <heightRatio>1</heightRatio>
-      <left>51</left>
-      <leftRatio>0.0861486486486486</leftRatio>
+      <left>54</left>
+      <leftRatio>0.0912162162162162</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.101338432122371</sizeRatio>
+      <sizeRatio>0.102119460500963</sizeRatio>
       <text>...</text>
       <top>0</top>
-      <width>523</width>
-      <widthRatio>0.883445945945946</widthRatio>
+      <width>519</width>
+      <widthRatio>0.876689189189189</widthRatio>
     </control>
-    <control type="Button" pathname="/divRoot/panel134/panel24/panel31/button4">
-      <backgroundSkin1>LRBtn12</backgroundSkin1>
-      <backgroundSkin2>twitterG008</backgroundSkin2>
+    <control type="Panel" pathname="/divRoot/panel134/panel24/panel31/panel114">
       <cursor>pointer</cursor>
       <dockY>center</dockY>
-      <fontBold>true</fontBold>
-      <fontColor2>0000C0</fontColor2>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>39</height>
-      <heightRatio>0.735849056603774</heightRatio>
-      <left>7</left>
-      <leftRatio>0.0118243243243243</leftRatio>
-      <onClick>history.go(-1);</onClick>
-      <onCreate>initLButton(sender,"",1,g5.icon.back);
-</onCreate>
-      <sizeRatio>0.975</sizeRatio>
+      <height>33</height>
+      <heightRatio>0.622641509433962</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0337837837837838</leftRatio>
+      <onClick>history.go(-1);
+window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:6px 0px 0px 6px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.icon.back+"</svg>";
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
-      <top>7</top>
-      <topRatio>0.132075471698113</topRatio>
-      <width>40</width>
-      <widthRatio>0.0675675675675676</widthRatio>
+      <top>10</top>
+      <topRatio>0.188679245283019</topRatio>
+      <width>33</width>
+      <widthRatio>0.0557432432432432</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel99">
       <backgroundColor>FFC080</backgroundColor>
@@ -16216,37 +16225,42 @@ sender.style.borderRight = "";</onCreate>
       <hAlign>left</hAlign>
       <height>53</height>
       <heightRatio>1</heightRatio>
-      <left>51</left>
-      <leftRatio>0.0861486486486486</leftRatio>
+      <left>53</left>
+      <leftRatio>0.089527027027027</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.102514506769826</sizeRatio>
+      <sizeRatio>0.10515873015873</sizeRatio>
       <text>粉丝列表</text>
       <top>0</top>
-      <width>517</width>
-      <widthRatio>0.873310810810811</widthRatio>
+      <width>504</width>
+      <widthRatio>0.851351351351351</widthRatio>
     </control>
-    <control type="Button" pathname="/divRoot/panel134/panel24/panel99/button5">
-      <backgroundSkin1>LRBtn12</backgroundSkin1>
-      <backgroundSkin2>twitterG008</backgroundSkin2>
+    <control type="Panel" pathname="/divRoot/panel134/panel24/panel99/panel104">
       <cursor>pointer</cursor>
       <dockY>center</dockY>
-      <fontBold>true</fontBold>
-      <fontColor2>0000C0</fontColor2>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>39</height>
-      <heightRatio>0.735849056603774</heightRatio>
-      <left>7</left>
-      <leftRatio>0.0118243243243243</leftRatio>
-      <onClick>history.go(-1);</onClick>
-      <onCreate>initLButton(sender,"",1,g5.icon.back);
-</onCreate>
-      <sizeRatio>0.975</sizeRatio>
+      <height>33</height>
+      <heightRatio>0.622641509433962</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0337837837837838</leftRatio>
+      <onClick>history.go(-1);
+window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:6px 0px 0px 6px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.icon.back+"</svg>";
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
-      <top>7</top>
-      <topRatio>0.132075471698113</topRatio>
-      <width>40</width>
-      <widthRatio>0.0675675675675676</widthRatio>
+      <top>10</top>
+      <topRatio>0.188679245283019</topRatio>
+      <width>33</width>
+      <widthRatio>0.0557432432432432</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel102">
       <backgroundColor>FFC080</backgroundColor>
@@ -16254,7 +16268,6 @@ sender.style.borderRight = "";</onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a10 -> 关注列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -16277,37 +16290,42 @@ sender.style.borderRight = "";</onCreate>
       <hAlign>left</hAlign>
       <height>53</height>
       <heightRatio>1</heightRatio>
-      <left>51</left>
-      <leftRatio>0.0861486486486486</leftRatio>
+      <left>53</left>
+      <leftRatio>0.089527027027027</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.102514506769826</sizeRatio>
+      <sizeRatio>0.102912621359223</sizeRatio>
       <text>粉丝列表</text>
       <top>0</top>
-      <width>517</width>
-      <widthRatio>0.873310810810811</widthRatio>
+      <width>515</width>
+      <widthRatio>0.869932432432432</widthRatio>
     </control>
-    <control type="Button" pathname="/divRoot/panel134/panel24/panel102/button8">
-      <backgroundSkin1>LRBtn12</backgroundSkin1>
-      <backgroundSkin2>twitterG008</backgroundSkin2>
+    <control type="Panel" pathname="/divRoot/panel134/panel24/panel102/panel118">
       <cursor>pointer</cursor>
       <dockY>center</dockY>
-      <fontBold>true</fontBold>
-      <fontColor2>0000C0</fontColor2>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>39</height>
-      <heightRatio>0.735849056603774</heightRatio>
-      <left>7</left>
-      <leftRatio>0.0118243243243243</leftRatio>
-      <onClick>history.go(-1);</onClick>
-      <onCreate>initLButton(sender,"",1,g5.icon.back);
-</onCreate>
-      <sizeRatio>0.975</sizeRatio>
+      <height>33</height>
+      <heightRatio>0.622641509433962</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0337837837837838</leftRatio>
+      <onClick>history.go(-1);
+window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:6px 0px 0px 6px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.icon.back+"</svg>";
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(c, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+    //sender.childNodes[0].style.color = "rgb(29,161,242)";
+});    
+ee.setOnMouseLeave(c, function(sender,event) {
+    sender.style.backgroundColor = "";
+    //sender.childNodes[0].style.color = "rgb(101,119,134)";
+});
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
-      <top>7</top>
-      <topRatio>0.132075471698113</topRatio>
-      <width>40</width>
-      <widthRatio>0.0675675675675676</widthRatio>
+      <top>10</top>
+      <topRatio>0.188679245283019</topRatio>
+      <width>33</width>
+      <widthRatio>0.0557432432432432</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel242">
       <backgroundColor>E6ECF0</backgroundColor>
@@ -23633,12 +23651,14 @@ ee.showAni(ee.getControl("panel10"),0);
 ]]></script3>
     </taskSetItem>
     <taskSetItem name="showFollowList">
-      <script1>//params: userName
+      <script1>//userId, onComplete
+if (showFollowList.busy) return;
+showFollowList.busy = true;
 eio.appendString16(g5.token);
-eio.appendString16(showFollowList.userName);
+eio.appendString16(showFollowList.userId);
 </script1>
       <script2><![CDATA[var token = eio.readString16();
-var userName = eio.readString16();
+var userId = parseInt(eio.readString16());
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -23658,12 +23678,22 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserId = parseInt(db.getString(sqlResult,"id"));
 
 sql =
-    "SELECT   TOP (100) PERCENT dbo.userInfo.*, 1 AS isFollow " +
-    "FROM      dbo.follow INNER JOIN " +
-    "                dbo.userInfo ON dbo.follow.followId = dbo.userInfo.id INNER JOIN " +
-    "                dbo.userInfo AS userInfo_1 ON dbo.follow.userId = userInfo_1.id " +
-    "WHERE   (userInfo_1.userName = '" + db.encode(userName) + "') " +
-    "ORDER BY dbo.follow.id DESC ";
+    "SELECT   TOP (100) PERCENT dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
+    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
+    "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
+    "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
+    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow,  " +
+    "                CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN ublockList1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
+    "FROM      dbo.follow LEFT OUTER JOIN " +
+    "                dbo.userInfo ON dbo.follow.followId = dbo.userInfo.id LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
+    "                uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " " +
+    "WHERE   (dbo.follow.userId = " + userId + ") " +
+    "ORDER BY dbo.follow.id DESC; ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -23672,41 +23702,24 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow", 0, 99999);
-
-
-
+eio.appendDataSet(sqlResult,
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail",
+    0, 99999);
 
 ]]></script2>
-      <script3><![CDATA[if (eio.readString8()!="T") {
+      <script3>if (eio.readString8()!="T") {
+    showFollowList.busy = false;
     g5.alert1("提示", eio.readString8());
     return;
 }
-showForwardList.data = eio.readDataSet();
+showFollowList.dataset = eio.readDataSet();
 
-var root = ee.getControl("layoutyitem2");
-if (eb.isEmpty(showForwardList.items)) showForwardList.items = new Array();
-while (showForwardList.items.length>0) {
-    ee.removeControl(showForwardList.items[0]);
-    showForwardList.items.splice(0,1);
+if (showFollowList.onComplete) {
+    showFollowList.onComplete(showFollowList.dataset);
 }
-ee.setText(ee.getControl("panel123"), "关注的用户");
-var cy = 0;
-var itemWidth = eb.getDivRect(root).w;
-for (var i=0; i<showForwardList.data.rowCount; i++) {
-    if (showFollowList.userName == showForwardList.data.getData(4,i)) continue;
-    var item = createPanel(root, "flol_" + showForwardList.data.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadUserRecord(item, showForwardList.data, i);
-    item.v_mode = "";
-    g5.renderUserBar(item);
-    cy += eb.getDivRect(item).h;
-    showForwardList.items.push(item);
-}
+showFollowList.busy = false;
 
-eb.processDock();
-ee.setVisible(ee.getControl("panel112"),true);
-ee.showAni(ee.getControl("panel10"),0);
-]]></script3>
+</script3>
     </taskSetItem>
     <taskSetItem name="showFansList">
       <script1>//userId, onComplete
