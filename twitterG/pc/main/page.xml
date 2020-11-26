@@ -6971,12 +6971,11 @@ sender.close = function() {
     }
 }
 
-
 sender.HisItem = function() {
     this.contentId = 0;
     this.data = null;
     this.backTrace = null;
-    this.v_items = null;
+    this.v_items = new Array();
     this.height = 0;
     this.p2Height = 0;
     this.v_content = null;
@@ -6984,6 +6983,15 @@ sender.HisItem = function() {
     this.v_userInfo = null;
     this.v_reUserInfo = null;
     this.scrollTop = 0;
+    
+    this.tabIndex = 1;
+    this.v_itemsP1 = new Array();
+    this.v_itemsP2 = new Array();
+    this.v_itemsP3 = new Array();
+    this.v_itemsP4 = new Array();
+    this.p2ContentId = 0;
+    this.p3ContentId = 0;
+    this.p4ContentId = 0;
 }
 
 
@@ -7006,6 +7014,14 @@ sender.save = function() {
     item.v_userInfo = this.v_userInfo;
     item.v_reUserInfo = this.v_reUserInfo;
     item.scrollTop = document.documentElement.scrollTop;
+    item.tabIndex = this.c_tabRoot.currentPageIndex;
+    item.v_itemsP1 = this.c_tabRoot.p1.v_items;
+    item.v_itemsP2 = this.c_tabRoot.p2.v_items;
+    item.v_itemsP3 = this.c_tabRoot.p3.v_items;
+    item.v_itemsP4 = this.c_tabRoot.p4.v_items;
+    item.p2ContentId = this.c_tabRoot.p2.v_contentId;
+    item.p3ContentId = this.c_tabRoot.p3.v_contentId;
+    item.p4ContentId = this.c_tabRoot.p4.v_contentId;
     
     this.v_hisItems.push(item);
     for (var i=0; i<this.v_items.length; i++) {
@@ -7161,10 +7177,12 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 item.v_mode = uType + dType;
                 g5.renderTwitter(item);        
             }
-            sender.c_tabRoot.p1.v_items.push(item);
             if (i==0) {
                 scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
                 sender.v_reIndex = sender.c_tabRoot.p1.v_items.length;
+                sender.v_items.push(item);
+            } else {
+                sender.c_tabRoot.p1.v_items.push(item);
             }
             cy += eb.getDivRect(item).h;    
             if (i==0) {
@@ -7174,15 +7192,6 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 cy = 0;
             }
         }
-        //if (item!=null) {
-        //    var ch = $g("divRoot").offsetHeight;
-        //    var h = cy + ch - eb.getDivRect(item).h - 50; 
-        //    eb.setDivRect(g5.p2,null,null,null,h);
-        //    eb.setDivRect(g5.p2.p9,null,null,null,h);
-        //} else {
-        //    eb.setDivRect(g5.p2,null,null,null,cy+200);
-        //    eb.setDivRect(g5.p2.p9,null,null,null,cy+200);
-        //}
         document.documentElement.scrollTop = scrollTop;
         eb.processDock();
         sender.c_tabRoot.changePage(-1);
@@ -7220,6 +7229,10 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     sender.v_items.push(item);
     g5.changeP2(7);
     document.documentElement.scrollTop = 0;
+}
+
+sender.setIsFollow = function(userId, isFollow) {
+    
 }
 
 sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
@@ -7800,7 +7813,7 @@ sender.init(0);
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.c_title = sender.parentNode.button2;
-sender.v_content = new g5.ContentInfo();
+sender.v_contentId = 0;
 
 sender.show = function(v_contentId) {
     if (this.v_contentId == v_contentId) {
