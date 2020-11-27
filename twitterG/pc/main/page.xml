@@ -165,6 +165,31 @@ ee.tiledResizeV = function(panel, level) {
     }
 }
 
+//增加功能：
+//  1. 如果newParent为空，则仅仅移除控件，但控件不释放内容不删除
+//  2. 如果control没有父节点，则仅在newParent下增加
+ee.changeParent = function (control, newParent, pos) {
+    var i;
+    if (control.parentNode) {
+        for (i = 0; i < control.parentNode.eeChildren.length; i++) {
+            if (control.parentNode.eeChildren[i] == control) {
+                control.parentNode.eeChildren.splice(i, 1);
+                break;
+            }
+        }
+    }
+    if (!newParent) {
+        if (control.parentNode) control.parentNode.removeChild(control);
+        return;
+    }
+    if ((pos < 0) || (pos >= newParent.eeChildren.length)) {
+        newParent.eeChildren.push(control);
+        newParent.appendChild(control);
+    } else {
+        newParent.insertBefore(control, newParent.eeChildren[pos]);
+        newParent.eeChildren.splice(pos, 0, control);
+    }
+}
 ]]></onPageCreate>
       <pageHead><![CDATA[<style>
 .scrollBar01::-webkit-scrollbar-track {
@@ -6996,6 +7021,13 @@ sender.HisItem = function() {
 
 
 sender.save = function() {
+    var clearItems = function(root) {
+        for (var i=0; i<root.v_items.length; i++) {
+            ee.changeParent(root.v_items[i], null);
+        }
+        root.v_items = new Array();
+    }
+    
     var cid = showTopic.topicId;
     //g5.writeLog("save cid=" + cid)
     var idx = this._getIndexById(cid);
@@ -7007,62 +7039,70 @@ sender.save = function() {
     item.data = showTopic.data;
     item.backTrace = showTopic.backTrace;
     item.v_items = this.v_items;
-    item.height = eb.getDivRect(this).h
-    item.p2Height  = eb.getDivRect(this.parentNode).h
+    clearItems(this);
     item.v_content = this.v_content;
     item.v_reContent = this.v_reContent;
     item.v_userInfo = this.v_userInfo;
     item.v_reUserInfo = this.v_reUserInfo;
     item.scrollTop = document.documentElement.scrollTop;
     item.tabIndex = this.c_tabRoot.currentPageIndex;
-    item.v_itemsP1 = this.c_tabRoot.p1.v_items;
-    item.v_itemsP2 = this.c_tabRoot.p2.v_items;
-    item.v_itemsP3 = this.c_tabRoot.p3.v_items;
-    item.v_itemsP4 = this.c_tabRoot.p4.v_items;
+    item.v_itemsP1 = this.c_tabRoot.p1.v_items; clearItems(this.c_tabRoot.p1);
+    
+    if (item.v_itemsP1.length>0) g5.writeLog(eb.getDivRectSetting(item.v_itemsP1[0]).w+"");
+    
+    item.v_itemsP2 = this.c_tabRoot.p2.v_items; clearItems(this.c_tabRoot.p2);
+    item.v_itemsP3 = this.c_tabRoot.p3.v_items; clearItems(this.c_tabRoot.p3);
+    item.v_itemsP4 = this.c_tabRoot.p4.v_items; clearItems(this.c_tabRoot.p4);
     item.p2ContentId = this.c_tabRoot.p2.v_contentId;
     item.p3ContentId = this.c_tabRoot.p3.v_contentId;
     item.p4ContentId = this.c_tabRoot.p4.v_contentId;
-    
     this.v_hisItems.push(item);
-    for (var i=0; i<this.v_items.length; i++) {
-        this.removeChild(this.v_items[i]);
-    }
-    this.v_items = new Array();
 }
 
 sender.load = function(cid) {
-    var idx = this._getIndexById(cid);
+    var loadItems = function(root, newItems) {
+        var i;
+        for (i=0; i<root.v_items.length; i++) {
+            ee.removeControl(root.v_items[i]);
+        }
+        root.v_items = newItems;
+        for (i=0; i<root.v_items.length; i++) {
+            ee.changeParent(root.v_items[i], root, 99999);
+        }
+    }
+    
+    var i, idx = this._getIndexById(cid);
     if (idx<0) return false;
     //g5.writeLog("load cid=" + cid)
     var item = this.v_hisItems[idx];
     //this.v_hisItems.splice(idx,1);
-    
-    for (var i=0; i<this.v_items.length; i++) {
-        this.removeChild(this.v_items[i]);
-    }
-    this.v_items = new Array();
     showTopic.topicId = cid;
     showTopic.data = item.data;
     showTopic.backTrace = item.backTrace;
-    this.v_items = item.v_items;
     this.v_content = item.v_content;
     this.v_reContent = item.v_reContent;
     this.v_userInfo = item.v_userInfo;
     this.v_reUserInfo = item.v_reUserInfo;
-    for (var i=0; i<this.v_items.length; i++) {
-        this.appendChild(this.v_items[i]);
-    }
+    loadItems(this, item.v_items);
     g5.changeP2(7);
     
-    
-    
+    if (item.v_itemsP1.length>0) g5.writeLog("load1:" + eb.getDivRectSetting(item.v_itemsP1[0]).w);
+
+    loadItems(this.c_tabRoot.p1, item.v_itemsP1);
+
+    if (item.v_itemsP1.length>0) g5.writeLog("load2:" + eb.getDivRectSetting(item.v_itemsP1[0]).w);
+
+    loadItems(this.c_tabRoot.p2, item.v_itemsP2);
+    loadItems(this.c_tabRoot.p3, item.v_itemsP3);
+    loadItems(this.c_tabRoot.p4, item.v_itemsP4);
+    this.c_tabRoot.p2.v_contentId = item.p2ContentId;
+    this.c_tabRoot.p3.v_contentId = item.p3ContentId;
+    this.c_tabRoot.p4.v_contentId = item.p4ContentId;
+    var rect = eb.getDivRectSetting(this.v_items[this.v_items.length-1]);
+    ee.setRect(sender.c_tabRoot,null,rect.y+rect.h,null,null);
+    this.c_tabRoot.changePage(-1);
+    this.c_tabRoot.changePage(item.tabIndex);
     document.documentElement.scrollTop = item.scrollTop;
-    
-    
-    ee.setRect(this,null,null,null,item.height);
-    ee.setRect(this.parentNode,null,null,null,item.p2Height);
-    
-    
     return true;
 }
 
@@ -7234,6 +7274,7 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     }
     g5.renderTwitter(item);        
     sender.v_items.push(item);
+    ee.setRect(sender.c_tabRoot,null,eb.getDivRectSetting(item).y + eb.getDivRectSetting(item).h,null,null);
     g5.changeP2(7);
     document.documentElement.scrollTop = 0;
 }
@@ -7831,7 +7872,6 @@ sender.show = function(v_contentId) {
     //    v_userInfo.nickName+"<font color=#a0a0a0>@"+v_userInfo.userName+"</font>转发("+v_userInfo.followCount+"人)");
     if (showForwardList.busy) return;
     this.v_contentId = v_contentId;
-    document.documentElement.scrollTop = 0;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
     this.parentNode.changePage(2);
@@ -7850,8 +7890,8 @@ sender.show = function(v_contentId) {
         }
         eb.processDock();
         var rect = eb.getDivRectSetting(g5.p4);
-        this.parentNode.changePage(-1);
-        this.parentNode.changePage(2);
+        sender.parentNode.changePage(-1);
+        sender.parentNode.changePage(2);
     }
     showForwardList();               
 }
@@ -7890,6 +7930,7 @@ sender.loadRecord = function(panel, dataset, index) {
       <layerName><![CDATA[  p3->点赞]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate>sender.v_items = new Array();</onCreate>
       <sizeRatio>0.22</sizeRatio>
       <top>41</top>
       <topRatio>0.109625668449198</topRatio>
@@ -7905,60 +7946,8 @@ sender.loadRecord = function(panel, dataset, index) {
       <layerName><![CDATA[  p4->点踩]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate><![CDATA[sender.c_titleChat = ee.getControl("panel263");
-sender.c_video = ee.getControl("panel264");
-sender.c_chat = ee.getControl("panel19");
-sender.c_titleBlog = ee.getControl("panel73");
-
-
-sender.v_pageIndex = 0;
-sender.v_pageSize = 10;
-
-sender.init = function() {
-    this.v_pageIndex = 0;
-}
-
-sender.loadMore = function() {
-    if (showUserPageLoadMore.busy) return;
-    this.v_pageIndex++;
-    showUserPageLoadMore.userId = g5.p2.p2.v_userInfo.id;
-    showUserPageLoadMore.pageIndex = this.v_pageIndex;
-    showUserPageLoadMore.pageSize = this.v_pageSize;
-    showUserPageLoadMore.onComplete = function(dataset) {
-        if (showUserPageLoadMore.disabled) return;
-        var i, j, item;
-        var root = sender;
-        var itemWidth = eb.getDivRect(root).w;
-        var cy = 0;
-        if (g5.p2.p2.p1Items.length>0) {
-            var r = eb.getDivRect(g5.p2.p2.p1Items[g5.p2.p2.p1Items.length-1]);
-            cy = r.y + r.h;
-        }
-        var item = null;
-        for (i=0; i< dataset.rowCount; i++) {
-            for (j=0; j<g5.p2.p2.p1Items.length; j++) {
-                if (g5.p2.p2.p1Items[j].v_contentId == dataset.getData(0,i)) break;    
-            }
-            if (j<g5.p2.p2.p1Items.length) continue;
-            item = createPanel(root, "puser_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
-            g5.loadTwitterRecord(item, dataset, i);
-            item.v_mode = "   x";
-            g5.renderTwitter(item);
-            g5.p2.p2.p1Items.push(item);
-            cy += 0 + eb.getDivRect(item).h;
-            item.style.borderLeft="";    
-            item.style.borderRight="";    
-        }
-        if (item!=null) {
-            var ch = $g("divRoot").offsetHeight;
-            var h = cy + ch - eb.getDivRect(item).h - 51; 
-            ee.setRect(root,null,null,null,h);
-            g5.resizeV(root.parentNode, 3);
-        }
-    }
-    showUserPageLoadMore();
-}
-]]></onCreate>
+      <onCreate>sender.v_items = new Array();
+</onCreate>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.109625668449198</topRatio>
