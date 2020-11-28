@@ -7017,6 +7017,10 @@ sender.HisItem = function() {
     this.p2ContentId = 0;
     this.p3ContentId = 0;
     this.p4ContentId = 0;
+    this.p1Title = "";
+    this.p2Title = "";
+    this.p3Title = "";
+    this.p4Title = "";
 }
 
 
@@ -7047,15 +7051,16 @@ sender.save = function() {
     item.scrollTop = document.documentElement.scrollTop;
     item.tabIndex = this.c_tabRoot.currentPageIndex;
     item.v_itemsP1 = this.c_tabRoot.p1.v_items; clearItems(this.c_tabRoot.p1);
-    
-    if (item.v_itemsP1.length>0) g5.writeLog(eb.getDivRectSetting(item.v_itemsP1[0]).w+"");
-    
     item.v_itemsP2 = this.c_tabRoot.p2.v_items; clearItems(this.c_tabRoot.p2);
     item.v_itemsP3 = this.c_tabRoot.p3.v_items; clearItems(this.c_tabRoot.p3);
     item.v_itemsP4 = this.c_tabRoot.p4.v_items; clearItems(this.c_tabRoot.p4);
     item.p2ContentId = this.c_tabRoot.p2.v_contentId;
     item.p3ContentId = this.c_tabRoot.p3.v_contentId;
     item.p4ContentId = this.c_tabRoot.p4.v_contentId;
+    item.p1Title = ee.getText(this.c_tabRoot.button1);
+    item.p2Title = ee.getText(this.c_tabRoot.button1);
+    item.p3Title = ee.getText(this.c_tabRoot.button1);
+    item.p4Title = ee.getText(this.c_tabRoot.button1);
     this.v_hisItems.push(item);
 }
 
@@ -7086,13 +7091,11 @@ sender.load = function(cid) {
     this.v_reUserInfo = item.v_reUserInfo;
     loadItems(this, item.v_items);
     g5.changeP2(7);
-    
-    if (item.v_itemsP1.length>0) g5.writeLog("load1:" + eb.getDivRectSetting(item.v_itemsP1[0]).w);
-
+    ee.setText(this.c_tabRoot.button1, item.p1Title);
+    ee.setText(this.c_tabRoot.button2, item.p1Title);
+    ee.setText(this.c_tabRoot.button3, item.p1Title);
+    ee.setText(this.c_tabRoot.button4, item.p1Title);
     loadItems(this.c_tabRoot.p1, item.v_itemsP1);
-
-    if (item.v_itemsP1.length>0) g5.writeLog("load2:" + eb.getDivRectSetting(item.v_itemsP1[0]).w);
-
     loadItems(this.c_tabRoot.p2, item.v_itemsP2);
     loadItems(this.c_tabRoot.p3, item.v_itemsP3);
     loadItems(this.c_tabRoot.p4, item.v_itemsP4);
@@ -7403,63 +7406,13 @@ sender.changePage = function(pageIndex) {
 }
 
 sender.init = function() {
-    this.currentPageIndex = -1;
-    this.p2ChatRect = null;
-    for (var i=0; i<this.parentNode.p3Items.length; i++) {
-        ee.removeControl(this.parentNode.p3Items[i]);
-    }
-    this.parentNode.p3Items = new Array();
-    this.v_p3PageIndex = 0;
-    this.parentNode.v_p3Init = true;
+    ee.setText(this.button1, "回复");
+    ee.setText(this.button2, "转发");
+    ee.setText(this.button3, "点赞");
+    ee.setText(this.button4, "点踩");
 }
 
 
-sender.v_p3PageIndex = 0;
-sender.v_p3PageSize = 10;
-sender.updateP3 = function() {
-    if (showUserPageP3.busy) return;
-    this.parentNode.v_p3Init = false;
-    showUserPageP3.userId = g5.p2.p2.v_userInfo.id;
-    showUserPageP3.pageIndex = this.v_p3PageIndex; this.v_p3PageIndex++;
-    showUserPageP3.pageSize = this.v_p3PageSize;
-    showUserPageP3.onComplete = function(dataset) {
-        if (showUserPageP3.disabled) return;
-        var i, j, item;
-        var root = sender.p3; 
-        var itemWidth = eb.getDivRect(root).w;
-        var cy = 0;
-        if (sender.parentNode.p3Items.length>0) {
-            var r = eb.getDivRect(sender.parentNode.p3Items[sender.parentNode.p3Items.length-1]);
-            cy = r.y + r.h;
-        }
-        var item = null;
-        for (i=0; i< dataset.rowCount; i++) {
-            for (j=0; j<sender.parentNode.p3Items; j++) {
-                if (sender.parentNode.p3Items[j].v_contentId == dataset.getData(0,i)) break;    
-            }
-            item = createPanel(root, "p2p2p3_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
-            g5.loadTwitterRecord(item, dataset, i);
-            item.v_mode = "   x";
-            g5.renderTwitter(item);
-            sender.parentNode.p3Items.push(item);
-            cy += eb.getDivRect(item).h;
-            item.style.borderLeft="";    
-            item.style.borderRight="";    
-        }
-        if (item!=null) {
-            var ch = $g("divRoot").offsetHeight;
-            var h = cy + ch - eb.getDivRect(item).h - 51; 
-            ee.setRect(root,null,null,null,h);
-        } else if (sender.parentNode.p3Items.length<=0) {
-            var ch = $g("divRoot").offsetHeight;
-            var h = ch + eb.getDivRect(ee.getControl("layoutx2")).y - 51; 
-            ee.setRect(root,null,null,null,h);
-        }
-        //g5.tiledV(root, 0, 0, 0);
-        g5.resizeV(root.parentNode, 3);
-    }
-    showUserPageP3(); 
-}
 
 ]]></onCreate>
       <sizeRatio>0.623333333333333</sizeRatio>
