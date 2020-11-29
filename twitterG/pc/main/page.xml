@@ -7521,16 +7521,31 @@ sender.changePage = function(pageIndex) {
         ee.setVisible(this.p2, true);
         ee.resizeV(this, 3);
     } else if (pageIndex == 3) {
-        g5.player.stop();
         this.button3.init(1);
         this.button3.appendChild(this.buttonLine);
-        if (this.parentNode.p3Items.length<=0) {
-            this.updateP3();
-            ee.setVisible(this.p3, true);
+        var dh;
+        if (this.p3.v_items.length>0) {
+            dh = eb.getDivRectSetting(this.p3.v_items[this.p3.v_items.length-1]).h;
         } else {
-            ee.setVisible(this.p3, true);
-            g5.resizeV(this.p3, 4);
+            dh = eb.getDivRectSetting(this.c_title).h;
         }
+        dh = eb.getClientSize().h - dh - eb.getDivRectSetting(g5.p4.a2).h + 2;
+        ee.tiledV(this.p3, 0, 0, dh);
+        ee.setVisible(this.p3, true);
+        ee.resizeV(this, 3);
+    } else if (pageIndex == 4) {
+        this.button4.init(1);
+        this.button4.appendChild(this.buttonLine);
+        var dh;
+        if (this.p4.v_items.length>0) {
+            dh = eb.getDivRectSetting(this.p4.v_items[this.p4.v_items.length-1]).h;
+        } else {
+            dh = eb.getDivRectSetting(this.c_title).h;
+        }
+        dh = eb.getClientSize().h - dh - eb.getDivRectSetting(g5.p4.a2).h + 2;
+        ee.tiledV(this.p4, 0, 0, dh);
+        ee.setVisible(this.p4, true);
+        ee.resizeV(this, 3);
     }
     this.currentPageIndex = pageIndex;
     eb.processDock();    
@@ -7763,7 +7778,7 @@ sender.init(0);
       <heightRatio>1</heightRatio>
       <left>300</left>
       <leftRatio>0.5</leftRatio>
-      <onClick>g5.p2PersonSub.changePage(3);</onClick>
+      <onClick>g5.p2.p9.c_tabRoot.p3.show(g5.p2.p9.v_contentId);</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
     this.color1 = color1;
     this.color2 = color2
@@ -7846,6 +7861,7 @@ sender.init(0);
       <heightRatio>1</heightRatio>
       <left>450</left>
       <leftRatio>0.75</leftRatio>
+      <onClick>g5.p2.p9.c_tabRoot.p4.show(g5.p2.p9.v_contentId);</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
     this.color1 = color1;
     this.color2 = color2
@@ -7953,8 +7969,6 @@ sender.show = function(v_contentId) {
         this.parentNode.changePage(2);
         return;
     }
-    //ee.setText(this.c_title, 
-    //    v_userInfo.nickName+"<font color=#a0a0a0>@"+v_userInfo.userName+"</font>转发("+v_userInfo.followCount+"人)");
     if (showForwardList.busy) return;
     this.v_contentId = v_contentId;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
@@ -7982,20 +7996,6 @@ sender.show = function(v_contentId) {
     showForwardList();               
 }
 
-sender.setIsFollow = function(userId, isFollow) {
-    for (var i = 0; i<this.v_items.length; i++) {
-        if (this.v_items[i].v_userInfo.id != userId) continue;
-        if (this.v_items[i].v_userInfo.isFollow != isFollow) continue;
-        this.v_items[i].v_userInfo.isFollow = isFollow;
-        if (isFollow) {
-            this.v_items[i].button1.init(2);
-        } else {
-            this.v_items[i].button1.init(1);
-        }
-    }
-}
-
-
 sender.loadRecord = function(panel, dataset, index) {
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset,0,index);
@@ -8016,7 +8016,47 @@ sender.loadRecord = function(panel, dataset, index) {
       <layerName><![CDATA[  p3->点赞]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.v_items = new Array();</onCreate>
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.c_title = sender.parentNode.button3;
+sender.v_contentId = 0;
+
+sender.show = function(v_contentId) {
+    if (this.v_contentId == v_contentId) {
+        this.parentNode.changePage(3);
+        return;
+    }
+    if (showLikeList.busy) return;
+    this.v_contentId = v_contentId;
+    for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+    sender.v_items = new Array();
+    this.parentNode.changePage(3);
+    showLikeList.contentId = v_contentId;
+    showLikeList.onComplete = function(dataset) {
+        var root = sender;
+        var cy = 0;
+        var itemWidth = eb.getDivRect(root).w;
+        for (var i=0; i<dataset.rowCount; i++) {
+            var item = createPanel(root, "fwdl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            sender.loadRecord(item, dataset, i);
+            item.v_mode = "";
+            g5.renderUserBar(item);
+            cy += eb.getDivRect(item).h;
+            sender.v_items.push(item);
+        }
+        eb.processDock();
+        ee.setText(sender.c_title, "点赞 <font style='font-size:9pt;font-weight:300'>(" + dataset.rowCount + "人)</font>");
+        var rect = eb.getDivRectSetting(g5.p4);
+        sender.parentNode.changePage(-1);
+        sender.parentNode.changePage(3);
+    }
+    showLikeList();               
+}
+
+sender.loadRecord = function(panel, dataset, index) {
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,0,index);
+}
+]]></onCreate>
       <sizeRatio>0.22</sizeRatio>
       <top>41</top>
       <topRatio>0.109625668449198</topRatio>
@@ -24372,8 +24412,8 @@ sql =
     "                THEN 0 ELSE 1 END AS uIsBlock2 " + 
     "FROM      (SELECT   userId " + 
     "                 FROM      dbo.tContent " + 
-    "                 WHERE   (uplinkId = "+contentId+") AND (uplinkType = 'F' OR " + 
-    "                                 uplinkType = 'L') " + 
+    "                 WHERE   (uplinkType = 'F') AND (uplinkId = "+contentId+") OR " + 
+    "                                 (uplinkType = 'L') AND (exContentId = "+contentId+") AND ([status] = 'IDL') " + 
     "                 GROUP BY userId) AS forwardUsers LEFT OUTER JOIN " + 
     "                dbo.userInfo ON forwardUsers.userId = dbo.userInfo.id LEFT OUTER JOIN " + 
     "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " + 
@@ -24554,7 +24594,9 @@ showFansList.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="showLikeList">
-      <script1>//params: contentId
+      <script1>//contentId, onComplete
+if (showLikeList.busy) return;
+showLikeList.busy = true;
 eio.appendString16(g5.token);
 eio.appendString16(showLikeList.contentId);
 </script1>
@@ -24579,12 +24621,21 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserId = parseInt(db.getString(sqlResult,"id"));
 
 sql =
-    "SELECT   dbo.likeList.userId, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo, " +
-    "                dbo.userInfo.titleBg, dbo.userInfo.homePage, CASE WHEN follow.userId IS NULL THEN 0 ELSE 1 END AS isFollow " +
+    "SELECT   dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime, " + 
+    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
+    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
+    "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
+    "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
+    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow,  " +
+    "                CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN ublockList1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
     "FROM      dbo.likeList INNER JOIN " +
     "                dbo.userInfo ON dbo.likeList.userId = dbo.userInfo.id LEFT OUTER JOIN " +
-    "                dbo.follow ON dbo.userInfo.id = dbo.follow.followId AND dbo.follow.userId = "+myUserId+" " +
-    "WHERE   (dbo.likeList.contentId = " + contentId + ") ";
+    "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
+    "                uBlockList1.blockUserId = "+myUserId+" LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = "+myUserId+" LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = "+myUserId+" " +
+    "WHERE   (dbo.likeList.contentId = " + contentId + "); ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -24593,40 +24644,27 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"userId,userName,nickName,note,photo,titleBg,homePage,isFollow", 0, 99999);
+eio.appendDataSet(sqlResult,
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail",
+    0, 99999);
 
 
 
 
 ]]></script2>
-      <script3><![CDATA[if (eio.readString8()!="T") {
+      <script3>if (eio.readString8()!="T") {
+    showLikeList.busy = false;
     g5.alert1("提示", eio.readString8());
     return;
 }
-showForwardList.data = eio.readDataSet();
+showLikeList.dataset = eio.readDataSet();
 
-var root = ee.getControl("layoutyitem2");
-if (eb.isEmpty(showForwardList.items)) showForwardList.items = new Array();
-while (showForwardList.items.length>0) {
-    ee.removeControl(showForwardList.items[0]);
-    showForwardList.items.splice(0,1);
+if (showLikeList.onComplete) {
+    showLikeList.onComplete(showLikeList.dataset);
 }
-ee.setText(ee.getControl("panel123"), "点赞的用户");
-var cy = 0;
-var itemWidth = eb.getDivRect(root).w;
-for (var i=0; i<showForwardList.data.rowCount; i++) {
-    var item = createPanel(root, "likl_" + showForwardList.data.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadUserRecord(item, showForwardList.data, i);
-    item.v_mode = "";
-    g5.renderUserBar(item);
-    cy += eb.getDivRect(item).h;
-    showForwardList.items.push(item);
-}
+showLikeList.busy = false;
 
-eb.processDock();
-ee.setVisible(ee.getControl("panel112"),true);
-ee.showAni(ee.getControl("panel10"),0);
-]]></script3>
+</script3>
     </taskSetItem>
     <taskSetItem name="showBlockList">
       <script1>//userId
