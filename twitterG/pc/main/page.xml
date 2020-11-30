@@ -7763,7 +7763,7 @@ sender.init(0);
 
 </onCreate>
       <sizeRatio>0.273333333333333</sizeRatio>
-      <text>转发(5人)</text>
+      <text>转发</text>
       <top>0</top>
       <width>150</width>
       <widthRatio>0.25</widthRatio>
@@ -7846,7 +7846,7 @@ sender.init(0);
 
 </onCreate>
       <sizeRatio>0.273333333333333</sizeRatio>
-      <text>点赞(5人)</text>
+      <text>点赞</text>
       <top>0</top>
       <width>150</width>
       <widthRatio>0.25</widthRatio>
@@ -7929,7 +7929,7 @@ sender.init(0);
 
 </onCreate>
       <sizeRatio>0.273333333333333</sizeRatio>
-      <text>点踩(5人)</text>
+      <text>点踩</text>
       <top>0</top>
       <width>150</width>
       <widthRatio>0.25</widthRatio>
@@ -8072,8 +8072,47 @@ sender.loadRecord = function(panel, dataset, index) {
       <layerName><![CDATA[  p4->点踩]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.v_items = new Array();
-</onCreate>
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.c_title = sender.parentNode.button4;
+sender.v_contentId = 0;
+
+sender.show = function(v_contentId) {
+    if (this.v_contentId == v_contentId) {
+        this.parentNode.changePage(4);
+        return;
+    }
+    if (showLikeList.busy) return;
+    this.v_contentId = v_contentId;
+    for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+    sender.v_items = new Array();
+    this.parentNode.changePage(4);
+    showLikeList.contentId = v_contentId;
+    showLikeList.onComplete = function(dataset) {
+        var root = sender;
+        var cy = 0;
+        var itemWidth = eb.getDivRect(root).w;
+        for (var i=0; i<dataset.rowCount; i++) {
+            var item = createPanel(root, "fwdl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            sender.loadRecord(item, dataset, i);
+            item.v_mode = "";
+            g5.renderUserBar(item);
+            cy += eb.getDivRect(item).h;
+            sender.v_items.push(item);
+        }
+        eb.processDock();
+        ee.setText(sender.c_title, "点踩 <font style='font-size:9pt;font-weight:300'>(" + dataset.rowCount + "人)</font>");
+        var rect = eb.getDivRectSetting(g5.p4);
+        sender.parentNode.changePage(-1);
+        sender.parentNode.changePage(4);
+    }
+    showLikeList();               
+}
+
+sender.loadRecord = function(panel, dataset, index) {
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,0,index);
+}
+]]></onCreate>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.109625668449198</topRatio>
@@ -21814,7 +21853,7 @@ sender.v_mode = "-";
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="56">
+  <taskSet count="57">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName 
@@ -24663,6 +24702,79 @@ if (showLikeList.onComplete) {
     showLikeList.onComplete(showLikeList.dataset);
 }
 showLikeList.busy = false;
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="showUnlikeList">
+      <script1>//contentId, onComplete
+if (showUnlikeList.busy) return;
+showUnlikeList.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(showUnlikeList.contentId);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var contentId = parseInt(eio.readString16());
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "SELECT   dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime, " + 
+    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
+    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
+    "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
+    "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
+    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow,  " +
+    "                CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN ublockList1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
+    "FROM      dbo.unlikeList INNER JOIN " +
+    "                dbo.userInfo ON dbo.unlikeList.userId = dbo.userInfo.id LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
+    "                uBlockList1.blockUserId = "+myUserId+" LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = "+myUserId+" LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = "+myUserId+" " +
+    "WHERE   (dbo.unlikeList.contentId = " + contentId + "); ";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail",
+    0, 99999);
+
+
+
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    showUnlikeList.busy = false;
+    g5.alert1("提示", eio.readString8());
+    return;
+}
+showUnlikeList.dataset = eio.readDataSet();
+
+if (showUnlikeList.onComplete) {
+    showUnlikeList.onComplete(showUnlikeList.dataset);
+}
+showUnlikeList.busy = false;
 
 </script3>
     </taskSetItem>
