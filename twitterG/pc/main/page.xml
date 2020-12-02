@@ -369,9 +369,9 @@ ee.setRect = function (panel, x, y, w, h, refresh) {
   width: 24px;
   height: 24px;
   border: 0.20rem solid rgba(80, 80, 250, 0.1);
-  border-top-color: #a9b3e6;
-  -webkit-animation: aniLoadingKF 1s infinite linear;
-          animation: aniLoadingKF 1s infinite linear;
+  border-top-color: rgb(29,161,242);
+  -webkit-animation: aniLoadingKF 0.5s infinite linear;
+          animation: aniLoadingKF 0.5s infinite linear;
 }
 
 </style>]]></pageHead>
@@ -1707,6 +1707,7 @@ sender.loadFromServer = function() {
         var root = sender;
         var itemWidth = eb.getDivRect(root).w;
         var cy = eb.getDivRect(g5.p4).h;
+        g5.loading.close();
         ee.setRect(g5.p2.p1.a1, null, cy, null,null);
         cy+=eb.getDivRect(g5.p2.p1.a1).h;
         if (updateHomepage.contentId == 0) {
@@ -1756,6 +1757,7 @@ sender.loadFromServer = function() {
         eb.setDivRect(g5.p2.p1,null,null,null,cy);
         eb.processDock();
     }
+    g5.loading.show();
     updateHomepage();    
 }
 
@@ -2361,6 +2363,7 @@ sender.show = function(v_userInfo, userId, userName) {
         showUserPage.userId = null;
     }                                     
     showUserPage.onComplete = function() {
+        g5.loading.close();
         if (showUserPage.disabled) return;
         var i;
         if (sender.v_userInfo == null) {
@@ -2412,7 +2415,7 @@ sender.show = function(v_userInfo, userId, userName) {
         g5.p2PersonSub.changePage(1);
         g5.p3.p8.init();
     }
-    
+    g5.loading.show();
     showUserPage();    
 }
 
@@ -7328,6 +7331,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
     }
     var nohis = g5.notPushHistory;
     showTopic.onComplete = function(datasetFw, datasetBk) {
+        g5.loading.close();
         if (showTopic.disabled) {
             //g5.writeLog("break response");
             return;
@@ -7424,6 +7428,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
     }
     showTopic.disabled = false;
     this.loadComplete = false;
+    g5.loading.show();
     showTopic();
 }
 
@@ -8071,6 +8076,7 @@ sender.show = function(v_contentId) {
     this.parentNode.changePage(3);
     showLikeList.contentId = v_contentId;
     showLikeList.onComplete = function(dataset) {
+        g5.loading.close();
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
@@ -8088,6 +8094,7 @@ sender.show = function(v_contentId) {
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(3);
     }
+    g5.loading.show();
     showLikeList();               
 }
 
@@ -8127,6 +8134,7 @@ sender.show = function(v_contentId) {
     this.parentNode.changePage(4);
     showLikeList.contentId = v_contentId;
     showLikeList.onComplete = function(dataset) {
+        g5.loading.close();
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
@@ -8144,6 +8152,7 @@ sender.show = function(v_contentId) {
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(4);
     }
+    g5.loading.show();
     showLikeList();               
 }
 
@@ -15628,7 +15637,6 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -15710,7 +15718,6 @@ sender.changePage = function(pageName) {
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a1->主页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -21899,6 +21906,7 @@ sender.v_mode = "-";
       <height>93</height>
       <heightRatio>0.116834170854271</heightRatio>
       <layerName>loading 等待动画</layerName>
+      <layerVisible>false</layerVisible>
       <left>514</left>
       <leftRatio>0.433755274261603</leftRatio>
       <onCreate>sender.style.position = "fixed";
