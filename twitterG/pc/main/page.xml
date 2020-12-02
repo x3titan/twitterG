@@ -1,5 +1,5 @@
 <page>
-  <controls count="524">
+  <controls count="525">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -338,6 +338,95 @@ ee.setRect = function (panel, x, y, w, h, refresh) {
     background-color: #E0E0EF;
 }
 
+
+</style>
+
+
+<style>
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes pulse {
+  50% {
+    background: white;
+  }
+}
+@keyframes pulse {
+  50% {
+    background: white;
+  }
+}
+html, body {
+  height: 100%;
+}
+
+body {
+  display: -webkit-box;
+  display: flex;
+  justify-content: space-around;
+  -webkit-box-align: center;
+          align-items: center;
+  background: #333333;
+}
+
+.loading {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  border: 0.25rem solid rgba(255, 255, 255, 0.2);
+  border-top-color: white;
+  -webkit-animation: spin 1s infinite linear;
+          animation: spin 1s infinite linear;
+}
+
+.loading-pulse {
+  position: relative;
+  width: 6px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  -webkit-animation: pulse 750ms infinite;
+          animation: pulse 750ms infinite;
+  -webkit-animation-delay: 250ms;
+          animation-delay: 250ms;
+}
+.loading-pulse:before, .loading-pulse:after {
+  content: '';
+  position: absolute;
+  display: block;
+  height: 16px;
+  width: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  -webkit-animation: pulse 750ms infinite;
+          animation: pulse 750ms infinite;
+}
+.loading-pulse:before {
+  left: -12px;
+}
+.loading-pulse:after {
+  left: 12px;
+  -webkit-animation-delay: 500ms;
+          animation-delay: 500ms;
+}
 </style>]]></pageHead>
       <pageTitle>拳头聊天室</pageTitle>
       <top>0</top>
@@ -1546,7 +1635,6 @@ sender.p16 = ee.getControl("panel101");
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.a1 = ee.getControl("panel1");
 sender.v_items = new Array();
@@ -2254,6 +2342,19 @@ sender.resize = function (img) {
       <topRatio>0.881118881118881</topRatio>
       <width>36</width>
       <widthRatio>0.06</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel290">
+      <cursor>pointer</cursor>
+      <height>45</height>
+      <heightRatio>0.104895104895105</heightRatio>
+      <left>12</left>
+      <leftRatio>0.02</leftRatio>
+      <onClick>sender.className = "loading";</onClick>
+      <sizeRatio>0.803571428571429</sizeRatio>
+      <top>139</top>
+      <topRatio>0.324009324009324</topRatio>
+      <width>56</width>
+      <widthRatio>0.0933333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -7099,6 +7200,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -7379,7 +7481,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         }
         document.documentElement.scrollTop = scrollTop;
         eb.processDock();
-        ee.setText(sender.c_tabRoot.button1, "回复 <font style='font-size:9pt;font-weight:300'>(" + reCount + "条)</font>");
+        ee.setText(sender.c_tabRoot.button1, "回复和转发 <font style='font-size:9pt;font-weight:300'>(" + reCount + "条)</font>");
         sender.c_tabRoot.changePage(-1);
         sender.c_tabRoot.changePage(1);
         showTopic.needRefresh = false;
@@ -7552,8 +7654,8 @@ sender.changePage = function(pageIndex) {
 }
 
 sender.init = function() {
-    ee.setText(this.button1, "回复");
-    ee.setText(this.button2, "转发");
+    ee.setText(this.button1, "回复和转发");
+    ee.setText(this.button2, "转发者");
     ee.setText(this.button3, "点赞");
     ee.setText(this.button4, "点踩");
 }
@@ -7661,7 +7763,7 @@ sender.init(0);
 
 </onCreate>
       <sizeRatio>0.273333333333333</sizeRatio>
-      <text>回复</text>
+      <text>回复和转发</text>
       <top>0</top>
       <width>150</width>
       <widthRatio>0.25</widthRatio>
@@ -7763,7 +7865,7 @@ sender.init(0);
 
 </onCreate>
       <sizeRatio>0.273333333333333</sizeRatio>
-      <text>转发</text>
+      <text>转发者</text>
       <top>0</top>
       <width>150</width>
       <widthRatio>0.25</widthRatio>
@@ -7988,7 +8090,7 @@ sender.show = function(v_contentId) {
             sender.v_items.push(item);
         }
         eb.processDock();
-        ee.setText(sender.parentNode.button2, "转发 <font style='font-size:9pt;font-weight:300'>(" + dataset.rowCount + "人)</font>");
+        ee.setText(sender.parentNode.button2, "转发者 <font style='font-size:9pt;font-weight:300'>(" + dataset.rowCount + "人)</font>");
         var rect = eb.getDivRectSetting(g5.p4);
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(2);
@@ -23560,7 +23662,7 @@ sql =
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType<>'F' AND dbo.tContent.uplinkType<>'L' AND dbo.tContent.status<>'DEL') OR (dbo.tContent.id = " + topicId + ") " +
+    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType<>'L' AND dbo.tContent.status<>'DEL') OR (dbo.tContent.id = " + topicId + ") " +
     "ORDER BY dbo.tContent.id ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -27178,10 +27280,12 @@ ee.setOnClick(c,function(sender,event) {
 
 //reUsername
 cy+=17;
-if (root.v_content.uplinkType == "R") {
+if ((root.v_content.uplinkType == "R") || (root.v_content.uplinkType == "F")){
     c = createPanel(root, root.id+"_pareUsername01nel17", "", 75, cy, mainWidth-80, 22);
     cy += 22;
-    addText(c, "<font color='#808080'>回复 </font><font color='#1b95e0'>@" + root.v_reUserInfo.userName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
+    addText(c, "<font color='#808080'>" +
+        (root.v_content.uplinkType == "R" ? "回复":"转发") +
+        " </font><font color='#1b95e0'>@" + root.v_reUserInfo.userName + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     c.style.cursor="pointer";
     c.v_username = root.v_reUserInfo.userName;
     root.c_reUserName = c.label.rows[0].cells[0].childNodes[1];
