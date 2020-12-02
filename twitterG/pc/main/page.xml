@@ -1,5 +1,5 @@
 <page>
-  <controls count="525">
+  <controls count="527">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -343,7 +343,7 @@ ee.setRect = function (panel, x, y, w, h, refresh) {
 
 
 <style>
-@-webkit-keyframes spin {
+@-webkit-keyframes aniLoadingKF {
   0% {
     -webkit-transform: rotate(0deg);
             transform: rotate(0deg);
@@ -353,7 +353,7 @@ ee.setRect = function (panel, x, y, w, h, refresh) {
             transform: rotate(360deg);
   }
 }
-@keyframes spin {
+@keyframes aniLoadingKF {
   0% {
     -webkit-transform: rotate(0deg);
             transform: rotate(0deg);
@@ -363,70 +363,17 @@ ee.setRect = function (panel, x, y, w, h, refresh) {
             transform: rotate(360deg);
   }
 }
-@-webkit-keyframes pulse {
-  50% {
-    background: white;
-  }
-}
-@keyframes pulse {
-  50% {
-    background: white;
-  }
-}
-html, body {
-  height: 100%;
-}
 
-body {
-  display: -webkit-box;
-  display: flex;
-  justify-content: space-around;
-  -webkit-box-align: center;
-          align-items: center;
-  background: #333333;
-}
-
-.loading {
+.aniLoading {
   border-radius: 50%;
   width: 24px;
   height: 24px;
-  border: 0.25rem solid rgba(255, 255, 255, 0.2);
-  border-top-color: white;
-  -webkit-animation: spin 1s infinite linear;
-          animation: spin 1s infinite linear;
+  border: 0.20rem solid rgba(80, 80, 250, 0.1);
+  border-top-color: #a9b3e6;
+  -webkit-animation: aniLoadingKF 1s infinite linear;
+          animation: aniLoadingKF 1s infinite linear;
 }
 
-.loading-pulse {
-  position: relative;
-  width: 6px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.2);
-  -webkit-animation: pulse 750ms infinite;
-          animation: pulse 750ms infinite;
-  -webkit-animation-delay: 250ms;
-          animation-delay: 250ms;
-}
-.loading-pulse:before, .loading-pulse:after {
-  content: '';
-  position: absolute;
-  display: block;
-  height: 16px;
-  width: 6px;
-  background: rgba(255, 255, 255, 0.2);
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  -webkit-animation: pulse 750ms infinite;
-          animation: pulse 750ms infinite;
-}
-.loading-pulse:before {
-  left: -12px;
-}
-.loading-pulse:after {
-  left: 12px;
-  -webkit-animation-delay: 500ms;
-          animation-delay: 500ms;
-}
 </style>]]></pageHead>
       <pageTitle>拳头聊天室</pageTitle>
       <top>0</top>
@@ -1635,6 +1582,7 @@ sender.p16 = ee.getControl("panel101");
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.a1 = ee.getControl("panel1");
 sender.v_items = new Array();
@@ -2342,19 +2290,6 @@ sender.resize = function (img) {
       <topRatio>0.881118881118881</topRatio>
       <width>36</width>
       <widthRatio>0.06</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel290">
-      <cursor>pointer</cursor>
-      <height>45</height>
-      <heightRatio>0.104895104895105</heightRatio>
-      <left>12</left>
-      <leftRatio>0.02</leftRatio>
-      <onClick>sender.className = "loading";</onClick>
-      <sizeRatio>0.803571428571429</sizeRatio>
-      <top>139</top>
-      <topRatio>0.324009324009324</topRatio>
-      <width>56</width>
-      <widthRatio>0.0933333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -8078,6 +8013,7 @@ sender.show = function(v_contentId) {
     this.parentNode.changePage(2);
     showForwardList.contentId = v_contentId;
     showForwardList.onComplete = function(dataset) {
+        g5.loading.close();
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
@@ -8095,6 +8031,7 @@ sender.show = function(v_contentId) {
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(2);
     }
+    g5.loading.show();
     showForwardList();               
 }
 
@@ -21954,6 +21891,66 @@ sender.v_mode = "-";
       <width>582</width>
       <widthRatio>1</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel291">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>93</height>
+      <heightRatio>0.116834170854271</heightRatio>
+      <layerName>loading 等待动画</layerName>
+      <left>514</left>
+      <leftRatio>0.433755274261603</leftRatio>
+      <onCreate>sender.style.position = "fixed";
+sender.c_ani = ee.getControl("panel290");
+
+sender.show = function() {
+    ee.setVisible(this, true);
+    this.c_ani.className = "aniLoading";
+}
+
+sender.close = function() {
+    ee.setVisible(this, false);
+    this.c_ani.className = "";
+}
+</onCreate>
+      <sizeRatio>0.592356687898089</sizeRatio>
+      <top>351</top>
+      <topRatio>0.440954773869347</topRatio>
+      <width>157</width>
+      <widthRatio>0.132489451476793</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel291/panel290">
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <height>22</height>
+      <heightRatio>0.236559139784946</heightRatio>
+      <left>67</left>
+      <leftRatio>0.426751592356688</leftRatio>
+      <onCreate>sender.style.backgroundColor = "";</onCreate>
+      <sizeRatio>1</sizeRatio>
+      <top>20</top>
+      <topRatio>0.21505376344086</topRatio>
+      <width>22</width>
+      <widthRatio>0.140127388535032</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel291/panel292">
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>808080</fontColor>
+      <fontFamily>arial</fontFamily>
+      <height>25</height>
+      <heightRatio>0.0314070351758794</heightRatio>
+      <left>50</left>
+      <leftRatio>0.475949367088608</leftRatio>
+      <outerLeft>20</outerLeft>
+      <sizeRatio>0.324675324675325</sizeRatio>
+      <text>loading...</text>
+      <top>47</top>
+      <topRatio>0.0590452261306533</topRatio>
+      <width>77</width>
+      <widthRatio>0.0649789029535865</widthRatio>
+    </control>
   </controls>
   <taskSet count="57">
     <taskSetItem name="uploadImage">
@@ -26626,7 +26623,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="84">
+  <g5Items count="85">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -26679,6 +26676,11 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </item>
     <item name="popBlack2" type="10">
       <varValue>ee.getControl("panel48");</varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="loading" type="10">
+      <varValue>ee.getControl("panel291");</varValue>
       <functionParam />
       <functionCode />
     </item>
