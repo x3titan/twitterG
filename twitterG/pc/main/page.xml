@@ -8089,7 +8089,7 @@ sender.show = function(v_contentId) {
             sender.v_items.push(item);
         }
         eb.processDock();
-        if (dataset.rowCount>0) ee.setText(sender.parentNode.button2, dataset.rowCount + " 点赞");
+        if (dataset.rowCount>0) ee.setText(sender.parentNode.button3, dataset.rowCount + " 点赞");
         var rect = eb.getDivRectSetting(g5.p4);
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(3);
@@ -8147,7 +8147,7 @@ sender.show = function(v_contentId) {
             sender.v_items.push(item);
         }
         eb.processDock();
-        if (dataset.rowCount>0) ee.setText(sender.parentNode.button2, dataset.rowCount + " 点踩");
+        if (dataset.rowCount>0) ee.setText(sender.parentNode.button4, dataset.rowCount + " 点踩");
         var rect = eb.getDivRectSetting(g5.p4);
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(4);
@@ -15637,6 +15637,7 @@ eb.initMouseEvent(sender);
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -15718,6 +15719,7 @@ sender.changePage = function(pageName) {
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a1->主页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -17372,9 +17374,11 @@ sender.onpointermove = function(event) {
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
-        ee.showAni(sender.eeChildren[i], 1);
+        ee.setVisible(sender.eeChildren[i], false);
+        //ee.showAni(sender.eeChildren[i], 1);
     }
-}]]></onClick>
+}
+ee.setVisible(sender, false);]]></onClick>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
 sender.p1 = ee.getControl("panel149");
@@ -17988,7 +17992,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -18019,7 +18022,12 @@ sender.addEventListener("mousewheel", function(e) {
 sender.close = function() {
     for (var i=0; i<sender.eeChildren.length; i++) {
         if (sender.eeChildren[i].style.visibility != "hidden") {
-            ee.showAni(sender.eeChildren[i], 1);
+            if (sender.eeChildren[i].close) {
+                sender.eeChildren[i].close();
+                ee.setVisible(this, false);
+            } else {
+                ee.showAni(sender.eeChildren[i], 1);
+            }
         }
     }
 }
@@ -19501,14 +19509,9 @@ sender.onpointermove = function(event) {
       <height>259</height>
       <heightRatio>0.325376884422111</heightRatio>
       <layerName><![CDATA[  a6->通用确认窗口]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>401</left>
       <leftRatio>0.338396624472574</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
-if (sender.formResult) {
-    sender.formResult = false;
-    delTwitter();
-}
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
 </onClick>
@@ -19522,8 +19525,14 @@ if (sender.formResult) {
     this.onComplete = onComplete;
     this.onButton1 = onButton1;
     ee.setVisible(this.parentNode, true);
-    ee.showAni(this, 0);
+    ee.setVisible(this, true);
+    //ee.showAni(this, 0);
 }
+
+sender.close = function() {
+    ee.setVisible(this, false);
+}
+
 
 </onCreate>
       <sizeRatio>0.678010471204188</sizeRatio>
@@ -19627,7 +19636,7 @@ sender.onpointermove = function(event) {
       <heightRatio>0.154440154440154</heightRatio>
       <left>56</left>
       <leftRatio>0.146596858638743</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel257"), 1);
+      <onClick>sender.parentNode.parentNode.close();
 if (!eb.isEmpty(sender.parentNode.onButton1)) {
     sender.parentNode.onButton1();
     sender.parentNode.onButton1 = null;
@@ -19718,7 +19727,7 @@ sender.init(0);
       <heightRatio>0.154440154440154</heightRatio>
       <left>205</left>
       <leftRatio>0.536649214659686</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel257"), 1);
+      <onClick>sender.parentNode.parentNode.close();
 sender.parentNode.onComplete();</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
     this.color1 = color1;
@@ -19802,7 +19811,7 @@ sender.init(0);
       <heightRatio>0.138996138996139</heightRatio>
       <left>328</left>
       <leftRatio>0.858638743455497</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel257"), 1);</onClick>
+      <onClick>sender.parentNode.parentNode.close();</onClick>
       <onCreate><![CDATA[ee.setText(sender,
     "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.iconClose + "</svg>"
 );
@@ -20880,9 +20889,11 @@ if (updateUserInfo.homePage.length>50) {
 }
 
 updateUserInfo.onComplete = function() {
-    ee.showAni(ee.getControl("panel54"), 1);
+    ee.setVisible(sender.parentNode, false);
+    ee.setVisible(sender.parentNode.parentNode, false);
     getUserInfo();
     if (g5.currentPageIndex == 1) showUserPage();
+    return;
     g5.popBlack.a7.show(
         "提示", "修改您的用户信息完成",
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
@@ -21911,6 +21922,7 @@ sender.v_mode = "-";
       <leftRatio>0.433755274261603</leftRatio>
       <onCreate>sender.style.position = "fixed";
 sender.c_ani = ee.getControl("panel290");
+sender.style.zIndex=200;
 
 sender.show = function() {
     ee.setVisible(this, true);
@@ -22290,6 +22302,7 @@ getOtherUserInfo2.busy = false;
       <script1>//nickName,note,homePage,onComplete
 updateUserInfo.busy = true;
 
+g5.loading.show();
 eio.appendString16(g5.token);
 eio.appendString16(updateUserInfo.nickName);
 eio.appendString16(updateUserInfo.note);
@@ -22345,7 +22358,8 @@ if (!db.executeNoneQuery("DB", sql)) {
 
 
 ]]></script2>
-      <script3>if (eio.readString8() == "F") {
+      <script3>g5.loading.close();
+if (eio.readString8() == "F") {
     g5.alert1("无法修改您的信息", eio.readString8());
     updateUserInfo.busy = false;
     return;
