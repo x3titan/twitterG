@@ -8477,7 +8477,6 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_topBlank = ee.getControl("panel336");
 sender.c_buttons = ee.getControl("layoutx11");
@@ -8800,7 +8799,6 @@ sender.fSearch = function() {
       <height>441</height>
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c3->用户]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_headerName = "page11c3_";
 sender.v_searchOptions = "user";
@@ -17795,8 +17793,7 @@ sender.show = function(refDiv, content, userInfo) {
       <height>50</height>
       <heightRatio>0.24390243902439</heightRatio>
       <left>0</left>
-      <onClick>ee.getControl("panel217").v_root = sender.parentNode.v_root;
-ee.getControl("panel217").show();
+      <onClick>g5.setBlock(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, true, null);
 </onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
@@ -17992,6 +17989,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -19509,6 +19507,7 @@ sender.onpointermove = function(event) {
       <height>259</height>
       <heightRatio>0.325376884422111</heightRatio>
       <layerName><![CDATA[  a6->通用确认窗口]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>401</left>
       <leftRatio>0.338396624472574</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
@@ -21960,16 +21959,16 @@ sender.close = function() {
       <fontColor>808080</fontColor>
       <fontFamily>arial</fontFamily>
       <height>25</height>
-      <heightRatio>0.0314070351758794</heightRatio>
+      <heightRatio>0.268817204301075</heightRatio>
       <left>50</left>
-      <leftRatio>0.475949367088608</leftRatio>
+      <leftRatio>0.318471337579618</leftRatio>
       <outerLeft>20</outerLeft>
       <sizeRatio>0.324675324675325</sizeRatio>
       <text>loading...</text>
       <top>47</top>
-      <topRatio>0.0590452261306533</topRatio>
+      <topRatio>0.505376344086022</topRatio>
       <width>77</width>
-      <widthRatio>0.0649789029535865</widthRatio>
+      <widthRatio>0.490445859872611</widthRatio>
     </control>
   </controls>
   <taskSet count="57">
@@ -23973,12 +23972,22 @@ if (options == "hot") {
 }
 if (options == "user") {
     sql =
-    "SELECT  TOP (" + top + ") dbo.userInfo.id AS userId, dbo.userInfo.userName, dbo.userInfo.nickName, dbo.userInfo.note, " + 
-    "                dbo.userInfo.photo, dbo.userInfo.titleBg, dbo.userInfo.homePage, CASE WHEN follow.userId IS NULL THEN 0 ELSE 1 END AS isFollow " +
+    "SELECT  TOP (" + top + ") dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
+    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
+    "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
+    "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
+    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow,  " +
+    "                CASE WHEN uBlockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN uBlockList1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
     "FROM      dbo.userInfo LEFT OUTER JOIN " +
-    "                dbo.follow ON dbo.userInfo.id = dbo.follow.followId AND dbo.follow.userId = " + userId + " " +
+    "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
+    "                uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + "     " +
     "WHERE " + cond + " " +
     orderby;
+    es.logCommon(sql);
 } else {
     sql =
     "SELECT   TOP (" + top + ") dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
@@ -24042,7 +24051,8 @@ if (sqlResult == null) {
 
 eio.appendString8("T");
 if (options == "user") {
-    eio.appendDataSet(sqlResult,"userId,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,isFollow",
+    eio.appendDataSet(sqlResult,
+        "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail",
         pageIndex*pageSize, pageSize);
 } else {
     eio.appendDataSet(sqlResult,
@@ -24414,7 +24424,8 @@ delTwitter.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="blockUser">
-      <script1>//userId, isBlock(0/1)
+      <script1>//userId, isBlock(0/1), onComplete
+blockUser.busy = true;
 eio.appendString16(g5.token);
 eio.appendString16(blockUser.userId + "");
 eio.appendString16(blockUser.isBlock + "");
@@ -24466,12 +24477,14 @@ if (!db.executeNoneQuery("DB", sql)) {
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
     g5.alert1("提示", eio.readString8());
+    blockUser.busy = false;
     return;
 }
 if (!eb.isEmpty(blockUser.onComplete)) {
     blockUser.onComplete();
     blockUser.onComplete=null;
 }
+blockUser.busy = false;
 
 </script3>
     </taskSetItem>
@@ -26645,7 +26658,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="85">
+  <g5Items count="86">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -28443,21 +28456,7 @@ if (root.v_mode.charAt(0)=="x") {
     }
     ee.setOnClick(c, function(sender, event) {
         if (sender.v_index==0) {
-            //屏蔽
-            g5.popBlack.a6.show(
-                "取消屏蔽@"+root.v_userInfo.userName+"？",
-                "该用户将能关注并查看你的发言",
-                [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-                [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")],
-                function() {
-                    blockUser.userId= root.v_userInfo.id;
-                    blockUser.isBlock = 0;
-                    blockUser();
-                    blockUser.onComplete = function() {
-                        sender.init(1);
-                    }
-                }
-            );
+            g5.setBlock(root.v_userInfo.id, root.v_userInfo.userName,false,null);
         } else if (sender.v_index==1) {
             //关注
             g5.setFollow(root.v_userInfo.id, root.v_userInfo.userName, false,function(userId,isFollow) {
@@ -29083,6 +29082,54 @@ if (isFollow) {
     }
     follow();
 }]]></functionCode>
+    </item>
+    <item name="setBlock" type="20">
+      <varValue />
+      <functionParam>userId,userName,isBlock,onComplete</functionParam>
+      <functionCode>var sync = function(userId, isBlock) {
+    g5.p2.p1.refresh();
+}
+
+if (isBlock) {
+    g5.popBlack.a6.show(
+        "屏蔽@"+userName+"？",
+        "他们将无法关注你或者无法查看你发送的短文，您也不会看到来自@"+userName+"的短文或者通知。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","屏蔽","屏蔽","屏蔽","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            if (blockUser.busy) return;
+            blockUser.userId = userId;
+            blockUser.isBlock = 1;
+            blockUser.onComplete = function() {
+                sync(userId, isBlock);
+                if (onComplete) {
+                    onComplete(userId, isBlock);
+                }
+            }
+            blockUser();
+        }
+    );
+} else {
+    g5.popBlack.a6.show(
+        "取消屏蔽@"+userName+"？",
+        "该用户将能关注并查看你的发言",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            if (blockUser.busy) return;
+            blockUser.userId = userId;
+            blockUser.isBlock = 0;
+            blockUser.onComplete = function() {
+                sync(userId, isBlock);
+                if (onComplete) {
+                    onComplete(userId, isBlock);
+                }
+                //sender.init(1);
+            }
+            blockUser();
+        }
+    );
+}</functionCode>
     </item>
     <item name="showCommonText" type="20">
       <varValue />
