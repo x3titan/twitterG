@@ -8477,6 +8477,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_topBlank = ee.getControl("panel336");
 sender.c_buttons = ee.getControl("layoutx11");
@@ -8799,6 +8800,7 @@ sender.fSearch = function() {
       <height>441</height>
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c3->用户]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_headerName = "page11c3_";
 sender.v_searchOptions = "user";
@@ -17368,7 +17370,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17714,7 +17715,6 @@ sender.close = function() {
       <height>205</height>
       <heightRatio>0.257537688442211</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.256540084388186</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -17793,7 +17793,7 @@ sender.show = function(refDiv, content, userInfo) {
       <height>50</height>
       <heightRatio>0.24390243902439</heightRatio>
       <left>0</left>
-      <onClick>g5.setBlock(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, true, null);
+      <onClick>g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, true, null);
 </onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
@@ -28456,7 +28456,7 @@ if (root.v_mode.charAt(0)=="x") {
     }
     ee.setOnClick(c, function(sender, event) {
         if (sender.v_index==0) {
-            g5.setBlock(root.v_userInfo.id, root.v_userInfo.userName,false,null);
+            g5.setBlock1(root.v_userInfo.id, root.v_userInfo.userName,false,null);
         } else if (sender.v_index==1) {
             //关注
             g5.setFollow(root.v_userInfo.id, root.v_userInfo.userName, false,function(userId,isFollow) {
@@ -29083,14 +29083,83 @@ if (isFollow) {
     follow();
 }]]></functionCode>
     </item>
-    <item name="setBlock" type="20">
+    <item name="setBlock1" type="20">
       <varValue />
-      <functionParam>userId,userName,isBlock,onComplete</functionParam>
-      <functionCode>var sync = function(userId, isBlock) {
-    g5.p2.p1.refresh();
+      <functionParam>userId,userName,isBlock1,onComplete</functionParam>
+      <functionCode><![CDATA[var collectUserInfoItems = function() {
+    var r = new Array();
+    r.push(g5.p2.p1.v_items);
+    r.push(g5.p2.p2.p1Items);
+    r.push(g5.p2.p2.p3Items);
+    r.push(g5.p2.p2.p2sub.chat.c_chat.c_chatRoot.v_items);
+    r.push(g5.p3.p8.p1.c_chatRoom.c_chatRoot.v_items);
+    r.push(g5.p2.p12.v_items);
+    r.push(g5.p2.p13.v_items);
+    r.push(g5.p2.p15.v_items);
+    r.push(g5.p2.p16.v_items);
+    r.push(g5.p2.p5.v_items);
+    r.push(g5.p2.p11.c_pages.c1.v_items);
+    r.push(g5.p2.p11.c_pages.c2.v_items);
+    r.push(g5.p2.p11.c_pages.c3.v_items);
+    r.push(g5.p2.p11.c_pages.c4.v_items);
+    r.push(g5.p2.p11.c_pages.c5.v_items);
+    r.push(g5.p2.p9.v_items);
+    r.push(g5.p2.p9.c_tabRoot.p1.v_items);
+    r.push(g5.p2.p9.c_tabRoot.p2.v_items);
+    r.push(g5.p2.p9.c_tabRoot.p3.v_items);
+    r.push(g5.p2.p9.c_tabRoot.p4.v_items);
+    for (var i=0; i<g5.p2.p9.v_hisItems.length; i++) {
+        r.push(g5.p2.p9.v_hisItems[i].v_items);
+        r.push(g5.p2.p9.v_hisItems[i].v_itemsP1);
+        r.push(g5.p2.p9.v_hisItems[i].v_itemsP2);
+        r.push(g5.p2.p9.v_hisItems[i].v_itemsP3);
+        r.push(g5.p2.p9.v_hisItems[i].v_itemsP4);
+    }
+    return r;
 }
 
-if (isBlock) {
+var sync = function(userId, isBlock1) {
+    g5.p2.p1.refresh();
+    //g5.p2.p2.setIsFollow(userId, isFollow);
+    var itemList = collectUserInfoItems();
+    var i,j;
+    for (i=0; i<itemList.length; i++) {
+        var items = itemList[i];
+        for (j=0; j<items.length; j++) {
+            if (items[j].v_userInfo) {
+                if (items[j].v_userInfo.id == userId) { 
+                    items[j].v_userInfo.isBlock1 = isBlock1;
+                    if (isBlock1) items[j].v_userInfo.isFollow = false;
+                }
+            }
+            if (items[j].v_reUserInfo) {
+                if (items[j].v_reUserInfo.id == userId) { 
+                    items[j].v_reUserInfo.isBlock1 = isBlock1;
+                    if (isBlock1) items[j].v_reUserInfo.isFollow = false;
+                }
+            }
+            if (items[j].v_content) {
+                if (items[j].v_content.exUserInfo) {
+                    if (items[j].v_content.exUserInfo.id == userId) { 
+                        items[j].v_content.exUserInfo.isBlock1 = isBlock1;
+                        if (isBlock1) items[j].v_content.exUserInfo.isFollow = false;
+                    }
+                }
+            }
+            if (items[j].v_userBar) {
+                if (items[j].v_userInfo.isBlock1) {
+                    items[j].button1.init(0);
+                } else if (items[j].v_userInfo.isFollow) {
+                    items[j].button1.init(2);
+                } else {
+                    items[j].button1.init(1);
+                }
+            } 
+        }
+    }
+}
+
+if (isBlock1) {
     g5.popBlack.a6.show(
         "屏蔽@"+userName+"？",
         "他们将无法关注你或者无法查看你发送的短文，您也不会看到来自@"+userName+"的短文或者通知。",
@@ -29101,9 +29170,9 @@ if (isBlock) {
             blockUser.userId = userId;
             blockUser.isBlock = 1;
             blockUser.onComplete = function() {
-                sync(userId, isBlock);
+                sync(userId, isBlock1);
                 if (onComplete) {
-                    onComplete(userId, isBlock);
+                    onComplete(userId, isBlock1);
                 }
             }
             blockUser();
@@ -29120,16 +29189,16 @@ if (isBlock) {
             blockUser.userId = userId;
             blockUser.isBlock = 0;
             blockUser.onComplete = function() {
-                sync(userId, isBlock);
+                sync(userId, isBlock1);
                 if (onComplete) {
-                    onComplete(userId, isBlock);
+                    onComplete(userId, isBlock1);
                 }
                 //sender.init(1);
             }
             blockUser();
         }
     );
-}</functionCode>
+}]]></functionCode>
     </item>
     <item name="showCommonText" type="20">
       <varValue />
