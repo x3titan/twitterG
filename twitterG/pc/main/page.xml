@@ -1,5 +1,5 @@
 <page>
-  <controls count="530">
+  <controls count="527">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -10483,7 +10483,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p17->设置-账号]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniStart>sender.reset();</onAniStart>
       <onCreate><![CDATA[sender.show = function() {
@@ -10584,18 +10583,21 @@ sender.style.borderRightColor = "#e6ecf0";
       <leftRatio>0.0333333333333333</leftRatio>
       <onClick>history.go(-1);
 window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
-      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:6px 0px 0px 6px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.icon.back+"</svg>";
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 26 26\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:5px 0px 0px 4px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.icon.back+"</svg>";
 sender.style.borderRadius = "50%";
-ee.setOnMouseEnter(c, function(sender,event) {
+ee.setOnMouseEnter(sender, function(sender,event) {
     sender.style.backgroundColor = "#dfeffa";
-    //sender.childNodes[0].style.color = "rgb(29,161,242)";
 });    
-ee.setOnMouseLeave(c, function(sender,event) {
+ee.setOnMouseLeave(sender, function(sender,event) {
     sender.style.backgroundColor = "";
-    //sender.childNodes[0].style.color = "rgb(101,119,134)";
 });
-
-]]></onCreate>
+sender.eeMouseDown = function(sender, event, x, y) {
+    sender.style.backgroundColor = "#cfdfea";
+}
+sender.eeMouseUp = function(sender, event, x, y) {
+    sender.style.backgroundColor = "#dfeffa";
+}
+eb.initMouseEvent(sender);]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
       <top>9</top>
@@ -10914,6 +10916,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p18->设置-隐私和安全]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniStart>sender.reset();</onAniStart>
       <onCreate><![CDATA[sender.show = function() {
@@ -11197,6 +11200,51 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <top>0</top>
       <width>4</width>
       <widthRatio>0.0130293159609121</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel208">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>702</height>
+      <heightRatio>0.9</heightRatio>
+      <layerName><![CDATA[P2->p19->设置-隐私和安全-已屏蔽账号]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onAniStart>sender.reset();</onAniStart>
+      <onCreate><![CDATA[sender.refresh = function() {
+    for (var i=0; i<this.eeChildren.length; i++) {
+        if (eb.isEmpty(this.eeChildren[i].selected)) continue;
+        if (this.eeChildren[i].selected) {
+            ee.setVisible(this.eeChildren[i].rightLine, true);
+            this.eeChildren[i].style.backgroundColor = "rgb(245,248,250)";
+        } else {
+            ee.setVisible(this.eeChildren[i].rightLine, false);
+            this.eeChildren[i].style.backgroundColor = "";
+        }
+    }
+}
+
+sender.reset = function() {
+    for (var i=0; i<this.eeChildren.length; i++) {
+        if (eb.isEmpty(this.eeChildren[i].selected)) continue;
+        this.eeChildren[i].selected = false;
+    }
+    this.refresh();
+}
+
+sender.setSelected = function(item) {
+    this.reset();
+    item.selected = true;
+    this.refresh();
+}]]></onCreate>
+      <sizeRatio>1.17</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -11558,105 +11606,6 @@ ee.showAni(ee.getControl("panel27"), 0);
       <top>0</top>
       <width>1</width>
       <widthRatio>0.00325732899022801</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel208">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <aniAlpha>appear:渐变出现</aniAlpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>stretch</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>top</dockY>
-      <height>702</height>
-      <heightRatio>0.972299168975069</heightRatio>
-      <layerName><![CDATA[P3->6->已屏蔽账号]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onAniStart>sender.reset();</onAniStart>
-      <onCreate><![CDATA[sender.refresh = function() {
-    for (var i=0; i<this.eeChildren.length; i++) {
-        if (eb.isEmpty(this.eeChildren[i].selected)) continue;
-        if (this.eeChildren[i].selected) {
-            ee.setVisible(this.eeChildren[i].rightLine, true);
-            this.eeChildren[i].style.backgroundColor = "rgb(245,248,250)";
-        } else {
-            ee.setVisible(this.eeChildren[i].rightLine, false);
-            this.eeChildren[i].style.backgroundColor = "";
-        }
-    }
-}
-
-sender.reset = function() {
-    for (var i=0; i<this.eeChildren.length; i++) {
-        if (eb.isEmpty(this.eeChildren[i].selected)) continue;
-        this.eeChildren[i].selected = false;
-    }
-    this.refresh();
-}
-
-sender.setSelected = function(item) {
-    this.reset();
-    item.selected = true;
-    this.refresh();
-}]]></onCreate>
-      <sizeRatio>2.28664495114007</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel208/panel209">
-      <backgroundColor>FFC080</backgroundColor>
-      <dockX>fill</dockX>
-      <dockY>top</dockY>
-      <height>51</height>
-      <heightRatio>0.0726495726495727</heightRatio>
-      <left>0</left>
-      <onCreate>sender.style.boxSizing="border-box";
-sender.style.borderWidth = "1px";
-sender.style.borderColor = "#ccd6dd";
-sender.style.borderStyle = "solid";
-sender.style.borderTop = "";
-sender.style.borderLeft = "";
-sender.style.borderRightColor = "#e6ecf0";
-</onCreate>
-      <sizeRatio>0.166123778501629</sizeRatio>
-      <top>0</top>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel208/panel209/panel211">
-      <cursor>pointer</cursor>
-      <dockY>fill</dockY>
-      <fontBold>true</fontBold>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>51</height>
-      <heightRatio>1</heightRatio>
-      <left>16</left>
-      <leftRatio>0.0521172638436482</leftRatio>
-      <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.337748344370861</sizeRatio>
-      <text>已屏蔽账号</text>
-      <top>0</top>
-      <width>151</width>
-      <widthRatio>0.49185667752443</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel137/panel208/panel212">
-      <autoScroll>true</autoScroll>
-      <bindTop>bottom</bindTop>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>649</height>
-      <heightRatio>0.924501424501424</heightRatio>
-      <left>0</left>
-      <outerTop>53</outerTop>
-      <sizeRatio>2.11400651465798</sizeRatio>
-      <top>53</top>
-      <topRatio>0.0754985754985755</topRatio>
-      <width>307</width>
-      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137/panel231">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
