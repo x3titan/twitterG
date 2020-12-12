@@ -1763,7 +1763,7 @@ sender.loadFromServer = function() {
         eb.setDivRect(g5.p2.p1,null,null,null,cy);
         eb.processDock();
     }
-    g5.loading.show();
+    g5.loading.show2();
     updateHomepage();    
 }
 
@@ -12437,6 +12437,7 @@ eb.initMouseEvent(sender);
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p23->设置-账号-修改密码]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.refresh = function() {
     ee.getControl("panel248").setEnabled(
@@ -22232,21 +22233,32 @@ sender.v_mode = "-";
     <control type="Panel" pathname="/divRoot/panel291">
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>stretch</backgroundImgMode>
-      <dockX>center</dockX>
-      <dockY>center</dockY>
       <height>93</height>
       <heightRatio>0.116834170854271</heightRatio>
       <layerName>loading 等待动画</layerName>
-      <layerVisible>false</layerVisible>
       <left>514</left>
       <leftRatio>0.433755274261603</leftRatio>
       <onCreate>sender.style.position = "fixed";
 sender.c_ani = ee.getControl("panel290");
 sender.style.zIndex=200;
+sender.c_text = ee.getControl("panel292");
 
 sender.show = function() {
     ee.setVisible(this, true);
+    ee.setVisible(this.c_text, true);
     this.c_ani.className = "aniLoading";
+    var r1 = eb.getDivRectSetting(g5.p2);
+    var r2 = eb.getDivRectSetting(this);
+    ee.setRect(this, parseInt((r1.w-r2.w)/2 + r1.x), parseInt((eb.getClientSize().h-r2.h)/2), null, null);
+}
+
+sender.show2 = function() {
+    ee.setVisible(this, true);
+    ee.setVisible(this.c_text, false);
+    this.c_ani.className = "aniLoading";
+    var r1 = eb.getDivRectSetting(g5.p2);
+    var r2 = eb.getDivRectSetting(this);
+    ee.setRect(this, parseInt((r1.w-r2.w)/2 + r1.x), eb.getClientSize().h-r2.h, null, null);
 }
 
 sender.close = function() {
