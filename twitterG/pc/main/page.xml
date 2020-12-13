@@ -6768,8 +6768,7 @@ sender.activePage = function() {
 }
 
 sender.show = function() {
-    this.v_needRefresh = sender.v_items.length<=0;
-    if (!this.v_needRefresh) {
+    if (this.v_status != "init") {
         g5.changeP2(4);
         document.documentElement.scrollTop = this.v_lastScrollTop;
         g5.resizeV(this.parentNode, 1);
@@ -6780,6 +6779,15 @@ sender.show = function() {
     g5.changeP2(4);
     this.c_topBlank.show();
     this.load();
+}
+
+sender.refresh = function() {
+    if (g5.currentPageIndex == 4) {
+        this.v_status = "init";
+        this.show();
+    } else {
+        this.v_status = "init";
+    }    
 }
 
 sender.clear = function() {
@@ -21275,11 +21283,15 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
-        ee.showAni(sender.eeChildren[i], 1);
+        if (sender.eeChildren[i].v_noAni) {
+            ee.setVisible(sender.eeChildren[i], false);
+            ee.setVisible(sender, false);
+        } else {
+            ee.showAni(sender.eeChildren[i], 1);
+        }
     }
 }]]></onClick>
       <onCreate><![CDATA[sender.style.zIndex=100;
@@ -21355,13 +21367,13 @@ if (sender.v_closeCount>=4) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.215189873417722</leftRatio>
-      <onAni2End>ee.setVisible(ee.getControl("panel268"), false);</onAni2End>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
 </onClick>
-      <onCreate><![CDATA[sender.show = function(refDiv, v_userInfo) {
+      <onCreate><![CDATA[sender.v_noAni = true;
+
+sender.show = function(refDiv, v_userInfo) {
     this.v_userInfo = v_userInfo
     this.refDiv = refDiv;
     this.refresh();
@@ -21463,7 +21475,8 @@ sender.refresh = function() {
     }
     
     ee.setVisible(this.parentNode, true);
-    ee.showAni(this, 0);
+    ee.setVisible(this, true);
+    //ee.showAni(this, 0);
 }
 ]]></onCreate>
       <sizeRatio>0.813008130081301</sizeRatio>
@@ -21503,22 +21516,7 @@ sender.style.borderRadius = "50%";
       <left>213</left>
       <leftRatio>0.577235772357724</leftRatio>
       <onClick>if (sender.v_index==0) {
-    //屏蔽
-    ee.getControl("panel257").show(
-        "取消屏蔽@"+showUserPage.userName+"？",
-        "该用户将能关注并查看你的发言",
-        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")],
-        function() {
-            blockUser.userId= showUserPage.id;
-            blockUser.isBlock = 0;
-            blockUser();
-            blockUser.onComplete = function() {
-                ee.getControl("panel256").init(1);
-            }
-        }
-    );
-    ee.showAni(sender.parentNode, 1);
+    g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false, null);
 } else if (sender.v_index==1) {
     //关注
     g5.setFollow(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false,function(userId,isFollow) {
@@ -22236,6 +22234,7 @@ sender.v_mode = "-";
       <height>93</height>
       <heightRatio>0.116834170854271</heightRatio>
       <layerName>loading 等待动画</layerName>
+      <layerVisible>false</layerVisible>
       <left>514</left>
       <leftRatio>0.433755274261603</leftRatio>
       <onCreate>sender.style.position = "fixed";
@@ -23763,7 +23762,7 @@ sql =
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND  " +
     "                exUnlikeList.userId = " + myUserId + " " +
-    "WHERE   (dbo.bookMark.userId = " + myUserId + ") " +
+    "WHERE   (dbo.bookMark.userId = " + myUserId + ") and (ublockList.id IS NULL) " +
     "ORDER BY dbo.bookMark.id DESC; ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -25611,6 +25610,26 @@ if (userName=="guest") {
     return;
 }
 
+sql = "select * from userInfo where userName='" + db.encode(userName) + "' and mobile='" + db.encode(mobile) + "'; " +
+    "select * from userInfo where userName<>'" + db.encode(userName) + "' and mobile='" + db.encode(mobile) + "'; ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+if (db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("您输入的手机号码和原来的相同。");
+    return;
+}
+db.nextResult(sqlResult);
+if (db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("该手机号码已经被其他人使用过了。");
+    return;
+}
+
 sql = "update userInfo set mobile = '" + db.encode(mobile) + "'" +
     " where userName = '" + db.encode(userName) + "'";
 if (!db.executeNoneQuery("DB", sql)) {
@@ -25677,6 +25696,26 @@ var userName =db.getString(sqlResult,"userName");
 if (userName=="guest") {
     eio.appendString8("F");
     eio.appendString8("游客不能对本内容进行修改，如需要更多的功能请注册正式用户。");
+    return;
+}
+
+sql = "select * from userInfo where userName='" + db.encode(userName) + "' and email='" + db.encode(email) + "'; " +
+    "select * from userInfo where userName<>'" + db.encode(userName) + "' and email='" + db.encode(email) + "'; ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+if (db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("您输入的电子邮件地址和原来的相同。");
+    return;
+}
+db.nextResult(sqlResult);
+if (db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("该电子邮件地址已经被其他人使用过了。");
     return;
 }
 
@@ -29504,6 +29543,7 @@ var sync = function(userId, isBlock1) {
     g5.p2.p1.refresh();
     g5.p2.p11.refresh();
     g5.p2.p19.refresh();
+    g5.p2.p5.refresh();
     //g5.p2.p2.setIsFollow(userId, isFollow);
     var itemList = collectUserInfoItems();
     var i,j;
