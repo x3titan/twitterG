@@ -2309,11 +2309,11 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
 sender.p3Items = new Array();
+sender.c_block = ee.getControl("panel6");
 
 sender.show = function(v_userInfo, userId, userName) {
     if (showUserPage.busy) return;
@@ -2379,6 +2379,9 @@ sender.show = function(v_userInfo, userId, userName) {
             ee.removeControl(sender.p1Items[i]);
         }
         sender.p1Items = new Array();
+        if (sender.c_block.style.visibility != "hidden") {
+            return;
+        }
         
         var rect = eb.getDivRect(ee.getControl("panel73"),null,cy,null,null);
         var cy = rect.y + rect.h;
@@ -2415,14 +2418,16 @@ sender.show = function(v_userInfo, userId, userName) {
         if (showUserPage.privateChatRoomRights) {
             g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
         }
-                
+        
         g5.tiledV(g5.p2PersonSub.p1,0);
         g5.p2PersonSub.init();
         g5.p2PersonSub.changePage(1);
         g5.p3.p8.init();
     }
-    g5.loading.show();
-    showUserPage();    
+    if ((this.c_block.style.visibility == "hidden") || eb.isEmpty(v_userInfo)) {
+        g5.loading.show();
+        showUserPage();
+    }
 }
 
 sender.close = function() {
@@ -2561,13 +2566,18 @@ sender.showByUserInfo = function(v_userInfo) {
     }
     cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
     
-    if (v_userInfo.isBlock1) {
-        ee.setVisible(ee.getControl("panel6"), true);
+    if (v_userInfo.isBlock1) ee.getControl("panel256").init(0);
+    if ((v_userInfo.isBlock1) &amp;&amp; (!v_userInfo.blockShow)) {
+        g5.changeP2(1);
+        ee.setVisible(this.c_block, true);
+        ee.setRect(this.c_block, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
         ee.setText(ee.getControl("panel253"), "@" + v_userInfo.userName + "已被屏蔽");
         ee.setText(ee.getControl("panel254"), "是否确定要查看这些发言？查看发言不会取消屏蔽 @" + v_userInfo.userName + "。");
-        ee.getControl("panel255").cy = cy;
         g5.changeP2(1);
-        ee.getControl("panel256").init(0);
+        var r1 = eb.getDivRectSetting(this.c_block);
+        ee.setRect(this,null,null,null,r1.y+r1.h);
+        ee.resizeV(this.parentNode, 1);
+        ee.setVisible(g5.p3, false);
         return;
     } else {
         ee.setVisible(ee.getControl("panel6"), false);
@@ -3026,133 +3036,6 @@ sender.init(0);
       <width>138</width>
       <widthRatio>0.23</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <height>452</height>
-      <heightRatio>0.57948717948718</heightRatio>
-      <layerName><![CDATA[p2.p2.p0->屏蔽别人]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>0.753333333333333</sizeRatio>
-      <top>373</top>
-      <topRatio>0.478205128205128</topRatio>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6/panel252">
-      <backgroundColor>E6ECF0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <height>1</height>
-      <heightRatio>0.00221238938053097</heightRatio>
-      <left>0</left>
-      <note>PLine1</note>
-      <sizeRatio>0.00166666666666667</sizeRatio>
-      <top>0</top>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6/panel253">
-      <dockX>fill</dockX>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>34</height>
-      <heightRatio>0.0752212389380531</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.0566666666666667</sizeRatio>
-      <text>@xxxxx已被屏蔽</text>
-      <top>32</top>
-      <topRatio>0.0707964601769911</topRatio>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6/panel254">
-      <dockX>fill</dockX>
-      <fontColor>808080</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <height>34</height>
-      <heightRatio>0.0752212389380531</heightRatio>
-      <left>0</left>
-      <sizeRatio>0.0566666666666667</sizeRatio>
-      <text>是否确定要查看这些发言？查看发言不会取消屏蔽 @xxxx。</text>
-      <top>64</top>
-      <topRatio>0.141592920353982</topRatio>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6/panel255">
-      <backgroundColor>8ED0F9</backgroundColor>
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontColor>1DA1F2</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <height>40</height>
-      <heightRatio>0.0884955752212389</heightRatio>
-      <left>246</left>
-      <leftRatio>0.41</leftRatio>
-      <onClick><![CDATA[ee.setVisible(ee.getControl("panel6"), false);
-
-var cy = sender.cy;
-var i, item;
-var root = ee.getControl("panel16"); 
-var itemWidth = eb.getDivRect(root).w;
-for (i=0; i< g5.datasetPageUser.rowCount; i++) {
-    var item = createPanel(root, "puser_" + g5.datasetPageUser.getData(0,i), "", 0, cy, itemWidth, 5);
-    g5.loadTwitterRecord(item, g5.datasetPageUser, i);
-    item.v_mode = "   x";
-    g5.renderTwitter(item);
-    g5.itemsPageUser.push(item);
-    cy += 0 + eb.getDivRect(item).h;
-    item.style.borderLeft="";    
-    item.style.borderRight="";    
-}
-ee.setRect(root,null,null,null,cy);
-eb.setDivRect(g5.p2,null,null,null,cy);
-]]></onClick>
-      <onCreate>sender.bgColor = "";
-sender.bgColorHot = "#e8f5fe";
-sender.bgColorDown = "#d2ecfc";
-
-sender.style.boxSizing="border-box";
-sender.style.borderWidth = "1px";
-sender.style.borderColor = "rgb(29, 161, 242)";
-sender.style.borderStyle = "solid";
-sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
-
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = sender.bgColorHot;
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = sender.bgColor
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = sender.bgColorDown
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = sender.bgColorHot;
-}
-eb.initMouseEvent(sender);
-
-
-
-
-
-
-
-</onCreate>
-      <sizeRatio>0.373831775700935</sizeRatio>
-      <text>查看发言</text>
-      <top>112</top>
-      <topRatio>0.247787610619469</topRatio>
-      <width>107</width>
-      <widthRatio>0.178333333333333</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279">
       <dockX>fill</dockX>
       <height>374</height>
@@ -3588,7 +3471,7 @@ sender.init(0);
       <dockX>fill</dockX>
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
-      <layerName><![CDATA[p1->综合]]></layerName>
+      <layerName><![CDATA[  p1->综合]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_titleChat = ee.getControl("panel263");
@@ -6404,7 +6287,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <dockX>fill</dockX>
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
-      <layerName><![CDATA[p2->聊天室]]></layerName>
+      <layerName><![CDATA[  p2->聊天室]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.456666666666667</sizeRatio>
@@ -6419,7 +6302,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <dockX>fill</dockX>
       <height>132</height>
       <heightRatio>0.352941176470588</heightRatio>
-      <layerName><![CDATA[p3->发言和回复]]></layerName>
+      <layerName><![CDATA[  p3->发言和回复]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.22</sizeRatio>
@@ -6427,6 +6310,119 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <topRatio>0.13903743315508</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>275</height>
+      <heightRatio>0.352564102564103</heightRatio>
+      <layerName><![CDATA[  c_block->屏蔽别人]]></layerName>
+      <left>0</left>
+      <sizeRatio>0.458333333333333</sizeRatio>
+      <top>480</top>
+      <topRatio>0.615384615384615</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6/panel252">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>1</height>
+      <heightRatio>0.00221238938053097</heightRatio>
+      <left>0</left>
+      <note>PLine1</note>
+      <sizeRatio>0.00166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6/panel253">
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>34</height>
+      <heightRatio>0.0752212389380531</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>@xxxxx已被屏蔽</text>
+      <top>32</top>
+      <topRatio>0.0707964601769911</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6/panel254">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.0752212389380531</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>是否确定要查看这些发言？查看发言不会取消屏蔽 @xxxx。</text>
+      <top>64</top>
+      <topRatio>0.141592920353982</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel6/panel255">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.0884955752212389</heightRatio>
+      <left>246</left>
+      <leftRatio>0.41</leftRatio>
+      <onClick>ee.setVisible(this.parentNode, false);
+var userInfo = g5.p2.p2.v_userInfo;
+userInfo.blockShow = true;
+g5.p2.p2.v_userInfo = new g5.UserInfo();
+g5.p2.p2.show(userInfo);
+</onClick>
+      <onCreate>sender.bgColor = "";
+sender.bgColorHot = "#e8f5fe";
+sender.bgColorDown = "#d2ecfc";
+
+sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(29, 161, 242)";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = sender.bgColorHot;
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = sender.bgColor
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = sender.bgColorDown
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = sender.bgColorHot;
+}
+eb.initMouseEvent(sender);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.373831775700935</sizeRatio>
+      <text>查看发言</text>
+      <top>112</top>
+      <topRatio>0.247787610619469</topRatio>
+      <width>107</width>
+      <widthRatio>0.178333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel82">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
@@ -9506,6 +9502,16 @@ sender.show = function() {
     ee.tiledV(this, 0, rect.h, 500); 
     this.load();
 }
+
+sender.refresh = function() {
+    if (g5.currentPageIndex == 12) {
+        this.v_needRefresh = true;
+        this.show();
+    } else {
+        this.v_needRefresh = true;
+    }
+}
+
 
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
@@ -21283,6 +21289,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -21367,6 +21374,7 @@ if (sender.v_closeCount>=4) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.215189873417722</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -24662,7 +24670,8 @@ sql =
     "                uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " " +
-    "ORDER BY derivedtbl_2.maxId DESC        ";
+    "WHERE  ublockList.id IS NULL " +
+    "ORDER BY derivedtbl_2.maxId DESC; ";
     
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -29544,6 +29553,7 @@ var sync = function(userId, isBlock1) {
     g5.p2.p11.refresh();
     g5.p2.p19.refresh();
     g5.p2.p5.refresh();
+    g5.p2.p13.refresh();
     //g5.p2.p2.setIsFollow(userId, isFollow);
     var itemList = collectUserInfoItems();
     var i,j;
