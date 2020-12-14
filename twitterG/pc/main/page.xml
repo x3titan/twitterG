@@ -78,249 +78,6 @@ initLButton = function(button,text,dy,icon,size,dx) {
     ee.setText(button.status3, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
-
-//判断node节点是否属于root的分支节点，如果node是root自身也会返回true
-ee.isBranchNode = function(root, node) {
-    if (eb.isEmpty(root)) return false;
-    while (!eb.isEmpty(node)) {
-        if (node==root) return true;
-        node = node.parentNode;
-    }
-    return false;
-}
-
-//判断一个node节点是否是panel的ePage系统自建节点的一部分,panel和node相同也会返回true
-ee.isInternalNode = function(panel, node) {
-    if (eb.isEmpty(panel)) return false;
-    if (panel == node) return true;
-    if (panel.label) {
-        if (ee.isBranchNode(panel.label.parentNode, node)) return true;
-    }
-    if (panel._input) {
-        if (ee.isBranchNode(panel._input, node)) return true;
-    }
-    if (panel.img) {
-        if (ee.isBranchNode(panel.img, node)) return true;
-    }
-    if (panel.skin) {
-        for (var i=0; i<panel.skin.length; i++) {
-            if (ee.isBranchNode(panel.skin[i], node)) return true;
-        }
-    }
-    return false;
-}
-
-//获取panel下所有非隐藏控件的Y最大值，child为强制计算的控件
-ee.getMaxY = function(panel, child) {
-    var result = 0;
-    var rect;
-    for (var i=0; i<panel.eeChildren.length; i++) {
-        if ((panel.eeChildren[i]!=child) &amp;&amp; (panel.eeChildren[i].style.visibility == "hidden")) continue;
-        rect = eb.getDivRectSetting(panel.eeChildren[i]);
-        if (rect.y + rect.h > result) result = rect.y + rect.h;
-    }
-    return result;
-}
-
-//缩放panel为最大内部可见控件的高度，同时向父方向重做level次(包含自身)
-ee.resizeV = function(panel, level) {
-    var child = null;
-    for (var i=0; i<level; i++) {
-        var maxY = ee.getMaxY(panel, child);
-        ee.setRect(panel, null, null, null, maxY);
-        child = panel;
-        panel = panel.parentNode;
-    }
-}
-
-//把panel内部的可见控件在Y方向排布，
-ee.tiledV = function(panel,sp,spTop,spBottom) {
-    if (eb.isEmpty(spTop)) spTop = 0;
-    if (eb.isEmpty(spBottom)) spBottom = 0;
-    panel.v_tiledVSp = sp;
-    panel.v_tiledVSpTop = spTop;
-    panel.v_tiledVSpBottom = spBottom;
-    var rect, cy = spTop;
-    for (var i = 0; i < panel.eeChildren.length; i++) {
-        if (panel.eeChildren[i].style.visibility == "hidden") continue;
-        if (i != 0) cy += sp;
-        ee.setRect(panel.eeChildren[i], null, cy, null, null);
-        rect = eb.getDivRectSetting(panel.eeChildren[i]);
-        cy += rect.h;
-    }
-    cy += spBottom;
-    ee.setRect(panel, null, null, null, cy);
-}
-
-//把panel内部的可见控件在Y方向排布,如果以前没有排布过，则采用最大内部控件模式(resize模式)，并向父方向重做level次(包含本节点)
-ee.tiledResizeV = function(panel, level) {
-    var child = null;
-    for (var i=0; i<level; i++) {
-        if (!eb.isEmpty(panel.v_tiledVSp)) {
-            ee.tiledV(panel, panel.v_tiledVSp, panel.v_tiledVSpTop, panel.v_tiledVSpBottom);
-        } else {
-            ee.resizeV(panel, 1);
-        }
-        panel = panel.parentNode;
-    }
-}
-
-//增加功能：
-//  1. 如果newParent为空，则仅仅移除控件，但控件不释放内容不删除
-//  2. 如果control没有父节点，则仅在newParent下增加
-ee.changeParent = function (control, newParent, pos) {
-    var i;
-    if (control.parentNode) {
-        for (i = 0; i < control.parentNode.eeChildren.length; i++) {
-            if (control.parentNode.eeChildren[i] == control) {
-                control.parentNode.eeChildren.splice(i, 1);
-                break;
-            }
-        }
-    }
-    if (!newParent) {
-        if (control.parentNode) control.parentNode.removeChild(control);
-        return;
-    }
-    if ((pos < 0) || (pos >= newParent.eeChildren.length)) {
-        newParent.eeChildren.push(control);
-        newParent.appendChild(control);
-    } else {
-        newParent.insertBefore(control, newParent.eeChildren[pos]);
-        newParent.eeChildren.splice(pos, 0, control);
-    }
-}
-
-ee.setRect = function (panel, x, y, w, h, refresh) {
-        var i, j, lastp, currentp, pos, rect = eb.getDivRectSetting(panel);
-        if (eb.isEmpty(refresh)) refresh = false;
-        if (!refresh) {
-            if ((w == rect.w) &amp;&amp; (h == rect.h)) {
-                eb.setDivRect(panel, x, y, w, h);
-                return;
-            }
-        }
-        if (eb.isEmpty(w)) w = rect.w;
-        if (eb.isEmpty(h)) h = rect.h;
-        eb.setDivRect(panel, x, y, w, h);
-        if (panel.skin != undefined) {
-            var imgW = panel.skinImgW;
-            var imgH = panel.skinImgH;
-            var rx = panel.skinX;
-            var ry = panel.skinY;
-            var rw = panel.skinW;
-            var rh = panel.skinH;
-            if (panel.skinClipMode == "9x") {
-                var dw = w - (imgW - rw);
-                var dh = h - (imgH - rh);
-                var cw = imgW - rx - rw;
-                var ch = imgH - ry - rh;
-                eb.restretchImg(panel.skin[0], 0, 0, 0, 0, 0, 0, 0, 0, rx, ry);
-                eb.restretchImg(panel.skin[1], 0, 0, rx + rw, 0, 0, 0, rx + dw, 0, cw, ry);
-                eb.restretchImg(panel.skin[2], 0, 0, 0, ry + rh, 0, 0, 0, ry + dh, rx, ch);
-                eb.restretchImg(panel.skin[3], 0, 0, rx + rw, ry + rh, 0, 0, rx + dw, ry + dh, cw, ch);
-                eb.restretchImg(panel.skin[4], imgW, imgH, rx, 0, rw, ry, rx, 0, dw, ry);
-                eb.restretchImg(panel.skin[5], imgW, imgH, rx, ry + rh, rw, ch, rx, ry + dh, dw, ch);
-                eb.restretchImg(panel.skin[6], imgW, imgH, 0, ry, rx, rh, 0, ry, rx, dh);
-                eb.restretchImg(panel.skin[7], imgW, imgH, rx + rw, ry, cw, rh, rx + dw, ry, cw, dh);
-                eb.restretchImg(panel.skin[8], imgW, imgH, rx, ry, rw, rh, rx, ry, dw, dh);
-            } else if (panel.skinClipMode == "LR3x") {
-                var w1 = parseInt(h * rx / rh);
-                var w3 = parseInt(h * (imgW - rx - rw) / rh);
-                var w2 = w - w1 - w3;
-                if (w2 <= 0) {
-                    w2 = 1;
-                    w1 = parseInt(w * w1 / (w3 + w1));
-                    w3 = w - w1 - w2;
-                }
-                eb.restretchImg(panel.skin[0], imgW, imgH, 0, 0, rx, rh, 0, 0, w1, h); //left
-                eb.restretchImg(panel.skin[1], imgW, imgH, rx, ry, rw, rh, w1, 0, w2, h); //middle
-                eb.restretchImg(panel.skin[2], imgW, imgH, rx + rw, ry, imgW - rx - rw, rh, w1 + w2, 0, w3, h); //right
-            }
-            if (!eb.isEmpty(panel.label)) {
-                eb.setDivRect(panel.label.parentNode, panel.skinCX, panel.skinCY, w - panel.skinImgW + panel.skinCW, h - panel.skinImgH + panel.skinCH);
-                var cy = parseInt((h - panel.skinImgH + panel.skinCH) / 2);
-                if (panel.label.vAlign == "top") {
-                    eb.setDivRect(panel.label, 0, 0, w - panel.skinImgW + panel.skinCW, h * 2);
-                } else if (panel.label.vAlign == "bottom") {
-                    eb.setDivRect(panel.label, 0, h - panel.skinImgH + panel.skinCH - h * 2, w - panel.skinImgW + panel.skinCW, h * 2);
-                } else {
-                    eb.setDivRect(panel.label, 0, parseInt(cy - h / 2), w - panel.skinImgW + panel.skinCW, h);
-                }
-            }
-            if (!eb.isEmpty(panel._input)) {
-                eb.setDivRect(panel._input, panel.skinCX, panel.skinCY,
-                    eb.getDivRect(panel).w - panel.skinImgW + panel.skinCW,
-                    eb.getDivRect(panel).h - panel.skinImgH + panel.skinCH);
-                if (!panel._input.multiLine) panel._input.style.lineHeight = eb.getDivRect(panel._input).h + "px";
-            }
-        } else {
-            if (!eb.isEmpty(panel.label)) {
-                eb.setDivRect(panel.label.parentNode, 0, 0, w, h);
-                eb.setDivRect(panel.label, 0, 0, w, h);
-            }
-        }
-        if (panel.img != undefined) {
-            addImageOnLoad(null, panel.img);
-        }
-        if (panel.layout != undefined) {
-            var totalSize;
-            if (panel.layout == "LayoutX") {
-                totalSize = eb.getDivRect(panel).w;
-            } else {
-                totalSize = eb.getDivRect(panel).h;
-            }
-            var totalHeavy = 0;
-            for (i = 0; i < panel.eeChildren.length; i++) {
-                if (!panel.eeChildren[i].heavyEnabled) {
-                    if (panel.layout == "LayoutX") {
-                        totalSize -= eb.getDivRect(panel.eeChildren[i]).w;
-                    } else {
-                        totalSize -= eb.getDivRect(panel.eeChildren[i]).h;
-                    }
-                } else {
-                    totalHeavy += panel.eeChildren[i].heavy;
-                }
-            }
-            lastp = 0; pos = 0;
-            for (i = 0; i < panel.eeChildren.length; i++) {
-                if (panel.eeChildren[i].heavyEnabled) {
-                    currentp = panel.eeChildren[i].heavy / totalHeavy * totalSize + lastp;
-                    lastp = currentp - parseInt(currentp);
-                    if (panel.layout == "LayoutX") {
-                        ee.setRect(panel.eeChildren[i], pos, 0, parseInt(currentp), h);
-                    } else {
-                        eb.setDivRect(panel.eeChildren[i], null, null, null, parseInt(currentp));
-                    }
-                    pos += parseInt(currentp);
-                }
-            }
-            //最终调整位置和大小
-            var leftPos = 0;
-            for (i = 0; i < panel.eeChildren.length; i++) {
-                if (panel.layout == "LayoutX") {
-                    ee.setRect(panel.eeChildren[i], leftPos, 0, eb.getDivRect(panel.eeChildren[i]).w, h);
-                    leftPos += eb.getDivRect(panel.eeChildren[i]).w;
-                } else {
-                    ee.setRect(panel.eeChildren[i], 0, leftPos, w, eb.getDivRect(panel.eeChildren[i]).h);
-                    leftPos += eb.getDivRect(panel.eeChildren[i]).h;
-                }
-            }
-        }
-        if (!eb.isEmpty(panel.tableTitle)) {
-            var t = panel.tableTitle;
-            lastp = 0;
-            pos = 0;
-            for (j = 0; j < panel.rowCount; j++) {
-                currentp = lastp + eb.getDivRect(panel).h / panel.visibleRowCount;
-                lastp = currentp - parseInt(currentp);
-                for (i = 0; i < panel.colCount; i++) {
-                    ee.setRect(this.getTableCell(panel, i, j), eb.getDivRect(t.eeChildren[i]).x, pos, eb.getDivRect(t.eeChildren[i]).w, parseInt(currentp));
-                }
-                pos += parseInt(currentp);
-            }
-        }
-}
 ]]></onPageCreate>
       <pageHead><![CDATA[<style>
 .scrollBar01::-webkit-scrollbar-track {
@@ -6330,7 +6087,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <height>1</height>
-      <heightRatio>0.00221238938053097</heightRatio>
+      <heightRatio>0.00363636363636364</heightRatio>
       <left>0</left>
       <note>PLine1</note>
       <sizeRatio>0.00166666666666667</sizeRatio>
@@ -6344,12 +6101,12 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <height>34</height>
-      <heightRatio>0.0752212389380531</heightRatio>
+      <heightRatio>0.123636363636364</heightRatio>
       <left>0</left>
       <sizeRatio>0.0566666666666667</sizeRatio>
       <text>@xxxxx已被屏蔽</text>
       <top>32</top>
-      <topRatio>0.0707964601769911</topRatio>
+      <topRatio>0.116363636363636</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -6359,12 +6116,12 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>34</height>
-      <heightRatio>0.0752212389380531</heightRatio>
+      <heightRatio>0.123636363636364</heightRatio>
       <left>0</left>
       <sizeRatio>0.0566666666666667</sizeRatio>
       <text>是否确定要查看这些发言？查看发言不会取消屏蔽 @xxxx。</text>
       <top>64</top>
-      <topRatio>0.141592920353982</topRatio>
+      <topRatio>0.232727272727273</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -6377,7 +6134,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>40</height>
-      <heightRatio>0.0884955752212389</heightRatio>
+      <heightRatio>0.145454545454545</heightRatio>
       <left>246</left>
       <leftRatio>0.41</leftRatio>
       <onClick>ee.setVisible(this.parentNode, false);
@@ -6420,7 +6177,7 @@ eb.initMouseEvent(sender);
       <sizeRatio>0.373831775700935</sizeRatio>
       <text>查看发言</text>
       <top>112</top>
-      <topRatio>0.247787610619469</topRatio>
+      <topRatio>0.407272727272727</topRatio>
       <width>107</width>
       <widthRatio>0.178333333333333</widthRatio>
     </control>
