@@ -24188,7 +24188,7 @@ if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
 }
 
 sql =
-    "SELECT   TOP (20) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
+    "SELECT   dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
     "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
     "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL  " +
@@ -24236,7 +24236,8 @@ sql =
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType<>'L' AND dbo.tContent.status<>'DEL') OR (dbo.tContent.id = " + topicId + ") " +
+    "WHERE (((dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType<>'L' AND dbo.tContent.status<>'DEL') OR (dbo.tContent.id = " + topicId + ")) " +
+    "       AND (ublockList.id IS NULL) " +
     "ORDER BY dbo.tContent.id ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -24249,8 +24250,8 @@ eio.appendString8("T");
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail",
     0, 99999);
 
 sql = "exec [twitterSource] " + userId + "," + topicId;
@@ -24261,15 +24262,15 @@ if (sqlResult == null) {
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail",
     0, 99999);
 while (db.nextResult(sqlResult)) {
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uBlock1,uBlock2,uEmail," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rBlock1,rBlock2,rEmail",
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail",
     0, 99999);
 }]]></script2>
       <script3>if (eio.readString8() != "T") {
@@ -25148,7 +25149,8 @@ sql =
     "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " + 
     "                uBlockList1.blockUserId = "+myUserId+" LEFT OUTER JOIN " + 
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = "+myUserId+" LEFT OUTER JOIN " + 
-    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = "+myUserId+"; ";
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = "+myUserId+" " +
+    "WHERE (ublockList.id IS NULL) ; ";
 
     
 sqlResult = db.executeQuery("DB", sql);
@@ -25364,7 +25366,7 @@ sql =
     "                uBlockList1.blockUserId = "+myUserId+" LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = "+myUserId+" LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = "+myUserId+" " +
-    "WHERE   (dbo.likeList.contentId = " + contentId + "); ";
+    "WHERE   (ublockList.id IS NULL) AND (dbo.likeList.contentId = " + contentId + "); ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -25437,7 +25439,7 @@ sql =
     "                uBlockList1.blockUserId = "+myUserId+" LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = "+myUserId+" LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = "+myUserId+" " +
-    "WHERE   (dbo.unlikeList.contentId = " + contentId + "); ";
+    "WHERE   (ublockList.id IS NULL) AND (dbo.unlikeList.contentId = " + contentId + "); ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
