@@ -7053,17 +7053,16 @@ sender.close = function() {
 
 sender.blockUser = function(userId) {
     if (g5.currentPageIndex == 8) {
-        history.go(-1);
-        g5.p2.p1.show();
-    } else {
-        var i = 0;
-        while (i < this.v_hisItems.length) {
-            if (this.v_hisItems[i].v_userInfo.id == userId) {
-                this.v_hisItems.splice(i,1);
-            } else {
-                i++;
-            }
+        if (this.v_userInfo.id == userId) {
+            history.go(-1);
+            g5.p2.p1.show();
+        } else {
+            g5.changeP2(-1);
+            this.v_hisItems = new Array();
+            this.show(this.v_content, this.v_reContent, this.v_userInfo, this.v_reUserInfo);
         }
+    } else {
+        this.v_hisItems = new Array();
     }
 }
 
