@@ -7023,6 +7023,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -9378,7 +9379,6 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_needRefresh = true;
@@ -9541,6 +9541,13 @@ sender.loadDataset = function(dataset) {
         this.render(c);
         this.v_items.push(c);
     }
+    if (dataset.rowCount<=0) {
+        this.v_status = "noResult";
+        var item = createPanel(this, "prvPanelEnd", "", 0, y, rect.w, 60);
+        addText(item, "您还没有和任何人有过私信", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+        this.v_items.push(item);
+    }
+
     ee.tiledResizeV(this, 2);
 }
 
