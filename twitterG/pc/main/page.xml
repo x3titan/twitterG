@@ -9726,6 +9726,7 @@ sender.start = function(roomId) {
         sender.timeFragment();    
     }, 500);
     this.running = true;
+    g5.loading.show();
     this.refresh();        
 }
 sender.stop = function() {
@@ -9748,6 +9749,7 @@ sender.refresh = function(force) {
         chatGet1v1.isNew = 1;
         chatGet1v1.my = this;
         chatGet1v1.onComplete = function(dataset) {
+            g5.loading.close();
             if (dataset.rowCount<=0) {
                 eb.processDock();
                 return;
@@ -9974,6 +9976,7 @@ sender.timeFragment = function() {
     chatGet1v1.isNew = 0;
     chatGet1v1.my = sender;
     chatGet1v1.onComplete = function(dataset) {
+        g5.loading.close();
         if (dataset.rowCount<=0) {
             chatGet1v1.my.v_nohis = true;
             eb.processDock();
@@ -10037,6 +10040,7 @@ sender.timeFragment = function() {
         root.move(cy);
         sender.scrollTop += cy;    
     }
+    g5.loading.show();
     chatGet1v1();
 };
 
@@ -24860,7 +24864,9 @@ sendChat1v1.busy = false;</script3>
 eio.appendString16(g5.token);
 showChatList.busy = true;
 eio.appendInt32(showChatList.pageIndex);
-eio.appendInt32(showChatList.pageSize);</script1>
+eio.appendInt32(showChatList.pageSize);
+g5.loading.show();
+</script1>
       <script2><![CDATA[var token = eio.readString16();
 var pageIndex = eio.readInt32();
 var pageSize = eio.readInt32();
@@ -24924,7 +24930,8 @@ eio.appendDataSet(sqlResult,"maxId,regDatetime,content,photo1," +
 
 
 ]]></script2>
-      <script3>if (eio.readString8()!="T") {
+      <script3>g5.loading.close();
+if (eio.readString8()!="T") {
     g5.alert1("提示", eio.readString8());
     return;
 }
