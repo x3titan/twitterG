@@ -7188,7 +7188,11 @@ sender.load = function(cid) {
     var rect = eb.getDivRectSetting(this.v_items[this.v_items.length-1]);
     ee.setRect(sender.c_tabRoot,null,rect.y+rect.h,null,null);
     this.c_tabRoot.changePage(-1);
-    this.c_tabRoot.changePage(item.tabIndex);
+    if ((item.tabIndex == 3) &amp;&amp; (this.c_tabRoot.p3.v_contentId == 0)) {
+        this.c_tabRoot.p3.show(cid);
+    } else {
+        this.c_tabRoot.changePage(item.tabIndex);
+    }
     document.documentElement.scrollTop = item.scrollTop;
     return true;
 }
@@ -7311,6 +7315,10 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 if (i==0) dType += "x";
                 item = createPanel(root, "page8_" + datasetFw.getData(0,i), "", 0, cy, itemWidth, 5);
                 g5.loadTwitterRecord(item, datasetFw, i);
+                sender.v_content = item.v_content;
+                sender.v_reContent = item.v_reContent;
+                sender.v_userInfo = item.v_userInfo;
+                sender.v_reUserInfo = item.v_reUserInfo;
                 item.v_mode = uType + dType;
                 g5.renderTwitter(item);        
             }
@@ -7406,6 +7414,16 @@ sender.loadMore = function() {
     showTopic.lastId = datasetFw.getData(0, datasetFw.rowCount - 1);
 }
 
+sender.setLike = function(contentId) {
+    if (this.v_content.id == contentId) {
+        this.c_tabRoot.p3.refresh();
+    }
+    for (var i=0; i<this.v_hisItems.length; i++) {
+        if (this.v_hisItems[i].v_content.id!=contentId) continue;
+        this.v_hisItems[i].p3ContentId = 0;
+        this.v_hisItems[i].p3Title = "点赞";    
+    }
+}
 
 
 ]]></onCreate>
@@ -8008,7 +8026,7 @@ sender.show = function(v_contentId) {
             sender.v_items.push(item);
         }
         eb.processDock();
-        if (dataset.rowCount>0) ee.setText(sender.parentNode.button3, dataset.rowCount + " 点赞");
+        if (dataset.rowCount>0) ee.setText(sender.c_title, dataset.rowCount + " 点赞");
         var rect = eb.getDivRectSetting(g5.p4);
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(3);
@@ -8021,6 +8039,19 @@ sender.loadRecord = function(panel, dataset, index) {
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset,0,index);
 }
+
+sender.refresh = function() {
+    if (this.v_contentId == 0) return;
+    var cid = this.v_contentId;
+    this.v_contentId = 0;
+    if (g5.currentPageIndex != 8) return;
+    if (g5.p2.p9.c_tabRoot.currentPageIndex == 3) {
+        this.show(cid);
+    } else {
+        ee.setText(this.c_title, "点赞");
+    }
+}
+
 ]]></onCreate>
       <sizeRatio>0.22</sizeRatio>
       <top>41</top>
@@ -28416,6 +28447,7 @@ ee.setOnClick(c,function(sender,event) {
         likeContent.contentId = contentIdB;
         likeContent.onComplete = function() {
             root.c_button3.v_enabled = true;
+            g5.p2.p9.setLike(root.v_content.id);
         }
         likeContent();
         sender.v_enabled = false;
