@@ -7318,14 +7318,14 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 if (i==0) dType += "x";
                 item = createPanel(root, "page8_" + datasetFw.getData(0,i), "", 0, cy, itemWidth, 5);
                 g5.loadTwitterRecord(item, datasetFw, i);
-                sender.v_content = item.v_content;
-                sender.v_reContent = item.v_reContent;
-                sender.v_userInfo = item.v_userInfo;
-                sender.v_reUserInfo = item.v_reUserInfo;
                 item.v_mode = uType + dType;
                 g5.renderTwitter(item);        
             }
             if (i==0) {
+                sender.v_content = item.v_content;
+                sender.v_reContent = item.v_reContent;
+                sender.v_userInfo = item.v_userInfo;
+                sender.v_reUserInfo = item.v_reUserInfo;
                 scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
                 sender.v_reIndex = sender.c_tabRoot.p1.v_items.length;
                 sender.v_items.push(item);
@@ -8029,7 +8029,11 @@ sender.show = function(v_contentId) {
             sender.v_items.push(item);
         }
         eb.processDock();
-        if (dataset.rowCount>0) ee.setText(sender.c_title, dataset.rowCount + " 点赞");
+        if (dataset.rowCount>0) {
+            ee.setText(sender.c_title, dataset.rowCount + " 点赞");
+        } else {
+            ee.setText(sender.c_title, "点赞");
+        }
         var rect = eb.getDivRectSetting(g5.p4);
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(3);
