@@ -17969,7 +17969,6 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -17991,21 +17990,38 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
     } else {
         ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
     }
+    if (this.v_content.exUplinkType == "L") {
+        ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 停止转发");
+    } else {    
+        ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 删除");
+    }
 
     ee.setVisible(this.parentNode, true);
     ee.showAni(this, 0);
 }
 
 ee.setOnClick(sender.c_button1, function(c_button1, event) {
-    g5.popBlack.a6.show(
-        "删除确认",
-        "此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。",
-        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","确认删除","#ffffff","#ffffff","#ffffff","")],
-        function() {
-            g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
-        }
-    );
+    if (sender.v_content.exUplinkType == "L") {
+        g5.popBlack.a6.show(
+            "停止转发",
+            "本短文为转发短文，停止转发并不会删除原文，您需要停止转发这条短文吗？",
+            [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","停止转发","停止转发","停止转发","#ffffff","#ffffff","#ffffff","")],
+            function() {
+                g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
+            }
+        );
+    } else {
+        g5.popBlack.a6.show(
+            "删除确认",
+            "此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。",
+            [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","确认删除","#ffffff","#ffffff","#ffffff","")],
+            function() {
+                g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
+            }
+        );
+    }
 });]]></onCreate>
       <sizeRatio>0.717592592592593</sizeRatio>
       <top>192</top>
@@ -18025,8 +18041,6 @@ ee.setOnClick(sender.c_button1, function(c_button1, event) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button1</note>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 删除");
-]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.231481481481481</sizeRatio>
@@ -18233,6 +18247,7 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.256540084388186</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -18305,8 +18320,12 @@ sender.show = function(refDiv, content, userInfo) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button1</note>
-      <onClick>g5.setFollow(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, sender.parentNode.v_userInfo.isFollow,function(userId,isFollow) {
-});
+      <onClick>if (sender.parentNode.v_userInfo.isBlock1) {
+    g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false, null);
+} else {
+    g5.setFollow(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, sender.parentNode.v_userInfo.isFollow,function(userId,isFollow) {
+    });
+}
 </onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
