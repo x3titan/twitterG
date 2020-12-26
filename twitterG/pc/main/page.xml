@@ -145,7 +145,6 @@ initLButton = function(button,text,dy,icon,size,dx) {
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1331,7 +1330,6 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -9076,7 +9074,6 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p12->通知]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.c_topBlank = sender.eeChildren[0];
@@ -9088,7 +9085,6 @@ sender.v_status = "init";
 sender.v_pageIndex = 0;
 
 sender.show = function() {
-    this.clear();
     g5.changeP2(11);
     this.c_topBlank.show();
     this.load();
@@ -9134,7 +9130,13 @@ sender.clear = function() {
 }
 
 sender.load = function() {
-    if (this.v_items.length>0) return;
+    if (this.v_items.length>0) {
+        var v_pageIndex = this.v_pageIndex;
+        this.v_pageIndex = 0;
+        this.fLoad();
+        this.v_pageIndex = v_pageIndex;
+        return;
+    }
     this.v_pageIndex = 0;
     this.fLoad();
     this.showAlert(0);
@@ -9269,6 +9271,11 @@ sender.renderItem = function(root) {
 
 sender.fLoad = function() {
     if (showBookMark.busy) return;
+    var maxId = 0x7fffffff;
+    if (this.v_items.length>0) {
+        maxId = parseInt(this.v_items[0].v_id);
+    }
+    var insertPos = 1;
     showPrompt.pageIndex = this.v_pageIndex;
     showPrompt.onComplete = function() {
         var cy = 0;
@@ -9288,6 +9295,10 @@ sender.fLoad = function() {
             }
             if (item == null) continue;
             sender.renderItem(item);
+            if (parseInt(item.v_id) > maxId) {
+                ee.changeParent(item, sender, insertPos);
+                insertPos++;
+            }
             sender.v_items.push(item);
             cy += eb.getDivRect(item).h;
         }
@@ -17883,6 +17894,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -17969,6 +17981,7 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
