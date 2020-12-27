@@ -7304,6 +7304,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         var item = null;
         var scrollTop = 0;
         var reCount = 0;
+        var rootUserId = 0;
         for (i=0; i< datasetFw.rowCount; i++) {
             uType = " "; dType = " ";
             if ((i==0) &amp;&amp; (datasetBk.rowCount>0)) {
@@ -7317,6 +7318,9 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 item = createPanel(root, "page8_" + datasetFw.getData(0,i), "", 0, cy, itemWidth, 5);
                 g5.loadTwitterRecord(item, datasetFw, i);
                 item.v_mode = uType + dType;
+                if ((rootUserId == item.v_userInfo.id) || (rootUserId == item.v_reUserInfo.id)) {
+                    item.v_forceDisplay = true;
+                }
                 g5.renderTwitter(item);        
             }
             if (i==0) {
@@ -7326,6 +7330,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 sender.v_reUserInfo = item.v_reUserInfo;
                 scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
                 sender.v_reIndex = sender.c_tabRoot.p1.v_items.length;
+                rootUserId = item.v_userInfo.id;
                 sender.v_items.push(item);
             } else {
                 sender.c_tabRoot.p1.v_items.push(item);
@@ -27895,7 +27900,7 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock()
     return root;
-} else if ((root.v_userInfo.isBlock1) &amp;&amp; (root.v_mode.charAt(2) != "x")) {
+} else if ((root.v_userInfo.isBlock1) &amp;&amp; (root.v_mode.charAt(2) != "x") &amp;&amp; (!root.v_forceDisplay)) {
     c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
@@ -28130,7 +28135,7 @@ if (!showRe) {
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock();
     cy+=20;
-} else if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_reUserInfo.isBlock1)) {
+} else if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_reUserInfo.isBlock1) &amp;&amp; (!root.v_forceDisplay)) {
     c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
