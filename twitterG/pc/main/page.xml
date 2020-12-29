@@ -27392,7 +27392,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="86">
+  <g5Items count="87">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -29751,6 +29751,21 @@ if (eb.isEmpty(p)) {
 g5.notPushHistory = false;
 </functionCode>
     </item>
+    <item name="processTextUrl" type="20">
+      <varValue />
+      <functionParam>text</functionParam>
+      <functionCode><![CDATA[// http://, https://, ftp://
+var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&amp;@#\/%?=~_|!:,.;]*[a-z0-9-+&amp;@#\/%=~_|]/gim;
+// www. sans http:// or https://
+var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+// Email addresses *** here I've changed the expression ***
+var emailAddressPattern = /(([a-zA-Z0-9_\-\.]+)@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6}))+/gim;
+return text
+    .replace(urlPattern, '<a target="_blank" href="$&amp;">$&amp;</a>')
+    .replace(pseudoUrlPattern, '$1<a target="_blank" href="http://$2">$2</a>')
+    .replace(emailAddressPattern, '<a target="_blank" href="mailto:$1">$1</a>');
+]]></functionCode>
+    </item>
     <item name="refreshUserInfo" type="20">
       <varValue />
       <functionParam />
@@ -30045,7 +30060,9 @@ if (isBlock1) {
     <item name="showCommonText" type="20">
       <varValue />
       <functionParam>text</functionParam>
-      <functionCode><![CDATA[return text.replace("<","&amp;lt;").replace(">","&amp;gt;");]]></functionCode>
+      <functionCode><![CDATA[text = text.replace("<","&amp;lt;").replace(">","&amp;gt;");
+text = g5.processTextUrl(text);
+return text;]]></functionCode>
     </item>
     <item name="refreshPage2" type="20">
       <varValue />
