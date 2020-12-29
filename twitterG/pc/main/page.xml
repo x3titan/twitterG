@@ -2194,6 +2194,12 @@ sender.show = function(v_userInfo, userId, userName) {
         for (i=0; i< showUserPage.dataset.rowCount; i++) {
             item = createPanel(root, "puser_" + showUserPage.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, showUserPage.dataset, i);
+            if (item.v_content.exUplinkType == "L") {
+                if (item.v_userInfo.isBlock1) {
+                    ee.removeControl(item);
+                    continue;
+                }
+            }
             item.v_mode = "   x";
             g5.renderTwitter(item);
             sender.p1Items.push(item);
@@ -3332,6 +3338,12 @@ sender.loadMore = function() {
             if (j<g5.p2.p2.p1Items.length) continue;
             item = createPanel(root, "puser_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
+            if (item.v_content.exUplinkType == "L") {
+                if (item.v_userInfo.isBlock1) {
+                    ee.removeControl(item);
+                    continue;
+                }
+            }
             item.v_mode = "   x";
             g5.renderTwitter(item);
             g5.p2.p2.p1Items.push(item);
@@ -9181,10 +9193,15 @@ sender.renderItem = function(root) {
     } else root.v_bgColor = "#ffffff";
     root.style.cursor = "pointer";
     ee.setOnClick(root,function(sender,event) {
-        if (root.v_url.length<=0) return;
-        if (root.v_url.charAt(0) == "?") {
+        var param = root.v_url;
+        if (param.length<=0) return;
+        if (param.charAt(0) == "?") {
+            param = param.substr(1, param.length-1);
         }
-        window.location.href = ee.pageUrl + root.v_url;
+        g5.pushHistory(param);
+        g5.pushHistory(param);
+        history.go(-1);
+        //window.location.href = ee.pageUrl + root.v_url;
     });
     ee.setOnMouseEnter(root, function(sender,e){
         sender.style.backgroundColor = "rgb(245,248,250)";
