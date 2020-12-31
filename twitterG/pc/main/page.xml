@@ -7472,6 +7472,16 @@ sender.setLike = function(contentId) {
     }
 }
 
+sender.setUnlike = function(contentId) {
+    if (this.v_content.id == contentId) {
+        this.c_tabRoot.p4.refresh();
+    }
+    for (var i=0; i<this.v_hisItems.length; i++) {
+        if (this.v_hisItems[i].v_content.id!=contentId) continue;
+        this.v_hisItems[i].p4ContentId = 0;
+        this.v_hisItems[i].p4Title = "点踩";    
+    }
+}
 
 ]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
@@ -8161,7 +8171,18 @@ sender.loadRecord = function(panel, dataset, index) {
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset,0,index);
 }
-]]></onCreate>
+
+sender.refresh = function() {
+    if (this.v_contentId == 0) return;
+    var cid = this.v_contentId;
+    this.v_contentId = 0;
+    if (g5.currentPageIndex != 8) return;
+    if (g5.p2.p9.c_tabRoot.currentPageIndex == 4) {
+        this.show(cid);
+    } else {
+        ee.setText(this.c_title, "点踩");
+    }
+}]]></onCreate>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.109625668449198</topRatio>
@@ -28611,6 +28632,7 @@ ee.setOnClick(c,function(sender,event) {
         unlikeContent.contentId = contentIdB;
         unlikeContent.onComplete = function() {
             root.c_button4.v_enabled = true;
+            g5.p2.p9.setUnlike(contentIdB);
         }
         unlikeContent();
         sender.v_enabled = false;
