@@ -174,6 +174,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1359,6 +1360,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -3353,6 +3355,7 @@ sender.loadMore = function() {
     showUserPageLoadMore.pageIndex = this.v_pageIndex;
     showUserPageLoadMore.pageSize = this.v_pageSize;
     showUserPageLoadMore.onComplete = function(dataset) {
+        g5.loading.close();
         if (showUserPageLoadMore.disabled) return;
         var i, j, item;
         var root = sender;
@@ -3390,6 +3393,7 @@ sender.loadMore = function() {
             g5.resizeV(root.parentNode, 3);
         }
     }
+    g5.loading.show2();
     showUserPageLoadMore();
 }
 ]]></onCreate>
@@ -17976,6 +17980,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18062,6 +18067,7 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -18644,7 +18650,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -19134,15 +19139,8 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>326</left>
       <leftRatio>0.275105485232068</leftRatio>
-      <onAni2End>ee.setVisible(sender.parentNode, false);
-this.c_photos.v_photos = new Array();
-g5.refreshPhoto(this.c_photos);</onAni2End>
-      <onAniStart>ee.setVisible(ee.getControl("panel112"), true);
-ee.getControl("panel51").v_photos = new Array();
-g5.refreshPhoto(ee.getControl("panel51"));</onAniStart>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel412");
 sender.c_input = ee.getControl("edit1");
@@ -19151,7 +19149,10 @@ sender.c_button = ee.getControl("panel220");
 
 sender.show = function(title) {
     this.init(title);
-    ee.showAni(this, 0);
+    ee.setVisible(ee.getControl("panel112"), true);
+    ee.setVisible(this, true);
+    ee.getControl("panel51").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel51"));
 }
 
 sender.init = function(titleText) {
@@ -19167,6 +19168,12 @@ sender.init = function(titleText) {
     ee.setText(cirText, "");    
 }
 
+sender.close = function() {
+    ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
+    this.c_photos.v_photos = new Array();
+    g5.refreshPhoto(this.c_photos);
+}
 
 sender.check = function() {
     this.c_button.setEnabled(
@@ -19184,7 +19191,7 @@ sender.showNew = function() {
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
-            ee.showAni(sender, 1);
+            sender.close();
             var newContent = new g5.ContentInfo();
             newContent.id = contentId;
             newContent.seconds = 0;
@@ -19209,7 +19216,10 @@ sender.showNew = function() {
         }
         newTwitter();
     }
-    ee.showAni(this, 0);
+    ee.setVisible(ee.getControl("panel112"), true);
+    ee.setVisible(this, true);
+    ee.getControl("panel51").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel51"));
 }
 
 sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
@@ -19227,7 +19237,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
-            ee.showAni(sender, 1);
+            sender.close();
             var newContent = new g5.ContentInfo();
             newContent.id = contentId;
             newContent.seconds = 0;
@@ -19251,7 +19261,10 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         }
         newTwitter();
     }
-    ee.showAni(this, 0);
+    ee.setVisible(ee.getControl("panel112"), true);
+    ee.setVisible(this, true);
+    ee.getControl("panel51").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel51"));
 }
 
 sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
@@ -19271,7 +19284,7 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
-            ee.showAni(sender, 1);
+            sender.close();
             var newContent = new g5.ContentInfo();
             newContent.id = contentId;
             newContent.seconds = 0;
@@ -19294,7 +19307,10 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         }
         newTwitter();
     }
-    ee.showAni(this, 0);
+    ee.setVisible(ee.getControl("panel112"), true);
+    ee.setVisible(this, true);
+    ee.getControl("panel51").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel51"));
 }]]></onCreate>
       <sizeRatio>1.1484962406015</sizeRatio>
       <top>92</top>
@@ -19389,7 +19405,7 @@ sender.refresh = function(progress) {
       <layerVisible>false</layerVisible>
       <left>476</left>
       <leftRatio>0.894736842105263</leftRatio>
-      <onClick>ee.showAni(ee.getControl("panel42"), 1);</onClick>
+      <onClick>sender.parentNode.close();</onClick>
       <onCreate><![CDATA[ee.setText(sender,
     "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.iconClose + "</svg>"
 );
