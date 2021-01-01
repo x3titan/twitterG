@@ -2183,6 +2183,9 @@ sender.show = function(v_userInfo, userId, userName) {
         return;
     }
     if (g5.currentPageIndex==1) {
+        if (v_userInfo) {
+            g5.pushHistory("p=1&amp;u=" + escape(v_userInfo.userName));
+        }
         document.documentElement.scrollTop = 0;
     }
     if (!eb.isEmpty(v_userInfo)) {
@@ -18059,7 +18062,6 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -18082,7 +18084,7 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
         ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
     }
     if (this.v_content.exUplinkType == "L") {
-        ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 停止转发");
+        ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 取消转发");
     } else {    
         ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 删除");
     }
@@ -18095,10 +18097,10 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
 ee.setOnClick(sender.c_button1, function(c_button1, event) {
     if (sender.v_content.exUplinkType == "L") {
         g5.popBlack.a6.show(
-            "停止转发",
-            "本短文为转发短文，停止转发并不会删除原文，您需要停止转发这条短文吗？",
+            "取消转发",
+            "本短文为转发短文，取消转发并不会删除原文，您需要取消转发这条短文吗？",
             [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","停止转发","停止转发","停止转发","#ffffff","#ffffff","#ffffff","")],
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
             function() {
                 g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
             }
@@ -18339,6 +18341,7 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.256540084388186</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
