@@ -7081,6 +7081,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -17978,7 +17979,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18065,7 +18065,6 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -18099,6 +18098,30 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
 }
 
 ee.setOnClick(sender.c_button1, function(c_button1, event) {
+    if (sender.v_content.exUplinkType == "L") {
+        g5.popBlack.a6.show(
+            "取消转发",
+            "本短文为转发短文，取消转发并不会删除原文，您需要取消转发这条短文吗？",
+            [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
+            function() {
+                g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
+            }
+        );
+    } else {
+        g5.popBlack.a6.show(
+            "删除确认",
+            "此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。",
+            [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","确认删除","#ffffff","#ffffff","#ffffff","")],
+            function() {
+                g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
+            }
+        );
+    }
+});
+
+ee.setOnClick(sender.c_button2, function(c_button2, event) {
     if (sender.v_content.exUplinkType == "L") {
         g5.popBlack.a6.show(
             "取消转发",
@@ -22737,7 +22760,7 @@ sender.close = function() {
       <widthRatio>0.490445859872611</widthRatio>
     </control>
   </controls>
-  <taskSet count="57">
+  <taskSet count="58">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName 
@@ -25189,6 +25212,82 @@ if (!db.executeNoneQuery("DB", sql)) {
 
 if (delTwitter.onComplete) delTwitter.onComplete();
 delTwitter.busy = false;
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="setTwitterForceTop">
+      <script1>//contentId,forceTop,onComplete
+setTwitterForceTop.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(setTwitterForceTop.contentId + "");
+eio.appendString16(setTwitterForceTop.forceTop? "T":"F");
+
+
+
+
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var contentId = parseInt(eio.readString16());
+var forceTop = eio.readString16()=="T";
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
+
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能进行本操作。");
+    return;
+}
+
+sql = "exec twitterForceTop " +
+    myUserId + 
+    "," + contentId +
+    "," + (forceTop ? 1:0);
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getInt32(sqlResult,"errorCode")!=0) {
+    es.logWarning(sql+"; result=" + db.getString(sqlResult,"errorString"));
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    setTwitterForceTop.busy = false;
+    return;
+}
+if (!eb.isEmpty(setTwitterForceTop.onComplete)) {
+    setTwitterForceTop.onComplete();
+    setTwitterForceTop.onComplete=null;
+}
+setTwitterForceTop.busy = false;
 
 </script3>
     </taskSetItem>
