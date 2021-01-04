@@ -18091,6 +18091,11 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
     } else {    
         ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 删除");
     }
+    if (this.v_content.forceTopSn == "0") {
+        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> 在个人主页中置顶");
+    } else {    
+        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> 在个人主页中取消置顶");
+    }
 
     ee.setVisible(this.parentNode, true);
     ee.setVisible(this, true);
@@ -18122,13 +18127,13 @@ ee.setOnClick(sender.c_button1, function(c_button1, event) {
 });
 
 ee.setOnClick(sender.c_button2, function(c_button2, event) {
-    g5.setTwitterForceTop(sender.v_content.id, true);
+    g5.setTwitterForceTop(sender.v_content.id, sender.v_content.forceTopSn=="0");
 });]]></onCreate>
-      <sizeRatio>0.717592592592593</sizeRatio>
+      <sizeRatio>0.63265306122449</sizeRatio>
       <top>192</top>
       <topRatio>0.241206030150754</topRatio>
-      <width>216</width>
-      <widthRatio>0.182278481012658</widthRatio>
+      <width>245</width>
+      <widthRatio>0.206751054852321</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40/panel149/panel110">
       <cursor>pointer</cursor>
@@ -18147,7 +18152,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <sizeRatio>0.231481481481481</sizeRatio>
       <text> x 删除</text>
       <top>0</top>
-      <width>216</width>
+      <width>245</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40/panel149/panel111">
@@ -18162,15 +18167,13 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button2</note>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> 置顶到你的个人资料");
-]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.231481481481481</sizeRatio>
       <text> x 置顶到你的个人资料</text>
       <top>52</top>
       <topRatio>0.335483870967742</topRatio>
-      <width>216</width>
+      <width>245</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40/panel149/panel28">
@@ -18204,7 +18207,7 @@ setBookMark();
       <text> x 添加发言到书签</text>
       <top>104</top>
       <topRatio>0.670967741935484</topRatio>
-      <width>216</width>
+      <width>245</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40/panel124">
@@ -28066,6 +28069,16 @@ if (root.v_mode.charAt(1) == "T") {
     c = createPanel(root, root.id+"_downlink01", "ccd6dd", 40, 64, 2, 1000);
 }
 
+root.refresh = function() {
+    if (this.c_forceTopLabel) {
+        if (root.v_content.forceTopSn == "0") {
+            this.c_forceTopLabel.innerHTML = "";
+        } else {
+            this.c_forceTopLabel.innerHTML = " [置顶]";
+        }
+    }
+}
+
 var cy = 9;
 if (root.v_content.status=="DEL") {
     c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
@@ -28191,10 +28204,13 @@ temp = "<div style='display:inline'><b>" + g5.add3Dot(root.v_userInfo.nickName, 
 if (root.v_mode.charAt(2) != "x") {
     temp+=" · <font>" + g5.getMins(root.v_content.seconds) + "</font>";
 }
-//temp+="</font>";
+temp += "<font color='#1b95e0'></font>";
 addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
 if (root.v_mode.charAt(2) != "x") {
     root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
+    root.c_forceTopLabel = c.label.rows[0].cells[0].childNodes[3]; 
+} else {
+    root.c_forceTopLabel = c.label.rows[0].cells[0].childNodes[2]; 
 }
 c.v_username = root.v_userInfo.userName;
 root.c_titleText = c.label.rows[0].cells[0].childNodes[0];
@@ -28861,6 +28877,8 @@ if (!eb.isEmpty(root.c_rePhotos)) {
         root.c_rePhotos.v_videoH = eb.getDivRect(root.c_rePhotos.c_video).h;
     }
 }
+
+root.refresh();
 
 return root;]]></functionCode>
     </item>
@@ -30291,31 +30309,33 @@ var sync = function(userId, isFollow) {
 }
 
 if (enabled) {
-    follow.follow = 1;
-    follow.userId = userId;
-    follow.onComplete = function() {
-        sync(userId, !isFollow);
-        if (onComplete) {
-            onComplete(userId, !isFollow);
+    g5.popBlack.a6.show(
+        "短文置顶？",
+        "置顶后，所有访问您个人主页的用户都会看到这条置顶短文。您是否确定要将此短文在您的个人主页置顶？",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","置顶","置顶","置顶","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            if (setTwitterForceTop.busy) return;
+            setTwitterForceTop.contentId = contentId;
+            setTwitterForceTop.forceTop = true;
+            setTwitterForceTop.onComplete = function() {
+            }
+            setTwitterForceTop();
         }
-    }
-    //follow();
+    );
 } else {
     g5.popBlack.a6.show(
         "取消短文置顶？",
-        "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
+        "取消置顶后，此短文将不会在您的个人主页中处于顶部位置，但其他人仍能够看到此短文。您是否要取消置顶？",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
         function() {
-            follow.follow = 0;
-            follow.userId = userId;
-            follow.onComplete = function() {
-                sync(userId, !isFollow);
-                if (onComplete) {
-                    onComplete(userId, !isFollow);
-                }
+            if (setTwitterForceTop.busy) return;
+            setTwitterForceTop.contentId = contentId;
+            setTwitterForceTop.forceTop = false;
+            setTwitterForceTop.onComplete = function() {
             }
-            //follow();
+            setTwitterForceTop();
         }
     );
 }]]></functionCode>
