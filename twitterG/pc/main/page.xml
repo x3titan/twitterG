@@ -18122,27 +18122,7 @@ ee.setOnClick(sender.c_button1, function(c_button1, event) {
 });
 
 ee.setOnClick(sender.c_button2, function(c_button2, event) {
-    if (sender.v_content.exUplinkType == "L") {
-        g5.popBlack.a6.show(
-            "取消转发",
-            "本短文为转发短文，取消转发并不会删除原文，您需要取消转发这条短文吗？",
-            [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
-            function() {
-                g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
-            }
-        );
-    } else {
-        g5.popBlack.a6.show(
-            "删除确认",
-            "此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。",
-            [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","确认删除","#ffffff","#ffffff","#ffffff","")],
-            function() {
-                g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
-            }
-        );
-    }
+    g5.setTwitterForceTop(sender.v_content.id, true);
 });]]></onCreate>
       <sizeRatio>0.717592592592593</sizeRatio>
       <top>192</top>
@@ -23413,13 +23393,13 @@ sql =
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
     "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS isForward, CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike,  " +
-    "                CASE WHEN unlikeList.id IS NULL THEN 0 ELSE 1 END AS isUnlike, tContent_1.id AS reId, DATEDIFF(second,  " +
+    "                CASE WHEN unlikeList.id IS NULL THEN 0 ELSE 1 END AS isUnlike, dbo.tContent.forceTopSn, tContent_1.id AS reId, DATEDIFF(second,  " +
     "                tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.status AS reStatus,  " +
     "                tContent_1.uplinkType AS reUplinkType, tContent_1.uplinkId AS reUplinkId, tContent_1.[content] AS reContent,  " +
     "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " +
     "                tContent_1.photo4 AS rePhoto4, tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount,  " +
     "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, CASE WHEN forwardLink_1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike,  " +
+    "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike, tContent_1.forceTopSn as reForceTopSn,  " +
     "                CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike, dbo.tContent.userId AS uId,  " +
     "                dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
@@ -23493,8 +23473,8 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,
-    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
-    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
+    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
+    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
     "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
@@ -27568,7 +27548,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="87">
+  <g5Items count="88">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -27738,7 +27718,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </item>
     <item name="ContentInfo" type="10">
       <varValue><![CDATA[function() {
-    this.size = 17;
+    this.size = 18;
     this.init = function() {
         if (this.photos.length<=0) {
             if (this.photo1.length>0) this.photos.push(this.photo1);
@@ -27771,6 +27751,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         this.isForward = ds.getData(x+14,idx)=="1";
         this.isLike = ds.getData(x+15,idx)=="1";
         this.isUnlike = ds.getData(x+16,idx)=="1";
+        this.forceTopSn = ds.getData(x+17,idx);
         this.init();
     }
     this.loadExFromDataset = function (ds, x, idx) {
@@ -27801,6 +27782,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         ds.setData(x+14,idx,this.isForward?"1":"0");
         ds.setData(x+15,idx,this.isLike?"1":"0");
         ds.setData(x+16,idx,this.isUnlike?"1":"0");
+        ds.setData(x+17,idx,this.forceTopSn);
     }
     this.clone = function() {
         var r = new g5.ContentInfo();
@@ -27821,6 +27803,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         r.isForward = this.isForward;
         r.isLike = this.isLike;
         r.isUnlike = this.isUnlike;
+        r.forceTopSn = this.forceTopSn;
         r.exUserInfo = this.exUserInfo;
         r.exUplinkType = this.exUplinkType;
         r.exContentId = this.exContentId;
@@ -27849,6 +27832,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     this.isForward = false;
     this.isLike = false;
     this.isUnlike = false;
+    this.forceTopSn = "0";
     this.photos = new Array();
     this.exUserInfo = new g5.UserInfo();
     this.exUplinkType = "";
@@ -30231,6 +30215,107 @@ if (isBlock1) {
                 //sender.init(1);
             }
             blockUser();
+        }
+    );
+}]]></functionCode>
+    </item>
+    <item name="setTwitterForceTop" type="20">
+      <varValue />
+      <functionParam>contentId, enabled, onComplete</functionParam>
+      <functionCode><![CDATA[var collectUserInfoItems = function() {
+    var r = new Array();
+    r.push(g5.p2.p1.v_items);
+    r.push(g5.p2.p2.p1Items);
+    r.push(g5.p2.p2.p3Items);
+    r.push(g5.p2.p2.p2sub.chat.c_chat.c_chatRoot.v_items);
+    r.push(g5.p3.p8.p1.c_chatRoom.c_chatRoot.v_items);
+    r.push(g5.p2.p12.v_items);
+    r.push(g5.p2.p13.v_items);
+    r.push(g5.p2.p15.v_items);
+    r.push(g5.p2.p16.v_items);
+    r.push(g5.p2.p5.v_items);
+    r.push(g5.p2.p11.c_pages.c1.v_items);
+    r.push(g5.p2.p11.c_pages.c2.v_items);
+    r.push(g5.p2.p11.c_pages.c3.v_items);
+    r.push(g5.p2.p11.c_pages.c4.v_items);
+    r.push(g5.p2.p11.c_pages.c5.v_items);
+    r.push(g5.p2.p9.v_items);
+    r.push(g5.p2.p9.c_tabRoot.p1.v_items);
+    r.push(g5.p2.p9.c_tabRoot.p2.v_items);
+    r.push(g5.p2.p9.c_tabRoot.p3.v_items);
+    r.push(g5.p2.p9.c_tabRoot.p4.v_items);
+    for (var i=0; i<g5.p2.p9.v_hisItems.length; i++) {
+        r.push(g5.p2.p9.v_hisItems[i].v_items);
+        r.push(g5.p2.p9.v_hisItems[i].v_itemsP1);
+        r.push(g5.p2.p9.v_hisItems[i].v_itemsP2);
+        r.push(g5.p2.p9.v_hisItems[i].v_itemsP3);
+        r.push(g5.p2.p9.v_hisItems[i].v_itemsP4);
+    }
+    return r;
+}
+
+var sync = function(userId, isFollow) {
+    g5.p2.p1.refresh();
+    g5.p2.p2.setIsFollow(userId, isFollow);
+    var itemList = collectUserInfoItems();
+    var i,j;
+    for (i=0; i<itemList.length; i++) {
+        var items = itemList[i];
+        for (j=0; j<items.length; j++) {
+            if (items[j].v_userInfo) {
+                if (items[j].v_userInfo.id == userId) { 
+                    items[j].v_userInfo.isFollow = isFollow;
+                }
+            }
+            if (items[j].v_reUserInfo) {
+                if (items[j].v_reUserInfo.id == userId) { 
+                    items[j].v_reUserInfo.isFollow = isFollow;
+                }
+            }
+            if (items[j].v_content) {
+                if (items[j].v_content.exUserInfo) {
+                    if (items[j].v_content.exUserInfo.id == userId) { 
+                        items[j].v_content.exUserInfo.isFollow = isFollow;
+                    }
+                }
+            }
+            if (items[j].v_userBar) {
+                if (items[j].v_userInfo.isFollow) {
+                    items[j].button1.init(2);
+                } else {
+                    items[j].button1.init(1);
+                }
+            } 
+        }
+    }
+}
+
+if (enabled) {
+    follow.follow = 1;
+    follow.userId = userId;
+    follow.onComplete = function() {
+        sync(userId, !isFollow);
+        if (onComplete) {
+            onComplete(userId, !isFollow);
+        }
+    }
+    //follow();
+} else {
+    g5.popBlack.a6.show(
+        "取消短文置顶？",
+        "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            follow.follow = 0;
+            follow.userId = userId;
+            follow.onComplete = function() {
+                sync(userId, !isFollow);
+                if (onComplete) {
+                    onComplete(userId, !isFollow);
+                }
+            }
+            //follow();
         }
     );
 }]]></functionCode>
