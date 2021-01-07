@@ -18192,7 +18192,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <note>c_button1</note>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
-      <sizeRatio>0.231481481481481</sizeRatio>
+      <sizeRatio>0.204081632653061</sizeRatio>
       <text> x 删除</text>
       <top>0</top>
       <width>245</width>
@@ -18212,7 +18212,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <note>c_button2</note>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
-      <sizeRatio>0.231481481481481</sizeRatio>
+      <sizeRatio>0.204081632653061</sizeRatio>
       <text> x 置顶到你的个人资料</text>
       <top>52</top>
       <topRatio>0.335483870967742</topRatio>
@@ -18246,7 +18246,7 @@ setBookMark();
     "</svg> <div style='display:inline;'>添加发言到书签</div>");    ]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
-      <sizeRatio>0.231481481481481</sizeRatio>
+      <sizeRatio>0.204081632653061</sizeRatio>
       <text> x 添加发言到书签</text>
       <top>104</top>
       <topRatio>0.670967741935484</topRatio>
@@ -30286,67 +30286,41 @@ if (isBlock1) {
       <functionCode><![CDATA[var collectUserInfoItems = function() {
     var r = new Array();
     r.push(g5.p2.p1.v_items);
-    r.push(g5.p2.p2.p1Items);
-    r.push(g5.p2.p2.p3Items);
-    r.push(g5.p2.p2.p2sub.chat.c_chat.c_chatRoot.v_items);
-    r.push(g5.p3.p8.p1.c_chatRoom.c_chatRoot.v_items);
-    r.push(g5.p2.p12.v_items);
-    r.push(g5.p2.p13.v_items);
-    r.push(g5.p2.p15.v_items);
-    r.push(g5.p2.p16.v_items);
     r.push(g5.p2.p5.v_items);
     r.push(g5.p2.p11.c_pages.c1.v_items);
     r.push(g5.p2.p11.c_pages.c2.v_items);
-    r.push(g5.p2.p11.c_pages.c3.v_items);
     r.push(g5.p2.p11.c_pages.c4.v_items);
     r.push(g5.p2.p11.c_pages.c5.v_items);
     r.push(g5.p2.p9.v_items);
     r.push(g5.p2.p9.c_tabRoot.p1.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p2.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p3.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p4.v_items);
     for (var i=0; i<g5.p2.p9.v_hisItems.length; i++) {
         r.push(g5.p2.p9.v_hisItems[i].v_items);
         r.push(g5.p2.p9.v_hisItems[i].v_itemsP1);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP2);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP3);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP4);
     }
     return r;
 }
 
-var sync = function(userId, isFollow) {
-    g5.p2.p1.refresh();
-    g5.p2.p2.setIsFollow(userId, isFollow);
+var sync = function(contentId, forceTop) {
+    g5.p2.p2.refreshContent();
     var itemList = collectUserInfoItems();
     var i,j;
     for (i=0; i<itemList.length; i++) {
         var items = itemList[i];
         for (j=0; j<items.length; j++) {
-            if (items[j].v_userInfo) {
-                if (items[j].v_userInfo.id == userId) { 
-                    items[j].v_userInfo.isFollow = isFollow;
-                }
-            }
-            if (items[j].v_reUserInfo) {
-                if (items[j].v_reUserInfo.id == userId) { 
-                    items[j].v_reUserInfo.isFollow = isFollow;
-                }
-            }
+            var needRefresh = false;
             if (items[j].v_content) {
-                if (items[j].v_content.exUserInfo) {
-                    if (items[j].v_content.exUserInfo.id == userId) { 
-                        items[j].v_content.exUserInfo.isFollow = isFollow;
-                    }
+                if (items[j].v_content.id == contentId) {
+                    items[j].v_content.forceTopSn = forceTop? "1":"0";
+                    needRefresh = true;
                 }
             }
-            if (items[j].v_userBar) {
-                if (items[j].v_userInfo.isFollow) {
-                    items[j].button1.init(2);
-                } else {
-                    items[j].button1.init(1);
+            if (items[j].v_reContent) {
+                if (items[j].v_reContent.id == contentId) {
+                    items[j].v_reContent.forceTopSn = forceTop? "1":"0";
+                    needRefresh = true;
                 }
-            } 
+            }
+            if (needRefresh) items[j].refresh();
         }
     }
 }
@@ -30362,7 +30336,7 @@ if (enabled) {
             setTwitterForceTop.contentId = contentId;
             setTwitterForceTop.forceTop = true;
             setTwitterForceTop.onComplete = function() {
-                g5.p2.p2.refreshContent();
+                sync(contentId, true);
             }
             setTwitterForceTop();
         }
@@ -30378,7 +30352,7 @@ if (enabled) {
             setTwitterForceTop.contentId = contentId;
             setTwitterForceTop.forceTop = false;
             setTwitterForceTop.onComplete = function() {
-                g5.p2.p2.refreshContent();
+                sync(contentId, false);
             }
             setTwitterForceTop();
         }
