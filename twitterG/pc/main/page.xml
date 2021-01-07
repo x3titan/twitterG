@@ -2940,6 +2940,7 @@ sender.changePage = function(pageIndex) {
     }
     
     if (pageIndex == 1) {
+        ee.setVisible(this.p1, true);
         this.button1.init(1);
         this.button1.appendChild(this.buttonLine);
         if (eb.isEmpty(this.p1ChatRect)) {
@@ -2952,7 +2953,6 @@ sender.changePage = function(pageIndex) {
         this.chat.init();
         this.chat.c_buttons.c_buttons.showButton3(true);
         g5.tiledV(this.p1, 0);
-        ee.setVisible(this.p1, true);
         g5.resizeV(this.p1, 4);
         if (this.p1.v_clear) this.p1.loadMore();
     } else if (pageIndex == 2) {
@@ -2997,11 +2997,14 @@ sender.init = function() {
 }
 
 sender.refreshP3 = function() {
+    for (var i=0; i<this.parentNode.p3Items.length; i++) {
+        ee.removeControl(this.parentNode.p3Items[i]);
+    }
+    this.parentNode.p3Items = new Array();
+    this.v_p3PageIndex = 0;
+    this.parentNode.v_p3Init = true;
     if (this.currentPageIndex == 3) {
-        this.init();
         this.updateP3();
-    } else {
-        this.init();
     }
 }
 
@@ -3505,7 +3508,7 @@ sender.setSize = function(sizeMode) {
         this.c_buttons.init();
         g5.tiledV(this, 0);
     }
-    g5.tiledResizeV(this.parentNode, 4);
+    g5.tiledResizeV(this.parentNode, 5);
 }
 
 sender.getAdminListVisible = function() {
