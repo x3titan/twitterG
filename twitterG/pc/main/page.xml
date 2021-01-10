@@ -24450,14 +24450,14 @@ sql =
     "SELECT   dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
     "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
-    "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, CASE WHEN forwardLink.id IS NULL  " +
+    "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, dbo.tContent.forceTopSn, CASE WHEN forwardLink.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS isForward, CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike,  " +
     "                CASE WHEN unlikeList.id IS NULL THEN 0 ELSE 1 END AS isUnlike, tContent_1.id AS reId, DATEDIFF(second,  " +
     "                tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.status AS reStatus,  " +
     "                tContent_1.uplinkType AS reUplinkType, tContent_1.uplinkId AS reUplinkId, tContent_1.[content] AS reContent,  " +
     "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " +
     "                tContent_1.photo4 AS rePhoto4, tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount,  " +
-    "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, CASE WHEN forwardLink_1.id IS NULL  " +
+    "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, tContent_1.forceTopSn as reForceTopSn, CASE WHEN forwardLink_1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike,  " +
     "                CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike, dbo.tContent.userId AS uId,  " +
     "                dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
@@ -24506,8 +24506,8 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,
-    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
-    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
+    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
+    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail",
     0, 99999);
@@ -24518,15 +24518,15 @@ if (sqlResult == null) {
     return;
 }
 eio.appendDataSet(sqlResult,
-    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
-    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
+    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
+    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail",
     0, 99999);
 while (db.nextResult(sqlResult)) {
 eio.appendDataSet(sqlResult,
-    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike," +
-    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike," +
+    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
+    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail",
     0, 99999);
@@ -28253,7 +28253,7 @@ if (root.v_mode.charAt(2) != "x") {
     root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
     root.c_forceTopLabel = c.label.rows[0].cells[0].childNodes[3]; 
 } else {
-    root.c_forceTopLabel = c.label.rows[0].cells[0].childNodes[2]; 
+    root.c_forceTopLabel = c.label.rows[0].cells[0].childNodes[1]; 
 }
 c.v_username = root.v_userInfo.userName;
 root.c_titleText = c.label.rows[0].cells[0].childNodes[0];
