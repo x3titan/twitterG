@@ -3370,6 +3370,7 @@ sender.v_pageSize = 10;
 
 sender.init = function() {
     this.v_pageIndex = 0;
+    this.v_status = "";
 }
 
 sender.refresh = function() {
@@ -3381,6 +3382,7 @@ sender.refresh = function() {
 }
 
 sender.loadMore = function() {
+    if (sender.v_status=="noResult") return;
     if (showUserPageLoadMore.busy) return;
     this.v_pageIndex++;
     showUserPageLoadMore.userId = g5.p2.p2.v_userInfo.id;
@@ -3431,6 +3433,12 @@ sender.loadMore = function() {
             var h = cy + ch - eb.getDivRect(item).h - 51; 
             ee.setRect(root,null,null,null,h);
             g5.resizeV(root.parentNode, 3);
+        }
+        if (dataset.rowCount<=0) {
+            sender.v_status = "noResult";
+            var item = createPanel(sender, "newThingsEndP2", "", 0, cy, itemWidth, 60); cy += 60;
+            addText(item, "没有更多的短文了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+            g5.p2.p2.p1Items.push(item);
         }
     }
     g5.loading.show2();
@@ -7512,8 +7520,10 @@ sender.loadMore = function() {
 }
 
 sender.setLike = function(contentId) {
-    if (this.v_content.id == contentId) {
-        this.c_tabRoot.p3.refresh();
+    if (this.v_content) {
+        if (this.v_content.id == contentId) {
+            this.c_tabRoot.p3.refresh();
+        }
     }
     for (var i=0; i<this.v_hisItems.length; i++) {
         if (this.v_hisItems[i].v_content.id!=contentId) continue;
