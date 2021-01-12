@@ -3375,6 +3375,7 @@ sender.init = function() {
 
 sender.refresh = function() {
     this.v_pageIndex = -1;
+    sender.v_status = "";
     this.v_clear = true;
     if (this.parentNode.currentPageIndex == 1) {
         this.loadMore();
@@ -7533,8 +7534,10 @@ sender.setLike = function(contentId) {
 }
 
 sender.setUnlike = function(contentId) {
-    if (this.v_content.id == contentId) {
-        this.c_tabRoot.p4.refresh();
+    if (this.v_content) {
+        if (this.v_content.id == contentId) {
+            this.c_tabRoot.p4.refresh();
+        }
     }
     for (var i=0; i<this.v_hisItems.length; i++) {
         if (this.v_hisItems[i].v_content.id!=contentId) continue;
@@ -24117,7 +24120,7 @@ sql =
     "                exLikeList.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + userId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") " +
-    "ORDER BY dbo.tContent.id DESC ";
+    "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
     
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
