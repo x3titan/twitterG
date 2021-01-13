@@ -2137,7 +2137,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2482,8 +2481,15 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
     } else if (pageIndex == 3) {
         cy = 0;
     }
+    var insertPos = 0;
+    for (var i=0; i<items.length; i++) {
+        if (!items[i].v_content) break;
+        if (items[i].v_content.forceTopSn != "0") {
+            insertPos++;
+        } else break;    
+    }
     if (items.length>0) {
-        cy = eb.getDivRect(items[0]).y;
+        cy = eb.getDivRect(items[insertPos]).y;
     }
     if (pageIndex == 1) {
         item = createPanel(root, "p2p2p1_" + v_content.id, "", 0, cy, itemWidth, 5);
@@ -2496,9 +2502,9 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
     item.v_reUserInfo = v_reUserInfo;
     item.v_mode = "";
     g5.renderTwitter(item);
-    items.splice(0, 0, item);
+    items.splice(insertPos, 0, item);
     cy = eb.getDivRect(item).h;
-    g5.batchMoveY(items, 1, cy);
+    g5.batchMoveY(items, insertPos+1, cy);
     eb.setDivRect(root, null,null,null,eb.getDivRect(root).h + cy);
     if (pageIndex == this.p2sub.currentPageIndex) {
         g5.resizeV(root.parentNode, 3);
@@ -2910,6 +2916,7 @@ sender.init(0);
       <left>0</left>
       <note>p2PersonSub,p2sub</note>
       <onCreate><![CDATA[sender.currentPageIndex = -1;
+sender.c_buttons = ee.getControl("layoutx2");
 sender.button1 = ee.getControl("layoutxitem3");
 sender.button2 = ee.getControl("layoutxitem4");
 sender.button3 = ee.getControl("layoutxitem5");
@@ -2951,8 +2958,7 @@ sender.changePage = function(pageIndex) {
         g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.v_userInfo.id == g5.myUserInfo.id);
         this.chat.init();
         this.chat.c_buttons.c_buttons.showButton3(true);
-        g5.tiledV(this.p1, 0);
-        g5.resizeV(this.p1, 4);
+        this.p1.resize();
         if (this.p1.v_clear) this.p1.loadMore();
     } else if (pageIndex == 2) {
         this.button2.init(1);
@@ -2977,8 +2983,8 @@ sender.changePage = function(pageIndex) {
             ee.setVisible(this.p3, true);
         } else {
             ee.setVisible(this.p3, true);
-            g5.resizeV(this.p3, 4);
         }
+        this.p3.resize();
     }
     this.currentPageIndex = pageIndex;
     eb.processDock();    
@@ -2994,9 +3000,11 @@ sender.init = function() {
     this.parentNode.p3Items = new Array();
     this.v_p3PageIndex = 0;
     this.parentNode.v_p3Init = true;
+    this.p3.v_status = "";
 }
 
 sender.refreshP3 = function() {
+    this.p3.v_status = "";
     for (var i=0; i<this.parentNode.p3Items.length; i++) {
         ee.removeControl(this.parentNode.p3Items[i]);
     }
@@ -3011,19 +3019,21 @@ sender.refreshP3 = function() {
 sender.v_p3PageIndex = 0;
 sender.v_p3PageSize = 10;
 sender.updateP3 = function() {
+    if (this.p3.v_status == "noResult") return;
     if (showUserPageP3.busy) return;
     this.parentNode.v_p3Init = false;
     showUserPageP3.userId = g5.p2.p2.v_userInfo.id;
     showUserPageP3.pageIndex = this.v_p3PageIndex; this.v_p3PageIndex++;
     showUserPageP3.pageSize = this.v_p3PageSize;
     showUserPageP3.onComplete = function(dataset) {
+        g5.loading.close();
         if (showUserPageP3.disabled) return;
         var i, j, item;
         var root = sender.p3; 
         var itemWidth = eb.getDivRect(root).w;
         var cy = 0;
         if (sender.parentNode.p3Items.length>0) {
-            var r = eb.getDivRect(sender.parentNode.p3Items[sender.parentNode.p3Items.length-1]);
+            var r = eb.getDivRectSetting(sender.parentNode.p3Items[sender.parentNode.p3Items.length-1]);
             cy = r.y + r.h;
         }
         var item = null;
@@ -3040,18 +3050,15 @@ sender.updateP3 = function() {
             item.style.borderLeft="";    
             item.style.borderRight="";    
         }
-        if (item!=null) {
-            var ch = $g("divRoot").offsetHeight;
-            var h = cy + ch - eb.getDivRect(item).h - 51; 
-            ee.setRect(root,null,null,null,h);
-        } else if (sender.parentNode.p3Items.length<=0) {
-            var ch = $g("divRoot").offsetHeight;
-            var h = ch + eb.getDivRect(ee.getControl("layoutx2")).y - 51; 
-            ee.setRect(root,null,null,null,h);
+        if (dataset.rowCount<=0) {
+            sender.p3.v_status = "noResult";
+            var item = createPanel(sender, "newThingsEndP2", "", 0, cy, itemWidth, 60); cy += 60;
+            addText(item, "没有更多的短文了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+            g5.p2.p2.p3Items.push(item);
         }
-        //g5.tiledV(root, 0, 0, 0);
-        g5.resizeV(root.parentNode, 3);
+        sender.p3.resize();
     }
+    g5.loading.show2();
     showUserPageP3(); 
 }
 
@@ -3068,7 +3075,7 @@ sender.updateP3 = function() {
       <heightRatio>0.13903743315508</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>题头按钮组</note>
+      <note>c_buttons</note>
       <onCreate>sender.style.boxSizing = "border-box";
 sender.style.borderBottomWidth = "1px";
 sender.style.borderBottomColor = "rgb(230,236,240)";
@@ -3429,22 +3436,37 @@ sender.loadMore = function() {
             item.style.borderLeft="";    
             item.style.borderRight="";    
         }
-        if (item!=null) {
-            var ch = $g("divRoot").offsetHeight;
-            var h = cy + ch - eb.getDivRect(item).h - 51; 
-            ee.setRect(root,null,null,null,h);
-            g5.resizeV(root.parentNode, 3);
-        }
         if (dataset.rowCount<=0) {
             sender.v_status = "noResult";
             var item = createPanel(sender, "newThingsEndP2", "", 0, cy, itemWidth, 60); cy += 60;
             addText(item, "没有更多的短文了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
             g5.p2.p2.p1Items.push(item);
         }
+        sender.resize();
     }
     g5.loading.show2();
     showUserPageLoadMore();
 }
+
+sender.resize = function() {
+    var item = null;
+    var add = 0;
+    for (var i=g5.p2.p2.p1Items.length-1; i>=0; i--) {
+        if (g5.p2.p2.p1Items[i].v_userInfo) {
+            item = g5.p2.p2.p1Items[i];
+            break;
+        } else {
+            add += eb.getDivRectSetting(g5.p2.p2.p1Items[i]).h;
+        }
+    }
+    if (item == null) {
+        item = g5.p2.p2.p2sub.p1.c_titleBlog;
+    }
+    var bottomSpace = eb.getClientSize().h - eb.getDivRectSetting(item).h - add - 51;
+    ee.tiledV(this,0,0,bottomSpace);
+    ee.resizeV(this.parentNode, 3);
+}
+
 ]]></onCreate>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>52</top>
@@ -6262,6 +6284,24 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <layerName><![CDATA[  p3->发言和回复]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate><![CDATA[sender.resize = function() {
+    var item = null;
+    var add = 0;
+    for (var i=g5.p2.p2.p3Items.length-1; i>=0; i--) {
+        if (g5.p2.p2.p3Items[i].v_userInfo) {
+            item = g5.p2.p2.p3Items[i];
+            break;
+        } else {
+            add += eb.getDivRectSetting(g5.p2.p2.p3Items[i]).h;
+        }
+    }
+    if (item == null) {
+        item = g5.p2.p2.p2sub.c_buttons;
+    }
+    var bottomSpace = eb.getClientSize().h - eb.getDivRectSetting(item).h - add - 51;
+    ee.tiledV(this,0,0,bottomSpace);
+    ee.resizeV(this.parentNode, 3);
+}]]></onCreate>
       <sizeRatio>0.22</sizeRatio>
       <top>52</top>
       <topRatio>0.13903743315508</topRatio>
@@ -18034,6 +18074,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18120,6 +18161,7 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -28613,7 +28655,7 @@ if (!showRe) {
 
 if (root.v_mode.charAt(2) == "x") {
     c = createPanel(root, root.id+"_bottom01", "", 16, cy, mainWidth, 26); cy+=33;
-    addText(c, g5.getMins(root.v_content.seconds), "left", "middle", "微软雅黑", 12, "808080", "normal");
+    addText(c, g5.getMins(root.v_content.seconds, 2), "left", "middle", "微软雅黑", 12, "808080", "normal");
     root.v_timeLabel = c.label.rows[0].cells[0]; 
     root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_content.seconds
     c = createPanel(root, root.id+"_btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
@@ -30054,21 +30096,40 @@ history.pushState(pageState,"",param);
     </item>
     <item name="getMins" type="20">
       <varValue />
-      <functionParam>seconds</functionParam>
+      <functionParam>seconds,style</functionParam>
       <functionCode><![CDATA[seconds = parseInt(seconds);
 var a;
-if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + "秒";
-if (seconds<60*60) {
-    a = seconds%60;
-    return parseInt(seconds/60) + "分" + (a<10 ? "0"+a:a) + "秒";
-} else if (seconds<60*60*24) {
-    a = parseInt((seconds%(60*60))/60);
-    return parseInt(seconds/60/60) + "小时" + (a<10 ? "0"+a:a) + "分钟";
+if (eb.isEmpty(style)) style = 1;
+if (style == 1) {
+    if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + "秒";
+    if (seconds<60*60) {
+        a = seconds%60;
+        return parseInt(seconds/60) + "分" + (a<10 ? "0"+a:a) + "秒";
+    } else if (seconds<60*60*24) {
+        a = parseInt((seconds%(60*60))/60);
+        return parseInt(seconds/60/60) + "小时" + (a<10 ? "0"+a:a) + "分钟";
+    } else {
+        var time = new Date((new Date()).getTime()-seconds*1000);
+        if ((new Date()).getYear() != time.getYear()) {
+            return (time.getYear() + 1900) + "年" + (time.getMonth()+1) + "月" + (time.getDate()+1) + "日";
+        } else {
+            return (time.getMonth()+1) + "月" + (time.getDate()+1) + "日";
+        }
+    }
 } else {
-    var time = new Date((new Date()).getTime()-seconds*1000);
-    a = time.getMinutes();    
-    return (time.getMonth()+1) + "月" + (time.getDate()+1) + "日" +
-        " " + time.getHours()+ ":" + (a<10 ? "0"+a:a);
+    if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + "秒";
+    if (seconds<60*60) {
+        a = seconds%60;
+        return parseInt(seconds/60) + "分" + (a<10 ? "0"+a:a) + "秒";
+    } else if (seconds<60*60*24) {
+        a = parseInt((seconds%(60*60))/60);
+        return parseInt(seconds/60/60) + "小时" + (a<10 ? "0"+a:a) + "分钟";
+    } else {
+        var time = new Date((new Date()).getTime()-seconds*1000);
+        return (time.getHours()<=12 ? "上午"+time.getHours() : "下午"+(time.getHours()-12)) + ":" +
+            (time.getMinutes()>=10 ? time.getMinutes() : "0" + time.getMinutes()) + " · " +
+            (time.getYear() + 1900) + "年" + (time.getMonth()+1) + "月" + (time.getDate()+1) + "日";
+    }
 }]]></functionCode>
     </item>
     <item name="setFollow" type="20">
