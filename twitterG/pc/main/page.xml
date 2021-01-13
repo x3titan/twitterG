@@ -2137,6 +2137,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2496,6 +2497,14 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
     } else if (pageIndex == 3) {
         item = createPanel(root, "p2p2p3_" + v_content.id, "", 0, cy, itemWidth, 5);
     }
+    var refPos = -1;
+    for (var i=0; i<root.childNodes.length; i++) {
+        if (root.childNodes[i] == items[insertPos]) {
+            refPos = i;
+            break;
+        }
+    }
+    ee.changeParent(item, root, refPos);
     item.v_content = v_content;
     item.v_reContent = v_reContent;
     item.v_userInfo = v_userInfo;
@@ -3052,7 +3061,7 @@ sender.updateP3 = function() {
         }
         if (dataset.rowCount<=0) {
             sender.p3.v_status = "noResult";
-            var item = createPanel(sender, "newThingsEndP2", "", 0, cy, itemWidth, 60); cy += 60;
+            var item = createPanel(sender.p3, "newThingsEndP3", "", 0, cy, itemWidth, 60); cy += 60;
             addText(item, "没有更多的短文了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
             g5.p2.p2.p3Items.push(item);
         }
@@ -3417,10 +3426,15 @@ sender.loadMore = function() {
         }
         var item = null;
         for (i=0; i< dataset.rowCount; i++) {
+            g5.writeLog("in: " + dataset.getData(0,i));
             for (j=0; j<g5.p2.p2.p1Items.length; j++) {
-                if (g5.p2.p2.p1Items[j].v_contentId == dataset.getData(0,i)) break;    
+                if (!g5.p2.p2.p1Items[j].v_content) continue;
+                if (g5.p2.p2.p1Items[j].v_content.id == dataset.getData(0,i)) break;    
             }
-            if (j<g5.p2.p2.p1Items.length) continue;
+            if (j<g5.p2.p2.p1Items.length) {
+                g5.writeLog("same");
+                continue;
+            }
             item = createPanel(root, "puser_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
             if (item.v_content.exUplinkType == "L") {
@@ -16181,7 +16195,6 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -16619,7 +16632,6 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>38</height>
       <heightRatio>0.387755102040816</heightRatio>
       <layerName><![CDATA[  a3->搜索按钮组]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[//sender.style.position="fixed";
 sender.style.boxSizing = "border-box";
@@ -19241,7 +19253,6 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>326</left>
       <leftRatio>0.275105485232068</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
