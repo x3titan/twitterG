@@ -2157,7 +2157,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2343,6 +2342,23 @@ sender.setIsFollow = function(userId, isFollow) {
         }
     }
 }
+
+sender.setIsBlock1 = function(userId, isBlock1) {
+    if (g5.currentPageIndex == 1) {
+        var v_userInfo = this.v_userInfo;
+        if (userId != v_userInfo.id) return;
+        v_userInfo.isBlock1 = isBlock1;
+        if (isBlock1) {
+            v_userInfo.isFollow = false;
+        }
+        g5.changeP2(-1);
+        this.v_userInfo = null;
+        this.show(v_userInfo);
+    } else {
+        this.v_userInfo = null;
+    }
+}
+
 
 sender.showByUserInfo = function(v_userInfo) {
     this.v_userInfo = v_userInfo;
@@ -2828,21 +2844,7 @@ sender.init = function(photoString) {
       <left>426</left>
       <leftRatio>0.71</leftRatio>
       <onClick>if (sender.v_index==0) {
-    //屏蔽
-    g5.popBlack.a6.show(
-        "取消屏蔽@"+showUserPage.v_userInfo.userName+"？",
-        "该用户将能关注并查看你的发言",
-        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")],
-        function() {
-            blockUser.userId= showUserPage.v_userInfo.id;
-            blockUser.isBlock = 0;
-            blockUser();
-            blockUser.onComplete = function() {
-                ee.getControl("panel256").init(1);
-            }
-        }
-    );
+    g5.setBlock1(g5.p2.p2.v_userInfo.id, g5.p2.p2.v_userInfo.userName, false, function(){});
 } else if (sender.v_index==1) {
     //关注
     g5.setFollow(showUserPage.v_userInfo.id, showUserPage.v_userInfo.userName, false,function(userId,isFollow) {
@@ -18781,6 +18783,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -19270,6 +19273,7 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>326</left>
       <leftRatio>0.275105485232068</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
@@ -30329,12 +30333,12 @@ if (isFollow) {
 
 var sync = function(userId, isBlock1) {
     g5.p2.p1.refresh();
+    g5.p2.p2.setIsBlock1(userId, isBlock1);
     g5.p2.p11.refresh();
     g5.p2.p19.refresh();
     g5.p2.p5.refresh();
     g5.p2.p13.refresh();
     g5.p2.p9.blockUser(userId);
-    //g5.p2.p2.setIsFollow(userId, isFollow);
     var itemList = collectUserInfoItems();
     var i,j;
     for (i=0; i<itemList.length; i++) {
