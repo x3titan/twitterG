@@ -2277,8 +2277,8 @@ sender.show = function(v_userInfo, userId, userName) {
         }
         
         g5.tiledV(g5.p2PersonSub.p1,0);
-        g5.p2PersonSub.init();
-        g5.p2PersonSub.changePage(1);
+        sender.p2sub.init();
+        sender.p2sub.changePage(1);
         g5.p3.p8.init();
     }
     if ((this.c_block.style.visibility == "hidden") || eb.isEmpty(v_userInfo)) {
@@ -2484,7 +2484,9 @@ sender.showByUserInfo = function(v_userInfo) {
     ee.setVisible(ee.getControl("panel73"), true);
     cy += eb.getDivRect(ee.getControl("panel73")).h;
     
+    g5.p2PersonSub.init();
     g5.changeP2(1);
+    this.p2sub.changePage(-1);
 }
 
 sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
@@ -3025,6 +3027,7 @@ sender.changePage = function(pageIndex) {
 sender.init = function() {
     this.currentPageIndex = -1;
     this.p2ChatRect = null;
+    this.chatVideo.init("", false);
     for (var i=0; i<this.parentNode.p3Items.length; i++) {
         ee.removeControl(this.parentNode.p3Items[i]);
     }
@@ -5784,9 +5787,9 @@ sender.renderMsg = function(root) {
         var style = new Array();
         var onClick = new Array();
         //delete
-        if ((showUserPage.v_userInfo.id == g5.myUserInfo.id) || 
+        if (((showUserPage.v_userInfo.id == g5.myUserInfo.id) || 
             (showUserPage.isChatRoomPubAdmin &amp;&amp; !root.v_isAdmin) || 
-            (root.v_userInfo.id == g5.myUserInfo.id)) {
+            (root.v_userInfo.id == g5.myUserInfo.id)) &amp;&amp; (!root.v_isBlack)) {
             if (root.v_chatStatus == "IDL") {
                 style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除聊天记录","删除聊天记录","删除聊天记录","#404040","#404040","#404040",""));
                 onClick.push(
