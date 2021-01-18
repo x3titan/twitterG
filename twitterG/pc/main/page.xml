@@ -78,7 +78,50 @@ initLButton = function(button,text,dy,icon,size,dx) {
     ee.setText(button.status3, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
-]]></onPageCreate>
+
+
+ee.setImage = function (div, imgUrl, imgMode, alt, title) {
+    if (!eb.isEmpty(div.img)) {
+        if (eb.isEmpty(alt)) alt = div.img.alt;
+        if (eb.isEmpty(title)) title = div.img.title;
+        if (eb.isEmpty(imgMode)) imgMode = div.imgMode;
+        if (eb.isEmpty(imgUrl)) imgUrl = "url:" + div.img.src;
+        div.removeChild(div.img);
+        div.img = undefined;
+    }
+    if (eb.isEmpty(imgUrl)) return;
+    if (eb.isEmpty(imgMode)) imgMode = "trim";
+    if (eb.isEmpty(alt)) alt = "";
+    if (eb.isEmpty(title)) title = "";
+    var cmd = "";
+    if (imgUrl.length >= 4) {
+        cmd = imgUrl.substring(0, 4);
+    }
+    if (cmd == "url:") {
+        imgUrl = imgUrl.substring(4);
+    } else {
+        //imgUrl = "eeImage.aspx?_image_Url_=" + imgUrl;
+        if (ee.relatedCache.length > 0) {
+            imgUrl = ee.relatedCache + "../cache" + imgUrl;
+        } else {
+            imgUrl = "cache" + imgUrl;
+            if (ee.pureServer) imgUrl = "/" + imgUrl;
+        }
+    }
+    div.img = document.createElement("img");
+    div.imgMode = imgMode;
+    div.img.ondragstart = function () { return false; };
+    div.img.alt = alt;
+    div.img.title = title;
+    div.img.style.position = "absolute";
+    var rect = eb.getDivRectSetting(div);
+    eb.setImgRect(div.img, rect.w, rect.h, null, null);
+    div.img.onload = addImageOnLoad;
+    div.img.src = imgUrl;
+    if (div.childNodes.length > 0) {
+        div.insertBefore(div.img, div.childNodes[0]);
+    } else div.appendChild(div.img);
+}]]></onPageCreate>
       <pageHead><![CDATA[<style>
 .scrollBar01::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
@@ -6001,12 +6044,20 @@ sender.renderMsg = function(root) {
 }
 
 sender.displayTime = function(time) {
-    return (
-        //(time.getMonth()+1) + "月" +
-        //time.getDate() + "日 " +
+    var c = new Date();
+    result = "";
+    if (c.getYear()!=time.getYear()) {
+        result += (time.getYear()+1900)+"年";
+    }
+    if ((c.getYear()!=time.getYear()) || (c.getMonth()!=time.getMonth()) || (c.getMonth()!=time.getMonth())) {
+        result += 
+            (time.getMonth()+1) + "月" +
+            time.getDate() + "日 ";
+    }
+    result += 
         (time.getHours()<10?"0":"") + time.getHours() + ":" +
-        (time.getMinutes()<10?"0":"") + time.getMinutes()
-    );
+        (time.getMinutes()<10?"0":"") + time.getMinutes();
+    return result;
 }
 
 sender.timeFragment = function() {
