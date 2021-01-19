@@ -80,14 +80,98 @@ initLButton = function(button,text,dy,icon,size,dx) {
 }
 
 
+
+function addImageOnLoad(na, img) {
+    if (!eb.isEmpty(img)) {
+        if (eb.isEmpty(img.sw)) return;
+    }
+    if (eb.isEmpty(img)) img = this;
+    if (eb.isEmpty(img.parentNode)) return;
+    
+    var div = img.parentNode;
+    if (div.c_imgOld) {
+        div.removeChild(div.c_imgOld);
+        div.c_imgOld = undefined;
+    }
+
+    var imgHeight;
+    var ratio;
+    var firstLoad = false;
+    var imgMode = img.parentNode.imgMode;
+    if (eb.isEmpty(img.sw)) {
+        img.sw = img.width;
+        img.sh = img.height;
+        firstLoad = true;
+    }
+    var rect = eb.getDivRectSetting(img.parentNode);
+    if (imgMode == "trim") {
+        if (rect.w / img.sw > rect.h / img.sh) {
+            ratio = rect.w / img.sw;
+            img.width = rect.w;
+            img.height = parseInt(img.sh * ratio + 1);
+            img.style.left = "0px";
+            img.style.top = parseInt(rect.h / 2 - img.height / 2) + "px";
+        } else {
+            ratio = rect.h / img.sh;
+            img.width = parseInt(img.sw * ratio + 1);
+            img.height = rect.h;
+            img.style.left = parseInt(rect.w / 2 - img.width / 2) + "px";
+            img.style.top = "0px";
+        }
+    } else if (imgMode == "fill") {
+        if (rect.w / img.sw < rect.h / img.sh) {
+            ratio = rect.w / img.sw;
+            img.width = rect.w;
+            img.height = parseInt(img.sh * ratio);
+            img.style.left = "0px";
+            img.style.top = parseInt(rect.h / 2 - img.height / 2) + "px";
+        } else {
+            ratio = rect.h / img.sh;
+            img.width = parseInt(img.sw * ratio + 1);
+            img.height = rect.h;
+            img.style.left = parseInt(rect.w / 2 - img.width / 2) + "px";
+            img.style.top = "0px";
+        }
+    } else if (imgMode == "stretch") {
+        img.width = rect.w;
+        img.height = rect.h;
+        img.style.left = "0px";
+        img.style.top = "0px";
+    } else if (imgMode == "center") {
+        img.style.left = parseInt(rect.w / 2 - img.sw / 2) + "px";
+        img.style.top = parseInt(rect.h / 2 - img.sh / 2) + "px";
+    } else if (imgMode == "normal") {
+        img.style.left = "0px";
+        img.style.top = "0px";
+    } else {
+        img.style.left = "0px";
+        img.style.top = "0px";
+    }
+    if (firstLoad) {
+        if (!eb.isEmpty(img.parentNode.onImageLoad)) {
+            img.parentNode.onImageLoad(img.parentNode);
+        }
+    }
+}
+
 ee.setImage = function (div, imgUrl, imgMode, alt, title) {
     if (!eb.isEmpty(div.img)) {
         if (eb.isEmpty(alt)) alt = div.img.alt;
         if (eb.isEmpty(title)) title = div.img.title;
         if (eb.isEmpty(imgMode)) imgMode = div.imgMode;
         if (eb.isEmpty(imgUrl)) imgUrl = "url:" + div.img.src;
-        div.removeChild(div.img);
+        if (div.c_imgOld) {
+            div.removeChild(div.c_imgOld);
+            div.c_imgOld = undefined;
+        }
+        div.c_imgOld = div.img;
         div.img = undefined;
+    }
+    if (imgUrl.length<=0) {
+        if (div.c_imgOld) {
+            div.removeChild(div.c_imgOld);
+            div.c_imgOld = undefined;
+        }
     }
     if (eb.isEmpty(imgUrl)) return;
     if (eb.isEmpty(imgMode)) imgMode = "trim";
@@ -121,7 +205,8 @@ ee.setImage = function (div, imgUrl, imgMode, alt, title) {
     if (div.childNodes.length > 0) {
         div.insertBefore(div.img, div.childNodes[0]);
     } else div.appendChild(div.img);
-}]]></onPageCreate>
+}
+]]></onPageCreate>
       <pageHead><![CDATA[<style>
 .scrollBar01::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
@@ -9709,6 +9794,7 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_needRefresh = true;
@@ -9907,6 +9993,7 @@ sender.loadDataset = function(dataset) {
       <height>376</height>
       <heightRatio>0.482051282051282</heightRatio>
       <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.62876254180602</sizeRatio>
       <top>0</top>
@@ -18921,7 +19008,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -19138,7 +19224,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -19182,8 +19267,10 @@ sender.refresh = function() {
     if (this.v_index>=this.v_photos.length) return;
     var v_photo = this.v_photos[this.v_index];
     var rect = eb.getDivRect(this.c_photo);
-    this.clear();
+    this.c_video.innerHTML = "";
+    ee.setVisible(this.c_video, false);
     if (v_photo.substr(0,4) == "?YTB") {
+        ee.setVisible(this.c_photo, false);
         this.c_video.innerHTML =
             "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
             v_photo.substr(4, v_photo.length) + 
