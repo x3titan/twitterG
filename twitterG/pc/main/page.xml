@@ -2288,6 +2288,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2467,8 +2468,21 @@ sender.setIsFollow = function(userId, isFollow) {
             this.v_userInfo.isFollow = isFollow;
             if (this.v_userInfo.isFollow) {
                 ee.getControl("panel256").init(2);
+                this.v_userInfo.fansCount++;
+                this.refreshFansFollowCount();
             } else {
                 ee.getControl("panel256").init(1);
+                this.v_userInfo.fansCount--;
+                this.refreshFansFollowCount();
+            }
+        }
+        if (this.v_userInfo.id == g5.myUserInfo.id) {
+            if (isFollow) {
+                this.v_userInfo.followCount++;
+                this.refreshFansFollowCount();
+            } else {
+                this.v_userInfo.followCount--;
+                this.refreshFansFollowCount();
             }
         }
     }
@@ -2490,6 +2504,39 @@ sender.setIsBlock1 = function(userId, isBlock1) {
     }
 }
 
+sender.refreshFansFollowCount = function() {
+    if (this.v_userInfo) {
+        ee.setText(ee.getControl("panel72"), "  <div id='userPageLink01' style='display:inline;'>" + this.v_userInfo.followCount + "个关注</div>" +
+            "     <div id='userPageLink02' style='display:inline;'>" + this.v_userInfo.fansCount +"个粉丝</div>");
+        var c = ee.getControl("panel72"); 
+        c.link01=$g("userPageLink01");
+        c.link02=$g("userPageLink02");
+        if (this.v_userInfo.followCount>0) {
+            c.link01.style.cursor = "pointer";
+            ee.setOnMouseEnter(c.link01,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c.link01,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            ee.setOnClick(c.link01, function(senderLink, event) {
+                g5.p2.p16.show(sender.v_userInfo);
+            });
+        }
+        if (this.v_userInfo.fansCount>0) {
+            c.link02.style.cursor = "pointer";
+            ee.setOnMouseEnter(c.link02,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c.link02,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            ee.setOnClick(c.link02, function(senderLink, event) {
+                g5.p2.p15.show(sender.v_userInfo);
+            });
+        }
+    }
+}
 
 sender.showByUserInfo = function(v_userInfo) {
     this.v_userInfo = v_userInfo;
@@ -2554,35 +2601,7 @@ sender.showByUserInfo = function(v_userInfo) {
     
     eb.setDivRect(ee.getControl("panel72"),null,cy,null,null);
     ee.setVisible(ee.getControl("panel72"), true);
-    ee.setText(ee.getControl("panel72"), "  <div id='userPageLink01' style='display:inline;'>" + v_userInfo.followCount + "个关注</div>" +
-        "     <div id='userPageLink02' style='display:inline;'>" + v_userInfo.fansCount +"个粉丝</div>");
-    var c = ee.getControl("panel72"); 
-    c.link01=$g("userPageLink01");
-    c.link02=$g("userPageLink02");
-    if (v_userInfo.followCount>0) {
-        c.link01.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link01,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link01,function(sender,e){
-            sender.style.textDecoration="";
-        });
-        ee.setOnClick(c.link01, function(senderLink, event) {
-            g5.p2.p16.show(sender.v_userInfo);
-        });
-    }
-    if (v_userInfo.fansCount>0) {
-        c.link02.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link02,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link02,function(sender,e){
-            sender.style.textDecoration="";
-        });
-        ee.setOnClick(c.link02, function(senderLink, event) {
-            g5.p2.p15.show(sender.v_userInfo);
-        });
-    }
+    this.refreshFansFollowCount();
     cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
     
     if (v_userInfo.isBlock1) ee.getControl("panel256").init(0);
@@ -8536,8 +8555,8 @@ sender.setSelected = function(item) {
       <backgroundColor>FFC080</backgroundColor>
       <dockX>fill</dockX>
       <dockY>top</dockY>
-      <height>53</height>
-      <heightRatio>0.0679487179487179</heightRatio>
+      <height>51</height>
+      <heightRatio>0.0653846153846154</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
@@ -8547,9 +8566,8 @@ sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
 sender.style.borderRight = "";
-
-</onCreate>
-      <sizeRatio>0.0883333333333333</sizeRatio>
+sender.style.borderRightColor = "#e6ecf0";</onCreate>
+      <sizeRatio>0.085</sizeRatio>
       <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
@@ -8562,7 +8580,7 @@ sender.style.borderRight = "";
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <hAlign>left</hAlign>
-      <height>53</height>
+      <height>51</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>60</left>
@@ -8600,7 +8618,7 @@ sender.eeMouseUp = function(sender, event, x, y) {
 eb.initMouseEvent(sender);]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
-      <top>10</top>
+      <top>9</top>
       <topRatio>0.188679245283019</topRatio>
       <width>33</width>
       <widthRatio>0.055</widthRatio>
@@ -8627,7 +8645,7 @@ sender.style.borderStyle = "solid";
 
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
-      <top>53</top>
+      <top>51</top>
       <topRatio>0.0679487179487179</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
@@ -8705,7 +8723,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    账号</text>
-      <top>98</top>
+      <top>96</top>
       <topRatio>0.125641025641026</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
@@ -8774,7 +8792,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    隐私和安全</text>
-      <top>143</top>
+      <top>141</top>
       <topRatio>0.183333333333333</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
@@ -10743,12 +10761,12 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p15->粉丝列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_lastScrollTop = 0;
 sender.v_items = new Array();
 sender.v_userInfo = new g5.UserInfo();
 sender.c_title = ee.getControl("panel100");
+sender.v_needRefresh = false;
 
 sender.activePage = function() {
     g5.pushHistory("p=14&amp;u=" + escape(this.v_userInfo.userName));
@@ -10775,8 +10793,26 @@ sender.showByUserName = function(userName) {
     getOtherUserInfo2();
 }
 
+sender.refresh = function(userId) {
+    var needRefresh = false;
+    if (userId) {
+        if (userId == this.v_userInfo.id) {
+            needRefresh = true;
+        }
+    } else needRefresh = true;
+    if (!needRefresh) return;
+    if (g5.currentPageIndex == 14) {
+        this.v_needRefresh = true;
+        this.show(this.v_userInfo);
+    } else {
+        this.v_needRefresh = true;
+    }
+}
+
 sender.show = function(v_userInfo) {
-    if (this.v_userInfo.id == v_userInfo.id) {
+    if (this.v_needRefresh) {
+        this.v_needRefresh = false;
+    } else if (this.v_userInfo.id == v_userInfo.id) {
         g5.changeP2(14);
         document.documentElement.scrollTop = this.v_lastScrollTop;
         ee.tiledResizeV(this, 2);
@@ -10842,6 +10878,7 @@ sender.loadRecord = function(panel, dataset, index) {
 sender.v_items = new Array();
 sender.v_userInfo = new g5.UserInfo();
 sender.c_title = ee.getControl("panel103");
+sender.v_needRefresh = false;
 
 sender.activePage = function() {
     g5.pushHistory("p=15&amp;u=" + escape(this.v_userInfo.userName));
@@ -10868,8 +10905,14 @@ sender.showByUserName = function(userName) {
     getOtherUserInfo2();
 }
 
+sender.refresh = function() {
+    if (this.v_userInfo.id == g5.myUserInfo.id) this.v_needRefresh = true;
+}
+
 sender.show = function(v_userInfo) {
-    if (this.v_userInfo.id == v_userInfo.id) {
+    if (this.v_needRefresh) {
+        this.v_needRefresh = false;
+    } else if (this.v_userInfo.id == v_userInfo.id) {
         g5.changeP2(15);
         document.documentElement.scrollTop = this.v_lastScrollTop;
         ee.tiledResizeV(this, 2);
@@ -10998,6 +11041,7 @@ sender.style.borderColor = "#ccd6dd";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.style.borderRightColor = "#e6ecf0";
 </onCreate>
       <sizeRatio>0.085</sizeRatio>
@@ -11076,6 +11120,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
@@ -11108,6 +11153,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -11180,6 +11226,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -11252,6 +11299,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -11323,6 +11371,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -11451,7 +11500,7 @@ sender.style.borderColor = "#ccd6dd";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
-sender.style.borderRightColor = "#e6ecf0";</onCreate>
+sender.style.borderRight = "";</onCreate>
       <sizeRatio>0.085</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -11529,6 +11578,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>   安全</text>
@@ -11558,6 +11608,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
@@ -11629,8 +11680,8 @@ sender.style.borderWidth = "1px";
 sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
-sender.style.borderLeft = "";
-
+sender.style.borderLeft = ""; 
+sender.style.borderRight = "";
 
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
@@ -18098,19 +18149,19 @@ eb.initMouseEvent(sender);]]></onCreate>
       <backgroundColor>FFC080</backgroundColor>
       <dockX>fill</dockX>
       <dockY>top</dockY>
-      <height>53</height>
-      <heightRatio>0.540816326530612</heightRatio>
+      <height>51</height>
+      <heightRatio>0.520408163265306</heightRatio>
       <layerName><![CDATA[  a11->设置-已屏蔽账号]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
-sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderColor = "#ccd6dd";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
 sender.style.borderRight = "";</onCreate>
-      <sizeRatio>0.089527027027027</sizeRatio>
+      <sizeRatio>0.0861486486486486</sizeRatio>
       <top>0</top>
       <width>592</width>
       <widthRatio>1</widthRatio>
@@ -18122,7 +18173,7 @@ sender.style.borderRight = "";</onCreate>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <hAlign>left</hAlign>
-      <height>53</height>
+      <height>51</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>60</left>
@@ -18161,7 +18212,7 @@ sender.eeMouseUp = function(sender, event, x, y) {
 eb.initMouseEvent(sender);]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
-      <top>10</top>
+      <top>9</top>
       <topRatio>0.188679245283019</topRatio>
       <width>33</width>
       <widthRatio>0.0557432432432432</widthRatio>
@@ -30458,6 +30509,8 @@ if (style == 1) {
 var sync = function(userId, isFollow) {
     g5.p2.p1.refresh();
     g5.p2.p2.setIsFollow(userId, isFollow);
+    g5.p2.p15.refresh(userId);
+    g5.p2.p16.refresh();
     var itemList = collectUserInfoItems();
     var i,j;
     for (i=0; i<itemList.length; i++) {
@@ -30481,10 +30534,12 @@ var sync = function(userId, isFollow) {
                 }
             }
             if (items[j].v_userBar) {
-                if (items[j].v_userInfo.isFollow) {
-                    items[j].button1.init(2);
-                } else {
-                    items[j].button1.init(1);
+                if (items[j].v_userInfo.id == userId) {
+                    if (items[j].v_userInfo.isFollow) {
+                        items[j].button1.init(2);
+                    } else {
+                        items[j].button1.init(1);
+                    }
                 }
             } 
         }
