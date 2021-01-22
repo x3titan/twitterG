@@ -2288,7 +2288,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2381,6 +2380,9 @@ sender.show = function(v_userInfo, userId, userName) {
                     ee.removeControl(item);
                     continue;
                 }
+            }
+            if (sender.v_userInfo.blockShow) {
+                item.v_forceDisplay = true;
             }
             item.v_mode = "   x";
             g5.renderTwitter(item);
@@ -2616,13 +2618,15 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setRect(this,null,null,null,r1.y+r1.h);
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
+        ee.setVisible(this.p2sub, false);
         return;
     } else {
         ee.setVisible(ee.getControl("panel6"), false);
     }
     
-    eb.setDivRect(ee.getControl("panel279"),null,cy,null,null);
-    ee.setVisible(ee.getControl("panel279"), true);
+    ee.setVisible(this.p2sub, true);
+    eb.setDivRect(this.p2sub,null,cy,null,null);
+    ee.setVisible(this.p2sub, true);
     
     var rect = eb.getDivRect(ee.getControl("panel263"));
     cy = rect.y + rect.h;
@@ -6504,7 +6508,6 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_block->屏蔽别人]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>480</top>
@@ -18381,6 +18384,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18754,6 +18758,7 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.256540084388186</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
