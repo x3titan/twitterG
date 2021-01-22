@@ -1,5 +1,5 @@
 <page>
-  <controls count="529">
+  <controls count="534">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -77,6 +77,135 @@ initLButton = function(button,text,dy,icon,size,dx) {
     ee.setTextColor(button.status2, "rgb(29,161,242)");
     ee.setText(button.status3, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
     ee.setTextColor(button.status3, "rgb(29,161,242)");
+}
+
+
+
+function addImageOnLoad(na, img) {
+    if (!eb.isEmpty(img)) {
+        if (eb.isEmpty(img.sw)) return;
+    }
+    if (eb.isEmpty(img)) img = this;
+    if (eb.isEmpty(img.parentNode)) return;
+    
+    var div = img.parentNode;
+    if (div.c_imgOld) {
+        div.removeChild(div.c_imgOld);
+        div.c_imgOld = undefined;
+    }
+
+    var imgHeight;
+    var ratio;
+    var firstLoad = false;
+    var imgMode = img.parentNode.imgMode;
+    if (eb.isEmpty(img.sw)) {
+        img.sw = img.width;
+        img.sh = img.height;
+        firstLoad = true;
+    }
+    var rect = eb.getDivRectSetting(img.parentNode);
+    if (imgMode == "trim") {
+        if (rect.w / img.sw > rect.h / img.sh) {
+            ratio = rect.w / img.sw;
+            img.width = rect.w;
+            img.height = parseInt(img.sh * ratio + 1);
+            img.style.left = "0px";
+            img.style.top = parseInt(rect.h / 2 - img.height / 2) + "px";
+        } else {
+            ratio = rect.h / img.sh;
+            img.width = parseInt(img.sw * ratio + 1);
+            img.height = rect.h;
+            img.style.left = parseInt(rect.w / 2 - img.width / 2) + "px";
+            img.style.top = "0px";
+        }
+    } else if (imgMode == "fill") {
+        if (rect.w / img.sw < rect.h / img.sh) {
+            ratio = rect.w / img.sw;
+            img.width = rect.w;
+            img.height = parseInt(img.sh * ratio);
+            img.style.left = "0px";
+            img.style.top = parseInt(rect.h / 2 - img.height / 2) + "px";
+        } else {
+            ratio = rect.h / img.sh;
+            img.width = parseInt(img.sw * ratio + 1);
+            img.height = rect.h;
+            img.style.left = parseInt(rect.w / 2 - img.width / 2) + "px";
+            img.style.top = "0px";
+        }
+    } else if (imgMode == "stretch") {
+        img.width = rect.w;
+        img.height = rect.h;
+        img.style.left = "0px";
+        img.style.top = "0px";
+    } else if (imgMode == "center") {
+        img.style.left = parseInt(rect.w / 2 - img.sw / 2) + "px";
+        img.style.top = parseInt(rect.h / 2 - img.sh / 2) + "px";
+    } else if (imgMode == "normal") {
+        img.style.left = "0px";
+        img.style.top = "0px";
+    } else {
+        img.style.left = "0px";
+        img.style.top = "0px";
+    }
+    if (firstLoad) {
+        if (!eb.isEmpty(img.parentNode.onImageLoad)) {
+            img.parentNode.onImageLoad(img.parentNode);
+        }
+    }
+}
+
+ee.setImage = function (div, imgUrl, imgMode, alt, title) {
+    if (!eb.isEmpty(div.img)) {
+        if (eb.isEmpty(alt)) alt = div.img.alt;
+        if (eb.isEmpty(title)) title = div.img.title;
+        if (eb.isEmpty(imgMode)) imgMode = div.imgMode;
+        if (eb.isEmpty(imgUrl)) imgUrl = "url:" + div.img.src;
+        if (div.c_imgOld) {
+            div.removeChild(div.c_imgOld);
+            div.c_imgOld = undefined;
+        }
+        div.c_imgOld = div.img;
+        div.img = undefined;
+    }
+    if (imgUrl.length<=0) {
+        if (div.c_imgOld) {
+            div.removeChild(div.c_imgOld);
+            div.c_imgOld = undefined;
+        }
+    }
+    if (eb.isEmpty(imgUrl)) return;
+    if (eb.isEmpty(imgMode)) imgMode = "trim";
+    if (eb.isEmpty(alt)) alt = "";
+    if (eb.isEmpty(title)) title = "";
+    var cmd = "";
+    if (imgUrl.length >= 4) {
+        cmd = imgUrl.substring(0, 4);
+    }
+    if (cmd == "url:") {
+        imgUrl = imgUrl.substring(4);
+    } else if (imgUrl.length<=0) {
+    } else {
+        //imgUrl = "eeImage.aspx?_image_Url_=" + imgUrl;
+        if (ee.relatedCache.length > 0) {
+            imgUrl = ee.relatedCache + "../cache" + imgUrl;
+        } else {
+            imgUrl = "cache" + imgUrl;
+            if (ee.pureServer) imgUrl = "/" + imgUrl;
+        }
+    }
+    div.img = document.createElement("img");
+    div.imgMode = imgMode;
+    div.img.ondragstart = function () { return false; };
+    div.img.alt = alt;
+    div.img.title = title;
+    div.img.style.position = "absolute";
+    var rect = eb.getDivRectSetting(div);
+    eb.setImgRect(div.img, rect.w, rect.h, null, null);
+    div.img.onload = addImageOnLoad;
+    div.img.src = imgUrl;
+    if (div.childNodes.length > 0) {
+        div.insertBefore(div.img, div.childNodes[0]);
+    } else div.appendChild(div.img);
 }
 ]]></onPageCreate>
       <pageHead><![CDATA[<style>
@@ -232,6 +361,8 @@ sender.onWheel = function(wheelDelta) {
             }
         } else if (g5.currentPageIndex == 4) {
             g5.p2.p5.loadMore();
+        } else if (g5.currentPageIndex == 12) {
+            g5.p2.p13.loadMore();
         } else if (g5.currentPageIndex == 1) {
             if (g5.p2.p2.p2sub.currentPageIndex == 1) {
                 g5.p2.p2.p2sub.p1.loadMore();
@@ -2157,7 +2288,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2251,6 +2381,9 @@ sender.show = function(v_userInfo, userId, userName) {
                     continue;
                 }
             }
+            if (sender.v_userInfo.blockShow) {
+                item.v_forceDisplay = true;
+            }
             item.v_mode = "   x";
             g5.renderTwitter(item);
             sender.p1Items.push(item);
@@ -2337,8 +2470,21 @@ sender.setIsFollow = function(userId, isFollow) {
             this.v_userInfo.isFollow = isFollow;
             if (this.v_userInfo.isFollow) {
                 ee.getControl("panel256").init(2);
+                this.v_userInfo.fansCount++;
+                this.refreshFansFollowCount();
             } else {
                 ee.getControl("panel256").init(1);
+                this.v_userInfo.fansCount--;
+                this.refreshFansFollowCount();
+            }
+        }
+        if (this.v_userInfo.id == g5.myUserInfo.id) {
+            if (isFollow) {
+                this.v_userInfo.followCount++;
+                this.refreshFansFollowCount();
+            } else {
+                this.v_userInfo.followCount--;
+                this.refreshFansFollowCount();
             }
         }
     }
@@ -2360,6 +2506,39 @@ sender.setIsBlock1 = function(userId, isBlock1) {
     }
 }
 
+sender.refreshFansFollowCount = function() {
+    if (this.v_userInfo) {
+        ee.setText(ee.getControl("panel72"), "  <div id='userPageLink01' style='display:inline;'>" + this.v_userInfo.followCount + "个关注</div>" +
+            "     <div id='userPageLink02' style='display:inline;'>" + this.v_userInfo.fansCount +"个粉丝</div>");
+        var c = ee.getControl("panel72"); 
+        c.link01=$g("userPageLink01");
+        c.link02=$g("userPageLink02");
+        if (this.v_userInfo.followCount>0) {
+            c.link01.style.cursor = "pointer";
+            ee.setOnMouseEnter(c.link01,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c.link01,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            ee.setOnClick(c.link01, function(senderLink, event) {
+                g5.p2.p16.show(sender.v_userInfo);
+            });
+        }
+        if (this.v_userInfo.fansCount>0) {
+            c.link02.style.cursor = "pointer";
+            ee.setOnMouseEnter(c.link02,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c.link02,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            ee.setOnClick(c.link02, function(senderLink, event) {
+                g5.p2.p15.show(sender.v_userInfo);
+            });
+        }
+    }
+}
 
 sender.showByUserInfo = function(v_userInfo) {
     this.v_userInfo = v_userInfo;
@@ -2424,35 +2603,7 @@ sender.showByUserInfo = function(v_userInfo) {
     
     eb.setDivRect(ee.getControl("panel72"),null,cy,null,null);
     ee.setVisible(ee.getControl("panel72"), true);
-    ee.setText(ee.getControl("panel72"), "  <div id='userPageLink01' style='display:inline;'>" + v_userInfo.followCount + "个关注</div>" +
-        "     <div id='userPageLink02' style='display:inline;'>" + v_userInfo.fansCount +"个粉丝</div>");
-    var c = ee.getControl("panel72"); 
-    c.link01=$g("userPageLink01");
-    c.link02=$g("userPageLink02");
-    if (v_userInfo.followCount>0) {
-        c.link01.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link01,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link01,function(sender,e){
-            sender.style.textDecoration="";
-        });
-        ee.setOnClick(c.link01, function(senderLink, event) {
-            g5.p2.p16.show(sender.v_userInfo);
-        });
-    }
-    if (v_userInfo.fansCount>0) {
-        c.link02.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link02,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link02,function(sender,e){
-            sender.style.textDecoration="";
-        });
-        ee.setOnClick(c.link02, function(senderLink, event) {
-            g5.p2.p15.show(sender.v_userInfo);
-        });
-    }
+    this.refreshFansFollowCount();
     cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
     
     if (v_userInfo.isBlock1) ee.getControl("panel256").init(0);
@@ -2467,13 +2618,15 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setRect(this,null,null,null,r1.y+r1.h);
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
+        ee.setVisible(this.p2sub, false);
         return;
     } else {
         ee.setVisible(ee.getControl("panel6"), false);
     }
     
-    eb.setDivRect(ee.getControl("panel279"),null,cy,null,null);
-    ee.setVisible(ee.getControl("panel279"), true);
+    ee.setVisible(this.p2sub, true);
+    eb.setDivRect(this.p2sub,null,cy,null,null);
+    ee.setVisible(this.p2sub, true);
     
     var rect = eb.getDivRect(ee.getControl("panel263"));
     cy = rect.y + rect.h;
@@ -2795,11 +2948,7 @@ sender.setText = function(text) {
       <layerVisible>false</layerVisible>
       <left>373</left>
       <leftRatio>0.621666666666667</leftRatio>
-      <onClick>g5.changeP2(6);
-showChatList.defaultUserId = showUserPage.id;
-showChatList.defaultUserNickName = showUserPage.nickName;
-showChatList.defaultUserName = showUserPage.userName;
-showChatList();</onClick>
+      <onClick>g5.p2.p14.show(sender.parentNode.v_userInfo);</onClick>
       <sizeRatio>0.891304347826087</sizeRatio>
       <top>272</top>
       <topRatio>0.348717948717949</topRatio>
@@ -3088,7 +3237,7 @@ sender.updateP3 = function() {
         if (dataset.rowCount<=0) {
             sender.p3.v_status = "noResult";
             var item = createPanel(sender.p3, "newThingsEndP3", "", 0, cy, itemWidth, 60); cy += 60;
-            addText(item, "没有更多的短文了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+            addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
             g5.p2.p2.p3Items.push(item);
         }
         sender.p3.resize();
@@ -3475,7 +3624,7 @@ sender.loadMore = function() {
         if (dataset.rowCount<=0) {
             sender.v_status = "noResult";
             var item = createPanel(sender, "newThingsEndP2", "", 0, cy, itemWidth, 60); cy += 60;
-            addText(item, "没有更多的短文了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+            addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
             g5.p2.p2.p1Items.push(item);
         }
         sender.resize();
@@ -5999,12 +6148,20 @@ sender.renderMsg = function(root) {
 }
 
 sender.displayTime = function(time) {
-    return (
-        //(time.getMonth()+1) + "月" +
-        //time.getDate() + "日 " +
+    var c = new Date();
+    result = "";
+    if (c.getYear()!=time.getYear()) {
+        result += (time.getYear()+1900)+"年";
+    }
+    if ((c.getYear()!=time.getYear()) || (c.getMonth()!=time.getMonth()) || (c.getMonth()!=time.getMonth())) {
+        result += 
+            (time.getMonth()+1) + "月" +
+            time.getDate() + "日 ";
+    }
+    result += 
         (time.getHours()<10?"0":"") + time.getHours() + ":" +
-        (time.getMinutes()<10?"0":"") + time.getMinutes()
-    );
+        (time.getMinutes()<10?"0":"") + time.getMinutes();
+    return result;
 }
 
 sender.timeFragment = function() {
@@ -6351,7 +6508,6 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_block->屏蔽别人]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>480</top>
@@ -6789,6 +6945,7 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p5->书签]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_topBlank = sender.eeChildren[0];
 sender.c_noResult = sender.eeChildren[1];
@@ -6861,6 +7018,7 @@ sender.fLoad = function() {
     if (showBookMark.busy) return;
     showBookMark.pageIndex = this.v_pageIndex;
     showBookMark.onComplete = function() {
+        g5.loading.close();
         var cy = 0;
         var itemWidth = eb.getDivRectSetting(sender).w;
         for (var i=0; i< showBookMark.dataset.rowCount; i++) {
@@ -6901,6 +7059,7 @@ sender.fLoad = function() {
         g5.tiledV(sender,0,0,0);
         g5.tiledResizeV(sender,2);   
     }
+    showBookMark.pageIndex<=0 ? g5.loading.show() : g5.loading.show2();
     showBookMark();
 }
 
@@ -7035,6 +7194,7 @@ sender.addButton = function(root) {
       <height>376</height>
       <heightRatio>0.482051282051282</heightRatio>
       <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.626666666666667</sizeRatio>
       <top>123</top>
@@ -7056,8 +7216,8 @@ sender.addButton = function(root) {
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.0716666666666667</sizeRatio>
       <text>您还没有添加任何发言到您的书签中</text>
-      <top>184</top>
-      <topRatio>0.48936170212766</topRatio>
+      <top>246</top>
+      <topRatio>0.654255319148936</topRatio>
       <vAlign>top</vAlign>
       <width>600</width>
       <widthRatio>1</widthRatio>
@@ -7075,11 +7235,32 @@ sender.addButton = function(root) {
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.0716666666666667</sizeRatio>
       <text>有了之后就会出现在这里</text>
-      <top>222</top>
-      <topRatio>0.590425531914894</topRatio>
+      <top>284</top>
+      <topRatio>0.75531914893617</topRatio>
       <vAlign>top</vAlign>
       <width>600</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel91/panel93/panel98">
+      <backgroundImg>empty02.gif</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>159</height>
+      <heightRatio>0.422872340425532</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>153</left>
+      <leftRatio>0.255</leftRatio>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.540816326530612</sizeRatio>
+      <top>79</top>
+      <topRatio>0.210106382978723</topRatio>
+      <vAlign>top</vAlign>
+      <width>294</width>
+      <widthRatio>0.49</widthRatio>
     </control>
     <control type="LayoutY" pathname="/divRoot/panel134/panel135/layouty4">
       <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
@@ -8379,8 +8560,8 @@ sender.setSelected = function(item) {
       <backgroundColor>FFC080</backgroundColor>
       <dockX>fill</dockX>
       <dockY>top</dockY>
-      <height>53</height>
-      <heightRatio>0.0679487179487179</heightRatio>
+      <height>51</height>
+      <heightRatio>0.0653846153846154</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
@@ -8390,9 +8571,8 @@ sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
 sender.style.borderRight = "";
-
-</onCreate>
-      <sizeRatio>0.0883333333333333</sizeRatio>
+sender.style.borderRightColor = "#e6ecf0";</onCreate>
+      <sizeRatio>0.085</sizeRatio>
       <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
@@ -8405,13 +8585,13 @@ sender.style.borderRight = "";
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <hAlign>left</hAlign>
-      <height>53</height>
+      <height>51</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>60</left>
       <leftRatio>0.1</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.53</sizeRatio>
+      <sizeRatio>0.51</sizeRatio>
       <text>设置</text>
       <top>0</top>
       <widthRatio>0.166666666666667</widthRatio>
@@ -8420,7 +8600,7 @@ sender.style.borderRight = "";
       <cursor>pointer</cursor>
       <dockY>center</dockY>
       <height>33</height>
-      <heightRatio>0.622641509433962</heightRatio>
+      <heightRatio>0.647058823529412</heightRatio>
       <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.0333333333333333</leftRatio>
@@ -8443,8 +8623,8 @@ sender.eeMouseUp = function(sender, event, x, y) {
 eb.initMouseEvent(sender);]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
-      <top>10</top>
-      <topRatio>0.188679245283019</topRatio>
+      <top>9</top>
+      <topRatio>0.176470588235294</topRatio>
       <width>33</width>
       <widthRatio>0.055</widthRatio>
     </control>
@@ -8470,8 +8650,8 @@ sender.style.borderStyle = "solid";
 
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
-      <top>53</top>
-      <topRatio>0.0679487179487179</topRatio>
+      <top>51</top>
+      <topRatio>0.0653846153846154</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -8548,8 +8728,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    账号</text>
-      <top>98</top>
-      <topRatio>0.125641025641026</topRatio>
+      <top>96</top>
+      <topRatio>0.123076923076923</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -8617,8 +8797,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    隐私和安全</text>
-      <top>143</top>
-      <topRatio>0.183333333333333</topRatio>
+      <top>141</top>
+      <topRatio>0.180769230769231</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -9550,78 +9730,78 @@ sender.fLoad = function() {
       <width>598</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel355/panel357">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel355/panel422">
       <backgroundColor>EDF1FA</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
-      <height>201</height>
-      <heightRatio>0.257692307692308</heightRatio>
+      <height>376</height>
+      <heightRatio>0.482051282051282</heightRatio>
       <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <sizeRatio>0.336120401337793</sizeRatio>
-      <top>123</top>
-      <topRatio>0.157692307692308</topRatio>
+      <sizeRatio>0.62876254180602</sizeRatio>
+      <top>0</top>
       <width>598</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel355/panel357/panel358">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel355/panel422/panel423">
       <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
       <dockX>fill</dockX>
       <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>18</fontSize>
+      <fontSize>14</fontSize>
       <height>43</height>
-      <heightRatio>0.213930348258706</heightRatio>
+      <heightRatio>0.11436170212766</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.0719063545150502</sizeRatio>
       <text>目前没有您的任何通知</text>
-      <top>40</top>
-      <topRatio>0.199004975124378</topRatio>
+      <top>246</top>
+      <topRatio>0.654255319148936</topRatio>
       <vAlign>top</vAlign>
       <width>598</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel355/panel357/panel359">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel355/panel422/panel424">
       <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>top</dockY>
-      <fontColor>404040</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>1</height>
-      <heightRatio>0.00497512437810945</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>0.00167224080267559</sizeRatio>
-      <top>0</top>
-      <width>598</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel355/panel357/panel360">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
       <dockX>fill</dockX>
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
-      <fontSize>18</fontSize>
+      <fontSize>14</fontSize>
       <height>43</height>
-      <heightRatio>0.213930348258706</heightRatio>
+      <heightRatio>0.11436170212766</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
       <sizeRatio>0.0719063545150502</sizeRatio>
       <text>如有（如用户留言等）则会出现在这里</text>
-      <top>99</top>
-      <topRatio>0.492537313432836</topRatio>
+      <top>284</top>
+      <topRatio>0.75531914893617</topRatio>
       <vAlign>top</vAlign>
       <width>598</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel355/panel422/panel425">
+      <backgroundImg>empty02.gif</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>159</height>
+      <heightRatio>0.422872340425532</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>152</left>
+      <leftRatio>0.254180602006689</leftRatio>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.540816326530612</sizeRatio>
+      <top>79</top>
+      <topRatio>0.210106382978723</topRatio>
+      <vAlign>top</vAlign>
+      <width>294</width>
+      <widthRatio>0.491638795986622</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel33">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
@@ -9638,6 +9818,7 @@ sender.fLoad = function() {
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_needRefresh = true;
 sender.v_lastScrollTop = 0;
+sender.c_noResult = ee.getControl("panel357");
 
 sender.activePage = function() {
     g5.pushHistory("p=12");
@@ -9686,6 +9867,7 @@ sender.clear = function() {
         ee.removeControl(this.v_items[i]);
     }
     this.v_items = new Array();
+    ee.setVisible(this.c_noResult, false);
 }
 
 sender.load = function() {
@@ -9695,7 +9877,7 @@ sender.load = function() {
 }
 
 sender.loadMore = function() {
-    if (this.v_status != "normal") return;
+    if (this.v_status == "noResult") return;
     this.v_pageIndex++;
     this.fLoad();
 }
@@ -9797,12 +9979,19 @@ sender.loadDataset = function(dataset) {
         this.v_items.push(c);
     }
     if (dataset.rowCount<=0) {
-        this.v_status = "noResult";
-        var item = createPanel(this, "prvPanelEnd", "", 0, y, rect.w, 60);
-        addText(item, "您还没有和任何人有过私信", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
-        this.v_items.push(item);
+            sender.v_status = "noResult";
+            if (sender.v_items.length<=0) {
+                ee.setVisible(sender.c_noResult, true);
+            } else {
+                this.v_status = "noResult";
+                var item = createPanel(this, "prvPanelEnd", "", 0, y, rect.w, 60);
+                addText(item, "没有更多的记录了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+                this.v_items.push(item);
+            }
+        } else {
+            sender.v_status = "normal";
     }
-
+    
     ee.tiledResizeV(this, 2);
 }
 
@@ -9816,6 +10005,79 @@ sender.loadDataset = function(dataset) {
       <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel33/panel357">
+      <backgroundColor>EDF1FA</backgroundColor>
+      <dockX>fill</dockX>
+      <height>376</height>
+      <heightRatio>0.482051282051282</heightRatio>
+      <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.626666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel33/panel357/panel358">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>43</height>
+      <heightRatio>0.11436170212766</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.0716666666666667</sizeRatio>
+      <text>目前没有您的任何私信</text>
+      <top>246</top>
+      <topRatio>0.654255319148936</topRatio>
+      <vAlign>top</vAlign>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel33/panel357/panel359">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>43</height>
+      <heightRatio>0.11436170212766</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.0716666666666667</sizeRatio>
+      <text>如有私信聊天则会出现在这里</text>
+      <top>284</top>
+      <topRatio>0.75531914893617</topRatio>
+      <vAlign>top</vAlign>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel33/panel357/panel360">
+      <backgroundImg>empty02.gif</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>159</height>
+      <heightRatio>0.422872340425532</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>153</left>
+      <leftRatio>0.255</leftRatio>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.540816326530612</sizeRatio>
+      <top>79</top>
+      <topRatio>0.210106382978723</topRatio>
+      <vAlign>top</vAlign>
+      <width>294</width>
+      <widthRatio>0.49</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel35">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
@@ -10510,6 +10772,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
 sender.v_items = new Array();
 sender.v_userInfo = new g5.UserInfo();
 sender.c_title = ee.getControl("panel100");
+sender.v_needRefresh = false;
 
 sender.activePage = function() {
     g5.pushHistory("p=14&amp;u=" + escape(this.v_userInfo.userName));
@@ -10536,8 +10799,26 @@ sender.showByUserName = function(userName) {
     getOtherUserInfo2();
 }
 
+sender.refresh = function(userId) {
+    var needRefresh = false;
+    if (userId) {
+        if (userId == this.v_userInfo.id) {
+            needRefresh = true;
+        }
+    } else needRefresh = true;
+    if (!needRefresh) return;
+    if (g5.currentPageIndex == 14) {
+        this.v_needRefresh = true;
+        this.show(this.v_userInfo);
+    } else {
+        this.v_needRefresh = true;
+    }
+}
+
 sender.show = function(v_userInfo) {
-    if (this.v_userInfo.id == v_userInfo.id) {
+    if (this.v_needRefresh) {
+        this.v_needRefresh = false;
+    } else if (this.v_userInfo.id == v_userInfo.id) {
         g5.changeP2(14);
         document.documentElement.scrollTop = this.v_lastScrollTop;
         ee.tiledResizeV(this, 2);
@@ -10603,6 +10884,7 @@ sender.loadRecord = function(panel, dataset, index) {
 sender.v_items = new Array();
 sender.v_userInfo = new g5.UserInfo();
 sender.c_title = ee.getControl("panel103");
+sender.v_needRefresh = false;
 
 sender.activePage = function() {
     g5.pushHistory("p=15&amp;u=" + escape(this.v_userInfo.userName));
@@ -10629,8 +10911,14 @@ sender.showByUserName = function(userName) {
     getOtherUserInfo2();
 }
 
+sender.refresh = function() {
+    if (this.v_userInfo.id == g5.myUserInfo.id) this.v_needRefresh = true;
+}
+
 sender.show = function(v_userInfo) {
-    if (this.v_userInfo.id == v_userInfo.id) {
+    if (this.v_needRefresh) {
+        this.v_needRefresh = false;
+    } else if (this.v_userInfo.id == v_userInfo.id) {
         g5.changeP2(15);
         document.documentElement.scrollTop = this.v_lastScrollTop;
         ee.tiledResizeV(this, 2);
@@ -10759,6 +11047,7 @@ sender.style.borderColor = "#ccd6dd";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.style.borderRightColor = "#e6ecf0";
 </onCreate>
       <sizeRatio>0.085</sizeRatio>
@@ -10837,6 +11126,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
@@ -10869,6 +11159,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -10941,6 +11232,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -11013,6 +11305,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -11084,6 +11377,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
     sender.style.backgroundColor = "rgb(245,248,250)";
@@ -11212,7 +11506,7 @@ sender.style.borderColor = "#ccd6dd";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
-sender.style.borderRightColor = "#e6ecf0";</onCreate>
+sender.style.borderRight = "";</onCreate>
       <sizeRatio>0.085</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -11290,6 +11584,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>   安全</text>
@@ -11319,6 +11614,7 @@ sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
+sender.style.borderRight = "";
 
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
@@ -11390,8 +11686,8 @@ sender.style.borderWidth = "1px";
 sender.style.borderColor = "#e6ecf0";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
-sender.style.borderLeft = "";
-
+sender.style.borderLeft = ""; 
+sender.style.borderRight = "";
 
 sender.selected = false;
 ee.setOnMouseEnter(sender, function(sender,e){
@@ -17859,19 +18155,19 @@ eb.initMouseEvent(sender);]]></onCreate>
       <backgroundColor>FFC080</backgroundColor>
       <dockX>fill</dockX>
       <dockY>top</dockY>
-      <height>53</height>
-      <heightRatio>0.540816326530612</heightRatio>
+      <height>51</height>
+      <heightRatio>0.520408163265306</heightRatio>
       <layerName><![CDATA[  a11->设置-已屏蔽账号]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
-sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderColor = "#ccd6dd";
 sender.style.borderStyle = "solid";
 sender.style.borderTop = "";
 sender.style.borderLeft = "";
 sender.style.borderRight = "";</onCreate>
-      <sizeRatio>0.089527027027027</sizeRatio>
+      <sizeRatio>0.0861486486486486</sizeRatio>
       <top>0</top>
       <width>592</width>
       <widthRatio>1</widthRatio>
@@ -17883,13 +18179,13 @@ sender.style.borderRight = "";</onCreate>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <hAlign>left</hAlign>
-      <height>53</height>
+      <height>51</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>60</left>
       <leftRatio>0.101351351351351</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.28042328042328</sizeRatio>
+      <sizeRatio>0.26984126984127</sizeRatio>
       <text>已屏蔽账号</text>
       <top>0</top>
       <width>189</width>
@@ -17899,7 +18195,7 @@ sender.style.borderRight = "";</onCreate>
       <cursor>pointer</cursor>
       <dockY>center</dockY>
       <height>33</height>
-      <heightRatio>0.622641509433962</heightRatio>
+      <heightRatio>0.647058823529412</heightRatio>
       <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.0337837837837838</leftRatio>
@@ -17922,8 +18218,8 @@ sender.eeMouseUp = function(sender, event, x, y) {
 eb.initMouseEvent(sender);]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
-      <top>10</top>
-      <topRatio>0.188679245283019</topRatio>
+      <top>9</top>
+      <topRatio>0.176470588235294</topRatio>
       <width>33</width>
       <widthRatio>0.0557432432432432</widthRatio>
     </control>
@@ -19005,8 +19301,8 @@ sender.show = function(photos, photo) {
     if (sender.v_index<0) return;
     sender.refresh();    
     document.addEventListener("keydown", this.onKeyDown);
-    ee.setVisible(ee.getControl("panel112"), true);
-    ee.showAni(sender, 0);
+    ee.setVisible(this, true);
+    ee.setVisible(this.parentNode, true);
 }
 
 sender.onKeyDown = function(event) {
@@ -19026,8 +19322,10 @@ sender.refresh = function() {
     if (this.v_index>=this.v_photos.length) return;
     var v_photo = this.v_photos[this.v_index];
     var rect = eb.getDivRect(this.c_photo);
-    this.clear();
+    this.c_video.innerHTML = "";
+    ee.setVisible(this.c_video, false);
     if (v_photo.substr(0,4) == "?YTB") {
+        ee.setVisible(this.c_photo, false);
         this.c_video.innerHTML =
             "<iframe width='" + rect.w + "' height='" + rect.h + "' src='https://www.youtube.com/embed/" +
             v_photo.substr(4, v_photo.length) + 
@@ -19049,6 +19347,7 @@ sender.clear = function() {
 
 sender.close = function() {
     ee.setVisible(this.parentNode, false);
+    ee.setVisible(this, false);
     document.removeEventListener("keydown", this.onKeyDown);
     this.clear();
 }
@@ -23763,35 +24062,35 @@ sql =
     "FROM      dbo.blockList AS rBlockList RIGHT OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
-    "                dbo.follow AS rFollow ON userInfo_1.id = rFollow.followId AND rFollow.userId = " + userId + " ON  " +
-    "                rBlockList1.userId = userInfo_1.id AND rBlockList1.blockUserId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.follow AS rFollow ON userInfo_1.id = rFollow.followId AND rFollow.userId = " + myUserId + " ON  " +
+    "                rBlockList1.userId = userInfo_1.id AND rBlockList1.blockUserId = " + myUserId + " RIGHT OUTER JOIN " +
     "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId RIGHT OUTER JOIN " +
     "                dbo.blockList AS uBlockList1 RIGHT OUTER JOIN " +
-    "                dbo.userInfo ON uBlockList1.userId = dbo.userInfo.id AND uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + " RIGHT OUTER JOIN " +
+    "                dbo.userInfo ON uBlockList1.userId = dbo.userInfo.id AND uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " RIGHT OUTER JOIN " +
     "                dbo.forwardLink AS forwardLink_1 RIGHT OUTER JOIN " +
     "                dbo.tContent LEFT OUTER JOIN " +
-    "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS unlikeList_1 ON dbo.tContent.uplinkId = unlikeList_1.contentId AND  " +
-    "                unlikeList_1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.unlikeList ON dbo.tContent.id = dbo.unlikeList.contentId AND dbo.unlikeList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " ON  " +
-    "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
+    "                unlikeList_1.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList ON dbo.tContent.id = dbo.unlikeList.contentId AND dbo.unlikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + myUserId + " ON  " +
+    "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + myUserId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
-    "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " LEFT OUTER JOIN " +
+    "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.userInfo AS exUserInfo ON exUserInfo.id = dbo.tContent.exUserId LEFT OUTER JOIN " +
-    "                dbo.follow AS exFollow ON exUserInfo.id = exFollow.followId AND exFollow.userId = " + userId + " LEFT OUTER JOIN " +
+    "                dbo.follow AS exFollow ON exUserInfo.id = exFollow.followId AND exFollow.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS exBlockList1 ON exUserInfo.id = exBlockList1.blockUserId AND  " +
-    "                exBlockList1.userId = " + userId + " LEFT OUTER JOIN " +
+    "                exBlockList1.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS exBlockList2 ON exUserInfo.id = exBlockList2.userId AND  " +
-    "                exBlockList2.blockUserId = " + userId + " LEFT OUTER JOIN " +
+    "                exBlockList2.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.forwardLink AS exForwardLink ON dbo.tContent.exContentId = exForwardLink.contentId AND  " +
-    "                exForwardLink.userId = " + userId + " LEFT OUTER JOIN " +
+    "                exForwardLink.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
-    "                exLikeList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + userId + " " +
+    "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and dbo.tContent.uplinkType<>'R' " +
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
 
@@ -24201,7 +24500,7 @@ sql =
     "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
     "                exLikeList.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + userId + " " +
-    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") " +
+    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (ublockList.id IS NULL) and (exBlockList1.id IS NULL)" +
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
     
 sqlResult = db.executeQuery("DB", sql);
@@ -25194,13 +25493,13 @@ if (!eb.isEmpty(sendChat1v1.onComplete)) {
 sendChat1v1.busy = false;</script3>
     </taskSetItem>
     <taskSetItem name="showChatList">
-      <script1>//pageIndex,pageSize,onComplete
+      <script1><![CDATA[//pageIndex,pageSize,onComplete
 eio.appendString16(g5.token);
 showChatList.busy = true;
 eio.appendInt32(showChatList.pageIndex);
 eio.appendInt32(showChatList.pageSize);
-g5.loading.show();
-</script1>
+showChatList.pageIndex>0 ? g5.loading.show2() : g5.loading.show(); 
+]]></script1>
       <script2><![CDATA[var token = eio.readString16();
 var pageIndex = eio.readInt32();
 var pageSize = eio.readInt32();
@@ -29084,6 +29383,7 @@ for (var i=0; i<task.length; i++) {
     items = task[i];
     for (var j=0; j<items.length; j++) {
         item = items[j];
+        if (!item.v_content) continue;
         if ((item.v_content.id!=contentId)&amp;&amp;(item.v_content.exContentId!=contentId)) continue;
         if (eb.isEmpty(v_reContent)) v_reContent = item.v_reContent.clone();
         if (eb.isEmpty(v_userInfo)) v_userInfo = item.v_userInfo;
@@ -29774,6 +30074,8 @@ if ((p2h-viewPortH-document.documentElement.scrollTop) < 6000) {
         g5.p2.p5.loadMore();
     } else if (g5.currentPageIndex == 11) {
         g5.p2.p12.loadMore();
+    } else if (g5.currentPageIndex == 12) {
+        g5.p2.p13.loadMore();
     } else if (g5.currentPageIndex == 1) {
         if (g5.p2.p2.p2sub.currentPageIndex == 1) {
             g5.p2.p2.p2sub.p1.loadMore();
@@ -30215,6 +30517,8 @@ if (style == 1) {
 var sync = function(userId, isFollow) {
     g5.p2.p1.refresh();
     g5.p2.p2.setIsFollow(userId, isFollow);
+    g5.p2.p15.refresh(userId);
+    g5.p2.p16.refresh();
     var itemList = collectUserInfoItems();
     var i,j;
     for (i=0; i<itemList.length; i++) {
@@ -30238,10 +30542,12 @@ var sync = function(userId, isFollow) {
                 }
             }
             if (items[j].v_userBar) {
-                if (items[j].v_userInfo.isFollow) {
-                    items[j].button1.init(2);
-                } else {
-                    items[j].button1.init(1);
+                if (items[j].v_userInfo.id == userId) {
+                    if (items[j].v_userInfo.isFollow) {
+                        items[j].button1.init(2);
+                    } else {
+                        items[j].button1.init(1);
+                    }
                 }
             } 
         }
@@ -30645,7 +30951,7 @@ if (root.v_photo.substr(0,4) == "?YTB") {
     //g5.setImage(root,root.imgUrl,"trim","","",400);
     ee.setImage(root,root.imgUrl,"trim","","");
     ee.setOnClick(root, function(sender, event) {
-        ee.getControl("panel142").show(sender.parentNode.v_photos, sender.v_photo);
+        g5.popBlack.a2.show(sender.parentNode.v_photos, sender.v_photo);
         g5.player.stop();
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     }); 
