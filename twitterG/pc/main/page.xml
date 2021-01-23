@@ -2560,13 +2560,9 @@ sender.showByUserInfo = function(v_userInfo) {
     }
     var rootH = eb.getDivRect(ee.getControl("panel16")).h;
     //photo
-    if (v_userInfo.photo != "") {
-        ee.getControl("panel23").init(v_userInfo.photo);
-    }
+    ee.getControl("panel23").init(v_userInfo.photo);
     //titleBg
-    if (v_userInfo.titleBg != "") {
-        ee.getControl("panel20").init(v_userInfo.titleBg);
-    }
+    ee.getControl("panel20").init(v_userInfo.titleBg);
     ee.getControl("panel18").setText(v_userInfo.nickName);
     ee.getControl("panel21").setText("@" + v_userInfo.userName);
     
@@ -2731,7 +2727,11 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
       <left>0</left>
       <onClick>g5.popBlack.a2.show([sender.v_photo], sender.v_photo);</onClick>
       <onCreate>sender.init = function(photoString) {
-    ee.setImage(this, "url:" + g5.imgUrl + photoString);
+    if (photoString == "") {
+        ee.setImage(this, "");
+    } else {
+        ee.setImage(this, "url:" + g5.imgUrl + photoString);
+    }
     this.v_photo = photoString;
 }
 </onCreate>
@@ -2969,7 +2969,11 @@ sender.style.borderWidth = "4px";
 sender.style.borderColor = "#ffffff";
 sender.style.borderStyle = "solid";
 sender.init = function(photoString) {
-    ee.setImage(this, "url:" + g5.imgUrl + photoString);
+    if (photoString == "") {
+        ee.setImage(this,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(this, "url:" + g5.imgUrl + photoString);
+    }
     this.v_photo = photoString;
 }
 </onCreate>
@@ -6514,6 +6518,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_block->屏蔽别人]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>480</top>
@@ -15173,6 +15178,7 @@ sender._input.addEventListener("keydown", function(event) {
     if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
         if (!showUserPage.privateChatRoomRights) {
             g5.chatPrvRequest(showUserPage.privateChatRoomId,showUserPage.nickName,showUserPage.userName);
+            event.preventDefault();
             return;
         }
         var msgContent = ee.getEditText(ee.getControl("edit12")).trim();
@@ -19372,6 +19378,7 @@ sender.close = function() {
       <layerVisible>false</layerVisible>
       <left>80</left>
       <leftRatio>0.0675105485232067</leftRatio>
+      <onClick>sender.parentNode.parentNode.close();</onClick>
       <outerBottom>50</outerBottom>
       <outerLeft>80</outerLeft>
       <outerRight>80</outerRight>
@@ -31179,7 +31186,7 @@ eb.processDock();
     <item name="chatPrvRequest" type="20">
       <varValue />
       <functionParam>chatRoomId,userNickName,userName</functionParam>
-      <functionCode><![CDATA[ee.getControl("panel257").show(
+      <functionCode><![CDATA[g5.popBlack.a6.show(
     "申请加入私有聊天室",
     "您没有加入房主的私有聊天室，申请加入<b>" + userNickName + "@" + userName + "</b>的私有聊天室吗？得到房主许可后，您才可以进入房主的私有聊天室。",
     [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
