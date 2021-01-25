@@ -2288,7 +2288,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2409,6 +2408,8 @@ sender.show = function(v_userInfo, userId, userName) {
         g5.p2.p2.p2sub.p1.c_chat.c_chat.c_chatRoot.start(showUserPage.defaultChatRoomId);
         if (showUserPage.privateChatRoomRights) {
             g5.p3.p8.p1.c_chatRoom.c_chatRoot.start(showUserPage.privateChatRoomId);
+        } else {
+            g5.p3.p8.p1.c_chatRoom.c_chatRoot.clear();
         }
         
         g5.tiledV(g5.p2PersonSub.p1,0);
@@ -2728,6 +2729,7 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
       <left>0</left>
       <onClick>g5.popBlack.a2.show([sender.v_photo], sender.v_photo);</onClick>
       <onCreate>sender.init = function(photoString) {
+    ee.setImage(this, "");
     if (photoString == "") {
         ee.setImage(this, "");
     } else {
@@ -2970,6 +2972,8 @@ sender.style.borderWidth = "4px";
 sender.style.borderColor = "#ffffff";
 sender.style.borderStyle = "solid";
 sender.init = function(photoString) {
+    ee.setImage(this, "");
+    ee.setVisible(this, false);
     if (photoString == "") {
         ee.setImage(this,"/twitterG/main/user.png","trim","","")
     } else {
@@ -2978,6 +2982,7 @@ sender.init = function(photoString) {
     this.v_photo = photoString;
 }
 </onCreate>
+      <onImageLoad>ee.setVisible(sender, true);</onImageLoad>
       <outerBottom>1</outerBottom>
       <outerLeft>1</outerLeft>
       <outerRight>1</outerRight>
@@ -6164,7 +6169,7 @@ sender.displayTime = function(time) {
     if (c.getYear()!=time.getYear()) {
         result += (time.getYear()+1900)+"年";
     }
-    if ((c.getYear()!=time.getYear()) || (c.getMonth()!=time.getMonth()) || (c.getMonth()!=time.getMonth())) {
+    if ((c.getYear()!=time.getYear()) || (c.getMonth()!=time.getMonth()) || (c.getDay()!=time.getDay())) {
         result += 
             (time.getMonth()+1) + "月" +
             time.getDate() + "日 ";
@@ -7061,7 +7066,7 @@ sender.fLoad = function() {
             } else {
                 ee.setVisible(sender.c_noResult, false);
                 var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
-                addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+                addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
                 item.v_noResult = true;
                 sender.v_items.push(item);
             }
@@ -8856,6 +8861,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_topBlank = ee.getControl("panel336");
 sender.c_buttons = ee.getControl("layoutx11");
@@ -14831,13 +14837,7 @@ sender.start = function(roomId) {
         return;
     }
     this.v_roomId = roomId;
-    this.firstRun = true;
-    this.currentRefreshTime = this.minRefreshTime;
-    this.v_lastChatId = 0;
-    for (var i=0; i<this.v_items.length; i++) ee.removeControl(this.v_items[i]);
-    this.v_items = new Array();
-    this.v_nohis = false;
-    this.clearTimer();
+    this.clear();
     if (showUserPage.privateChatRoomRights) {
         ee.setText(ee.getControl("panel294"), "发送");
     } else {
@@ -14851,10 +14851,21 @@ sender.start = function(roomId) {
     this.running = true;
     this.refresh();        
 }
+
 sender.stop = function() {
     chatGetPv.disabled = true;
     this.clearTimer();
     this.running = false;
+}
+
+sender.clear = function() {
+    this.firstRun = true;
+    this.currentRefreshTime = this.minRefreshTime;
+    this.v_lastChatId = 0;
+    for (var i=0; i<this.v_items.length; i++) ee.removeControl(this.v_items[i]);
+    this.v_items = new Array();
+    this.v_nohis = false;
+    this.clearTimer();
 }
 
 //==implementation==//
@@ -15012,12 +15023,20 @@ sender.loadData = function(panel,dataset,index) {
 }
 
 sender.displayTime = function(time) {
-    return (
-        //(time.getMonth()+1) + "月" +
-        //time.getDate() + "日 " +
+    var c = new Date();
+    result = "";
+    if (c.getYear()!=time.getYear()) {
+        result += (time.getYear()+1900)+"年";
+    }
+    if ((c.getYear()!=time.getYear()) || (c.getMonth()!=time.getMonth()) || (c.getDay()!=time.getDay())) {
+        result += 
+            (time.getMonth()+1) + "月" +
+            time.getDate() + "日 ";
+    }
+    result += 
         (time.getHours()<10?"0":"") + time.getHours() + ":" +
-        (time.getMinutes()<10?"0":"") + time.getMinutes()
-    );
+        (time.getMinutes()<10?"0":"") + time.getMinutes();
+    return result;
 }
 
 sender.timeFragment = function() {
