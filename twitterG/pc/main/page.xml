@@ -168,6 +168,9 @@ ee.setImage = function (div, imgUrl, imgMode, alt, title) {
         div.img = undefined;
     }
     if (eb.isEmpty(imgUrl)) imgUrl = "";
+    if (eb.isEmpty(imgMode)) imgMode = "trim";
+    if (eb.isEmpty(alt)) alt = "";
+    if (eb.isEmpty(title)) title = "";
     if (imgUrl.length<=0) {
         if (div.c_imgOld) {
             div.removeChild(div.c_imgOld);
@@ -1586,7 +1589,7 @@ sender.activePage = function() {
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
     g5.p4.changePage("a1");
-    g5.changeP3(9);
+    //g5.changeP3(9);
     ee.setRect(g5.p4.a1,0,0,eb.getDivRect(g5.p4).w,null);
     ee.setRect(g5.p4, null,null,null,eb.getDivRect(g5.p4.a1).h);
     ee.setRect(g5.p2,null,null,null,eb.getDivRect(this).h+1);
@@ -2289,6 +2292,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -9529,6 +9533,10 @@ sender.clear = function() {
         ee.removeControl(this.v_items[i]);
     }
     this.v_items = new Array();
+    if (this.c_noResultBar) {
+        ee.removeControl(this.c_noResultBar);
+        this.c_noResultBar = undefined;
+    }    
     ee.setVisible(this.c_noResult, false);
 }
 
@@ -9716,10 +9724,14 @@ sender.fLoad = function() {
                 ee.setVisible(sender.c_noResult, true);
             } else {
                 ee.setVisible(sender.c_noResult, false);
+                if (sender.c_noResultBar) {
+                    ee.removeControl(sender.c_noResultBar);
+                    sender.c_noResultBar = undefined;
+                }
                 var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
-                addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "f7c9c8" ,"bold");
+                addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
                 item.v_noResult = true;
-                sender.v_items.push(item);
+                sender.c_noResultBar = item;
             }
         } else {
             sender.v_status = "normal";
@@ -18441,7 +18453,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18683,7 +18694,6 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -18750,11 +18760,12 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
         g5.popBlack.a3.showFw(v_content.clone(),v_reContent.clone(),v_userInfo,v_reUserInfo);
     });
     ee.setVisible(this.parentNode, true);
-    ee.showAni(this, 0);
+    ee.setVisible(this, true);
 }
 
 sender.close = function() {
-    ee.showAni(this, 1);
+    ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
 }
 ]]></onCreate>
       <sizeRatio>0.605882352941176</sizeRatio>
@@ -29147,8 +29158,10 @@ c.init = function(styleIndex) {
     this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">" + g5.icon.forward + "</svg>";        
     if (this.v_styleIndex == 0) {
         this.v_defaultColor = "rgb(101,119,134)";
+        if (root.c_label2) ee.setTextColor(root.c_label2, "rgb(101,119,134)");
     } else {
         this.v_defaultColor = "#17bf63";
+        if (root.c_label2) ee.setTextColor(root.c_label2, "#17bf63");
     }
     this.childNodes[0].style.color = this.v_defaultColor;
 }
@@ -29545,6 +29558,10 @@ for (var i=0; i<task.length; i++) {
     var j=0;
     while (j < items.length) {
         item = items[j];
+        if (!item.v_content) {
+            j++;
+            continue;
+        }
         if (item.v_content.id != contentId) {
             j++;
             continue;
