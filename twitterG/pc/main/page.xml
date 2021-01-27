@@ -2390,6 +2390,7 @@ sender.show = function(v_userInfo, userId, userName) {
                 item.v_forceDisplay = true;
             }
             item.v_mode = "   x";
+            item.v_displayForceTop = true;
             g5.renderTwitter(item);
             sender.p1Items.push(item);
             cy += 0 + eb.getDivRect(item).h;
@@ -3246,6 +3247,7 @@ sender.updateP3 = function() {
                 item.v_forceDisplay = true;
             }
             item.v_mode = "   x";
+            item.v_displayForceTop = true;
             g5.renderTwitter(item);
             sender.parentNode.p3Items.push(item);
             cy += eb.getDivRect(item).h;
@@ -3636,6 +3638,7 @@ sender.loadMore = function() {
                 item.v_forceDisplay = true;
             }
             item.v_mode = "   x";
+            item.v_displayForceTop = true;
             g5.renderTwitter(item);
             g5.p2.p2.p1Items.push(item);
             cy += 0 + eb.getDivRect(item).h;
@@ -5724,7 +5727,8 @@ sender.refreshContent = function(root, resize) {
     } else if (root.v_isAdmin) {
         user = "<span style='background-color:#48ccfe;border-radius:3px;font-weight:bold;color:#4e4e4e'> " + user + " </span>";  
     } else {
-        user = "<font color='#6f6f6f'><b>" + user + "</b></font>";
+        user = "<span style='background-color:#f0f0ff;border-radius:3px;font-weight:bold;color:#6f6f6f'> " + user + " </span>";  
+        //user = "<font color='#6f6f6f'><b>" + user + "</b></font>";
     }
     if (root.v_chatStatus == "SYS") {
         ee.setRect(c,null,null,null,10);
@@ -9480,7 +9484,6 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p12->通知]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.c_topBlank = sender.eeChildren[0];
@@ -9694,6 +9697,7 @@ sender.fLoad = function() {
     var insertPos = 1;
     showPrompt.pageIndex = this.v_pageIndex;
     showPrompt.onComplete = function() {
+        g5.loading.close();
         var cy = 0;
         var itemWidth = eb.getDivRectSetting(sender).w;
         for (var i=0; i< showPrompt.dataset.rowCount; i++) {
@@ -9739,6 +9743,7 @@ sender.fLoad = function() {
         g5.tiledV(sender,0,0,0);
         g5.tiledResizeV(sender,2);   
     }
+    showPrompt.pageIndex==0 ? g5.loading.show() : g5.loading.show2();
     showPrompt();
 }
 
@@ -15012,7 +15017,8 @@ sender.renderMsg = function(root) {
     } else if (root.v_userInfo.id == showUserPage.v_userInfo.id) {
         user = "<span style='background-color:#fcd801;border-radius:3px;font-weight:bold'> " + user + " </span>";    
     } else {
-        user = "<font color='#6f6f6f'><b>" + user + "</b></font>";
+        user = "<span style='background-color:#f0f0ff;border-radius:3px;font-weight:bold;color:#6f6f6f'> " + user + " </span>"; 
+        //user = "<font color='#6f6f6f'><b>" + user + "</b></font>";
     }
     addText(c, "<font color='#6e6e6e' style='font-family:宋体,Consolas,Monaco,monospace;text-indent:-1ch;'>" + root.parentNode.displayTime(root.v_regDatetime)+ " " + user + "</font> " + root.v_msgContent, "left", "top", "微软雅黑", 9, textColor, "normal");
     c.label.style.wordBreak = "break-all";
@@ -18453,6 +18459,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -18694,6 +18701,7 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -21078,8 +21086,14 @@ ee.setOnMouseLeave(sender, function(sender,event) {
     ee.getControl("panel349").init(0);
     this.onComplete = onComplete;
     ee.setVisible(this.parentNode, true);
-    ee.showAni(this, 0);
+    ee.setVisible(this, true);
 }
+
+sender.close = function() {
+    ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
+}
+
 
 </onCreate>
       <sizeRatio>0.552356020942408</sizeRatio>
@@ -21188,7 +21202,7 @@ sender.onpointermove = function(event) {
       <layerVisible>false</layerVisible>
       <left>128</left>
       <leftRatio>0.335078534031414</leftRatio>
-      <onClick>ee.showAni(sender.parentNode, 1);
+      <onClick>sender.parentNode.close();
 sender.parentNode.onComplete();</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
     this.color1 = color1;
@@ -21273,7 +21287,7 @@ sender.init(0);
       <layerVisible>false</layerVisible>
       <left>328</left>
       <leftRatio>0.858638743455497</leftRatio>
-      <onClick>ee.showAni(sender.parentNode, 1);</onClick>
+      <onClick>sender.parentNode.close();</onClick>
       <onCreate><![CDATA[ee.setText(sender,
     "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.iconClose + "</svg>"
 );
@@ -23967,7 +23981,7 @@ sql =
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND  " +
     "                exUnlikeList.userId = " + userId + " " +
     "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
-    "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) " + 
+    "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) and (exBlockList1.id IS NULL) " + 
     "  AND dbo.tContent.status<>'DEL' " + sql1 +
     "ORDER BY dbo.tContent.id DESC ";
    
@@ -28583,7 +28597,7 @@ root.refresh = function() {
     if (this.c_forceTopLabel) {
         if (root.v_content.forceTopSn == "0") {
             this.c_forceTopLabel.innerHTML = "";
-        } else {
+        } else if (this.v_displayForceTop) {
             this.c_forceTopLabel.innerHTML = " · <font color='#D08080' style='font-weight:bold'>置顶</font>";
         }
     }
@@ -30487,7 +30501,7 @@ if (g5.myUserInfo.photo == "") {
     ee.setImage(ee.getControl("panel14"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
 }
 if (g5.myUserInfo.titleBg == "") {
-    ee.setImage(ee.getControl("panel58"), "/twitterG/main/user.png");
+    ee.setImage(ee.getControl("panel58"), "");
 } else {
     ee.setImage(ee.getControl("panel58"), "url:" + g5.imgUrl + g5.myUserInfo.titleBg, "trim");
 }
