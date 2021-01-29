@@ -1,5 +1,5 @@
 <page>
-  <controls count="534">
+  <controls count="535">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -7063,6 +7063,7 @@ sender.fLoad = function() {
                 }
             }
             if (item == null) continue;
+            item.v_isBookMark = true;
             g5.renderTwitter(item);
             sender.addButton(item);
             sender.v_items.push(item);
@@ -7090,7 +7091,7 @@ sender.fLoad = function() {
 }
 
 sender.addButton = function(root) {
-    var c = createPanel(root, root.id+"_bkmkDel", "", 480, 9, 70, 25);
+    var c = createPanel(root, root.id+"_bkmkDel", "", 480, 7, 70, 25);
     root.c_bookMarkDelete = c;
     
     c.v_style = [
@@ -7707,7 +7708,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         }
         document.documentElement.scrollTop = scrollTop;
         eb.processDock();
-        if (reCount>0) ee.setText(sender.c_tabRoot.button1, reCount + " 回复");
+        if (reCount>0) ee.setText(sender.c_tabRoot.button1, reCount + " 评论");
         sender.c_tabRoot.changePage(-1);
         sender.c_tabRoot.changePage(1);
         showTopic.needRefresh = false;
@@ -7906,7 +7907,7 @@ sender.changePage = function(pageIndex) {
 }
 
 sender.init = function() {
-    ee.setText(this.button1, "回复");
+    ee.setText(this.button1, "评论");
     ee.setText(this.button2, "转发");
     ee.setText(this.button3, "点赞");
     ee.setText(this.button4, "点踩");
@@ -9484,6 +9485,7 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p12->通知]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.c_topBlank = sender.eeChildren[0];
@@ -10885,6 +10887,7 @@ sender.show = function(v_userInfo) {
     g5.changeP2(14);
     showFansList.userId = v_userInfo.id;
     showFansList.onComplete = function(dataset) {
+        g5.loading.close();
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
@@ -10906,6 +10909,7 @@ sender.show = function(v_userInfo) {
         }
         ee.tiledResizeV(sender, 2);
     }
+    g5.loading.show();
     showFansList();               
 }
 
@@ -10929,7 +10933,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p16->关注列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_lastScrollTop = 0;
 sender.v_items = new Array();
@@ -10985,6 +10988,7 @@ sender.show = function(v_userInfo) {
     g5.changeP2(15);
     showFollowList.userId = v_userInfo.id;
     showFollowList.onComplete = function(dataset) {
+        g5.loading.close();
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
@@ -11006,6 +11010,7 @@ sender.show = function(v_userInfo) {
         }
         ee.tiledResizeV(sender, 2);
     }
+    g5.loading.show();
     showFollowList();               
 }
 
@@ -18553,6 +18558,7 @@ if (sender.v_closeCount>=4) {
       <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel110");
 sender.c_button2 = ee.getControl("panel111");
 sender.c_button3 = ee.getControl("panel28");
+sender.v_isBookMark = false;
 
 sender.style.borderRadius = "6px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
@@ -18578,10 +18584,11 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
     } else {    
         ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> 在个人主页中取消置顶");
     }
-
+    ee.setVisible(this.c_button3, this.v_isBookMark ? false:true); this.v_isBookMark = false;
+    ee.tiledV(this, 0, 0, 0);
+    ee.tiledResizeV(this, 1);
     ee.setVisible(this.parentNode, true);
     ee.setVisible(this, true);
-    //ee.showAni(this, 0);
 }
 
 ee.setOnClick(sender.c_button1, function(c_button1, event) {
@@ -23261,6 +23268,70 @@ sender.close = function() {
       <width>77</width>
       <widthRatio>0.490445859872611</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel426">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundSkin>empty</backgroundSkin>
+      <cursor>wait</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>796</height>
+      <heightRatio>1</heightRatio>
+      <layerName>blockLoading全局屏蔽输入</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>sender.style.zIndex=100;
+sender.style.position = "fixed";
+sender.show = function() {
+    ee.setVisible(this, true);
+}
+
+sender.close = function() {
+    ee.setVisible(this, false);
+}
+
+
+</onCreate>
+      <onMouseMove><![CDATA[var getDist = function(x,y,div) {
+    var rect = eb.getDivRectSetting(div);
+    var dx, dy;
+    if (x<rect.x) {
+        dx = rect.x - x;
+    } else if (x<rect.x+rect.w) {
+        dx = -1;
+    } else {
+        dx = x - rect.x - rect.w;
+    }
+    if (y<rect.y) {
+        dy = rect.y - y;
+    } else if (y<rect.y+rect.h) {
+        dy = -1;
+    } else {
+        dy = y - rect.y - rect.h;
+    }
+    return Math.max(dx,dy);
+}
+
+var div = null;
+for (var i = 0; i<sender.eeChildren.length; i++) {
+    if (sender.eeChildren[i].style.visibility != "hidden") {
+        div = sender.eeChildren[i];
+        break;
+    }
+}
+if (div == null) return;
+
+var currentDist = getDist(x,y, div);
+if (currentDist>100) {
+    sender.click();
+}
+
+
+]]></onMouseMove>
+      <sizeRatio>0.671729957805907</sizeRatio>
+      <top>0</top>
+      <width>1185</width>
+      <widthRatio>1</widthRatio>
+    </control>
   </controls>
   <taskSet count="58">
     <taskSetItem name="uploadImage">
@@ -25379,6 +25450,7 @@ if (follow.follow==0) {
 }
 eio.appendString16(g5.token);
 eio.appendString16(follow.userId);
+g5.blockLoading.show();
 
 
 
@@ -25424,7 +25496,8 @@ if (!db.executeNoneQuery("DB", sql)) {
 eio.appendString8("T");
 eio.appendString8(follow);
 ]]></script2>
-      <script3>if (eio.readString8() != "T") {
+      <script3>g5.blockLoading.close();
+if (eio.readString8() != "T") {
     g5.alert1("提示", eio.readString8());
     return;
 }
@@ -28075,7 +28148,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="88">
+  <g5Items count="89">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -28133,6 +28206,11 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </item>
     <item name="loading" type="10">
       <varValue>ee.getControl("panel291");</varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="blockLoading" type="10">
+      <varValue>ee.getControl("panel426");</varValue>
       <functionParam />
       <functionCode />
     </item>
@@ -28768,6 +28846,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
 root.v_btn1 = c;
 ee.setOnClick(c,function(sender,event) {
     if (sender.parentNode.v_userInfo.id==g5.myUserInfo.id) {
+        g5.popup1.p1.v_isBookMark = root.v_isBookMark;
         g5.popup1.p1.show(sender, root.v_content, root.v_reContent, root.v_userInfo, root.v_reUserInfo);
     } else {
         g5.popup1.p3.show(sender, root.v_content, root.v_userInfo);
