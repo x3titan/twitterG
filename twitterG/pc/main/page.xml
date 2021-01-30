@@ -2295,6 +2295,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -9624,12 +9625,15 @@ sender.renderItem = function(root) {
     c = createPanel(root, root.id+"_panel13", "", 16, cy, 50, 50);
     root.c_userPhoto = c;
     root.c_photo = c;
-    c.v_timer = null;
-    if (root.v_userInfo.photo == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
-    } else {
-        ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
+    root.setUserPhoto = function(photo) {
+        if (photo == "") {
+            ee.setImage(root.c_photo,"/twitterG/main/user.png","trim","","")
+        } else {
+            ee.setImage(root.c_photo,"url:" + g5.imgUrl + photo,"trim","","")
+        }
     }
+    root.setUserPhoto(root.v_userInfo.photo);
+    c.v_timer = null;
     c.style.cursor="pointer";
     c.style.borderRadius = "50%";
     ee.setOnClick(c,function(sender,event) {
@@ -22617,7 +22621,6 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -22694,7 +22697,6 @@ if (currentDist>100) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.215189873417722</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -22849,7 +22851,7 @@ sender.style.borderRadius = "50%";
       <onClick>if (sender.v_index==0) {
     g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false, null);
 } else if (sender.v_index==1) {
-    //关注
+    //follow
     g5.setFollow(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false,function(userId,isFollow) {
         sender.init(2);
         sender.parentNode.v_userInfo.isFollow = true;
@@ -22862,10 +22864,10 @@ sender.style.borderRadius = "50%";
         sender.parentNode.v_userInfo.isFollow = false;
     });
 } else if (sender.v_index==3) {
-    //编辑个人资料
+    //edit personal information
     ee.setVisible(sender.parentNode, false);
     ee.setVisible(sender.parentNode.parentNode, false);
-    g5.popBlack.a8.show();
+    g5.p2.p17.show();
 }
 </onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
@@ -29211,9 +29213,9 @@ root.c_photo = c;
 c.v_timer = null;
 root.setUserPhoto = function(photo) {
     if (photo == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
+        ee.setImage(root.c_photo,"/twitterG/main/user.png","trim","","")
     } else {
-        ee.setImage(c,"url:" + g5.imgUrl + photo,"trim","","")
+        ee.setImage(root.c_photo,"url:" + g5.imgUrl + photo,"trim","","")
     }
 }
 root.setUserPhoto(root.v_userInfo.photo);
@@ -29434,11 +29436,6 @@ if (!showRe) {
     //rePhoto
     c = createPanel($g(root.id+"_panel2"), root.id+"_panel8", "", 11, 11, 20, 20);
     c.style.cursor="pointer";
-    if (root.v_reUserInfo.photo == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
-    } else {
-        ee.setImage(c,"url:" + g5.imgUrl + root.v_reUserInfo.photo,"trim","","")
-    }
     c.style.borderRadius = "50%";
     c.v_username = root.v_reUserInfo.userName;
     c.style.cursor="pointer";
@@ -29454,6 +29451,14 @@ if (!showRe) {
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     root.c_rePhoto = c;
+    root.setReUserPhoto = function(photo) {
+        if (photo == "") {
+            ee.setImage(root.c_rePhoto,"/twitterG/main/user.png","trim","","")
+        } else {
+            ee.setImage(root.c_rePhoto,"url:" + g5.imgUrl + photo,"trim","","")
+        }
+    }
+    root.setReUserPhoto(root.v_reUserInfo.photo);
     c.v_timer = null;
     ee.setOnMouseEnter(c, function(sender,e) {
         sender.style.webkitFilter="brightness(80%)";
@@ -29531,16 +29536,11 @@ if (!showRe) {
     eb.setDock(c,"disabled","disabled");
     //rePhoto
     c = createPanel($g(root.id+"_panel6"), root.id+"_panel8", "", 16, 12, 20, 20);
-    if (root.v_reUserInfo.photo == "") {
-        ee.setImage(c,"/twitterG/main/user.png","trim","","")
-    } else {
-        ee.setImage(c,"url:" + g5.imgUrl + root.v_reUserInfo.photo,"trim","","")
-    }
     c.style.borderRadius = "50%";
     c.v_username = root.v_reUserInfo.userName;
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
-        ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
+        ee.getControl("panel280").show(root.c_rePhoto, root.v_reUserInfo);
         //showUserPage.userName=sender.v_username;
         //showUserPage();
         //if (sender.v_timer!=null) {
@@ -29551,6 +29551,14 @@ if (!showRe) {
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     root.c_rePhoto = c;
+    root.setReUserPhoto = function(photo) {
+        if (photo == "") {
+            ee.setImage(root.c_rePhoto,"/twitterG/main/user.png","trim","","")
+        } else {
+            ee.setImage(root.c_rePhoto,"url:" + g5.imgUrl + photo,"trim","","")
+        }
+    }
+    root.setReUserPhoto(root.v_reUserInfo.photo);
     c.v_timer = null;
     ee.setOnMouseEnter(c, function(sender,e) {
         sender.style.webkitFilter="brightness(80%)";
@@ -30312,14 +30320,17 @@ ee.setOnMouseLeave(root, function(sender,e){
 
 //user photo
 c = createPanel(root, root.id+"panel13", "", 15,cy,50,50);
-if (root.v_userInfo.photo == "") {
-    ee.setImage(c,"/twitterG/main/user.png","trim","","")
-} else {
-    ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
-}
 c.style.borderRadius = "50%";
 c.v_timer = null;
 root.c_photo = c;
+root.setUserPhoto = function(photo) {
+    if (photo == "") {
+        ee.setImage(root.c_photo,"/twitterG/main/user.png","trim","","")
+    } else {
+        ee.setImage(root.c_photo,"url:" + g5.imgUrl + photo,"trim","","")
+    }
+}
+root.setUserPhoto(root.v_userInfo.photo);
 ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.webkitFilter="brightness(80%)";
     sender.style.filter="brightness(80%)";
@@ -31077,11 +31088,17 @@ for (i=0; i<itemList.length; i++) {
         if (items[j].v_userInfo) {
             if (items[j].v_userInfo.id == g5.myUserInfo.id) { 
                 items[j].v_userInfo = g5.myUserInfo;
+                if (items[j].setUserPhoto) {
+                    items[j].setUserPhoto(g5.myUserInfo.photo);
+                }
             }
         }
         if (items[j].v_reUserInfo) {
             if (items[j].v_reUserInfo.id == g5.myUserInfo.id) { 
                 items[j].v_reUserInfo = g5.myUserInfo;
+                if (items[j].setReUserPhoto) {
+                    items[j].setReUserPhoto(g5.myUserInfo.photo);
+                }
             }
         }
         if (items[j].v_content) {
@@ -31094,11 +31111,11 @@ for (i=0; i<itemList.length; i++) {
         if (items[j].v_userBar) {
             if (items[j].v_userInfo.id == g5.myUserInfo.id) {
                 items[j].v_userInfo = g5.myUserInfo;
+                if (items[j].setUserPhoto) {
+                    items[j].setUserPhoto(g5.myUserInfo.photo);
+                }
             }
         }
-        if (items[j].setUserPhoto) {
-            items[j].setUserPhoto(g5.myUserInfo.photo);
-        } 
     }
 }]]></functionCode>
     </item>
