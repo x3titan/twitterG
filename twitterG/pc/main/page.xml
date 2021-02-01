@@ -1,5 +1,5 @@
 <page>
-  <controls count="568">
+  <controls count="569">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -2297,7 +2297,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2994,11 +2993,7 @@ sender.style.borderStyle = "solid";
 sender.init = function(photoString) {
     ee.setImage(this, "");
     ee.setVisible(this, false);
-    if (photoString == "") {
-        ee.setImage(this,"/twitterG/main/user.png","trim","","");
-    } else {
-        ee.setImage(this, "url:" + g5.imgUrl + photoString);
-    }
+    ee.setImage(this, g5.getUserPhotoUrl(photoString)[1], "trim","","");
     this.v_photo = photoString;
 }
 </onCreate>
@@ -14591,6 +14586,7 @@ sender.refresh = function(progress) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p26->设置-账号-头像和主题背景]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_userPhoto = ee.getControl("panel468");
 sender.c_titleBg = ee.getControl("panel472");
@@ -14601,7 +14597,7 @@ sender.v_newTitleBg = "";
 sender.show = function() {
     g5.changeP2(25);
     ee.setImage(this.c_userPhoto, g5.getUserPhotoUrl(g5.myUserInfo.photo)[1], "trim","","");
-    ee.setImage(this.c_titleBg, g5.getUserPhotoUrl(g5.myUserInfo.titleBg)[1], "trim","","");
+    ee.setImage(this.c_titleBg, g5.getUserTitleBgUrl(g5.myUserInfo.titleBg)[1], "trim","","");
     sender.v_newUserPhoto = g5.myUserInfo.photo;
     sender.v_newTitleBg = g5.myUserInfo.titleBg;
     this.checkValid();
@@ -14766,15 +14762,18 @@ sender.style.borderRight = "";</onCreate>
       <leftRatio>0.836666666666667</leftRatio>
       <note>c_button</note>
       <onClick>if (!sender.v_enabled) return;
-if (changeNote.busy) return;
+if (changeUserPhoto.busy) return;
 var p1 = ee.getEditText(g5.p2.p24.c_edit);
-changeNote.note = p1;
-changeNote.onComplete = function() {
-    g5.myUserInfo.note = p1;
+//photo,titleBg,onComplete
+changeUserPhoto.photo = g5.p2.p26.v_newUserPhoto; 
+changeUserPhoto.titleBg = g5.p2.p26.v_newTitleBg; 
+changeUserPhoto.onComplete = function() {
+    g5.myUserInfo.photo = changeUserPhoto.photo;
+    g5.myUserInfo.titleBg = changeUserPhoto.titleBg;
     g5.refreshUserInfo();
     window.history.go(-1);
 }
-changeNote();</onClick>
+changeUserPhoto();</onClick>
       <onCreate>sender.bgColorDisabled = "#8ed0f9";
 sender.bgColorEnabled = "#1da1f2";
 sender.bgColorHot = "#1a91da";
@@ -14835,6 +14834,20 @@ eb.initMouseEvent(sender);
       <width>571</width>
       <widthRatio>0.951666666666667</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel458/panel462/panel466/panel132">
+      <backgroundColor>FAFAFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>195</height>
+      <heightRatio>0.665529010238908</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.341506129597198</sizeRatio>
+      <top>98</top>
+      <topRatio>0.334470989761092</topRatio>
+      <width>571</width>
+      <widthRatio>1</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel458/panel462/panel466/panel472">
       <backgroundColor>0E5079</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -14862,8 +14875,7 @@ eb.initMouseEvent(sender);
       <left>257</left>
       <leftRatio>0.450342465753425</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxSqr = 700*700;
-sender.compressRatio = 0.85;
+      <onCreate><![CDATA[sender.compressRatio = 0.85;
 
 sender.style.borderRadius = "50%";
 
@@ -14906,18 +14918,20 @@ c.onchange = function() {
             var image = new Image();
             image.src = blobURL;
             image.onload = function() {
-                sender.v_data = sender.resize(image);
-                if (sender.v_data) {
-                    //upload immediately
-                    uploadImage.data = sender.v_data;
-                    uploadImage.controlName = sender.id;
-                    uploadImage.onComplete = function(newFileName) {
-                        getUserInfo();
-                        return;
-                    }
-                    uploadImage();
-                    sender.v_data = "";
+                var imgs = new Array();
+                var exts = ["s", ""];
+                imgs.push(sender.resize(image, 200*200));
+                imgs.push(sender.resize(image, 800*800));
+                if (!imgs[0] || !imgs[1]) return;
+                //upload immediately
+                uploadImage2.imgs = imgs;
+                uploadImage2.imgExt = exts;
+                uploadImage2.onComplete = function(newFiles) {
+                    ee.setImage(g5.p2.p26.c_titleBg, g5.getUserTitleBgUrl(newFiles[0])[1], "trim","","");
+                    g5.p2.p26.v_newTitleBg = newFiles[0];
+                    g5.p2.p26.checkValid();
                 }
+                uploadImage2();
             }
         }
         reader.readAsArrayBuffer(file);
@@ -14926,14 +14940,15 @@ c.onchange = function() {
     }
 }
 
-sender.resize = function (img) {
+
+sender.resize = function (img, maxSize) {
     var canvas = document.createElement("canvas");
     var imgW = img.width;
     var imgH = img.height;
     var dw,dh;
-    if (imgW*imgH>this.maxSqr) {
+    if (imgW*imgH>maxSize) {
         var ratio = imgW / imgH;
-        var y = Math.sqrt(this.maxSqr/ratio);
+        var y = Math.sqrt(maxSize/ratio);
         canvas.width = parseInt(ratio*y);
         canvas.height = parseInt(y);
     } else {
@@ -15021,8 +15036,7 @@ sender.style.borderStyle = "solid";
       <left>28</left>
       <leftRatio>0.235294117647059</leftRatio>
       <onClick>sender.c_file.click();</onClick>
-      <onCreate><![CDATA[sender.maxSqr = 700*700;
-sender.compressRatio = 0.85;
+      <onCreate><![CDATA[sender.compressRatio = 0.85;
 
 sender.style.borderRadius = "50%";
 
@@ -24608,7 +24622,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="61">
+  <taskSet count="62">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName 
@@ -28353,6 +28367,71 @@ if (!db.executeNoneQuery("DB", sql)) {
 }
 changeHomePage.onComplete();
 changeHomePage.busy = false;
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="changeUserPhoto">
+      <script1>//photo,titleBg,onComplete
+changeUserPhoto.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(changeUserPhoto.photo);
+eio.appendString16(changeUserPhoto.titleBg);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var photo = eio.readString16();
+var titleBg = eio.readString16();
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName =db.getString(sqlResult,"userName");
+if (userName=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能对本内容进行修改，如需要更多的功能请注册正式用户。");
+    return;
+}
+
+sql = "update userInfo set photo = '" + db.encode(photo) + "', " +
+    "titleBg =  '" + db.encode(titleBg) + "' " +
+    " where userName = '" + db.encode(userName) + "'";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}    
+
+
+
+
+
+
+
+
+
+
+
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("修改失败",eio.readString8());
+    changeUserPhoto.busy = false;
+    return;
+}
+changeUserPhoto.onComplete();
+changeUserPhoto.busy = false;
 
 </script3>
     </taskSetItem>
@@ -33076,7 +33155,7 @@ if (p[0].charAt(p[0].length-1) == "s") {
 }
 return result;]]></functionCode>
     </item>
-    <item name="getUserTitleBgUrl1" type="20">
+    <item name="getUserTitleBgUrl" type="20">
       <varValue />
       <functionParam>titleBg</functionParam>
       <functionCode><![CDATA[var result = ["", ""];
