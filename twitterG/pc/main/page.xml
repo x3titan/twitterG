@@ -1,5 +1,5 @@
 <page>
-  <controls count="571">
+  <controls count="575">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -307,7 +307,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1495,7 +1494,6 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -2299,12 +2297,12 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
 sender.p3Items = new Array();
 sender.c_block = ee.getControl("panel6");
+sender.c_block2 = ee.getControl("panel467");
 sender.v_userInfo = new g5.UserInfo();
 
 sender.show = function(v_userInfo, userId, userName) {
@@ -2374,7 +2372,7 @@ sender.show = function(v_userInfo, userId, userName) {
             ee.removeControl(sender.p1Items[i]);
         }
         sender.p1Items = new Array();
-        if (sender.c_block.style.visibility != "hidden") {
+        if ((sender.c_block.style.visibility != "hidden") || (sender.c_block2.style.visibility != "hidden")) {
             return;
         }
         
@@ -2431,7 +2429,7 @@ sender.show = function(v_userInfo, userId, userName) {
         sender.p2sub.changePage(1);
         g5.p3.p8.init();
     }
-    if ((this.c_block.style.visibility == "hidden") || eb.isEmpty(v_userInfo)) {
+    if (((this.c_block.style.visibility == "hidden") &amp;&amp; (this.c_block2.style.visibility == "hidden")) || eb.isEmpty(v_userInfo)) {
         g5.loading.show();
         showUserPage();
     }
@@ -2633,8 +2631,18 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setRect(this.c_block, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
         ee.setText(ee.getControl("panel253"), "@" + v_userInfo.userName + "已被屏蔽");
         ee.setText(ee.getControl("panel254"), "是否确定要查看这些发言？查看发言不会取消屏蔽 @" + v_userInfo.userName + "。");
-        g5.changeP2(1);
         var r1 = eb.getDivRectSetting(this.c_block);
+        ee.setRect(this,null,null,null,r1.y+r1.h);
+        ee.resizeV(this.parentNode, 1);
+        ee.setVisible(g5.p3, false);
+        ee.setVisible(this.p2sub, false);
+        return;
+    } else if (v_userInfo.isBlock2) {
+        g5.changeP2(1);
+        ee.setVisible(this.c_block2, true);
+        ee.setRect(this.c_block2, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
+        ee.setText(ee.getControl("panel475"), "您已被@" + v_userInfo.userName + "屏蔽");
+        var r1 = eb.getDivRectSetting(this.c_block2);
         ee.setRect(this,null,null,null,r1.y+r1.h);
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
@@ -6541,7 +6549,6 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_block->屏蔽别人]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>480</top>
@@ -6651,6 +6658,66 @@ eb.initMouseEvent(sender);
       <topRatio>0.407272727272727</topRatio>
       <width>107</width>
       <widthRatio>0.178333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel467">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>275</height>
+      <heightRatio>0.352564102564103</heightRatio>
+      <layerName><![CDATA[  c_block2->被屏蔽]]></layerName>
+      <left>0</left>
+      <sizeRatio>0.458333333333333</sizeRatio>
+      <top>480</top>
+      <topRatio>0.615384615384615</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel467/panel474">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>1</height>
+      <heightRatio>0.00363636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>PLine1</note>
+      <sizeRatio>0.00166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel467/panel475">
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>您已被@xxxxx屏蔽</text>
+      <top>32</top>
+      <topRatio>0.116363636363636</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel467/panel476">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>您无法查看该用户的详细信息</text>
+      <top>64</top>
+      <topRatio>0.232727272727273</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel82">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
@@ -19836,6 +19903,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -19922,6 +19990,7 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
