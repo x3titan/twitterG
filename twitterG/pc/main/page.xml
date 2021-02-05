@@ -2297,10 +2297,13 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
 sender.p3Items = new Array();
+sender.c_button1 = ee.getControl("panel256");
+sender.c_button2 = ee.getControl("panel115");
 sender.c_block = ee.getControl("panel6");
 sender.c_block2 = ee.getControl("panel467");
 sender.v_userInfo = new g5.UserInfo();
@@ -2624,6 +2627,8 @@ sender.showByUserInfo = function(v_userInfo) {
     this.refreshFansFollowCount();
     cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
     
+    ee.setVisible(this.c_button1, true);
+    ee.setVisible(this.c_button2, true);
     if (v_userInfo.isBlock1) ee.getControl("panel256").init(0);
     if ((v_userInfo.isBlock1) &amp;&amp; (!v_userInfo.blockShow)) {
         g5.changeP2(1);
@@ -2647,6 +2652,8 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
         ee.setVisible(this.p2sub, false);
+        ee.setVisible(this.c_button1, false);
+        ee.setVisible(this.c_button2, false);
         return;
     } else {
         ee.setVisible(ee.getControl("panel6"), false);
@@ -6549,6 +6556,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_block->屏蔽别人]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>480</top>
@@ -6666,6 +6674,7 @@ eb.initMouseEvent(sender);
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_block2->被屏蔽]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>480</top>
@@ -7469,7 +7478,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -11804,7 +11812,7 @@ sender.style.borderRight = "";
       <heightRatio>0.416666666666667</heightRatio>
       <layerVisible>false</layerVisible>
       <left>187</left>
-      <leftRatio>0.313333333333333</leftRatio>
+      <leftRatio>0.311666666666667</leftRatio>
       <note>c_button</note>
       <onClick>if (!sender.v_enabled) return;
 g5.p2.p2.show(g5.myUserInfo);
@@ -30426,6 +30434,16 @@ if (root.v_content.status=="DEL") {
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
     addText(c, "  此发言不可用。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock()
+    return root;
+} else if (root.v_userInfo.isBlock2) {
+    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  您被此用户屏蔽，该短文不可用。", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock()
     return root;
