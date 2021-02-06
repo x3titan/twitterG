@@ -10289,6 +10289,20 @@ sender.show = function(v_userInfo) {
     ee.tiledResizeV(this, 2);
 }
 
+sender.sendChat = function(msgContent, onComplete) {
+    if (this.v_userInfo.isBlock2) {
+        g5.alert1("提示", "您已被@" + this.v_userInfo.userName + "屏蔽，您的私信被拒收。");
+        return;
+    }
+    if (sendChat1v1.busy) return;
+    sendChat1v1.chatUserId = this.v_userInfo.id;
+    sendChat1v1.content = msgContent;
+    sendChat1v1.onComplete = function() {
+        if (onComplete) onComplete();
+    }
+    sendChat1v1();
+}
+
 
 
 
@@ -10823,19 +10837,10 @@ sender._input.addEventListener("keydown", function(event) {
             return false;
         }
         if (msgContent.length>200) msgContent = msgContent.substr(0,200);
-        
         ee.getControl("edit6").setText("");
-        //content, chatUserId, onComplete()
-        if (sendChat1v1.busy) return;
-        
-        
-        sendChat1v1.chatUserId = chatGet1v1.chatUserId;
-        sendChat1v1.content = msgContent;
-        sendChat1v1.onComplete = function() {
+        g5.p2.p14.sendChat(msgContent, function(){
             g5.p3.p3.c_chat.refresh(true);
-        }
-        sendChat1v1();        
-                        
+        });
         event.preventDefault();
         return false;
     }
@@ -10863,18 +10868,10 @@ if (msgContent.length<=0) {
     event.preventDefault();
     return false;
 }
-
 ee.getControl("edit6").setText("");
-//content, chatUserId, onComplete()
-if (sendChat1v1.busy) return;
-
-
-sendChat1v1.chatUserId = chatGet1v1.chatUserId;
-sendChat1v1.content = msgContent;
-sendChat1v1.onComplete = function() {
+g5.p2.p14.sendChat(msgContent, function(){
     g5.p3.p3.c_chat.refresh(true);
-}
-sendChat1v1();
+});
 
 window.event? window.event.cancelBubble = true : event.stopPropagation();
 ]]></onClick>
@@ -26348,7 +26345,7 @@ sql =
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND  " +
     "                exUnlikeList.userId = " + myUserId + " " +
-    "WHERE   (dbo.bookMark.userId = " + myUserId + ") and (ublockList.id IS NULL) " +
+    "WHERE   (dbo.bookMark.userId = " + myUserId + ") and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " +
     "ORDER BY dbo.bookMark.id DESC; ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -26598,7 +26595,7 @@ sql =
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType<>'L' AND dbo.tContent.status<>'DEL' AND (ublockList.id IS NULL)) OR (dbo.tContent.id = " + topicId + ") " +
+    "WHERE ((dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType<>'L' AND dbo.tContent.status<>'DEL' AND (ublockList.id IS NULL) and (ublockList1.id IS NULL)) OR (dbo.tContent.id = " + topicId + ") " +
     "ORDER BY dbo.tContent.id ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -26959,7 +26956,7 @@ if (options == "user") {
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "WHERE   (tContent.status<>'DEL') and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) " + cond + " " +
+    "WHERE   (tContent.status<>'DEL') and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " + cond + " " +
     orderby;
 }
 
