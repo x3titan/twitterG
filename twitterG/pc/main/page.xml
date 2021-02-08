@@ -212,7 +212,6 @@ ee.setImage = function (div, imgUrl, imgMode, alt, title) {
     } else div.appendChild(div.img);
 }
 
-/*
 ee.setOnClick = function (div, func) {
     div.eeOnClick = func;
     eb.addEvent(div, "click", function (event) {
@@ -221,7 +220,8 @@ ee.setOnClick = function (div, func) {
         }
     }, false);
 }
-*/]]></onPageCreate>
+
+]]></onPageCreate>
       <pageHead><![CDATA[<style>
 .scrollBar01::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
@@ -2668,7 +2668,8 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setVisible(this.c_button2, false);
         return;
     } else {
-        ee.setVisible(ee.getControl("panel6"), false);
+        ee.setVisible(this.c_block, false);
+        ee.setVisible(this.c_block2, false);
     }
     
     ee.setVisible(this.p2sub, true);
@@ -25816,7 +25817,7 @@ sql =
     "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
-    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and dbo.tContent.uplinkType<>'R' " +
+    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (dbo.tContent.uplinkType<>'R') and (exBlockList2.id IS NULL) " +
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -26087,7 +26088,7 @@ var sql =
     "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
-    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and dbo.tContent.uplinkType<>'R' " +
+    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (dbo.tContent.uplinkType<>'R') and (exBlockList2.id IS NULL) " +
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
 
 //es.logCommon(sql);
@@ -26225,7 +26226,7 @@ sql =
     "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
-    "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ")" +
+    "WHERE (dbo.tContent.status='IDL') and (dbo.tContent.userId = " + userId + ") and (exBlockList2.id IS NULL) " +
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
     
 sqlResult = db.executeQuery("DB", sql);
