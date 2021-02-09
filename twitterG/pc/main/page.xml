@@ -7803,10 +7803,13 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         document.documentElement.scrollTop = scrollTop;
         eb.processDock();
         if (reCount>0) ee.setText(sender.c_tabRoot.button1, reCount + " 回复和转发");
+        sender.c_tabRoot.p3.setCount(parseInt(sender.v_content.likeCount));
+        sender.c_tabRoot.p4.setCount(parseInt(sender.v_content.unlikeCount));
         sender.c_tabRoot.changePage(-1);
         sender.c_tabRoot.changePage(1);
         showTopic.needRefresh = false;
         sender.loadComplete = true;
+        sender.c_tabRoot.p2.show(sender.v_content.id, true);
     }
     showTopic.disabled = false;
     this.loadComplete = false;
@@ -7838,6 +7841,7 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     g5.renderTwitter(item);        
     sender.v_items.push(item);
     ee.setRect(sender.c_tabRoot,null,eb.getDivRectSetting(item).y + eb.getDivRectSetting(item).h,null,null);
+    
     g5.changeP2(8);
     document.documentElement.scrollTop = 0;
 }
@@ -8003,8 +8007,8 @@ sender.changePage = function(pageIndex) {
 sender.init = function() {
     ee.setText(this.button1, "回复和转发");
     ee.setText(this.button2, "转发者");
-    ee.setText(this.button3, "点赞");
-    ee.setText(this.button4, "点踩");
+    this.p3.setCount(0);
+    this.p4.setCount(0);
 }
 
 
@@ -8111,11 +8115,11 @@ sender.init(0);
 
 
 </onCreate>
-      <sizeRatio>0.188073394495413</sizeRatio>
+      <sizeRatio>0.273333333333333</sizeRatio>
       <text>回复和转发</text>
       <top>0</top>
       <width>150</width>
-      <widthRatio>0.363333333333333</widthRatio>
+      <widthRatio>0.25</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel22/panel119/layoutx1/layoutxitem1/panel275">
       <backgroundColor>1DA1F2</backgroundColor>
@@ -8147,7 +8151,7 @@ sender.init(0);
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>150</left>
-      <leftRatio>0.221666666666667</leftRatio>
+      <leftRatio>0.25</leftRatio>
       <onClick>g5.p2.p9.c_tabRoot.p2.show(g5.p2.p9.v_contentId);</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
     this.color1 = color1;
@@ -8215,11 +8219,11 @@ sender.init(0);
 
 
 </onCreate>
-      <sizeRatio>0.205</sizeRatio>
+      <sizeRatio>0.273333333333333</sizeRatio>
       <text>转发者</text>
       <top>0</top>
       <width>150</width>
-      <widthRatio>0.333333333333333</widthRatio>
+      <widthRatio>0.25</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel22/panel119/layoutx1/layoutxitem6">
       <backgroundColor>FAFAFF</backgroundColor>
@@ -8419,7 +8423,7 @@ sender.init(0);
 sender.c_title = sender.parentNode.button2;
 sender.v_contentId = 0;
 
-sender.show = function(v_contentId) {
+sender.show = function(v_contentId, bgRefresh) {
     if (this.v_contentId == v_contentId) {
         this.parentNode.changePage(2);
         return;
@@ -8428,7 +8432,7 @@ sender.show = function(v_contentId) {
     this.v_contentId = v_contentId;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
-    this.parentNode.changePage(2);
+    if (!bgRefresh) this.parentNode.changePage(2);
     showForwardList.contentId = v_contentId;
     showForwardList.onComplete = function(dataset) {
         g5.loading.close();
@@ -8446,8 +8450,10 @@ sender.show = function(v_contentId) {
         eb.processDock();
         if (dataset.rowCount>0) ee.setText(sender.parentNode.button2, dataset.rowCount + " 转发者");
         var rect = eb.getDivRectSetting(g5.p4);
-        sender.parentNode.changePage(-1);
-        sender.parentNode.changePage(2);
+        if (!bgRefresh) {
+            sender.parentNode.changePage(-1);
+            sender.parentNode.changePage(2);
+        }
     }
     g5.loading.show();
     showForwardList();               
@@ -8502,11 +8508,7 @@ sender.show = function(v_contentId) {
             sender.v_items.push(item);
         }
         eb.processDock();
-        if (dataset.rowCount>0) {
-            ee.setText(sender.c_title, dataset.rowCount + " 点赞");
-        } else {
-            ee.setText(sender.c_title, "点赞");
-        }
+        sender.setCount(dataset.rowCount);
         var rect = eb.getDivRectSetting(g5.p4);
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(3);
@@ -8528,9 +8530,18 @@ sender.refresh = function() {
     if (g5.p2.p9.c_tabRoot.currentPageIndex == 3) {
         this.show(cid);
     } else {
+        this.setCount(0);
+    }
+}
+
+sender.setCount = function(value) {
+    if (value>0) {
+        ee.setText(this.c_title, value + " 点赞");
+    } else {
         ee.setText(this.c_title, "点赞");
     }
 }
+
 
 ]]></onCreate>
       <sizeRatio>0.22</sizeRatio>
@@ -8577,11 +8588,7 @@ sender.show = function(v_contentId) {
             sender.v_items.push(item);
         }
         eb.processDock();
-        if (dataset.rowCount>0) {
-            ee.setText(sender.c_title, dataset.rowCount + " 点踩");
-        } else {
-            ee.setText(sender.c_title, "点踩");
-        }
+        sender.setCount(dataset.rowCount);
         var rect = eb.getDivRectSetting(g5.p4);
         sender.parentNode.changePage(-1);
         sender.parentNode.changePage(4);
@@ -8603,9 +8610,19 @@ sender.refresh = function() {
     if (g5.p2.p9.c_tabRoot.currentPageIndex == 4) {
         this.show(cid);
     } else {
+        this.setCount(0);
+    }
+}
+
+sender.setCount = function(value) {
+    if (value>0) {
+        ee.setText(this.c_title, value + " 点踩");
+    } else {
         ee.setText(this.c_title, "点踩");
     }
-}]]></onCreate>
+}
+
+]]></onCreate>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.109625668449198</topRatio>
