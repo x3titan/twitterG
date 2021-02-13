@@ -1,5 +1,5 @@
 <page>
-  <controls count="575">
+  <controls count="579">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -2313,8 +2313,9 @@ sender.p1Items = new Array();
 sender.p3Items = new Array();
 sender.c_button1 = ee.getControl("panel256");
 sender.c_button2 = ee.getControl("panel115");
-sender.c_block = ee.getControl("panel6");
+sender.c_block1 = ee.getControl("panel6");
 sender.c_block2 = ee.getControl("panel467");
+sender.c_block12 = ee.getControl("panel477");
 sender.v_userInfo = new g5.UserInfo();
 
 sender.show = function(v_userInfo, userId, userName) {
@@ -2328,6 +2329,7 @@ sender.show = function(v_userInfo, userId, userName) {
         if (v_userInfo) {
             if (v_userInfo.id == this.v_userInfo.id) {
                 this.v_needRefresh = false;
+                this.v_userInfo = v_userInfo;
             }
         } else if (userId) { 
             if (userId == this.v_userInfo.id) {
@@ -2385,7 +2387,7 @@ sender.show = function(v_userInfo, userId, userName) {
             ee.removeControl(sender.p1Items[i]);
         }
         sender.p1Items = new Array();
-        if ((sender.c_block.style.visibility != "hidden") || (sender.c_block2.style.visibility != "hidden")) {
+        if ((sender.c_block1.style.visibility != "hidden") || (sender.c_block2.style.visibility != "hidden") || (sender.c_block12.style.visibility != "hidden")) {
             return;
         }
         
@@ -2442,7 +2444,7 @@ sender.show = function(v_userInfo, userId, userName) {
         sender.p2sub.changePage(1);
         g5.p3.p8.init();
     }
-    if (((this.c_block.style.visibility == "hidden") &amp;&amp; (this.c_block2.style.visibility == "hidden")) || eb.isEmpty(v_userInfo)) {
+    if (((this.c_block1.style.visibility == "hidden") &amp;&amp; (this.c_block2.style.visibility == "hidden") &amp;&amp; (sender.c_block12.style.visibility == "hidden")) || eb.isEmpty(v_userInfo)) {
         g5.loading.show();
         showUserPage();
     }
@@ -2628,15 +2630,11 @@ sender.showByUserInfo = function(v_userInfo) {
     ee.setVisible(this.c_button1, true);
     ee.setVisible(this.c_button2, true);
     if (v_userInfo.isBlock1 &amp;&amp; v_userInfo.isBlock2) {
-        ee.setVisible(this.c_button1, false);
+        //ee.setVisible(this.c_button1, false);
         ee.setVisible(this.c_button2, false);
     } else if (v_userInfo.isBlock1) {
         ee.setVisible(this.c_button2, false);
     } else if (v_userInfo.isBlock2) {
-        ee.setVisible(this.c_button2, false);
-    }
-    if (v_userInfo.userName == g5.myUserInfo.userName) {
-        this.c_button1.init(3);
         ee.setVisible(this.c_button2, false);
     }
     
@@ -2647,8 +2645,26 @@ sender.showByUserInfo = function(v_userInfo) {
     }
     if (v_userInfo.isBlock1) this.c_button1.init(0);
     if (v_userInfo.isBlock2) this.c_button1.init(4);
+    if (v_userInfo.isBlock2 &amp;&amp; v_userInfo.isBlock1) this.c_button1.init(0);
+    if (v_userInfo.userName == g5.myUserInfo.userName) {
+        this.c_button1.init(3);
+        ee.setVisible(this.c_button2, false);
+    }
     
-    if (v_userInfo.isBlock2) {
+    ee.setVisible(this.c_block1, false);
+    ee.setVisible(this.c_block2, false);
+    ee.setVisible(this.c_block12, false);
+    if (v_userInfo.isBlock1 &amp;&amp; v_userInfo.isBlock2) {
+        g5.changeP2(1);
+        ee.setVisible(this.c_block12, true);
+        ee.setRect(this.c_block12, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
+        var r1 = eb.getDivRectSetting(this.c_block12);
+        ee.setRect(this,null,null,null,r1.y+r1.h);
+        ee.resizeV(this.parentNode, 1);
+        ee.setVisible(g5.p3, false);
+        ee.setVisible(this.p2sub, false);
+        return;
+    } else if (v_userInfo.isBlock2) {
         g5.changeP2(1);
         ee.setVisible(this.c_block2, true);
         ee.setRect(this.c_block2, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
@@ -2661,19 +2677,16 @@ sender.showByUserInfo = function(v_userInfo) {
         return;
     } else if ((v_userInfo.isBlock1) &amp;&amp; (!v_userInfo.blockShow)) {
         g5.changeP2(1);
-        ee.setVisible(this.c_block, true);
-        ee.setRect(this.c_block, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
+        ee.setVisible(this.c_block1, true);
+        ee.setRect(this.c_block1, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
         ee.setText(ee.getControl("panel253"), "@" + v_userInfo.userName + "已被屏蔽");
         ee.setText(ee.getControl("panel254"), "是否确定要查看这些发言？查看发言不会取消屏蔽 @" + v_userInfo.userName + "。");
-        var r1 = eb.getDivRectSetting(this.c_block);
+        var r1 = eb.getDivRectSetting(this.c_block1);
         ee.setRect(this,null,null,null,r1.y+r1.h);
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
         ee.setVisible(this.p2sub, false);
         return;
-    } else {
-        ee.setVisible(this.c_block, false);
-        ee.setVisible(this.c_block2, false);
     }
     
     ee.setVisible(this.p2sub, true);
@@ -3001,6 +3014,7 @@ sender.setText = function(text) {
       <layerVisible>false</layerVisible>
       <left>373</left>
       <leftRatio>0.621666666666667</leftRatio>
+      <note>c_button2</note>
       <onClick>g5.p2.p14.show(sender.parentNode.v_userInfo);</onClick>
       <sizeRatio>0.891304347826087</sizeRatio>
       <top>272</top>
@@ -3051,6 +3065,7 @@ sender.init = function(photoString) {
       <layerVisible>false</layerVisible>
       <left>426</left>
       <leftRatio>0.71</leftRatio>
+      <note>c_button1</note>
       <onClick>if (sender.v_index==0) {
     g5.setBlock1(g5.p2.p2.v_userInfo.id, g5.p2.p2.v_userInfo.userName, false, function(){});
 } else if (sender.v_index==1) {
@@ -6743,6 +6758,66 @@ eb.initMouseEvent(sender);
       <left>0</left>
       <sizeRatio>0.0566666666666667</sizeRatio>
       <text>您无法查看该用户的详细信息</text>
+      <top>64</top>
+      <topRatio>0.232727272727273</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel477">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>275</height>
+      <heightRatio>0.352564102564103</heightRatio>
+      <layerName><![CDATA[  c_block12->相互屏蔽]]></layerName>
+      <left>0</left>
+      <sizeRatio>0.458333333333333</sizeRatio>
+      <top>469</top>
+      <topRatio>0.601282051282051</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel477/panel478">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>1</height>
+      <heightRatio>0.00363636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>PLine1</note>
+      <sizeRatio>0.00166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel477/panel479">
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>双方相互屏蔽</text>
+      <top>32</top>
+      <topRatio>0.116363636363636</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel477/panel480">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>您屏蔽了对方，对方也屏蔽了您，双方都不可以查看对方的详细信息。</text>
       <top>64</top>
       <topRatio>0.232727272727273</topRatio>
       <width>600</width>
