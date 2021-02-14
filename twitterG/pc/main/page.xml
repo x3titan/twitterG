@@ -7575,7 +7575,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -7872,7 +7871,6 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 sender.v_userInfo = item.v_userInfo;
                 sender.v_reUserInfo = item.v_reUserInfo;
                 scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
-                sender.v_reIndex = sender.c_tabRoot.p1.v_items.length;
                 rootUserId = item.v_userInfo.id;
                 sender.v_items.push(item);
             } else {
@@ -7934,14 +7932,19 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
 }
 
 sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    var i = 0;
+    while (i<this.v_hisItems.length) {
+        if (this.v_hisItems[i].contentId == v_reContent.Id) {
+            this.v_hisItems.splice(i,1);
+        } else i++;
+    }
+    if (g5.currentPageIndex != 8) return;
+    if (this.v_contentId != v_reContent.id) return;
+    
     var item;
-    var root = sender;
+    var root = this.c_tabRoot.p1;
     var itemWidth = eb.getDivRect(root).w;
-    var cy = eb.getDivRect(g5.p4).h;
-    cy+=eb.getDivRect(g5.p2.p1.a1).h;
-    if (this.v_items.length>0) {
-        cy = eb.getDivRect(this.v_items[this.v_reIndex-1]).y + eb.getDivRect(this.v_items[this.v_reIndex-1]).h;
-    } else this.v_reIndex = 1;
+    var cy = 0;
     item = createPanel(root, "page8_" + v_content.id, "", 0, cy, itemWidth, 5);
     item.v_content = v_content;
     item.v_reContent = v_reContent;
@@ -7949,13 +7952,14 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     item.v_reUserInfo = v_reUserInfo;
     item.v_mode = "";
     g5.renderTwitter(item);
-    root.v_items.splice(this.v_reIndex, 0, item);
+    this.c_tabRoot.p1.v_items.splice(0, 0, item);
+    ee.changeParent(item, item.parentNode, 0);
     cy = eb.getDivRect(item).h;
-    g5.batchMoveY(this.v_items, this.v_reIndex+1, cy);
-    eb.setDivRect(this, null,null,null,eb.getDivRect(this).h + cy);
-    if (g5.currentPageIndex==7) {
-        eb.setDivRect(this.parentNode, null,null,null,eb.getDivRect(this.parentNode).h + cy);
-    }
+    g5.batchMoveY(this.c_tabRoot.p1.v_items, 1, cy);
+    if (this.c_tabRoot.currentPageIndex == 1) {
+        this.c_tabRoot.changePage(-1);
+        this.c_tabRoot.changePage(1);
+    }     
 }
 
 sender.loadMore = function() {
@@ -20023,6 +20027,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20415,6 +20420,7 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
