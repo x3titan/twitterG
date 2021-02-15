@@ -317,6 +317,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1504,6 +1505,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -7575,6 +7577,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -7887,7 +7890,8 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         }
         document.documentElement.scrollTop = scrollTop;
         eb.processDock();
-        if (reCount>0) ee.setText(sender.c_tabRoot.button1, reCount + " 回复和转发");
+        
+        sender.c_tabRoot.p1.setCount(reCount);
         sender.c_tabRoot.p3.setCount(parseInt(sender.v_content.likeCount));
         sender.c_tabRoot.p4.setCount(parseInt(sender.v_content.unlikeCount));
         sender.c_tabRoot.changePage(-1);
@@ -7951,6 +7955,7 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     item.v_userInfo = v_userInfo;
     item.v_reUserInfo = v_reUserInfo;
     item.v_mode = "";
+    item.v_notDisplayRe = true;
     g5.renderTwitter(item);
     this.c_tabRoot.p1.v_items.splice(0, 0, item);
     ee.changeParent(item, item.parentNode, 0);
@@ -7959,7 +7964,12 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     if (this.c_tabRoot.currentPageIndex == 1) {
         this.c_tabRoot.changePage(-1);
         this.c_tabRoot.changePage(1);
-    }     
+    }
+    this.c_tabRoot.p1.setCount(this.c_tabRoot.p1.v_items.length);
+    if (v_content.uplinkType == "F") {
+        this.c_tabRoot.p2.v_contentId = 0;
+        this.c_tabRoot.p2.show(v_reContent.id, true);     
+    }
 }
 
 sender.loadMore = function() {
@@ -8096,8 +8106,8 @@ sender.changePage = function(pageIndex) {
 }
 
 sender.init = function() {
-    ee.setText(this.button1, "回复和转发");
-    ee.setText(this.button2, "转发者");
+    this.p1.setCount(0);
+    this.p2.setCount(0);
     this.p3.setCount(0);
     this.p4.setCount(0);
 }
@@ -8493,8 +8503,17 @@ sender.init(0);
       <layerName><![CDATA[  p1->回复]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.v_items = new Array();
-</onCreate>
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.c_title = sender.parentNode.button1;
+
+sender.setCount = function(value) {
+    if (value>0) {
+        ee.setText(this.c_title, value + " 回复和转发");
+    } else {
+        ee.setText(this.c_title, "回复和转发");
+    }
+}
+]]></onCreate>
       <sizeRatio>0.506666666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.109625668449198</topRatio>
@@ -8539,7 +8558,7 @@ sender.show = function(v_contentId, bgRefresh) {
             sender.v_items.push(item);
         }
         eb.processDock();
-        if (dataset.rowCount>0) ee.setText(sender.parentNode.button2, dataset.rowCount + " 转发者");
+        sender.setCount(dataset.rowCount);
         var rect = eb.getDivRectSetting(g5.p4);
         if (!bgRefresh) {
             sender.parentNode.changePage(-1);
@@ -8553,6 +8572,15 @@ sender.show = function(v_contentId, bgRefresh) {
 sender.loadRecord = function(panel, dataset, index) {
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset,0,index);
+}
+
+
+sender.setCount = function(value) {
+    if (value>0) {
+        ee.setText(this.c_title, value + " 转发者");
+    } else {
+        ee.setText(this.c_title, "转发者");
+    }
 }
 ]]></onCreate>
       <sizeRatio>0.456666666666667</sizeRatio>
@@ -20727,7 +20755,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -21221,7 +21248,6 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>326</left>
       <leftRatio>0.275105485232068</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
@@ -21385,6 +21411,7 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.isUnlike = false;
             g5.p2.p1.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
             g5.p2.p2.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
+            g5.p2.p9.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
             v_content.fwCount++;
             g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
         }
