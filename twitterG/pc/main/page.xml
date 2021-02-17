@@ -7943,7 +7943,14 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     if (this.v_contentId != v_reContent.id) return;
     
     var item;
-    var root = this.c_tabRoot.p1;
+    var root, items;
+    if (v_content.uplinkType == "R") {
+        root = this.c_tabRoot.p1;
+        items = this.c_tabRoot.p1.v_items
+    } else if (v_content.uplinkType == "F") {
+        root = this.c_tabRoot.p2;
+        items = this.c_tabRoot.p2.v_items
+    } else return;
     var itemWidth = eb.getDivRect(root).w;
     var cy = 0;
     item = createPanel(root, "page8_" + v_content.id, "", 0, cy, itemWidth, 5);
@@ -7954,19 +7961,16 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     item.v_mode = "";
     item.v_notDisplayRe = true;
     g5.renderTwitter(item);
-    this.c_tabRoot.p1.v_items.splice(0, 0, item);
+    items.splice(0, 0, item);
     ee.changeParent(item, item.parentNode, 0);
     cy = eb.getDivRect(item).h;
-    g5.batchMoveY(this.c_tabRoot.p1.v_items, 1, cy);
+    g5.batchMoveY(items, 1, cy);
     if (this.c_tabRoot.currentPageIndex == 1) {
         this.c_tabRoot.changePage(-1);
         this.c_tabRoot.changePage(1);
     }
     this.c_tabRoot.p1.setCount(this.c_tabRoot.p1.v_items.length);
-    if (v_content.uplinkType == "F") {
-        this.c_tabRoot.p2.v_contentId = 0;
-        this.c_tabRoot.p2.show(v_reContent.id, true);     
-    }
+    this.c_tabRoot.p2.setCount(this.c_tabRoot.p2.v_items.length);
 }
 
 sender.loadMore = function() {
