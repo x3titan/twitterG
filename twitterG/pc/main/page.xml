@@ -7575,6 +7575,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -7940,11 +7941,16 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
         } else i++;
     }
     if (g5.currentPageIndex != 8) return;
-    if (this.v_contentId != v_reContent.id) return;
+    if (v_content.exUplinkType == "L") {
+        if (this.v_contentId != v_content.exContentId) return;
+    } else if (this.v_contentId != v_reContent.id) return;
     
     var item;
     var root, items;
-    if (v_content.uplinkType == "R") {
+    if (v_content.exUplinkType == "L") {
+        root = this.c_tabRoot.p2;
+        items = this.c_tabRoot.p2.v_items
+    } else if (v_content.uplinkType == "R") {
         root = this.c_tabRoot.p1;
         items = this.c_tabRoot.p1.v_items
     } else if (v_content.uplinkType == "F") {
@@ -7960,7 +7966,11 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     item.v_reUserInfo = v_reUserInfo;
     item.v_mode = "";
     item.v_notDisplayRe = true;
-    g5.renderTwitter(item);
+    if (v_content.exUplinkType == "L") {
+        g5.renderTwitterL(item);
+    } else {
+        g5.renderTwitter(item);
+    }
     items.splice(0, 0, item);
     ee.changeParent(item, item.parentNode, 0);
     cy = eb.getDivRect(item).h;
@@ -20098,7 +20108,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20358,7 +20367,6 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -20405,6 +20413,7 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
                 v_newContent.exUplinkType = "L";
                 v_newContent.exUserInfo = g5.myUserInfo;
                 g5.p2.p2.insert(v_newContent, v_reContent, v_userInfo, v_reUserInfo);
+                g5.p2.p9.insert(v_newContent, v_reContent, v_userInfo, v_reUserInfo);
             }
         }
         newTwitter();
@@ -31886,7 +31895,7 @@ if (root.v_content.reCount != v_content.reCount) {
 
 if (root.v_content.isForward != v_content.isForward) {
     root.v_content.isForward = v_content.isForward;
-    root.c_button2.init(root.v_content.isForward ? 1:0);
+    if (root.c_button2) root.c_button2.init(root.v_content.isForward ? 1:0);
     if (root.c_label2) root.c_label2.init(root.v_content.isForward ? 1:0);
 }
 
@@ -32094,6 +32103,7 @@ task.push(g5.p2.p11.c_pages.c4.v_items);
 task.push(g5.p2.p11.c_pages.c5.v_items);
 task.push(g5.p2.p9.v_items);
 task.push(g5.p2.p9.c_tabRoot.p1.v_items);
+task.push(g5.p2.p9.c_tabRoot.p2.v_items);
 for (var i=0; i<g5.p2.p9.v_hisItems.length; i++) {
     task.push(g5.p2.p9.v_hisItems[i].v_items);
     task.push(g5.p2.p9.v_hisItems[i].v_itemsP1);
@@ -32117,7 +32127,11 @@ if (g5.currentPageIndex == 0) {
         currentPage = g5.p2.p2.p3Items;
     }
 } else if (g5.currentPageIndex == 8) {
-    currentPage = g5.p2.p9.v_items;
+    if (g5.p2.p9.c_tabRoot.currentPageIndex == 1) {
+        currentPage = g5.p2.p9.c_tabRoot.p1.v_items;
+    } else if (g5.p2.p9.c_tabRoot.currentPageIndex == 2) {
+        currentPage = g5.p2.p9.c_tabRoot.p2.v_items;
+    }
 } else if (g5.currentPageIndex == 4) {
     currentPage = g5.p2.p5.v_items;
 } else if (g5.currentPageIndex == 10) {
