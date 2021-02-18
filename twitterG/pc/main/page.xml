@@ -7979,9 +7979,16 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
         this.c_tabRoot.changePage(-1);
         this.c_tabRoot.changePage(1);
     }
-    this.c_tabRoot.p1.setCount(this.c_tabRoot.p1.v_items.length);
-    this.c_tabRoot.p2.setCount(this.c_tabRoot.p2.v_items.length);
 }
+
+sender.sync = function(v_content) {
+    if (v_content.id != this.v_content.id) return;
+    this.c_tabRoot.p1.setCount(v_content.reCount);
+    this.c_tabRoot.p2.setCount(v_content.fwCount);
+    this.c_tabRoot.p3.setCount(v_content.likeCount);
+    this.c_tabRoot.p4.setCount(v_content.unlikeCount);
+}
+
 
 sender.loadMore = function() {
     //nouse
@@ -31918,6 +31925,7 @@ if (v_content.exUplinkType == "L") {
 } else {
     contentId = v_content.id;
 }
+g5.p2.p9.sync(v_content);
 for (var i=0; i<task.length; i++) {
     items = task[i];
     for (var j=0; j<items.length; j++) {
