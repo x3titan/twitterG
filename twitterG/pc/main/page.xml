@@ -8012,15 +8012,15 @@ sender.setLike = function(contentId, isLike) {
     if (this.v_content.id!=contentId) return;
     var root = this.c_tabRoot.p3;
     var item = null;
+    var items = this.c_tabRoot.p3.v_items;
     if (isLike) {
         item = createPanel(root, "twlku_" + g5.myUserInfo.id, "", 0, 0, eb.getDivRectSetting(root).w, 5);
         item.v_userInfo = g5.myUserInfo;
         item.v_mode = "";
         g5.renderUserBar(item);
-        this.c_tabRoot.p3.v_items.splice(0,0,item);
+        items.splice(0,0,item);
         ee.changeParent(item, item.parentNode, 0);
     } else {
-        var items = this.c_tabRoot.p3.v_items;
         for (i=0; i<items.length; i++) {
             if (!items[i].v_userInfo) continue;
             if (items[i].v_userInfo.id == g5.myUserInfo.id) {
@@ -8047,16 +8047,51 @@ sender.setLike = function(contentId, isLike) {
     }
 }
 
-sender.setUnlike = function(contentId) {
-    if (this.v_content) {
-        if (this.v_content.id == contentId) {
-            this.c_tabRoot.p4.refresh();
+sender.setUnlike = function(contentId, isUnlike) {
+    var i = 0;
+    while (i<this.v_hisItems.length) {
+        if (this.v_hisItems[i].v_content.id!=contentId) {
+            i++;
+        } else {
+            this.v_hisItems.splice(i,1);
         }
     }
-    for (var i=0; i<this.v_hisItems.length; i++) {
-        if (this.v_hisItems[i].v_content.id!=contentId) continue;
-        this.v_hisItems[i].p4ContentId = 0;
-        this.v_hisItems[i].p4Title = "点踩";    
+    if (g5.currentPageIndex != 8) return;
+    if (this.v_content.id!=contentId) return;
+    var root = this.c_tabRoot.p4;
+    var item = null;
+    var items = this.c_tabRoot.p4.v_items;
+    if (isUnlike) {
+        item = createPanel(root, "twulku_" + g5.myUserInfo.id, "", 0, 0, eb.getDivRectSetting(root).w, 5);
+        item.v_userInfo = g5.myUserInfo;
+        item.v_mode = "";
+        g5.renderUserBar(item);
+        items.splice(0,0,item);
+        ee.changeParent(item, item.parentNode, 0);
+    } else {
+        for (i=0; i<items.length; i++) {
+            if (!items[i].v_userInfo) continue;
+            if (items[i].v_userInfo.id == g5.myUserInfo.id) {
+                item = items[i];
+                break;
+            }
+        }
+        if (item == null) return;
+        eb.setAni2(item,1,"disappear", "rightFlyOut", "null", 0, true);
+        var aniItem = item;
+        var aniItems = items;
+        var aniItemIndex = i;
+        var aniHeight = eb.getDivRectSetting(item).h;
+        eb.setAniEvent(aniItem,1,function(){}, function(sender) {
+            ee.removeControl(aniItem);
+            aniItems.splice(aniItemIndex,1);
+            g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
+        });
+        ee.showAni(aniItem, 1);
+    }
+    if (this.c_tabRoot.currentPageIndex == 4) {
+        this.c_tabRoot.changePage(-1);
+        this.c_tabRoot.changePage(4);
     }
 }
 
@@ -31533,7 +31568,7 @@ ee.setOnClick(c,function(sender,event) {
         unlikeContent.contentId = contentIdB;
         unlikeContent.onComplete = function() {
             root.c_button4.v_enabled = true;
-            g5.p2.p9.setUnlike(contentIdB);
+            g5.p2.p9.setUnlike(contentIdB,contentClone.isUnlike);
         }
         unlikeContent();
         sender.v_enabled = false;
