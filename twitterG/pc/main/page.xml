@@ -7999,16 +7999,51 @@ sender.loadMore = function() {
     showTopic.lastId = datasetFw.getData(0, datasetFw.rowCount - 1);
 }
 
-sender.setLike = function(contentId) {
-    if (this.v_content) {
-        if (this.v_content.id == contentId) {
-            this.c_tabRoot.p3.refresh();
+sender.setLike = function(contentId, isLike) {
+    var i = 0;
+    while (i<this.v_hisItems.length) {
+        if (this.v_hisItems[i].v_content.id!=contentId) {
+            i++;
+        } else {
+            this.v_hisItems.splice(i,1);
         }
     }
-    for (var i=0; i<this.v_hisItems.length; i++) {
-        if (this.v_hisItems[i].v_content.id!=contentId) continue;
-        this.v_hisItems[i].p3ContentId = 0;
-        this.v_hisItems[i].p3Title = "点赞";    
+    if (g5.currentPageIndex != 8) return;
+    if (this.v_content.id!=contentId) return;
+    var root = this.c_tabRoot.p3;
+    var item = null;
+    if (isLike) {
+        item = createPanel(root, "twlku_" + g5.myUserInfo.id, "", 0, 0, eb.getDivRectSetting(root).w, 5);
+        item.v_userInfo = g5.myUserInfo;
+        item.v_mode = "";
+        g5.renderUserBar(item);
+        this.c_tabRoot.p3.v_items.splice(0,0,item);
+        ee.changeParent(item, item.parentNode, 0);
+    } else {
+        var items = this.c_tabRoot.p3.v_items;
+        for (i=0; i<items.length; i++) {
+            if (!items[i].v_userInfo) continue;
+            if (items[i].v_userInfo.id == g5.myUserInfo.id) {
+                item = items[i];
+                break;
+            }
+        }
+        if (item == null) return;
+        eb.setAni2(item,1,"disappear", "rightFlyOut", "null", 0, true);
+        var aniItem = item;
+        var aniItems = items;
+        var aniItemIndex = i;
+        var aniHeight = eb.getDivRectSetting(item).h;
+        eb.setAniEvent(aniItem,1,function(){}, function(sender) {
+            ee.removeControl(aniItem);
+            aniItems.splice(aniItemIndex,1);
+            g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
+        });
+        ee.showAni(aniItem, 1);
+    }
+    if (this.c_tabRoot.currentPageIndex == 3) {
+        this.c_tabRoot.changePage(-1);
+        this.c_tabRoot.changePage(3);
     }
 }
 
@@ -8679,7 +8714,7 @@ sender.show = function(v_contentId) {
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
         for (var i=0; i<dataset.rowCount; i++) {
-            var item = createPanel(root, "fwdl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            var item = createPanel(root, "twlk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
             item.v_mode = "";
             g5.renderUserBar(item);
@@ -8759,7 +8794,7 @@ sender.show = function(v_contentId) {
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
         for (var i=0; i<dataset.rowCount; i++) {
-            var item = createPanel(root, "fwdl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            var item = createPanel(root, "twulk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
             item.v_mode = "";
             g5.renderUserBar(item);
@@ -31444,7 +31479,7 @@ ee.setOnClick(c,function(sender,event) {
         likeContent.contentId = contentIdB;
         likeContent.onComplete = function() {
             root.c_button3.v_enabled = true;
-            g5.p2.p9.setLike(contentIdB);
+            g5.p2.p9.setLike(contentIdB, contentClone.isLike);
         }
         likeContent();
         sender.v_enabled = false;
