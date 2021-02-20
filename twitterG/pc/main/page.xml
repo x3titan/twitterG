@@ -7890,13 +7890,14 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         eb.processDock();
         
         sender.c_tabRoot.p1.setCount(reCount);
+        sender.c_tabRoot.p2.setCount(sender.v_content.fwCount);
         sender.c_tabRoot.p3.setCount(parseInt(sender.v_content.likeCount));
         sender.c_tabRoot.p4.setCount(parseInt(sender.v_content.unlikeCount));
         sender.c_tabRoot.changePage(-1);
         sender.c_tabRoot.changePage(1);
         showTopic.needRefresh = false;
         sender.loadComplete = true;
-        sender.c_tabRoot.p2.show(sender.v_content.id, true);
+        //sender.c_tabRoot.p2.show(sender.v_content.id, true);
     }
     showTopic.disabled = false;
     this.loadComplete = false;
@@ -20271,7 +20272,6 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -20294,11 +20294,6 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
     } else {
         ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
     }
-    //if (this.v_content.exUplinkType == "L") {
-    //    ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 取消转发");
-    //} else {    
-    //    ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 删除");
-    //}
     ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 删除");
     if (this.v_content.forceTopSn == "0") {
         ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> 在个人主页中置顶");
@@ -20313,17 +20308,6 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
 }
 
 ee.setOnClick(sender.c_button1, function(c_button1, event) {
-    //if (sender.v_content.exUplinkType == "L") {
-    //    g5.popBlack.a6.show(
-    //        "取消转发",
-    //        "本短文为转发短文，取消转发并不会删除原文，您需要取消转发这条短文吗？",
-    //        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-    //        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
-    //        function() {
-    //            g5.deleteTwitter(sender.v_content,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
-    //        }
-    //    );
-    //} else {
     g5.popBlack.a6.show(
         "删除确认",
         "此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。",
@@ -20342,7 +20326,6 @@ ee.setOnClick(sender.c_button1, function(c_button1, event) {
             g5.deleteTwitter(c,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
         }
     );
-    //}
 });
 
 ee.setOnClick(sender.c_button2, function(c_button2, event) {
@@ -20444,6 +20427,7 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -30981,7 +30965,7 @@ c = createPanel(root, root.id+"_panel16", "", 75, cy-3, mainWidth-80, 26);
 root.v_titleText = c;
 var temp = "";
 temp = "<div style='display:inline'><b>" + g5.add3Dot(root.v_userInfo.nickName, 30) + "</b> <font color='#808080' style='font-size:12pt'>@" + g5.add3Dot(root.v_userInfo.userName, 30) + "</font></div>";
-if (root.v_mode.charAt(2) != "x") {
+if (root.v_mode.charAt(2) != "xx") {
     temp+=" · <font>" + g5.getMins(root.v_content.seconds) + "</font>";
 }
 temp += "<font color='#808080'></font>";
@@ -31365,7 +31349,7 @@ if (!showRe) {
     cy += p1y + w*0.03;
 }    
 
-if (root.v_mode.charAt(2) == "x") {
+if (root.v_mode.charAt(2) == "xx") {
     c = createPanel(root, root.id+"_bottom01", "", 16, cy, mainWidth, 26); cy+=33;
     addText(c, g5.getMins(root.v_content.seconds, 2), "left", "middle", "微软雅黑", 12, "808080", "normal");
     root.v_timeLabel = c.label.rows[0].cells[0]; 
@@ -32078,6 +32062,7 @@ g5.contentDel(v_content.id, function() {
                         if (newContent.fwCount>0) newContent.fwCount--;
                     }
                     g5.modifyTwitter(item, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
+                    g5.p2.p9.sync(newContent);
                 }
             }
             j++;
