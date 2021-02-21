@@ -7983,6 +7983,7 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
 }
 
 sender.sync = function(v_content) {
+    if (!this.v_content) return;
     if (v_content.id != this.v_content.id) return;
     this.c_tabRoot.p1.setCount(v_content.reCount);
     this.c_tabRoot.p2.setCount(v_content.fwCount);
@@ -30296,7 +30297,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="92">
+  <g5Items count="93">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -32193,11 +32194,13 @@ if (g5.currentPageIndex == 0) {
         currentPage = g5.p2.p2.p3Items;
     }
 } else if (g5.currentPageIndex == 8) {
+    currentPage = new Array();
     if (g5.p2.p9.c_tabRoot.currentPageIndex == 1) {
         currentPage = g5.p2.p9.c_tabRoot.p1.v_items;
     } else if (g5.p2.p9.c_tabRoot.currentPageIndex == 2) {
         currentPage = g5.p2.p9.c_tabRoot.p2.v_items;
     }
+    currentPage = currentPage.concat(g5.p2.p9.v_items);
 } else if (g5.currentPageIndex == 4) {
     currentPage = g5.p2.p5.v_items;
 } else if (g5.currentPageIndex == 10) {
@@ -32209,6 +32212,40 @@ if (g5.currentPageIndex == 0) {
         currentPage = g5.p2.p11.c_pages.c4.v_items;
     } else if (g5.p2.p11.currentPage == "c5") {
         currentPage = g5.p2.p11.c_pages.c5.v_items;
+    }
+}
+return currentPage;</functionCode>
+    </item>
+    <item name="contentGetCurrentBuffs" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode>var currentPage = new Array();
+if (g5.currentPageIndex == 0) {
+    currentPage.push(g5.p2.p1.v_items);
+} else if (g5.currentPageIndex == 1) {
+    if (g5.p2.p2.p2sub.currentPageIndex == 1) {
+        currentPage.push(g5.p2.p2.p1Items);
+    } else if (g5.p2.p2.p2sub.currentPageIndex == 3) {
+        currentPage.push(g5.p2.p2.p3Items);
+    }
+} else if (g5.currentPageIndex == 8) {
+    if (g5.p2.p9.c_tabRoot.currentPageIndex == 1) {
+        currentPage.push(g5.p2.p9.c_tabRoot.p1.v_items);
+    } else if (g5.p2.p9.c_tabRoot.currentPageIndex == 2) {
+        currentPage.push(g5.p2.p9.c_tabRoot.p2.v_items);
+    }
+    currentPage.push(g5.p2.p9.v_items);
+} else if (g5.currentPageIndex == 4) {
+    currentPage.push(g5.p2.p5.v_items);
+} else if (g5.currentPageIndex == 10) {
+    if (g5.p2.p11.currentPage == "c1") {
+        currentPage.push(g5.p2.p11.c_pages.c1.v_items);
+    } else if (g5.p2.p11.currentPage == "c2") {
+        currentPage.push(g5.p2.p11.c_pages.c2.v_items);
+    } else if (g5.p2.p11.currentPage == "c4") {
+        currentPage.push(g5.p2.p11.c_pages.c4.v_items);
+    } else if (g5.p2.p11.currentPage == "c5") {
+        currentPage.push(g5.p2.p11.c_pages.c5.v_items);
     }
 }
 return currentPage;</functionCode>
@@ -32579,18 +32616,20 @@ return y;]]></functionCode>
       <varValue />
       <functionParam>refresh</functionParam>
       <functionCode><![CDATA[//process time
-var currentItems = g5.contentGetCurrentBuff();
-if (!currentItems) currentItems = new Array();
-for (var i=0; i<currentItems.length; i++) {
-    var item = currentItems[i];
-    if (!item.v_content) continue;
-    var now = parseInt((new Date()).getTime()/1000);    
-    var time = now-item.v_content.startTime;
-    if (time>=24*60*60) continue;
-    time=g5.getMins(time);
-    if (item.v_timeLabel) {
-        if (item.v_timeLabel.innerHTML!=time) {
-            item.v_timeLabel.innerHTML = time;
+var currentItemsArr = g5.contentGetCurrentBuffs();
+for (var j=0; j<currentItemsArr.length; j++) {
+    var currentItems = currentItemsArr[j];
+    for (var i=0; i<currentItems.length; i++) {
+        var item = currentItems[i];
+        if (!item.v_content) continue;
+        var now = parseInt((new Date()).getTime()/1000);    
+        var time = now-item.v_content.startTime;
+        if (time>=24*60*60) continue;
+        time=g5.getMins(time);
+        if (item.v_timeLabel) {
+            if (item.v_timeLabel.innerHTML!=time) {
+                item.v_timeLabel.innerHTML = time;
+            }
         }
     }
 }
