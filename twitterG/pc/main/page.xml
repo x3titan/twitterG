@@ -7736,6 +7736,7 @@ sender.load = function(cid) {
     } else {
         this.c_tabRoot.changePage(item.tabIndex);
     }
+    this.v_hisItems.splice(idx,1);
     document.documentElement.scrollTop = item.scrollTop;
     return true;
 }
@@ -30297,7 +30298,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="93">
+  <g5Items count="92">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -32038,6 +32039,10 @@ g5.contentDel(v_content.id, function() {
         j = 0;
         while (j<items.length) {
             item = items[j];
+            if (!item.v_content) {
+                j++;
+                continue;
+            }
             //downlink L
             if (item.v_content.exContentId == v_content.id) {
                 var rect = eb.getDivRect(item);
@@ -32065,6 +32070,7 @@ g5.contentDel(v_content.id, function() {
                     } else if (v_content.uplinkType == "F") {
                         if (newContent.fwCount>0) newContent.fwCount--;
                     }
+                    g5.writeLog(item.v_content.id + ", cnt=" + newContent.reCount+ ",i=" + i);
                     g5.modifyTwitter(item, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
                     g5.p2.p9.sync(newContent);
                 }
@@ -32083,7 +32089,7 @@ g5.contentDel(v_content.id, function() {
       <varValue />
       <functionParam>contentId, onComplete</functionParam>
       <functionCode><![CDATA[var task = g5.contentGetAllBuff();
-var currentPage = g5.contentGetCurrentBuff();
+var currentPages = g5.contentGetCurrentBuffs();
 
 var items,item;
 var i=0;
@@ -32102,7 +32108,7 @@ for (var i=0; i<task.length; i++) {
             continue;
         }
         var rect = eb.getDivRect(item);
-        if (currentPage == items) {
+        if (currentPages.includes(items)) {
             eb.setAni2(item,1,"disappear", "rightFlyOut", "null", 0, true);
             var aniItem = item;
             var aniItems = items;
@@ -32180,41 +32186,6 @@ return task;
 
 
 ]]></functionCode>
-    </item>
-    <item name="contentGetCurrentBuff" type="20">
-      <varValue />
-      <functionParam />
-      <functionCode>var currentPage = null;
-if (g5.currentPageIndex == 0) {
-    currentPage = g5.p2.p1.v_items;
-} else if (g5.currentPageIndex == 1) {
-    if (g5.p2.p2.p2sub.currentPageIndex == 1) {
-        currentPage = g5.p2.p2.p1Items;
-    } else if (g5.p2.p2.p2sub.currentPageIndex == 3) {
-        currentPage = g5.p2.p2.p3Items;
-    }
-} else if (g5.currentPageIndex == 8) {
-    currentPage = new Array();
-    if (g5.p2.p9.c_tabRoot.currentPageIndex == 1) {
-        currentPage = g5.p2.p9.c_tabRoot.p1.v_items;
-    } else if (g5.p2.p9.c_tabRoot.currentPageIndex == 2) {
-        currentPage = g5.p2.p9.c_tabRoot.p2.v_items;
-    }
-    currentPage = currentPage.concat(g5.p2.p9.v_items);
-} else if (g5.currentPageIndex == 4) {
-    currentPage = g5.p2.p5.v_items;
-} else if (g5.currentPageIndex == 10) {
-    if (g5.p2.p11.currentPage == "c1") {
-        currentPage = g5.p2.p11.c_pages.c1.v_items;
-    } else if (g5.p2.p11.currentPage == "c2") {
-        currentPage = g5.p2.p11.c_pages.c2.v_items;
-    } else if (g5.p2.p11.currentPage == "c4") {
-        currentPage = g5.p2.p11.c_pages.c4.v_items;
-    } else if (g5.p2.p11.currentPage == "c5") {
-        currentPage = g5.p2.p11.c_pages.c5.v_items;
-    }
-}
-return currentPage;</functionCode>
     </item>
     <item name="contentGetCurrentBuffs" type="20">
       <varValue />
