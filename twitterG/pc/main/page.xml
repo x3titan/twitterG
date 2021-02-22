@@ -7580,6 +7580,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
 sender.c_tabRoot = ee.getControl("panel119");
+sender.v_forceDisplay = false;
 
 sender.activePage = function() {
     g5.pageMode = 0;
@@ -7748,8 +7749,9 @@ sender._getIndexById = function(contentId) {
     return -1;
 }
      
-sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId) {
+sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId, forceDisplay) {
     if (showTopic.busy) return;
+    this.v_forceDisplay = forceDisplay ? true:false;
     g5.changeP2(-1);
     this.c_tabRoot.init();
     if (this.load(contentId)) {
@@ -7862,9 +7864,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 g5.loadTwitterRecord(item, datasetFw, i);
                 if (i>0) item.v_notDisplayRe = true;
                 item.v_mode = uType + dType;
-                if ((rootUserId == item.v_userInfo.id) || (rootUserId == item.v_reUserInfo.id)) {
-                    item.v_forceDisplay = true;
-                }
+                item.v_forceDisplay = sender.v_forceDisplay;
                 g5.renderTwitter(item);        
             }
             if (i==0) {
@@ -8645,6 +8645,7 @@ sender.show = function(v_contentId, bgRefresh) {
             g5.loadTwitterRecord(item, dataset, i);
             item.v_notDisplayRe = true;
             item.v_mode = "";
+            item.v_forceDisplay = g5.p2.p9.v_forceDisplay;
             if (item.v_content.exUplinkType == "L") {
                 g5.renderTwitterL(item);        
             } else {
@@ -26915,7 +26916,8 @@ sql =
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' AND (ublockList.id IS NULL) and (ublockList1.id IS NULL) " +
+    //"WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' AND (ublockList.id IS NULL) and (ublockList1.id IS NULL) " +
+    "WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' " +
     "ORDER BY dbo.tContent.id DESC; ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -30927,7 +30929,7 @@ if (root.v_content.status=="DEL") {
     c.c_button1 = $g(root.id+"_blockF02");
     c.c_button1.style.cursor = "pointer";
     ee.setOnClick(c.c_button1,function(sender,event) {
-        g5.p2.p9.show(null,null,null,null,root.v_content.id);
+        g5.p2.p9.show(null,null,null,null,root.v_content.id,true);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     ee.setOnMouseEnter(c.c_button1,function(sender,e){
@@ -31182,7 +31184,7 @@ if (!showRe) {
     cy+=20;
     c.c_button1 = $g(root.id+"_blockF01");
     ee.setOnClick(c.c_button1,function(sender,event) {
-        g5.p2.p9.show(null,null,null,null,root.v_reContent.id);
+        g5.p2.p9.show(null,null,null,null,root.v_reContent.id,true);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     ee.setOnMouseEnter(c.c_button1,function(sender,e){
