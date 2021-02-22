@@ -32060,6 +32060,18 @@ g5.contentDel(v_content.id, function() {
                     g5.contentRenew(items, j, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
                 }
             }
+            //uplink L
+            if ((item.v_content.exUplinkType == "L") &amp;&amp; (item.v_content.exContentId == v_reContent.id)) {
+                newContent = item.v_content.clone();
+                newReContent = item.v_reContent.clone();
+                if (v_content.uplinkType == "R") {
+                    if (newContent.reCount>0) newContent.reCount--;
+                } else if (v_content.uplinkType == "F") {
+                    if (newContent.fwCount>0) newContent.fwCount--;
+                }
+                g5.writeLog(item.v_content.id + ",L, cnt=" + newContent.reCount+ ",i=" + i);
+                g5.modifyTwitter(item, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
+            }
             //uplink
             if (v_content.uplinkType != "N") {
                 if (item.v_content.id == v_reContent.id) {
@@ -32070,7 +32082,6 @@ g5.contentDel(v_content.id, function() {
                     } else if (v_content.uplinkType == "F") {
                         if (newContent.fwCount>0) newContent.fwCount--;
                     }
-                    g5.writeLog(item.v_content.id + ", cnt=" + newContent.reCount+ ",i=" + i);
                     g5.modifyTwitter(item, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
                     g5.p2.p9.sync(newContent);
                 }
