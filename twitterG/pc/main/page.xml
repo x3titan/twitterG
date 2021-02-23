@@ -7575,7 +7575,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -7697,7 +7696,7 @@ sender.load = function(cid) {
         }
         root.v_items = newItems;
         for (i=0; i<root.v_items.length; i++) {
-            ee.changeParent(root.v_items[i], root, 99999);
+            ee.changeParent(root.v_items[i], root, i);
         }
     }
     
@@ -7819,6 +7818,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             g5.p4.changePage("a2");
         }
         var cy = eb.getDivRect(g5.p4).h-3;
+        ee.tiledV(sender, 0, cy, 0);
       
         var preShowItem;
         if (sender.v_preShow) {
@@ -7844,6 +7844,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             item.v_mode = uType + dType;
             g5.renderTwitter(item);        
             sender.v_items.push(item);
+            ee.changeParent(item, item.parentNode, sender.v_items.length-1);
             lastCy = cy;
             cy += 0 + eb.getDivRect(item).h;    
         }
@@ -7888,6 +7889,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
                 rootUserId = item.v_userInfo.id;
                 sender.v_items.push(item);
+                ee.changeParent(item, item.parentNode, sender.v_items.length-1);
             } else {
                 sender.c_tabRoot.p1.v_items.push(item);
                 reCount++;
@@ -20202,6 +20204,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20288,6 +20291,7 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName><![CDATA[popup1.p1->A自己选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.321518987341772</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -30374,7 +30378,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="92">
+  <g5Items count="93">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -32004,6 +32008,12 @@ root.refresh();
 
 return root;]]></functionCode>
     </item>
+    <item name="refreshTwitter" type="20">
+      <varValue />
+      <functionParam>root</functionParam>
+      <functionCode><![CDATA[while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
+g5.renderTwitter(root);]]></functionCode>
+    </item>
     <item name="modifyTwitter" type="20">
       <varValue />
       <functionParam>root,v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
@@ -32208,12 +32218,18 @@ for (var i=0; i<task.length; i++) {
             var aniItemIndex = j;
             var aniHeight = rect.h;
             eb.setAniEvent(aniItem,1,function(){}, function(sender) {
-                //if (aniItem.parentNode == g5.p2.p
-                
-                
-                ee.removeControl(aniItem);
-                aniItems.splice(aniItemIndex,1);
-                g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
+                if (aniItem.parentNode == g5.p2.p9) {
+                    aniItem.v_content.status = "DEL";
+                    eb.setDivRect(aniItem,0,null,null,5);
+                    g5.refreshTwitter(aniItem);
+                    ee.setVisible(aniItem, true);
+                    eb.setAlpha(aniItem, 100);
+                    ee.tiledResizeV(g5.p2.p9,2);
+                } else {
+                    ee.removeControl(aniItem);
+                    aniItems.splice(aniItemIndex,1);
+                    g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
+                }
                 if (onComplete) onComplete();
             });
             ee.showAni(aniItem, 1);
