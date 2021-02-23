@@ -7748,6 +7748,19 @@ sender._getIndexById = function(contentId) {
     }
     return -1;
 }
+
+sender.delHisById = function(contentId) {
+    var i = 0;
+    while (i<this.v_hisItems.length) {
+        var j=0;
+        for (j=0; i<this.v_hisItems[i].v_items.length; j++) {
+            if (this.v_hisItems[i].v_items[j].v_content.id == contentId) break;    
+        }
+        if (j<this.v_hisItems[i].v_items.length) {
+            this.v_hisItems.splice(i,1);
+        } else i++;
+    }
+}
      
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId, forceDisplay) {
     if (showTopic.busy) return;
@@ -26916,7 +26929,6 @@ sql =
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    //"WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' AND (ublockList.id IS NULL) and (ublockList1.id IS NULL) " +
     "WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' " +
     "ORDER BY dbo.tContent.id DESC; ";
 
@@ -27084,7 +27096,7 @@ sql =
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND  " +
     "                exUnlikeList.userId = " + userId + " " +
     "WHERE ((dbo.tContent.uplinkType = 'F' and dbo.tContent.uplinkId = " + contentId + ") OR (dbo.tContent.uplinkType = 'L' and dbo.tContent.exContentId = " + contentId + ")) " + 
-    "      AND (dbo.tContent.status<>'DEL') AND (ublockList.id IS NULL) and (ublockList1.id IS NULL) " +
+    "      AND (dbo.tContent.status<>'DEL')  " +
     "ORDER BY dbo.tContent.id DESC; ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -32095,6 +32107,13 @@ delTwitter.contentId = v_content.id;
 delTwitter.onComplete = function() {
 }
 delTwitter();
+if (g5.currentPageIndex == 8) {
+    if (g5.p2.p9.v_content.id == v_content.id) {
+        window.history.go(-1);
+        g5.p2.p1.show();
+    }
+}
+g5.p2.p9.delHisById(v_content.id);
 g5.contentDel(v_content.id, function() {
     var buffs = g5.contentGetAllBuff();
     var i, j, items, item, newContent, newReContent;
@@ -32133,7 +32152,6 @@ g5.contentDel(v_content.id, function() {
                 } else if (v_content.uplinkType == "F") {
                     if (newContent.fwCount>0) newContent.fwCount--;
                 }
-                g5.writeLog(item.v_content.id + ",L, cnt=" + newContent.reCount+ ",i=" + i);
                 g5.modifyTwitter(item, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
             }
             //uplink
@@ -32190,6 +32208,9 @@ for (var i=0; i<task.length; i++) {
             var aniItemIndex = j;
             var aniHeight = rect.h;
             eb.setAniEvent(aniItem,1,function(){}, function(sender) {
+                //if (aniItem.parentNode == g5.p2.p
+                
+                
                 ee.removeControl(aniItem);
                 aniItems.splice(aniItemIndex,1);
                 g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
@@ -32199,7 +32220,7 @@ for (var i=0; i<task.length; i++) {
             hasAni = true;
             break;
         } else {
-            ee.removeControl(item);
+            if (item.parentNode) ee.removeControl(item);
             items.splice(j,1);
             g5.batchMoveY(items, j, - rect.h);
         }
@@ -32255,6 +32276,7 @@ task.push(g5.p2.p9.c_tabRoot.p2.v_items);
 for (var i=0; i<g5.p2.p9.v_hisItems.length; i++) {
     task.push(g5.p2.p9.v_hisItems[i].v_items);
     task.push(g5.p2.p9.v_hisItems[i].v_itemsP1);
+    task.push(g5.p2.p9.v_hisItems[i].v_itemsP2);
 }
 return task;
 
