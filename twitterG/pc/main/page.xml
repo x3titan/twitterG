@@ -2307,7 +2307,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -7575,6 +7574,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_hisItems = new Array();
@@ -8216,8 +8216,11 @@ sender.init = function() {
     this.p2.setCount(0);
     this.p3.setCount(0);
     this.p4.setCount(0);
+    this.p1.v_contentId = 0;
+    this.p2.v_contentId = 0;
+    this.p3.v_contentId = 0;
+    this.p4.v_contentId = 0;
 }
-
 
 
 ]]></onCreate>
@@ -33364,17 +33367,44 @@ var sync = function(userId, isFollow) {
     g5.p2.p16.refresh();
     var itemList = collectUserInfoItems();
     var i,j;
+    if (isFollow) {
+        g5.myUserInfo.followCount++;
+    } else {
+        g5.myUserInfo.followCount--;
+    }
     for (i=0; i<itemList.length; i++) {
         var items = itemList[i];
         for (j=0; j<items.length; j++) {
             if (items[j].v_userInfo) {
                 if (items[j].v_userInfo.id == userId) { 
+                    if (items[j].v_userInfo.isFollow &amp;&amp; !isFollow) {
+                        items[j].v_userInfo.fansCount--;
+                    } else if (!items[j].v_userInfo.isFollow &amp;&amp; isFollow) {
+                        items[j].v_userInfo.fansCount++;
+                    }
                     items[j].v_userInfo.isFollow = isFollow;
+                } else if (items[j].v_userInfo.id == g5.myUserInfo.id) {
+                    if (isFollow) {
+                        items[j].v_userInfo.followCount++;
+                    } else {
+                        items[j].v_userInfo.followCount--;
+                    }
                 }
             }
             if (items[j].v_reUserInfo) {
                 if (items[j].v_reUserInfo.id == userId) { 
+                    if (items[j].v_reUserInfo.isFollow &amp;&amp; !isFollow) {
+                        items[j].v_reUserInfo.fansCount--;
+                    } else if (!items[j].v_reUserInfo.isFollow &amp;&amp; isFollow) {
+                        items[j].v_reUserInfo.fansCount++;
+                    }
                     items[j].v_reUserInfo.isFollow = isFollow;
+                } else if (items[j].v_reUserInfo.id == g5.myUserInfo.id) {
+                    if (isFollow) {
+                        items[j].v_reUserInfo.followCount++;
+                    } else {
+                        items[j].v_reUserInfo.followCount--;
+                    }
                 }
             }
             if (items[j].v_content) {
