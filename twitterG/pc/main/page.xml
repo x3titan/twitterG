@@ -20893,6 +20893,7 @@ sender.renderItem = function(root) {
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
 }
+if (sender.a3.style.visibility != "hidden") return;
 sender.close();
 </onClick>
       <onCreate><![CDATA[sender.style.position = "fixed";
@@ -21399,10 +21400,10 @@ sender.show = function(title) {
     g5.refreshPhoto(ee.getControl("panel51"));
 }
 
-sender.init = function(titleText) {
+sender.init = function(titleText, keepLast) {
     if (eb.isEmpty(titleText)) titleText = "";
-    ee.setText(this.c_title, titleText)
-    ee.setEditText(this.c_input, "");
+    ee.setText(this.c_title, titleText);
+    if (!keepLast) ee.setEditText(this.c_input, "");
     this.c_photos.v_photos = new Array();
     g5.refreshPhoto(this.c_photos);
     this.check();
@@ -21427,7 +21428,8 @@ sender.check = function() {
 }
 
 sender.showNew = function() {
-    this.init("发言");
+    this.init("发言", this.v_lastOp == "new");
+    this.v_lastOp = "new";
     this.onComplete = function() {
         if (newTwitter.busy) return;
         newTwitter.uplinkType = "N";
@@ -21435,6 +21437,7 @@ sender.showNew = function() {
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
+            sender.v_lastOp = "";
             sender.close();
             var newContent = new g5.ContentInfo();
             newContent.id = contentId;
@@ -21467,7 +21470,9 @@ sender.showNew = function() {
 }
 
 sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
-    this.init("回复发言");
+    this.init("回复发言", this.v_lastOp == "re" &amp;&amp; this.v_lastId == v_content.id);
+    this.v_lastOp = "re";
+    this.v_lastId = v_content.id;
     this.onComplete = function() {
         if (newTwitter.busy) return;
         var contentIdB;
@@ -21481,6 +21486,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
+            sender.v_lastOp = "";
             sender.close();
             var newContent = new g5.ContentInfo();
             newContent.id = contentId;
@@ -21512,9 +21518,9 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
 }
 
 sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
-    this.init("带评论转发");
-    v_content = v_content.clone();
-    v_reContent = v_reContent.clone();
+    this.init("带评论转发", this.v_lastOp == "fw" &amp;&amp; this.v_lastId == v_content.id);
+    this.v_lastOp = "fw";
+    this.v_lastId = v_content.id;
     this.onComplete = function() {
         if (newTwitter.busy) return;
         var contentIdB;
@@ -21528,6 +21534,7 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         newTwitter.content = ee.getEditText(sender.c_input);
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
+            sender.v_lastOp = "";
             sender.close();
             var newContent = new g5.ContentInfo();
             newContent.id = contentId;
