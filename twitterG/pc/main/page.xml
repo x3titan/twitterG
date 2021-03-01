@@ -1504,6 +1504,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -2307,6 +2308,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
@@ -2329,7 +2331,7 @@ sender.show = function(v_userInfo, userId, userName) {
         if (v_userInfo) {
             if (v_userInfo.id == this.v_userInfo.id) {
                 this.v_needRefresh = false;
-                this.v_userInfo = v_userInfo;
+                this.v_userInfo = v_userInfo.clone();
             }
         } else if (userId) { 
             if (userId == this.v_userInfo.id) {
@@ -2465,12 +2467,12 @@ sender.close = function() {
 }
 
 sender.activePage = function() {
-    g5.pushHistory("p=1&amp;u=" + escape(g5.p2.p2.v_userInfo.userName));
     if (this.v_needRefresh) {
         document.documentElement.scrollTop = 0;
     } else {
         document.documentElement.scrollTop = this.v_lastScrollTop;
     }
+    g5.pushHistory("p=1&amp;u=" + escape(this.v_userInfo.userName));
     g5.pageMode = 0;
     g5.refreshMain(true);
     eb.setDivRect(g5.p2,null,null,null,eb.getDivRect(this).h);
@@ -2578,7 +2580,7 @@ sender.refreshFansFollowCount = function() {
 }
 
 sender.showByUserInfo = function(v_userInfo) {
-    this.v_userInfo = v_userInfo;
+    this.v_userInfo = v_userInfo.clone();
     
     g5.pageMode = 0;
     g5.refreshMain(true);
@@ -18305,7 +18307,6 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onCreate>sender.style.position="fixed";
@@ -19838,7 +19839,6 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a9 -> 粉丝列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -30555,6 +30555,30 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         ds.setData(x+15,idx,this.block2);
         ds.setData(x+16,idx,this.email);
     }
+    this.clone = function() {
+        var r = new g5.UserInfo();
+        r.id = this.id;
+        r.status = this.status;
+        r.regDatetime = this.regDatetime;
+        r.lastAccessTime = this.lastAccessTime;    
+        r.userName = this.userName;    
+        r.mobile = this.mobile;    
+        r.nickName = this.nickName;    
+        r.note = this.note;    
+        r.photo = this.photo;    
+        r.titleBg = this.titleBg;    
+        r.homePage = this.homePage;    
+        r.followCount = this.followCount;    
+        r.fansCount = this.fansCount;
+        r.follow = this.follow;
+        r.block1 = this.block1;
+        r.block2 = this.block2;
+        r.email = this.email;
+        r.isFollow = this.isFollow;
+        r.isBlock1 = this.isBlock1;
+        r.isBlock2 = this.isBlock2;
+        return r;
+    }
 }
 
 </varValue>
@@ -30938,7 +30962,7 @@ if (root.v_content.status=="DEL") {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "  您被此用户屏蔽，该短文不可用。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "  您已被此用户屏蔽，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock()
     return root;
@@ -31023,31 +31047,16 @@ c.style.cursor="pointer";
 c.style.borderRadius = "50%";
 ee.setOnClick(c,function(sender,event) {
     ee.getControl("panel280").show(root.c_photo, root.v_userInfo);
-    //showUserPage.userName=sender.parentNode.v_userName;
-    //showUserPage();
-    //if (sender.v_timer!=null) {
-    //    clearTimeout(sender.v_timer);
-    //    sender.v_timer = null;
-    //}
-    //getUserInfo2.busy = false;
     window.event? window.event.cancelBubble = true : event.stopPropagation();
     return false;
 });
 ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.webkitFilter="brightness(80%)";
     sender.style.filter="brightness(80%)";
-//    if (sender.v_timer!=null) clearTimeout(sender.v_timer);
-//    sender.v_timer = setTimeout(function() {
-//        ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
-//    }, 700);
 });
 ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.webkitFilter="brightness(100%)";
     sender.style.filter="brightness(100%)";
-    //if (sender.v_timer!=null) {
-    //    clearTimeout(sender.v_timer);
-    //    sender.v_timer = null;
-    //}
 });
 
 var mainWidth = parseInt((w-75)*0.97);
@@ -31100,22 +31109,12 @@ ee.setOnMouseLeave(c, function(sender,event) {
 root.v_btn1 = c;
 ee.setOnClick(c,function(sender,event) {
     var uid = 0;
-    //if (sender.parentNode.v_content.exUplinkType == "L") {
-    //    uid = sender.parentNode.v_content.exUserInfo.id;
-    //} else {
-    //    uid = sender.parentNode.v_userInfo.id;
-    //} 
     uid = sender.parentNode.v_userInfo.id;
     if (uid==g5.myUserInfo.id) {
         g5.popup1.p1.v_isBookMark = root.v_isBookMark;
         g5.popup1.p1.show(sender, root.v_content, root.v_reContent, root.v_userInfo, root.v_reUserInfo);
     } else {
         g5.popup1.p3.show(sender, root.v_content, root.v_userInfo);
-    //    if (sender.parentNode.v_content.exUplinkType == "L") {
-    //        g5.popup1.p3.show(sender, root.v_content, root.v_content.exUserInfo);
-    //    } else {
-    //        g5.popup1.p3.show(sender, root.v_content, root.v_userInfo);
-    //    } 
     }
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
@@ -31258,13 +31257,6 @@ if (!showRe) {
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
         ee.getControl("panel280").show(sender, root.v_reUserInfo);
-        //showUserPage.userName=sender.v_username;
-        //showUserPage();
-        //if (sender.v_timer!=null) {
-        //    clearTimeout(sender.v_timer);
-        //    sender.v_timer = null;
-        //}
-        //getUserInfo2.busy = false;
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     root.c_rePhoto = c;
@@ -32456,18 +32448,10 @@ root.setUserPhoto(root.v_userInfo.photo);
 ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.webkitFilter="brightness(80%)";
     sender.style.filter="brightness(80%)";
-//    if (sender.v_timer!=null) clearTimeout(sender.v_timer);
-//    sender.v_timer = setTimeout(function() {
-//        ee.getControl("panel280").show(root.v_userInfo.id, root.c_photo);
-//    }, 200);
 });
 ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.webkitFilter="brightness(100%)";
     sender.style.filter="brightness(100%)";
-//    if (sender.v_timer!=null) {
-//        clearTimeout(sender.v_timer);
-//        sender.v_timer = null;
-//    }
 });
 ee.setOnClick(c,function(sender,event) {
     ee.getControl("panel280").show(root.c_photo, root.v_userInfo);
@@ -32878,17 +32862,19 @@ this.currentIndex = pageIndex;</functionCode>
     <item name="changeP2" type="20">
       <varValue />
       <functionParam>pageIndex</functionParam>
-      <functionCode><![CDATA[if (g5.currentPageIndex == pageIndex) return true;
+      <functionCode><![CDATA[g5.writeLog("changeP2=" + pageIndex);
+
+if (g5.currentPageIndex == pageIndex) return true;
 var root = ee.getControl("panel135");
 var url = window.location.href;
 var a = url.indexOf("?");
 if (a>=0) url = url.substr(0,a+1);
-var pageState = {title:"", url:url};
 
-if (g5.notPushHis) {
+var pageState = {title:"", url:url};
+if (g5.notPushHistory) {
     pageState = "";
-    g5.notPushHis = false;
 }
+
 if (g5.currentPageIndex == 0) {
     g5.p2.p1.close();
 } else if (g5.currentPageIndex == 1) {
@@ -33076,77 +33062,54 @@ g5.currentP3Index = pageIndex;</functionCode>
     <item name="processUrl" type="20">
       <varValue />
       <functionParam />
-      <functionCode>g5.notPushHistory = true;
+      <functionCode>g5.notPushHistoryCount = 1;
 var p = g5.getQueryString("p");
 if (eb.isEmpty(p)) {
-    g5.notPushHis = true;
     g5.p2.p1.show();
 } else if (p=="1") {
-    g5.notPushHis = true;
     g5.p2.p2.show(null,null,g5.getQueryString("u"));
 } else if (p=="4") {
-    g5.notPushHis = true;
     g5.p2.p5.show();
 } else if (p=="6") {
-    g5.notPushHis = true;
     g5.changeP2(6);
     showChatList();
 } else if (p=="7") {
     g5.p2.p9.show(null,null,null,null,g5.getQueryString("c"));
-    g5.notPushHis = true;
 } else if (p=="9") {
-    g5.notPushHis = true;
     g5.changeP2(9);
 } else if (p=="10") {
-    g5.notPushHis = true;
     g5.p2.p11.search(g5.getQueryString("s"));    
 } else if (p=="11") {
-    g5.notPushHis = true;
     g5.p2.p12.show();
 } else if (p=="12") {
-    g5.notPushHis = true;
     g5.p2.p13.show();
 } else if (p=="13") {
-    g5.notPushHis = true;
     g5.p2.p14.showByUserName(g5.getQueryString("u"));
 } else if (p=="14") {
-    g5.notPushHis = true;
     g5.p2.p15.showByUserName(g5.getQueryString("u"));
 } else if (p=="15") {
-    g5.notPushHis = true;
     g5.p2.p16.showByUserName(g5.getQueryString("u"));
 } else if (p=="16") {
-    g5.notPushHis = true;
     g5.p2.p17.show();
 } else if (p=="17") {
-    g5.notPushHis = true;
     g5.p2.p18.show();
 } else if (p=="18") {
-    g5.notPushHis = true;
     g5.p2.p19.show();
 } else if (p=="19") {
-    g5.notPushHis = true;
     g5.p2.p20.show();
 } else if (p=="20") {
-    g5.notPushHis = true;
     g5.p2.p21.show();
 } else if (p=="21") {
-    g5.notPushHis = true;
     g5.p2.p22.show();
 } else if (p=="22") {
-    g5.notPushHis = true;
     g5.p2.p23.show();
 } else if (p=="23") {
-    g5.notPushHis = true;
     g5.p2.p24.show();
 } else if (p=="24") {
-    g5.notPushHis = true;
     g5.p2.p25.show();
 } else if (p=="25") {
-    g5.notPushHis = true;
     g5.p2.p26.show();
 }
-g5.notPushHistory = false;
 </functionCode>
     </item>
     <item name="processTextUrl" type="20">
@@ -33269,7 +33232,10 @@ for (i=0; i<itemList.length; i++) {
     <item name="pushHistory" type="20">
       <varValue />
       <functionParam>param</functionParam>
-      <functionCode><![CDATA[if (g5.notPushHistory) return;
+      <functionCode><![CDATA[if (g5.notPushHistoryCount>0) {
+    g5.notPushHistoryCount--;
+    return;
+}
 var url = window.location.href;
 var a = url.indexOf("?");
 if (a>=0) url = url.substr(0,a+1);
@@ -33277,6 +33243,7 @@ var pageState = {title:"", url:url};
 param = "?" + param;
 history.pushState(pageState,"",param);
 
+g5.writeLog("pushHis=" + param);
 ]]></functionCode>
     </item>
     <item name="setImage" type="20">
