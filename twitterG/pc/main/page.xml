@@ -2499,6 +2499,7 @@ sender.refreshUserInfo = function(v_userInfo) {
     if (this.v_userInfo.id != v_userInfo.id) return;
     this.v_userInfo = new g5.UserInfo();
     if (g5.currentPageIndex != 1) return;
+    g5.notPushHistoryCount = 1;
     this.show(v_userInfo);
 }
 
@@ -2539,6 +2540,7 @@ sender.setIsBlock1 = function(userId, isBlock1) {
         }
         g5.changeP2(-1);
         this.v_userInfo = null;
+        g5.notPushHistoryCount = 1;
         this.show(v_userInfo);
     } else {
         this.v_userInfo = null;
@@ -7196,6 +7198,7 @@ sender.show = function() {
 sender.refresh = function() {
     if (g5.currentPageIndex == 4) {
         this.v_status = "init";
+        g5.notPushHistoryCount = 1;
         this.show();
     } else {
         this.v_status = "init";
@@ -11246,6 +11249,7 @@ sender.refresh = function(userId) {
     if (!needRefresh) return;
     if (g5.currentPageIndex == 14) {
         this.v_needRefresh = true;
+        g5.notPushHistoryCount = 1;
         this.show(this.v_userInfo);
     } else {
         this.v_needRefresh = true;
@@ -11268,6 +11272,7 @@ sender.show = function(v_userInfo) {
     document.documentElement.scrollTop = 0;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
+    g5.changeP2(-1);
     g5.changeP2(14);
     showFansList.userId = v_userInfo.id;
     showFansList.onComplete = function(dataset) {
@@ -11370,6 +11375,7 @@ sender.show = function(v_userInfo) {
     document.documentElement.scrollTop = 0;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
+    g5.changeP2(-1);
     g5.changeP2(15);
     showFollowList.userId = v_userInfo.id;
     showFollowList.onComplete = function(dataset) {
