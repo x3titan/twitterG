@@ -317,6 +317,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1505,6 +1506,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -3179,7 +3181,8 @@ sender.init(0);
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p2PersonSub,p2sub</note>
-      <onCreate><![CDATA[sender.currentPageIndex = -1;
+      <onCreate><![CDATA[sender.v_fitInner = true;
+sender.currentPageIndex = -1;
 sender.c_buttons = ee.getControl("layoutx2");
 sender.button1 = ee.getControl("layoutxitem3");
 sender.button2 = ee.getControl("layoutxitem4");
@@ -3635,7 +3638,8 @@ sender.init(0);
       <layerName><![CDATA[  p1->综合]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate><![CDATA[sender.c_titleChat = ee.getControl("panel263");
+      <onCreate><![CDATA[sender.v_fitInner = true;
+sender.c_titleChat = ee.getControl("panel263");
 sender.c_video = ee.getControl("panel264");
 sender.c_chat = ee.getControl("panel19");
 sender.c_titleBlog = ee.getControl("panel73");
@@ -6552,6 +6556,8 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <layerName><![CDATA[  p2->聊天室]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate>sender.v_fitInner = true;
+</onCreate>
       <sizeRatio>0.456666666666667</sizeRatio>
       <top>52</top>
       <topRatio>0.13903743315508</topRatio>
@@ -6567,7 +6573,8 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <layerName><![CDATA[  p3->发言和回复]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate><![CDATA[sender.resize = function() {
+      <onCreate><![CDATA[sender.v_fitInner = true;
+sender.resize = function() {
     var item = null;
     var add = 0;
     for (var i=g5.p2.p2.p3Items.length-1; i>=0; i--) {
@@ -7158,6 +7165,7 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p5->书签]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_topBlank = sender.eeChildren[0];
@@ -20231,7 +20239,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20474,7 +20481,6 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -21530,9 +21536,11 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.isForward = false;
             newContent.isLike = false;
             newContent.isUnlike = false;
-            g5.p2.p1.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
-            g5.p2.p2.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
-            g5.p2.p9.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
+            var newReContent = v_content.clone();
+            if (newReContent.exUplinkType=="L") newReContent.id = newReContent.exContentId;
+            g5.p2.p1.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            g5.p2.p2.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            g5.p2.p9.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
             v_content.reCount++;
             g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
         }
@@ -21578,9 +21586,11 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.isForward = false;
             newContent.isLike = false;
             newContent.isUnlike = false;
-            g5.p2.p1.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
-            g5.p2.p2.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
-            g5.p2.p9.insert(newContent.clone(),v_content.clone(),g5.myUserInfo,v_userInfo);
+            var newReContent = v_content.clone();
+            if (newReContent.exUplinkType=="L") newReContent.id = newReContent.exContentId;
+            g5.p2.p1.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            g5.p2.p2.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            g5.p2.p9.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
             v_content.fwCount++;
             g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
         }
@@ -30412,7 +30422,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="93">
+  <g5Items count="96">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -32041,6 +32051,34 @@ return root;]]></functionCode>
       <functionCode><![CDATA[while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
 g5.renderTwitter(root);]]></functionCode>
     </item>
+    <item name="refreshTwitter2" type="20">
+      <varValue />
+      <functionParam>root,frontMode,itemsMode</functionParam>
+      <functionCode><![CDATA[var i,dy,r;
+r = eb.getDivRectSetting(root);
+while (root.eeChildren.length>0) ee.removeControl(root.eeChildren[0]);
+g5.renderTwitter(root);
+dy = eb.getDivRectSetting(root).h - r.h;
+if (itemsMode) {
+    for (i=0; i<itemsMode.length; i++) if (itemsMode[i]==root) break;
+    if (i>=itemsMode.length) return;
+    g5.batchMoveY(itemsMode,i,dy);
+} else if (frontMode) {
+    while(true) {
+        g5.batchMoveYPage(root,dy);
+        if (!root.parentNode) break;
+        root = root.parentNode;
+        if (!root.v_fitInner) break;
+        ee.setRect(root,null,null,null,eb.getDivRectSetting(root).h+dy);
+    }
+} else {
+    g5.batchMoveYPage(root,dy);
+    ee.setRect(root.parentNode,null,null,null,eb.getDivRectSetting(root.parentNode).h+dy);
+}
+
+
+]]></functionCode>
+    </item>
     <item name="modifyTwitter" type="20">
       <varValue />
       <functionParam>root,v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
@@ -32177,10 +32215,12 @@ g5.contentDel(v_content.id, function() {
             //downlink R F
             if (item.v_reContent.id == v_content.id) {
                 if (item.v_content.uplinkType == "F") {
-                    newContent = item.v_content.clone();
-                    newReContent = item.v_reContent.clone();
-                    newReContent.status = "DEL";
-                    g5.contentRenew(items, j, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
+                    item.v_reContent.status = "DEL";
+                    g5.refreshTwitter2(item,g5.contentIsCurrentBuff(items),null);
+                    //newContent = item.v_content.clone();
+                    //newReContent = item.v_reContent.clone();
+                    //newReContent.status = "DEL";
+                    //g5.contentRenew(items, j, newContent, newReContent, item.v_userInfo, item.v_reUserInfo);
                 }
             }
             //uplink L
@@ -32368,6 +32408,16 @@ if (g5.currentPageIndex == 0) {
     }
 }
 return currentPage;</functionCode>
+    </item>
+    <item name="contentIsCurrentBuff" type="20">
+      <varValue />
+      <functionParam>items</functionParam>
+      <functionCode><![CDATA[var itemsArr = g5.contentGetCurrentBuffs();
+for (var i=0; i<itemsArr.length; i++) {
+    if (itemsArr[i] == items) return true;    
+}
+return false;
+]]></functionCode>
     </item>
     <item name="contentRenew" type="20">
       <varValue />
@@ -33705,7 +33755,30 @@ if (g5.itemsHome.length>0) {
       <functionCode><![CDATA[for (var i=index; i<items.length; i++) {
     ee.setRect(items[i],null,eb.getDivRect(items[i]).y+dy,null,null);
 }
+return;
+var r,rSelf;
+if (index>=items.length) return;
+rSelf = eb.getDivRectSetting(items[index]);
+for (var i=0; i<items.length; i++) {
+    r = eb.getDivRectSetting(items[i]);
+    if (r.y<rSelf.y) continue;
+    ee.setRect(items[i],null,r.y+dy,null,null);
+}
 ]]></functionCode>
+    </item>
+    <item name="batchMoveYPage" type="20">
+      <varValue />
+      <functionParam>refItem,dy</functionParam>
+      <functionCode><![CDATA[var p = refItem.parentNode;
+if (!p) return;
+var r, rSelf;
+rSelf = eb.getDivRectSetting(refItem);
+for (var i=0; i<p.eeChildren.length; i++) {
+    if (p.eeChildren[i]==refItem) continue;
+    r = eb.getDivRectSetting(p.eeChildren[i]);
+    if (r.y<=rSelf.y) continue;
+    ee.setRect(p.eeChildren[i],null,r.y+dy,null,null);
+}]]></functionCode>
     </item>
     <item name="refreshPhoto" type="20">
       <varValue />
