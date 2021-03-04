@@ -20481,6 +20481,7 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.313924050632911</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -20614,7 +20615,6 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -33495,7 +33495,7 @@ if (isFollow) {
     </item>
     <item name="setBlock1" type="20">
       <varValue />
-      <functionParam>userId,userName,isBlock1,onComplete</functionParam>
+      <functionParam>v_userInfo,isBlock1,onComplete</functionParam>
       <functionCode><![CDATA[var collectUserInfoItems = function() {
     var r = new Array();
     r.push(g5.p2.p1.v_items);
@@ -33528,34 +33528,34 @@ if (isFollow) {
     return r;
 }
 
-var sync = function(userId, isBlock1) {
+var sync = function(v_userInfo, isBlock1) {
     g5.p2.p1.refresh();
-    g5.p2.p2.setIsBlock1(userId, isBlock1);
+    g5.p2.p2.setIsBlock1(v_userInfo.id, isBlock1);
     g5.p2.p11.refresh();
     g5.p2.p19.refresh();
     g5.p2.p5.refresh();
     g5.p2.p13.refresh();
-    g5.p2.p9.blockUser(userId);
+    g5.p2.p9.blockUser(v_userInfo.id);
     var itemList = collectUserInfoItems();
     var i,j;
     for (i=0; i<itemList.length; i++) {
         var items = itemList[i];
         for (j=0; j<items.length; j++) {
             if (items[j].v_userInfo) {
-                if (items[j].v_userInfo.id == userId) { 
+                if (items[j].v_userInfo.id == v_userInfo.id) { 
                     items[j].v_userInfo.isBlock1 = isBlock1;
                     if (isBlock1) items[j].v_userInfo.isFollow = false;
                 }
             }
             if (items[j].v_reUserInfo) {
-                if (items[j].v_reUserInfo.id == userId) { 
+                if (items[j].v_reUserInfo.id == v_userInfo.id) { 
                     items[j].v_reUserInfo.isBlock1 = isBlock1;
                     if (isBlock1) items[j].v_reUserInfo.isFollow = false;
                 }
             }
             if (items[j].v_content) {
                 if (items[j].v_content.exUserInfo) {
-                    if (items[j].v_content.exUserInfo.id == userId) { 
+                    if (items[j].v_content.exUserInfo.id == v_userInfo.id) { 
                         items[j].v_content.exUserInfo.isBlock1 = isBlock1;
                         if (isBlock1) items[j].v_content.exUserInfo.isFollow = false;
                     }
@@ -33576,20 +33576,22 @@ var sync = function(userId, isBlock1) {
     }
 }
 
+if (v_userInfo.isBlock1==isBlock1) return;
+
 if (isBlock1) {
     g5.popBlack.a6.show(
-        "屏蔽@"+userName+"？",
+        "屏蔽@"+v_userInfo.userName+"？",
         "他们将无法关注你或者无法查看你发送的短文，您也不会看到来自@"+userName+"的短文或者通知。",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","屏蔽","屏蔽","屏蔽","#ffffff","#ffffff","#ffffff","")],
         function() {
             if (blockUser.busy) return;
-            blockUser.userId = userId;
+            blockUser.userId = v_userInfo.id;
             blockUser.isBlock = 1;
             blockUser.onComplete = function() {
-                sync(userId, isBlock1);
+                sync(v_userInfo, isBlock1);
                 if (onComplete) {
-                    onComplete(userId, isBlock1);
+                    onComplete(v_userInfo, isBlock1);
                 }
             }
             blockUser();
@@ -33597,18 +33599,18 @@ if (isBlock1) {
     );
 } else {
     g5.popBlack.a6.show(
-        "取消屏蔽@"+userName+"？",
+        "取消屏蔽@"+v_userInfo.userName+"？",
         "该用户将能关注并查看你的发言",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")],
         function() {
             if (blockUser.busy) return;
-            blockUser.userId = userId;
+            blockUser.userId = v_userInfo.id;
             blockUser.isBlock = 0;
             blockUser.onComplete = function() {
-                sync(userId, isBlock1);
+                sync(v_userInfo, isBlock1);
                 if (onComplete) {
-                    onComplete(userId, isBlock1);
+                    onComplete(v_userInfo, isBlock1);
                 }
                 //sender.init(1);
             }
