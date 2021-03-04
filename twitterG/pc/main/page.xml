@@ -3079,15 +3079,15 @@ sender.init = function(photoString) {
     g5.setBlock1(g5.p2.p2.v_userInfo.id, g5.p2.p2.v_userInfo.userName, false, function(){});
 } else if (sender.v_index==1) {
     //follow
-    g5.setFollow(showUserPage.v_userInfo.id, showUserPage.v_userInfo.userName, false,function(userId,isFollow) {
+    g5.setFollow(showUserPage.v_userInfo, function(v_userInfo) {
         ee.getControl("panel256").init(2);
-        showUserPage.v_userInfo.isFollow = isFollow;
+        showUserPage.v_userInfo = v_userInfo.clone();
     });
 } else if (sender.v_index==2) {
     //cancel follow
-    g5.setFollow(showUserPage.v_userInfo.id, showUserPage.v_userInfo.userName, true,function(userId,isFollow) {
+    g5.setFollow(showUserPage.v_userInfo,function(v_userInfo) {
         ee.getControl("panel256").init(1);
-        showUserPage.v_userInfo.isFollow = isFollow;
+        showUserPage.v_userInfo = v_userInfo.clone();
     });
 } else if (sender.v_index==3) {
     //edit personal information
@@ -20239,6 +20239,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20615,6 +20616,7 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -20691,8 +20693,7 @@ sender.show = function(refDiv, content, userInfo) {
       <onClick>if (sender.parentNode.v_userInfo.isBlock1) {
     g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false, null);
 } else {
-    g5.setFollow(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, sender.parentNode.v_userInfo.isFollow,function(userId,isFollow) {
-    });
+    g5.setFollow(sender.parentNode.v_userInfo, null);
 }
 </onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
@@ -20717,7 +20718,7 @@ sender.show = function(refDiv, content, userInfo) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button2</note>
-      <onClick>g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, true, null);
+      <onClick>g5.setBlock1(sender.parentNode.v_userInfo, true, null);
 </onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
@@ -24023,7 +24024,6 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -24100,7 +24100,6 @@ if (currentDist>100) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.215189873417722</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -24258,16 +24257,16 @@ sender.style.borderRadius = "50%";
     g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false, null);
 } else if (sender.v_index==1) {
     //follow
-    g5.setFollow(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false,function(userId,isFollow) {
+    g5.setFollow(sender.parentNode.v_userInfo,function(v_userInfo) {
         sender.init(2);
-        sender.parentNode.v_userInfo.isFollow = true;
+        sender.parentNode.v_userInfo = v_userInfo.clone();
     });
 } else if (sender.v_index==2) {
     ee.setVisible(sender.parentNode, false);
     ee.setVisible(sender.parentNode.parentNode, false);
-    g5.setFollow(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, true,function(userId,isFollow) {
+    g5.setFollow(sender.parentNode.v_userInfo,function(v_userInfo) {
         sender.init(1);
-        sender.parentNode.v_userInfo.isFollow = false;
+        sender.parentNode.v_userInfo = v_userInfo.clone();
     });
 } else if (sender.v_index==3) {
     //edit personal information
@@ -30422,7 +30421,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="96">
+  <g5Items count="98">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -32419,6 +32418,39 @@ for (var i=0; i<itemsArr.length; i++) {
 return false;
 ]]></functionCode>
     </item>
+    <item name="getAllBuff" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode><![CDATA[var r = new Array();
+r.push(g5.p2.p1.v_items);
+r.push(g5.p2.p2.p1Items);
+r.push(g5.p2.p2.p3Items);
+r.push(g5.p2.p2.p2sub.chat.c_chat.c_chatRoot.v_items);
+r.push(g5.p3.p8.p1.c_chatRoom.c_chatRoot.v_items);
+r.push(g5.p2.p5.v_items);
+r.push(g5.p2.p11.c_pages.c1.v_items);
+r.push(g5.p2.p11.c_pages.c2.v_items);
+r.push(g5.p2.p11.c_pages.c3.v_items);
+r.push(g5.p2.p11.c_pages.c4.v_items);
+r.push(g5.p2.p11.c_pages.c5.v_items);
+r.push(g5.p2.p12.v_items);
+r.push(g5.p2.p13.v_items);
+r.push(g5.p2.p15.v_items);
+r.push(g5.p2.p16.v_items);
+r.push(g5.p2.p9.v_items);
+r.push(g5.p2.p9.c_tabRoot.p1.v_items);
+r.push(g5.p2.p9.c_tabRoot.p2.v_items);
+r.push(g5.p2.p9.c_tabRoot.p3.v_items);
+r.push(g5.p2.p9.c_tabRoot.p4.v_items);
+for (var i=0; i<g5.p2.p9.v_hisItems.length; i++) {
+    r.push(g5.p2.p9.v_hisItems[i].v_items);
+    r.push(g5.p2.p9.v_hisItems[i].v_itemsP1);
+    r.push(g5.p2.p9.v_hisItems[i].v_itemsP2);
+    r.push(g5.p2.p9.v_hisItems[i].v_itemsP3);
+    r.push(g5.p2.p9.v_hisItems[i].v_itemsP4);
+}
+return r;]]></functionCode>
+    </item>
     <item name="contentRenew" type="20">
       <varValue />
       <functionParam>items, index, v_content,v_reContent,v_userInfo,v_reUserInfo</functionParam>
@@ -32684,16 +32716,16 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         if (sender.v_index==0) {
             g5.setBlock1(root.v_userInfo.id, root.v_userInfo.userName,false,null);
         } else if (sender.v_index==1) {
-            //关注
-            g5.setFollow(root.v_userInfo.id, root.v_userInfo.userName, false,function(userId,isFollow) {
+            //follow
+            g5.setFollow(root.v_userInfo, function(v_userInfo) {
                 sender.init(2);
-                root.v_userInfo.isFollow = isFollow;
+                root.v_userInfo = v_userInfo.clone();
             });
         } else if (sender.v_index==2) {
-            //取消关注
-            g5.setFollow(root.v_userInfo.id, root.v_userInfo.userName, true,function(userId,isFollow) {
+            //unfollow
+            g5.setFollow(root.v_userInfo, function(v_userInfo) {
                 sender.init(1);
-                root.v_userInfo.isFollow = isFollow;
+                root.v_userInfo = v_userInfo.clone();
             });
         } else if (sender.v_index==3) {
             //编辑个人资料
@@ -33363,119 +33395,21 @@ if (style == 1) {
     </item>
     <item name="setFollow" type="20">
       <varValue />
-      <functionParam>userId,userName,isFollow,onComplete</functionParam>
-      <functionCode><![CDATA[var collectUserInfoItems = function() {
-    var r = new Array();
-    r.push(g5.p2.p1.v_items);
-    r.push(g5.p2.p2.p1Items);
-    r.push(g5.p2.p2.p3Items);
-    r.push(g5.p2.p2.p2sub.chat.c_chat.c_chatRoot.v_items);
-    r.push(g5.p3.p8.p1.c_chatRoom.c_chatRoot.v_items);
-    r.push(g5.p2.p12.v_items);
-    r.push(g5.p2.p13.v_items);
-    r.push(g5.p2.p15.v_items);
-    r.push(g5.p2.p16.v_items);
-    r.push(g5.p2.p5.v_items);
-    r.push(g5.p2.p11.c_pages.c1.v_items);
-    r.push(g5.p2.p11.c_pages.c2.v_items);
-    r.push(g5.p2.p11.c_pages.c3.v_items);
-    r.push(g5.p2.p11.c_pages.c4.v_items);
-    r.push(g5.p2.p11.c_pages.c5.v_items);
-    r.push(g5.p2.p9.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p1.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p2.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p3.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p4.v_items);
-    for (var i=0; i<g5.p2.p9.v_hisItems.length; i++) {
-        r.push(g5.p2.p9.v_hisItems[i].v_items);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP1);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP2);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP3);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP4);
-    }
-    return r;
-}
-
-var sync = function(userId, isFollow) {
-    g5.p2.p1.refresh();
-    g5.p2.p2.setIsFollow(userId, isFollow);
-    g5.p2.p15.refresh(userId);
-    g5.p2.p16.refresh();
-    var itemList = collectUserInfoItems();
-    var i,j;
-    if (isFollow) {
-        g5.myUserInfo.followCount++;
-    } else {
-        g5.myUserInfo.followCount--;
-    }
-    for (i=0; i<itemList.length; i++) {
-        var items = itemList[i];
-        for (j=0; j<items.length; j++) {
-            if (items[j].v_userInfo) {
-                if (items[j].v_userInfo.id == userId) { 
-                    if (items[j].v_userInfo.isFollow &amp;&amp; !isFollow) {
-                        items[j].v_userInfo.fansCount--;
-                    } else if (!items[j].v_userInfo.isFollow &amp;&amp; isFollow) {
-                        items[j].v_userInfo.fansCount++;
-                    }
-                    items[j].v_userInfo.isFollow = isFollow;
-                } else if (items[j].v_userInfo.id == g5.myUserInfo.id) {
-                    if (isFollow) {
-                        items[j].v_userInfo.followCount++;
-                    } else {
-                        items[j].v_userInfo.followCount--;
-                    }
-                }
-            }
-            if (items[j].v_reUserInfo) {
-                if (items[j].v_reUserInfo.id == userId) { 
-                    if (items[j].v_reUserInfo.isFollow &amp;&amp; !isFollow) {
-                        items[j].v_reUserInfo.fansCount--;
-                    } else if (!items[j].v_reUserInfo.isFollow &amp;&amp; isFollow) {
-                        items[j].v_reUserInfo.fansCount++;
-                    }
-                    items[j].v_reUserInfo.isFollow = isFollow;
-                } else if (items[j].v_reUserInfo.id == g5.myUserInfo.id) {
-                    if (isFollow) {
-                        items[j].v_reUserInfo.followCount++;
-                    } else {
-                        items[j].v_reUserInfo.followCount--;
-                    }
-                }
-            }
-            if (items[j].v_content) {
-                if (items[j].v_content.exUserInfo) {
-                    if (items[j].v_content.exUserInfo.id == userId) { 
-                        items[j].v_content.exUserInfo.isFollow = isFollow;
-                    }
-                }
-            }
-            if (items[j].v_userBar) {
-                if (items[j].v_userInfo.id == userId) {
-                    if (items[j].v_userInfo.isFollow) {
-                        items[j].button1.init(2);
-                    } else {
-                        items[j].button1.init(1);
-                    }
-                }
-            } 
-        }
-    }
-}
-
-if (isFollow) {
+      <functionParam>v_userInfo,onComplete</functionParam>
+      <functionCode>v_userInfo = v_userInfo.clone();
+if (v_userInfo.isFollow) {
     g5.popBlack.a6.show(
-        "取消关注@"+userName+"？",
+        "取消关注@"+v_userInfo.userName+"？",
         "他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
         function() {
             follow.follow = 0;
-            follow.userId = userId;
+            follow.userId = v_userInfo.id;
             follow.onComplete = function() {
-                sync(userId, !isFollow);
+                g5.setFollowSync(v_userInfo, false);
                 if (onComplete) {
-                    onComplete(userId, !isFollow);
+                    onComplete(v_userInfo);
                 }
             }
             follow();
@@ -33483,14 +33417,90 @@ if (isFollow) {
     );
 } else {
     follow.follow = 1;
-    follow.userId = userId;
+    follow.userId = v_userInfo.id;
     follow.onComplete = function() {
-        sync(userId, !isFollow);
+        g5.setFollowSync(v_userInfo, true);
         if (onComplete) {
-            onComplete(userId, !isFollow);
+            onComplete(v_userInfo);
         }
     }
     follow();
+}</functionCode>
+    </item>
+    <item name="setFollowSync" type="20">
+      <varValue />
+      <functionParam>v_userInfo, isFollow</functionParam>
+      <functionCode><![CDATA[if (v_userInfo.isFollow == isFollow) return;
+if (isFollow) {
+    v_userInfo.fansCount++;
+} else {
+    v_userInfo.fansCount--;
+}
+v_userInfo.isFollow = isFollow;
+
+g5.p2.p1.refresh();
+g5.p2.p2.setIsFollow(v_userInfo.id, isFollow);
+g5.p2.p15.refresh(v_userInfo.id);
+g5.p2.p16.refresh();
+var itemList = g5.getAllBuff();
+var i,j;
+if (isFollow) {
+    g5.myUserInfo.followCount++;
+} else {
+    g5.myUserInfo.followCount--;
+}
+for (i=0; i<itemList.length; i++) {
+    var items = itemList[i];
+    for (j=0; j<items.length; j++) {
+        if (items[j].v_userInfo) {
+            if (items[j].v_userInfo.id == v_userInfo.id) { 
+                if (items[j].v_userInfo.isFollow &amp;&amp; !isFollow) {
+                    items[j].v_userInfo.fansCount--;
+                } else if (!items[j].v_userInfo.isFollow &amp;&amp; isFollow) {
+                    items[j].v_userInfo.fansCount++;
+                }
+                items[j].v_userInfo.isFollow = isFollow;
+            } else if (items[j].v_userInfo.id == g5.myUserInfo.id) {
+                if (isFollow) {
+                    items[j].v_userInfo.followCount++;
+                } else {
+                    items[j].v_userInfo.followCount--;
+                }
+            }
+        }
+        if (items[j].v_reUserInfo) {
+            if (items[j].v_reUserInfo.id == v_userInfo.id) { 
+                if (items[j].v_reUserInfo.isFollow &amp;&amp; !isFollow) {
+                    items[j].v_reUserInfo.fansCount--;
+                } else if (!items[j].v_reUserInfo.isFollow &amp;&amp; isFollow) {
+                    items[j].v_reUserInfo.fansCount++;
+                }
+                items[j].v_reUserInfo.isFollow = isFollow;
+            } else if (items[j].v_reUserInfo.id == g5.myUserInfo.id) {
+                if (isFollow) {
+                    items[j].v_reUserInfo.followCount++;
+                } else {
+                    items[j].v_reUserInfo.followCount--;
+                }
+            }
+        }
+        if (items[j].v_content) {
+            if (items[j].v_content.exUserInfo) {
+                if (items[j].v_content.exUserInfo.id == v_userInfo.id) { 
+                    items[j].v_content.exUserInfo.isFollow = isFollow;
+                }
+            }
+        }
+        if (items[j].v_userBar) {
+            if (items[j].v_userInfo.id == v_userInfo.id) {
+                if (items[j].v_userInfo.isFollow) {
+                    items[j].button1.init(2);
+                } else {
+                    items[j].button1.init(1);
+                }
+            }
+        } 
+    }
 }]]></functionCode>
     </item>
     <item name="setBlock1" type="20">
