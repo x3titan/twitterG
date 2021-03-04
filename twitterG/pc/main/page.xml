@@ -2512,13 +2512,13 @@ sender.refreshUserInfo = function(v_userInfo) {
 sender.setIsFollow = function(userId, isFollow) {
     if (this.v_userInfo) {
         if (this.v_userInfo.id == userId) {
+            if (this.v_userInfo.isFollow == isFollow) return;
             this.v_userInfo.isFollow = isFollow;
+            this.refreshButton();
             if (this.v_userInfo.isFollow) {
-                this.c_button1.init(2);
                 this.v_userInfo.fansCount++;
                 this.refreshFansFollowCount();
             } else {
-                this.c_button1.init(1);
                 this.v_userInfo.fansCount--;
                 this.refreshFansFollowCount();
             }
@@ -2540,9 +2540,6 @@ sender.setIsBlock1 = function(userId, isBlock1) {
         var v_userInfo = this.v_userInfo;
         if (userId != v_userInfo.id) return;
         v_userInfo.isBlock1 = isBlock1;
-        if (isBlock1) {
-            v_userInfo.isFollow = false;
-        }
         g5.changeP2(-1);
         this.v_userInfo = null;
         g5.notPushHistoryCount = 1;
@@ -2583,6 +2580,33 @@ sender.refreshFansFollowCount = function() {
                 g5.p2.p15.show(sender.v_userInfo);
             });
         }
+    }
+}
+
+sender.refreshButton = function() {
+    if (!this.v_userInfo) return;
+    ee.setVisible(this.c_button1, true);
+    ee.setVisible(this.c_button2, true);
+    if (this.v_userInfo.isBlock1 &amp;&amp; this.v_userInfo.isBlock2) {
+        //ee.setVisible(this.c_button1, false);
+        ee.setVisible(this.c_button2, false);
+    } else if (this.v_userInfo.isBlock1) {
+        ee.setVisible(this.c_button2, false);
+    } else if (this.v_userInfo.isBlock2) {
+        ee.setVisible(this.c_button2, false);
+    }
+    
+    if (this.v_userInfo.isFollow) {
+        this.c_button1.init(2);
+    } else {
+        this.c_button1.init(1);
+    }
+    if (this.v_userInfo.isBlock1) this.c_button1.init(0);
+    if (this.v_userInfo.isBlock2) this.c_button1.init(4);
+    if (this.v_userInfo.isBlock2 &amp;&amp; this.v_userInfo.isBlock1) this.c_button1.init(0);
+    if (this.v_userInfo.userName == g5.myUserInfo.userName) {
+        this.c_button1.init(3);
+        ee.setVisible(this.c_button2, false);
     }
 }
 
@@ -2636,29 +2660,7 @@ sender.showByUserInfo = function(v_userInfo) {
     this.refreshFansFollowCount();
     cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
     
-    ee.setVisible(this.c_button1, true);
-    ee.setVisible(this.c_button2, true);
-    if (v_userInfo.isBlock1 &amp;&amp; v_userInfo.isBlock2) {
-        //ee.setVisible(this.c_button1, false);
-        ee.setVisible(this.c_button2, false);
-    } else if (v_userInfo.isBlock1) {
-        ee.setVisible(this.c_button2, false);
-    } else if (v_userInfo.isBlock2) {
-        ee.setVisible(this.c_button2, false);
-    }
-    
-    if (v_userInfo.isFollow) {
-        this.c_button1.init(2);
-    } else {
-        this.c_button1.init(1);
-    }
-    if (v_userInfo.isBlock1) this.c_button1.init(0);
-    if (v_userInfo.isBlock2) this.c_button1.init(4);
-    if (v_userInfo.isBlock2 &amp;&amp; v_userInfo.isBlock1) this.c_button1.init(0);
-    if (v_userInfo.userName == g5.myUserInfo.userName) {
-        this.c_button1.init(3);
-        ee.setVisible(this.c_button2, false);
-    }
+    this.refreshButton();
     
     ee.setVisible(this.c_block1, false);
     ee.setVisible(this.c_block2, false);
@@ -3076,7 +3078,7 @@ sender.init = function(photoString) {
       <leftRatio>0.71</leftRatio>
       <note>c_button1</note>
       <onClick>if (sender.v_index==0) {
-    g5.setBlock1(g5.p2.p2.v_userInfo.id, g5.p2.p2.v_userInfo.userName, false, function(){});
+    g5.setBlock1(g5.p2.p2.v_userInfo, null);
 } else if (sender.v_index==1) {
     //follow
     g5.setFollow(showUserPage.v_userInfo, function(v_userInfo) {
@@ -3093,7 +3095,7 @@ sender.init = function(photoString) {
     //edit personal information
     g5.p2.p17.show();
 } else if (sender.v_index==4) {
-    g5.setBlock1(g5.p2.p2.v_userInfo.id, g5.p2.p2.v_userInfo.userName, true, function(){});
+    g5.setBlock1(g5.p2.p2.v_userInfo, null);
 }
 </onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
@@ -20239,7 +20241,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20616,7 +20617,6 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -20691,7 +20691,7 @@ sender.show = function(refDiv, content, userInfo) {
       <left>0</left>
       <note>c_button1</note>
       <onClick>if (sender.parentNode.v_userInfo.isBlock1) {
-    g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false, null);
+    g5.setBlock1(sender.parentNode.v_userInfo, null);
 } else {
     g5.setFollow(sender.parentNode.v_userInfo, null);
 }
@@ -20718,7 +20718,7 @@ sender.show = function(refDiv, content, userInfo) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button2</note>
-      <onClick>g5.setBlock1(sender.parentNode.v_userInfo, true, null);
+      <onClick>g5.setBlock1(sender.parentNode.v_userInfo, null);
 </onClick>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
@@ -24024,6 +24024,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -24100,6 +24101,7 @@ if (currentDist>100) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.215189873417722</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -24254,7 +24256,7 @@ sender.style.borderRadius = "50%";
       <left>213</left>
       <leftRatio>0.577235772357724</leftRatio>
       <onClick>if (sender.v_index==0) {
-    g5.setBlock1(sender.parentNode.v_userInfo.id, sender.parentNode.v_userInfo.userName, false, null);
+    g5.setBlock1(sender.parentNode.v_userInfo, null);
 } else if (sender.v_index==1) {
     //follow
     g5.setFollow(sender.parentNode.v_userInfo,function(v_userInfo) {
@@ -32714,7 +32716,7 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
     }
     ee.setOnClick(c, function(sender, event) {
         if (sender.v_index==0) {
-            g5.setBlock1(root.v_userInfo.id, root.v_userInfo.userName,false,null);
+            g5.setBlock1(root.v_userInfo,null);
         } else if (sender.v_index==1) {
             //follow
             g5.setFollow(root.v_userInfo, function(v_userInfo) {
@@ -33505,40 +33507,10 @@ for (i=0; i<itemList.length; i++) {
     </item>
     <item name="setBlock1" type="20">
       <varValue />
-      <functionParam>v_userInfo,isBlock1,onComplete</functionParam>
-      <functionCode><![CDATA[var collectUserInfoItems = function() {
-    var r = new Array();
-    r.push(g5.p2.p1.v_items);
-    r.push(g5.p2.p2.p1Items);
-    r.push(g5.p2.p2.p3Items);
-    r.push(g5.p2.p2.p2sub.chat.c_chat.c_chatRoot.v_items);
-    r.push(g5.p3.p8.p1.c_chatRoom.c_chatRoot.v_items);
-    r.push(g5.p2.p12.v_items);
-    r.push(g5.p2.p13.v_items);
-    r.push(g5.p2.p15.v_items);
-    r.push(g5.p2.p16.v_items);
-    r.push(g5.p2.p5.v_items);
-    r.push(g5.p2.p11.c_pages.c1.v_items);
-    r.push(g5.p2.p11.c_pages.c2.v_items);
-    r.push(g5.p2.p11.c_pages.c3.v_items);
-    r.push(g5.p2.p11.c_pages.c4.v_items);
-    r.push(g5.p2.p11.c_pages.c5.v_items);
-    r.push(g5.p2.p9.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p1.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p2.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p3.v_items);
-    r.push(g5.p2.p9.c_tabRoot.p4.v_items);
-    for (var i=0; i<g5.p2.p9.v_hisItems.length; i++) {
-        r.push(g5.p2.p9.v_hisItems[i].v_items);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP1);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP2);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP3);
-        r.push(g5.p2.p9.v_hisItems[i].v_itemsP4);
-    }
-    return r;
-}
-
-var sync = function(v_userInfo, isBlock1) {
+      <functionParam>v_userInfo,onComplete</functionParam>
+      <functionCode><![CDATA[var sync = function(v_userInfo, isBlock1) {
+    if (v_userInfo.isBlock1 == isBlock1) return;
+    v_userInfo.isBlock = isBlock1;
     g5.p2.p1.refresh();
     g5.p2.p2.setIsBlock1(v_userInfo.id, isBlock1);
     g5.p2.p11.refresh();
@@ -33546,7 +33518,7 @@ var sync = function(v_userInfo, isBlock1) {
     g5.p2.p5.refresh();
     g5.p2.p13.refresh();
     g5.p2.p9.blockUser(v_userInfo.id);
-    var itemList = collectUserInfoItems();
+    var itemList = g5.getAllBuff();
     var i,j;
     for (i=0; i<itemList.length; i++) {
         var items = itemList[i];
@@ -33554,20 +33526,20 @@ var sync = function(v_userInfo, isBlock1) {
             if (items[j].v_userInfo) {
                 if (items[j].v_userInfo.id == v_userInfo.id) { 
                     items[j].v_userInfo.isBlock1 = isBlock1;
-                    if (isBlock1) items[j].v_userInfo.isFollow = false;
+                    //if (isBlock1) items[j].v_userInfo.isFollow = false;
                 }
             }
             if (items[j].v_reUserInfo) {
                 if (items[j].v_reUserInfo.id == v_userInfo.id) { 
                     items[j].v_reUserInfo.isBlock1 = isBlock1;
-                    if (isBlock1) items[j].v_reUserInfo.isFollow = false;
+                    //if (isBlock1) items[j].v_reUserInfo.isFollow = false;
                 }
             }
             if (items[j].v_content) {
                 if (items[j].v_content.exUserInfo) {
                     if (items[j].v_content.exUserInfo.id == v_userInfo.id) { 
                         items[j].v_content.exUserInfo.isBlock1 = isBlock1;
-                        if (isBlock1) items[j].v_content.exUserInfo.isFollow = false;
+                        //if (isBlock1) items[j].v_content.exUserInfo.isFollow = false;
                     }
                 }
             }
@@ -33586,28 +33558,9 @@ var sync = function(v_userInfo, isBlock1) {
     }
 }
 
-if (v_userInfo.isBlock1==isBlock1) return;
+v_userInfo = v_userInfo.clone();
 
-if (isBlock1) {
-    g5.popBlack.a6.show(
-        "屏蔽@"+v_userInfo.userName+"？",
-        "他们将无法关注你或者无法查看你发送的短文，您也不会看到来自@"+userName+"的短文或者通知。",
-        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","屏蔽","屏蔽","屏蔽","#ffffff","#ffffff","#ffffff","")],
-        function() {
-            if (blockUser.busy) return;
-            blockUser.userId = v_userInfo.id;
-            blockUser.isBlock = 1;
-            blockUser.onComplete = function() {
-                sync(v_userInfo, isBlock1);
-                if (onComplete) {
-                    onComplete(v_userInfo, isBlock1);
-                }
-            }
-            blockUser();
-        }
-    );
-} else {
+if (v_userInfo.isBlock1) {
     g5.popBlack.a6.show(
         "取消屏蔽@"+v_userInfo.userName+"？",
         "该用户将能关注并查看你的发言",
@@ -33618,11 +33571,30 @@ if (isBlock1) {
             blockUser.userId = v_userInfo.id;
             blockUser.isBlock = 0;
             blockUser.onComplete = function() {
-                sync(v_userInfo, isBlock1);
+                sync(v_userInfo, false);
                 if (onComplete) {
-                    onComplete(v_userInfo, isBlock1);
+                    onComplete(v_userInfo);
                 }
-                //sender.init(1);
+            }
+            blockUser();
+        }
+    );
+} else {
+    g5.popBlack.a6.show(
+        "屏蔽@"+v_userInfo.userName+"？",
+        "他们将无法关注你或者无法查看你发送的短文，您也不会看到来自@"+v_userInfo.userName+"的短文或者通知。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","屏蔽","屏蔽","屏蔽","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            if (blockUser.busy) return;
+            blockUser.userId = v_userInfo.id;
+            blockUser.isBlock = 1;
+            blockUser.onComplete = function() {
+                sync(v_userInfo, true);
+                g5.setFollowSync(v_userInfo, false);
+                if (onComplete) {
+                    onComplete(v_userInfo);
+                }
             }
             blockUser();
         }
