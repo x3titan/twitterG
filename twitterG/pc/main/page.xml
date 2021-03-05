@@ -317,7 +317,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1506,7 +1505,6 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -11342,7 +11340,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p16->关注列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -11380,6 +11377,28 @@ sender.refresh = function() {
     if (this.v_userInfo.id == g5.myUserInfo.id) this.v_needRefresh = true;
 }
 
+sender.refreshCount = function() {
+    if (!this.v_userInfo) return;
+    if (this.v_userInfo.followCount<=0) {
+        ee.setText(this.c_title, 
+            this.v_userInfo.nickName+"<font color=#a0a0a0>@"+this.v_userInfo.userName+"</font>关注的用户");
+    } else {
+        ee.setText(this.c_title, 
+            this.v_userInfo.nickName+"<font color=#a0a0a0>@"+this.v_userInfo.userName+"</font>关注的用户("+this.v_userInfo.followCount+"人)");
+    }
+}
+
+sender.refreshMyInfo = function() {
+    if (g5.currentPageIndex!=15) {
+        this.refresh();
+        return;
+    }
+    if (!this.v_userInfo) return;
+    if (this.v_userInfo.id != g5.myUserInfo.id) return;
+    this.v_userInfo = g5.myUserInfo.clone();
+    this.refreshCount();
+}
+
 sender.show = function(v_userInfo) {
     if (this.v_needRefresh) {
         this.v_needRefresh = false;
@@ -11389,10 +11408,9 @@ sender.show = function(v_userInfo) {
         ee.tiledResizeV(this, 2);
         return;
     }
-    ee.setText(this.c_title, 
-        v_userInfo.nickName+"<font color=#a0a0a0>@"+v_userInfo.userName+"</font>关注的用户("+v_userInfo.followCount+"人)");
+    this.v_userInfo = v_userInfo.clone();
+    this.refreshCount();
     if (showFollowList.busy) return;
-    this.v_userInfo = v_userInfo;
     document.documentElement.scrollTop = 0;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
@@ -20241,6 +20259,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20617,6 +20636,7 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -33443,7 +33463,6 @@ v_userInfo.isFollow = isFollow;
 g5.p2.p1.refresh();
 g5.p2.p2.setIsFollow(v_userInfo.id, isFollow);
 g5.p2.p15.refresh(v_userInfo.id);
-g5.p2.p16.refresh();
 var itemList = g5.getAllBuff();
 var i,j;
 if (isFollow) {
@@ -33451,6 +33470,7 @@ if (isFollow) {
 } else {
     g5.myUserInfo.followCount--;
 }
+g5.p2.p16.refreshMyInfo();
 for (i=0; i<itemList.length; i++) {
     var items = itemList[i];
     for (j=0; j<items.length; j++) {
