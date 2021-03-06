@@ -32723,17 +32723,20 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         ee.setTextColor(sender, s.tColor2);
     }
     eb.initMouseEvent(c);
-    if (root.v_userInfo.isFollow) {
-        c.init(2);
-    } else {
-        c.init(1);
+    root.refreshButton = function() {
+        if (root.v_userInfo.isFollow) {
+            root.button1.init(2);
+        } else {
+            root.button1.init(1);
+        }
+        if (root.v_userInfo.userName == g5.myUserInfo.userName) {
+            root.button1.init(3);
+        }
+        if (root.v_userInfo.isBlock1) {
+            root.button1.init(0);
+        }
     }
-    if (root.v_userInfo.userName == g5.myUserInfo.userName) {
-        c.init(3);
-    }
-    if (root.v_userInfo.isBlock1) {
-        c.init(0);
-    }
+    root.refreshButton();
     ee.setOnClick(c, function(sender, event) {
         if (sender.v_index==0) {
             g5.setBlock1(root.v_userInfo,null);
@@ -33513,13 +33516,9 @@ for (i=0; i<itemList.length; i++) {
                 }
             }
         }
-        if (items[j].v_userBar) {
+        if (items[j].refreshButton &amp;&amp; items[j].v_userInfo) {
             if (items[j].v_userInfo.id == v_userInfo.id) {
-                if (items[j].v_userInfo.isFollow) {
-                    items[j].button1.init(2);
-                } else {
-                    items[j].button1.init(1);
-                }
+                items[j].refreshButton();
             }
         } 
     }
@@ -33563,15 +33562,9 @@ for (i=0; i<itemList.length; i++) {
                     }
                 }
             }
-            if (items[j].v_userBar) {
-                if (items[j].button1) {
-                    if (items[j].v_userInfo.isBlock1) {
-                        items[j].button1.init(0);
-                    } else if (items[j].v_userInfo.isFollow) {
-                        items[j].button1.init(2);
-                    } else {
-                        items[j].button1.init(1);
-                    }
+            if (items[j].refreshButton &amp;&amp; items[j].v_userInfo) {
+                if (items[j].v_userInfo.id == v_userInfo.id) {
+                    items[j].refreshButton();
                 }
             } 
         }
