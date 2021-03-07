@@ -1367,11 +1367,13 @@ regV2.onComplete = function() {
         function() {
             login.username = regV2.userName;
             login.password = regV2.password;
+            login.param = "?p=1&amp;u=" + escape(regV2.userName);
             login();
         },
         function() {
             login.username = regV2.userName;
             login.password = regV2.password;
+            login.param = "?p=1&amp;u=" + escape(regV2.userName);
             login();
         }
     );
@@ -1554,7 +1556,7 @@ sender.init(0);
       <text>* 密码区分英文字母大小写
 * 密码可以包含英文数字或特殊符号
 * 密码不能出现汉字和空格
-* 密码长度必须在6-20字符之间</text>
+* 密码长度必须在6-20个字符之间</text>
       <top>162</top>
       <topRatio>0.408060453400504</topRatio>
       <vAlign>top</vAlign>
@@ -2807,7 +2809,8 @@ ee.setText(ee.getControl("panel12"), s);
 ]]></script3>
     </taskSetItem>
     <taskSetItem name="login">
-      <script1><![CDATA[g5.username = login.username;
+      <script1><![CDATA[if (!login.param) login.param = "";
+g5.username = login.username;
 g5.password = login.password;
 if (g5.username.length <= 2) {
     g5.alert1("登录提示", "请输入有效的账号");
@@ -2858,7 +2861,7 @@ if (resultCode=="F") {
 }  
 //获取令牌
 eb.setCookie("twitterGToken", eio.readString8());  
-window.location.href = ee.getUrl("/pc/main");
+window.location.href = ee.getUrl("/pc/main" + login.param);
 
 
 
