@@ -2310,6 +2310,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -6599,6 +6600,7 @@ sender.resize = function() {
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_block->屏蔽别人]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>480</top>
@@ -7958,6 +7960,15 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     
     g5.changeP2(8);
     document.documentElement.scrollTop = 0;
+}
+
+sender.delHis = function(cid) {
+    var i = 0;
+    while (i<this.v_hisItems.length) {
+        if (this.v_hisItems[i].contentId == cid) {
+            this.v_hisItems.splice(i,1);
+        } else i++;
+    }
 }
 
 sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
@@ -12938,7 +12949,7 @@ if (p1.length<3) {
 changeNickName.nickName = p1;
 changeNickName.onComplete = function() {
     g5.alert1("完成", "用户名修改完成，您的新用户名是：" + p1);
-    g5.changeP3(4);
+    history.go(-1);
     getUserInfo();    
 }
 changeNickName();
@@ -13312,7 +13323,7 @@ if (p1.length<=0) {
             changeMobile.mobile = p1;
             changeMobile.onComplete = function() {
                 g5.alert1("完成", "手机号码修改完成，您的手机号码信息已删除。");
-                g5.changeP3(4);
+                history.go(-1);
                 getUserInfo();    
             }
             changeMobile();
@@ -13326,7 +13337,7 @@ if (p1.length<=0) {
 changeMobile.mobile = p1;
 changeMobile.onComplete = function() {
     g5.alert1("完成", "手机号码修改完成，您的新手机号是：" + p1);
-    g5.changeP3(4);
+    history.go(-1);
     getUserInfo();    
 }
 changeMobile();
@@ -13707,7 +13718,7 @@ if (p1.length<=0) {
             changeEmail.email = p1;
             changeEmail.onComplete = function() {
                 g5.alert1("完成", "电子邮箱地址修改完成，您的电子邮箱地址信息已删除。");
-                g5.changeP3(4);
+                history.go(-1);
                 getUserInfo();    
             }
             changeMchangeEmailobile();
@@ -13721,7 +13732,7 @@ if (p1.length<=0) {
 changeEmail.email = p1;
 changeEmail.onComplete = function() {
     g5.alert1("完成", "电子邮箱地址修改完成，您的新电子邮箱地址是：" + p1);
-    g5.changeP3(4);
+    history.go(-1);
     getUserInfo();    
 }
 changeEmail();]]></onClick>
@@ -14204,7 +14215,7 @@ changePassword.old = p1;
 changePassword.new = p2;
 changePassword.onComplete = function(参数) {
     g5.alert1("提示", "密码修改完成，请牢记您的新密码");
-    g5.changeP3(4);    
+    history.go(-1); 
 }
 changePassword();
 </onClick>
@@ -15094,7 +15105,6 @@ sender.refresh = function(progress) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p26->设置-账号-头像和主题背景]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_userPhoto = ee.getControl("panel468");
 sender.c_titleBg = ee.getControl("panel472");
@@ -20553,7 +20563,7 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
                 v_newContent.exUplinkType = "L";
                 v_newContent.exUserInfo = g5.myUserInfo;
                 g5.p2.p2.insert(v_newContent, v_reContent, v_userInfo, v_reUserInfo);
-                g5.p2.p9.insert(v_newContent, v_reContent, v_userInfo, v_reUserInfo);
+                g5.p2.p9.insert(v_newContent, v_content, v_userInfo, v_reUserInfo);
             }
         }
         newTwitter();
@@ -20563,6 +20573,7 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
             v_content.fwCount--;
             if (v_content.fwCount<0) v_content.fwCount = 0;
             g5.contentDel(g5.contentGetMyDownlinkId(contentIdB, "L"), function() {});
+            g5.p2.p9.delHis(contentIdB);
         } else {
             v_content.isForward = true;
             v_content.fwCount++;
@@ -20808,7 +20819,7 @@ setBookMark();
       <onClick><![CDATA[var cid = sender.parentNode.v_content.id;
 if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
 var value = "https://" + window.location.host + ee.pageUrl + "?p=7&amp;c=" + cid;
-g5.copyClipboard(value,
+g5.copyClipboard(sender, value,
     function() {
         g5.alert1("复制成功", value + "<br/>已经成功复制到您的剪贴板");
     },
@@ -26610,7 +26621,7 @@ eio.appendString16(showBookMark.pageIndex+"");
 </script1>
       <script2><![CDATA[var token = eio.readString16();
 var pageIndex = parseInt(eio.readString16());
-var pageSize = 5;
+var pageSize = 20;
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -34146,19 +34157,19 @@ if(r!=null)return  unescape(r[2]); return null;</functionCode>
     </item>
     <item name="copyClipboard" type="20">
       <varValue />
-      <functionParam>value,onSucc,onFail</functionParam>
+      <functionParam>refObj,value,onSucc,onFail</functionParam>
       <functionCode>var input = document.createElement("input");
 input.setAttribute("readonly", "readonly");
 input.setAttribute("value", value);
-document.body.appendChild(input);
+refObj.appendChild(input);
 input.focus();
 input.setSelectionRange(0, 9999);
 if (document.execCommand("copy")) {
     document.execCommand("copy");
-    document.body.removeChild(input);
+    input.parentNode.removeChild(input);
     if (onSucc) onSucc();
 } else {
-    document.body.removeChild(input);
+    input.parentNode.removeChild(input);
     if (onFail) onFail();
 }
 
