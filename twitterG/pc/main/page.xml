@@ -7178,7 +7178,8 @@ sender.close = function() {
 }
 
 sender.activePage = function() {
-    g5.pushHistory("p=4");
+    //g5.pushHistory("p=4");
+    g5.pushHistory2("/label");
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
@@ -10294,7 +10295,8 @@ sender.v_lastScrollTop = 0;
 sender.c_noResult = ee.getControl("panel357");
 
 sender.activePage = function() {
-    g5.pushHistory("p=12");
+    //g5.pushHistory("p=12");
+    g5.pushHistory2("/messages");
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
@@ -30458,7 +30460,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="98">
+  <g5Items count="99">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -33165,7 +33167,12 @@ g5.currentP3Index = pageIndex;</functionCode>
       <functionParam />
       <functionCode>g5.notPushHistoryCount = 1;
 var p = g5.getQueryString("p");
-if (eb.isEmpty(p)) {
+var url = new URL(window.location.href);
+if (url.pathname.toLowerCase()=="/label") {
+    g5.p2.p5.show();
+} else if (url.pathname.toLowerCase()=="/messages") {
+    g5.p2.p13.show();
+} else if (eb.isEmpty(p)) {
     g5.p2.p1.show();
 } else if (p=="1") {
     g5.p2.p2.show(null,null,g5.getQueryString("u"));
@@ -33343,6 +33350,19 @@ if (a>=0) url = url.substr(0,a+1);
 var pageState = {title:"", url:url};
 param = "?" + param;
 history.pushState(pageState,"",param);
+]]></functionCode>
+    </item>
+    <item name="pushHistory2" type="20">
+      <varValue />
+      <functionParam>getString</functionParam>
+      <functionCode><![CDATA[var url = new URL(window.location.href);
+var header = url.origin;
+
+if (g5.notPushHistoryCount>0) {
+    g5.notPushHistoryCount--;
+    return;
+}
+window.history.pushState({},"",url.origin+getString);
 ]]></functionCode>
     </item>
     <item name="setImage" type="20">
