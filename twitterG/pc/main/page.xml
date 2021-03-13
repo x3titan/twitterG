@@ -19,16 +19,16 @@ c.style.overflow = "";
 var c = ee.getControl("panel134");
 c.style.overflow = "";
 
-g5.pushHistory2("/home");
+var url = new URL(window.location.href);
+var pns = url.pathname.toLowerCase().split("/")
+pns.splice(0,1);;
+if (pns[0]=="twitterg") g5.pushHistory2("/home");
 
 getUserInfo();
 getPromptCount();
 
 g5.changeP3(-1);
-//g5.changeP2(0);
 
-
-//searchUser();
 eb.processDock();
 setInterval(function() {
     g5.refreshMain();
@@ -2479,7 +2479,8 @@ sender.activePage = function() {
     } else {
         document.documentElement.scrollTop = this.v_lastScrollTop;
     }
-    g5.pushHistory("p=1&amp;u=" + escape(this.v_userInfo.userName));
+    //g5.pushHistory("p=1&amp;u=" + escape(this.v_userInfo.userName));
+    g5.pushHistory2("/" + escape(this.v_userInfo.userName));
     g5.pageMode = 0;
     g5.refreshMain(true);
     eb.setDivRect(g5.p2,null,null,null,eb.getDivRect(this).h);
@@ -7607,7 +7608,8 @@ sender.activePage = function() {
     g5.refreshMain(true);
     //ee.showAni(this, 0);
     ee.setVisible(this, true);
-    g5.pushHistory("p=7&amp;c=" + showTopic.topicId)
+    //g5.pushHistory("p=7&amp;c=" + showTopic.topicId)
+    g5.pushHistory2("/msg/"+showTopic.topicId)
 }
 
 sender.close = function() {
@@ -10578,7 +10580,7 @@ sender.v_lastScrollTop = 0;
 sender.v_userInfo = new g5.UserInfo();
 
 sender.activePage = function() {
-    g5.pushHistory("p=13&amp;u=" + escape(this.v_userInfo.userName));
+    g5.pushHistory2("/messages/" + escape(this.v_userInfo.userName));
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
@@ -33079,9 +33081,10 @@ if (pageIndex == 0) {
     ee.setVisible(g5.p2.p11, true);
     g5.p2.p11.init();
     g5.p2.p11.changePage("c1");
-    if (pageState!="") {
-        history.pushState(pageState,"","?p=10&amp;s=" + escape(g5.p2.p11.v_searchString));
-    }
+    g5.pushHistory2("/search/" + escape(g5.p2.p11.v_searchString));
+//    if (pageState!="") {
+//        history.pushState(pageState,"","?p=10&amp;s=" + escape(g5.p2.p11.v_searchString));
+//    }
 } else if (pageIndex == 11) {
     g5.p2.p12.activePage();
 } else if (pageIndex == 12) {
@@ -33174,6 +33177,9 @@ g5.currentP3Index = pageIndex;</functionCode>
 var p = g5.getQueryString("p");
 var url = new URL(window.location.href);
 var pn = url.pathname.toLowerCase();
+var pns = url.pathname.split("/");
+pns.splice(0,1);;
+
 if (pn=="/bookmarks") {
     g5.p2.p5.show();
 } else if (pn=="/messages") {
@@ -33183,25 +33189,17 @@ if (pn=="/bookmarks") {
 } else if (pn=="/login") {
     eb.delCookie("twitterGToken");
     window.location.href = ee.getUrl("/pc/new");
-} else if (p=="1") {
-    g5.p2.p2.show(null,null,g5.getQueryString("u"));
-//} else if (p=="4") {
-//    g5.p2.p5.show();
-} else if (p=="6") {
-    g5.changeP2(6);
-    showChatList();
-} else if (p=="7") {
-    g5.p2.p9.show(null,null,null,null,g5.getQueryString("c"));
-} else if (p=="9") {
-    g5.changeP2(9);
-} else if (p=="10") {
-    g5.p2.p11.search(g5.getQueryString("s"));    
+} else if (pns[0]=="msg") {
+    g5.p2.p9.show(null,null,null,null,pns[1]);
+} else if (pn=="/settings") {
+    g5.p2.p10.show();
+} else if (pns[0]=="search") {
+    g5.p2.p11.search(unescape(pns[1]));    
 } else if (pn=="/notifications") {
     g5.p2.p12.show();
-//} else if (p=="12") {
-//    g5.p2.p13.show();
-} else if (p=="13") {
-    g5.p2.p14.showByUserName(g5.getQueryString("u"));
+} else if (pns[0]=="messages" &amp;&amp; pns[1]) {
+    g5.p2.p14.showByUserName(unescape(pns[1]));
+
 } else if (p=="14") {
     g5.p2.p15.showByUserName(g5.getQueryString("u"));
 } else if (p=="15") {
@@ -33226,6 +33224,8 @@ if (pn=="/bookmarks") {
     g5.p2.p25.show();
 } else if (p=="25") {
     g5.p2.p26.show();
+} else {
+    g5.p2.p2.show(null,null, unescape(pns[0]));
 }
 </functionCode>
     </item>
