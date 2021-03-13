@@ -13,12 +13,15 @@ eb.processDock();
 ee.getControl("divRoot").dockX = "disabled";
 ee.getControl("divRoot").dockY = "disabled";
 */
+
+g5.pushHistory2("/login");
+
 g5.imgUrl = "/incoming/";
 
 ee.getControl("panel26").style.zIndex = 100;
 ee.getControl("panel20").style.zIndex = 100;
 
-getUserInfo();
+//getUserInfo();
 
 eb.processDock();
 g5.p1.changePage("a3");</onControlLoad>
@@ -31,7 +34,6 @@ g5.p1.changePage("a3");</onControlLoad>
       <dockY>center</dockY>
       <height>651</height>
       <heightRatio>0.8178391959799</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>365</left>
       <leftRatio>0.321020228671944</leftRatio>
       <note>p1</note>
@@ -145,7 +147,6 @@ sender.changePage = function(pageName) {
       <height>301</height>
       <heightRatio>0.462365591397849</heightRatio>
       <layerName><![CDATA[p1.a2 -> 旧的主菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.73955773955774</sizeRatio>
       <top>199</top>
@@ -1223,6 +1224,7 @@ sender.init(0);
       <height>397</height>
       <heightRatio>0.609831029185868</heightRatio>
       <layerName><![CDATA[p1.a6 -> 注册第三页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.975429975429975</sizeRatio>
       <top>238</top>
@@ -2765,7 +2767,7 @@ if (db.getInt32(sqlResult,"c") > 0) {
 */
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
-    g5.alert1("提示", eio.readString8());
+    //g5.alert1("提示", eio.readString8());
     return;
 }
 
@@ -3210,7 +3212,7 @@ if (!eb.isEmpty(regV2.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="8">
+  <g5Items count="9">
     <item name="p1" type="10">
       <varValue>ee.getControl("panel9");</varValue>
       <functionParam />
@@ -3306,6 +3308,19 @@ this.tColor1 = tColor1;
 this.tColor2 = tColor2;
 this.tColor3 = tColor3;
 this.bdColor = bdColor;</functionCode>
+    </item>
+    <item name="pushHistory2" type="20">
+      <varValue />
+      <functionParam>getString</functionParam>
+      <functionCode><![CDATA[var url = new URL(window.location.href);
+var header = url.origin;
+
+if (g5.notPushHistoryCount>0) {
+    g5.notPushHistoryCount--;
+    return;
+}
+window.history.pushState({},"",url.origin+getString);
+]]></functionCode>
     </item>
   </g5Items>
 </page>

@@ -7,6 +7,7 @@
       <dockY>fill</dockY>
       <height>796</height>
       <left>0</left>
+      <onControlLoad>g5.pushHistory2("/login");</onControlLoad>
       <onPageCreate>var url = new URL(window.location.href);
 </onPageCreate>
       <pageTitle>拳头聊天室</pageTitle>
@@ -16,5 +17,19 @@
   </controls>
   <taskSet count="0" />
   <gridLines count="0" />
-  <g5Items count="0" />
+  <g5Items count="1">
+    <item name="pushHistory2" type="20">
+      <varValue />
+      <functionParam>getString</functionParam>
+      <functionCode><![CDATA[var url = new URL(window.location.href);
+var header = url.origin;
+
+if (g5.notPushHistoryCount>0) {
+    g5.notPushHistoryCount--;
+    return;
+}
+window.history.pushState({},"",url.origin+getString);
+]]></functionCode>
+    </item>
+  </g5Items>
 </page>

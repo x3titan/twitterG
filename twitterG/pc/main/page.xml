@@ -19,7 +19,7 @@ c.style.overflow = "";
 var c = ee.getControl("panel134");
 c.style.overflow = "";
 
-
+g5.pushHistory2("/home");
 
 getUserInfo();
 getPromptCount();
@@ -59,6 +59,11 @@ window.addEventListener("popstate", function (a) {
     g5.processUrl();
 })
 
+var tk = eb.getCookie("twitterGToken");
+if (eb.isEmpty(tk)) tk = "";
+if (tk == "") {
+    window.location.href = ee.getUrl("/pc/new");
+}
 
 var tag = document.createElement("script");
 tag.src = "https://www.youtube.com/iframe_api";
@@ -505,7 +510,6 @@ sender.scrollAniProcess = function() {
       <fontSize>100</fontSize>
       <height>571</height>
       <heightRatio>0.717336683417085</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p1</note>
       <onCreate>sender.v_fitInner = true;
@@ -534,7 +538,6 @@ sender.addEventListener("mousewheel",function(event){
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P1->1->标准菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.90333333333333</sizeRatio>
       <top>0</top>
@@ -1505,6 +1508,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -1600,7 +1604,7 @@ sender.init = function() {
 }
 
 sender.activePage = function() {
-    g5.pushHistory("");
+    g5.pushHistory2("/home");
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
@@ -7179,7 +7183,7 @@ sender.close = function() {
 
 sender.activePage = function() {
     //g5.pushHistory("p=4");
-    g5.pushHistory2("/label");
+    g5.pushHistory2("/bookmarks");
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
@@ -9911,7 +9915,7 @@ sender.show = function() {
 }
 
 sender.activePage = function() {
-    g5.pushHistory("p=11");
+    g5.pushHistory2("/notifications");
     g5.mainDiv.scrollTop = 0;
     g5.pageMode = 0;
     g5.refreshMain(true);
@@ -15107,6 +15111,7 @@ sender.refresh = function(progress) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p26->设置-账号-头像和主题背景]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_userPhoto = ee.getControl("panel468");
 sender.c_titleBg = ee.getControl("panel472");
@@ -25391,8 +25396,8 @@ db.executeNoneQuery("DB", sql);
 
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
-    g5.alert1("提示", eio.readString8());
-    window.location.href = ee.getUrl("/new");
+    //g5.alert1("提示", eio.readString8());
+    window.location.href = ee.getUrl("/pc/new");
     return;
 }
 
@@ -33168,16 +33173,20 @@ g5.currentP3Index = pageIndex;</functionCode>
       <functionCode>g5.notPushHistoryCount = 1;
 var p = g5.getQueryString("p");
 var url = new URL(window.location.href);
-if (url.pathname.toLowerCase()=="/label") {
+var pn = url.pathname.toLowerCase();
+if (pn=="/bookmarks") {
     g5.p2.p5.show();
-} else if (url.pathname.toLowerCase()=="/messages") {
+} else if (pn=="/messages") {
     g5.p2.p13.show();
-} else if (eb.isEmpty(p)) {
+} else if (pn=="/home") {
     g5.p2.p1.show();
+} else if (pn=="/login") {
+    eb.delCookie("twitterGToken");
+    window.location.href = ee.getUrl("/pc/new");
 } else if (p=="1") {
     g5.p2.p2.show(null,null,g5.getQueryString("u"));
-} else if (p=="4") {
-    g5.p2.p5.show();
+//} else if (p=="4") {
+//    g5.p2.p5.show();
 } else if (p=="6") {
     g5.changeP2(6);
     showChatList();
@@ -33187,10 +33196,10 @@ if (url.pathname.toLowerCase()=="/label") {
     g5.changeP2(9);
 } else if (p=="10") {
     g5.p2.p11.search(g5.getQueryString("s"));    
-} else if (p=="11") {
+} else if (pn=="/notifications") {
     g5.p2.p12.show();
-} else if (p=="12") {
-    g5.p2.p13.show();
+//} else if (p=="12") {
+//    g5.p2.p13.show();
 } else if (p=="13") {
     g5.p2.p14.showByUserName(g5.getQueryString("u"));
 } else if (p=="14") {
