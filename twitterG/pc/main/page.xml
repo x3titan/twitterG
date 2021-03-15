@@ -322,6 +322,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1510,6 +1511,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.253164556962025</leftRatio>
       <note>p2</note>
@@ -8940,6 +8942,7 @@ sender.setCount = function(value) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->10->设置]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.show = function() {
@@ -10024,10 +10027,14 @@ sender.renderItem = function(root) {
         var param = root.v_url;
         if (param.length<=0) return;
         if (param.charAt(0) == "?") {
-            param = param.substr(1, param.length-1);
+            var a = param.lastIndexOf("=");
+            if (a>=0) {
+                param = param.substr(a+1,20);
+            } else return;
+            param = "/msg/" + param;
         }
-        g5.pushHistory(param);
-        g5.pushHistory("a");
+        g5.pushHistory2(param);
+        g5.pushHistory2("/a");
         history.go(-1);
         //window.location.href = ee.pageUrl + "?" + param;
     });
@@ -13818,7 +13825,7 @@ sender.show = function() {
 }
 
 sender.activePage = function() {
-    g5.pushHistory2("/settings/passwd");
+    g5.pushHistory2("/settings/password");
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(this, true);
@@ -20281,7 +20288,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20659,7 +20665,6 @@ sender.close = function() {
       <height>208</height>
       <heightRatio>0.261306532663317</heightRatio>
       <layerName><![CDATA[popup1.p3>C其他人选项]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.255696202531646</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -20826,7 +20831,7 @@ setBookMark();
       <note>c_button4</note>
       <onClick><![CDATA[var cid = sender.parentNode.v_content.id;
 if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
-var value = "https://" + window.location.host + ee.pageUrl + "?p=7&amp;c=" + cid;
+var value = window.location.origin + "/msg/" + cid;
 g5.copyClipboard(sender, value,
     function() {
         g5.alert1("复制成功", value + "<br/>已经成功复制到您的剪贴板");
@@ -33209,7 +33214,7 @@ if (pn=="/bookmarks") {
     g5.p2.p21.show();
 } else if (pn=="/settings/email") {
     g5.p2.p22.show();
-} else if (pn=="/settings/passwd") {
+} else if (pn=="/settings/password") {
     g5.p2.p23.show();
 } else if (pn=="/settings/comment") {
     g5.p2.p24.show();
