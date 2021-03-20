@@ -11,6 +11,7 @@
 document.body.style.backgroundColor = "#ffffff";
 document.body.style.overflowY  = "scroll";
 document.body.style.overflowX  = "hidden";
+document.body.style.webkitTapHighlightColor = "rgba(0,0,0,0)";
 
 var c = document.getElementById("divRoot");
 c.style.overflow = "";
@@ -103,7 +104,7 @@ function addImageOnLoad(na, img) {
     var imgHeight;
     var ratio;
     var firstLoad = false;
-    var imgMode = img.parentNode.imgMode;
+    var imgMode = img.parentNode.imgMode ? img.parentNode.imgMode: "trim";
     if (eb.isEmpty(img.sw)) {
         img.sw = img.width;
         img.sh = img.height;
@@ -226,6 +227,36 @@ ee.setOnClick = function (div, func) {
         }
     }, false);
 }
+
+ee.setOnClick = function (div, func) {
+    div.eeOnClick = func;
+    if ("ontouchstart" in window) {
+        eb.addEvent(div, "touchstart", function (event) {
+            div.eeMouseDownX = event.changedTouches[0].screenX;
+            div.eeMouseDownY = event.changedTouches[0].screenY;
+        }, false);
+        eb.addEvent(div, "touchend", function (event) {
+            var d = Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX);
+            d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
+            if (d < 50) {
+                if (div.eeOnClick) {
+                    //setTimeout(function () { //?
+                    div.eeOnClick(div, event);
+                    //}, 1);
+                }
+            }
+        }, false);
+        eb.addEvent(div, "touchmove", function (event) {
+        }, false);
+    } else {
+        eb.addEvent(div, "click", function (event) {
+            if (div.eeOnClick) {
+                div.eeOnClick(div, event);
+            }
+        }, false);
+    }
+}
+
 
 ]]></onPageCreate>
       <pageHead><![CDATA[<style>
