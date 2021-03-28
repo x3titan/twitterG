@@ -92,7 +92,7 @@ query();
       <height>34</height>
       <heightRatio>0.453333333333333</heightRatio>
       <left>20</left>
-      <leftRatio>0.0153139356814701</leftRatio>
+      <leftRatio>0.0175901495162709</leftRatio>
       <onClick>ee.setText(ee.getControl("panel10"), "0");
 ee.setEditText(ee.getControl("edit2"), "");
 ee.setEditText(ee.getControl("edit4"), "");
@@ -105,11 +105,11 @@ ee.setEditText(ee.getControl("edit1"), "");
 g5.operation = "new";
 ee.showAni(ee.getControl("panel1"));</onClick>
       <sizeRatio>0.276422764227642</sizeRatio>
-      <text>创建用户</text>
+      <text>封号/解封</text>
       <top>23</top>
       <topRatio>0.306666666666667</topRatio>
       <width>123</width>
-      <widthRatio>0.0941807044410413</widthRatio>
+      <widthRatio>0.108179419525066</widthRatio>
     </control>
     <control type="Button" pathname="/divRoot/layouty1/layoutyitem1/button4">
       <backgroundSkin>TCloud000</backgroundSkin>
@@ -122,7 +122,7 @@ ee.showAni(ee.getControl("panel1"));</onClick>
       <height>34</height>
       <heightRatio>0.453333333333333</heightRatio>
       <left>165</left>
-      <leftRatio>0.126339969372129</leftRatio>
+      <leftRatio>0.145118733509235</leftRatio>
       <onClick>if (eb.isEmpty(g5.userId) || isNaN(g5.userId)) {
     alert("请选择有效的记录进行编辑");
     return;
@@ -139,11 +139,11 @@ ee.setEditText(ee.getControl("edit1"), g5.note);
 g5.operation = "edit";
 ee.showAni(ee.getControl("panel1"));</onClick>
       <sizeRatio>0.276422764227642</sizeRatio>
-      <text>编辑修改</text>
+      <text>冻结/解冻</text>
       <top>23</top>
       <topRatio>0.306666666666667</topRatio>
       <width>123</width>
-      <widthRatio>0.0941807044410413</widthRatio>
+      <widthRatio>0.108179419525066</widthRatio>
     </control>
     <control type="Button" pathname="/divRoot/layouty1/layoutyitem1/button5">
       <backgroundSkin>TCloud000</backgroundSkin>
@@ -156,7 +156,7 @@ ee.showAni(ee.getControl("panel1"));</onClick>
       <height>34</height>
       <heightRatio>0.453333333333333</heightRatio>
       <left>310</left>
-      <leftRatio>0.237366003062787</leftRatio>
+      <leftRatio>0.272647317502199</leftRatio>
       <onClick>if (eb.isEmpty(g5.userId) || isNaN(g5.userId)) {
     alert("请选择有效的记录进行操作");
     return;
@@ -164,13 +164,13 @@ ee.showAni(ee.getControl("panel1"));</onClick>
 if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只有联系网管，您是否继续这个危险的操作？")) {
     return;
 }
-del();</onClick>
+//del();</onClick>
       <sizeRatio>0.276422764227642</sizeRatio>
-      <text>删除用户</text>
+      <text>强删关注</text>
       <top>23</top>
       <topRatio>0.306666666666667</topRatio>
       <width>123</width>
-      <widthRatio>0.0941807044410413</widthRatio>
+      <widthRatio>0.108179419525066</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem1/layoutx1">
       <dockX>right</dockX>
@@ -582,6 +582,11 @@ del();</onClick>
       <heightRatio>0.0661654135338346</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
+      <onUpdate>if (!query.dataset) {
+    text = "";
+    return;
+}
+ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.getData(4,sender.rowIndex));</onUpdate>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>0</top>
@@ -5132,7 +5137,7 @@ if (text == "") {
   </controls>
   <taskSet count="4">
     <taskSetItem name="query">
-      <script1>eio.appendString8(eb.getCookie("loginToken")); 
+      <script1>eio.appendString8(eb.getCookie("FAToken")); 
 eio.appendString8(ee.getEditText(ee.getControl("edit3")));
 eio.appendInt32(g5.pageSize);
 eio.appendInt32(g5.pageCurrent);
@@ -5143,7 +5148,7 @@ var pageSize = eio.readInt32();
 var pageCurrent = eio.readInt32();
 
 var sql,sqlResult;
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -5158,40 +5163,32 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     return;
 }   
 var userId = db.getString(sqlResult, "id");
-var companyId = db.getString(sqlResult, "companyId");
+var userName = db.getString(sqlResult, "userName");
 
 //获取记录数量
 var condition = "";
 if (searchText != "") {
     condition +=
-        " and (" +
+        " (" +
         "(dbo.userInfo.userName like '%" + db.encode(searchText) + "%') or " +
         "(dbo.userInfo.mobile like '%" + db.encode(searchText) + "%') or " +
         "(dbo.userInfo.nickName like '%" + db.encode(searchText) + "%') or " +
-        "(dbo.userInfo.note like '%" + db.encode(searchText) + "%') or " +
-        "(dbo.company.displayName like '%" + db.encode(searchText) + "%')) ";
-}
-if (companyId >=0) { //只能看自己公司的账户
-    condition += " and (dbo.userInfo.companyId = " + companyId + ") ";
+        "(dbo.userInfo.note like '%" + db.encode(searchText) + "%') " +
+        ") ";
 }
 sql =
     "SELECT count(*) as c " +
-    "FROM dbo.userInfo LEFT OUTER JOIN " +
-    "      dbo.company ON dbo.userInfo.companyId = dbo.company.id " +
-    "WHERE (dbo.userInfo.status <> 'DEL') " + condition;
+    "FROM dbo.userInfo " +
+    (condition=="" ? "":"WHERE " + condition);
 sqlResult = db.executeQuery("DB", sql);   
 db.read(sqlResult);
 var count = db.getInt32(sqlResult, "c");
 
 sql= 
-    "SELECT dbo.userInfo.id, dbo.userInfo.status, dbo.userInfo.companyId, " +
-    "      dbo.userInfo.regDatetime, dbo.userInfo.lastAccessTime, dbo.userInfo.userName, " + 
-    "      dbo.userInfo.password, dbo.userInfo.mobile, dbo.userInfo.nickName, " + 
-    "      dbo.userInfo.note, dbo.company.displayName AS companyName " +
-    "FROM dbo.userInfo LEFT OUTER JOIN " +
-    "      dbo.company ON dbo.userInfo.companyId = dbo.company.id " +
-    "WHERE (dbo.userInfo.status <> 'DEL') " + condition +
-    "ORDER BY dbo.userInfo.regDatetime DESC ";
+    "SELECT * " +
+    "FROM dbo.userInfo " +
+    (condition=="" ? "":"WHERE " + condition) +
+    "ORDER BY dbo.userInfo.id DESC ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -5200,20 +5197,19 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendInt32(count);
-eio.appendDataSet(sqlResult,"userName,nickName,id,companyName,status,mobile,regDatetime,lastAccessTime,note", pageSize*(pageCurrent-1), pageSize); 
+eio.appendDataSet(sqlResult,"id,status,regDatetime,lastAccessTime,userName,password,mobile,email,nickName,note,photo,titleBg,homePage,chatRoomVideo,followCount,fansCount,lastPromptId", pageSize*(pageCurrent-1), pageSize); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     alert("无法获取您需要的数据：" + eio.readString8());
     return;
 }
-g5.pageRecordCount = eio.readInt32();
-g5.dataset1 = eio.readDataSet();
-g5.user = eio.readString8();
-g5.pageCount = parseInt((g5.pageRecordCount-1)/g5.pageSize)+1;
-ee.setTableData(ee.getControl("tablebody2"), g5.dataset1,0);   
+query.pageRecordCount = eio.readInt32();
+query.dataset = eio.readDataSet();
+g5.pageCount = parseInt((query.pageRecordCount-1)/g5.pageSize)+1;
+ee.setTableData(ee.getControl("tablebody2"), query.dataset,0);   
 ee.setText(ee.getControl("layoutxitem45"), g5.pageCurrent + "/" + g5.pageCount);
 ee.setText(ee.getControl("panel16"), "共找到" +
-    "<font color = '#d00000'>" + g5.pageRecordCount + "条</font>记录");
+    "<font color = '#d00000'>" + query.pageRecordCount + "条</font>记录");
 ]]></script3>
     </taskSetItem>
     <taskSetItem name="del">
@@ -5459,5 +5455,80 @@ query();</script3>
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="0" />
+  <g5Items count="1">
+    <item name="Record" type="10">
+      <varValue>function() {
+    this.size = 17;
+    this.loadFromDataset = function(ds, x, idx) {
+        this.id = ds.getData(x+0,idx);
+        this.status = ds.getData(x+1,idx);    
+        this.regDatetime = ds.getData(x+2,idx);    
+        this.lastAccessTime = ds.getData(x+3,idx);    
+        this.userName = ds.getData(x+4,idx);    
+        this.mobile = ds.getData(x+5,idx);    
+        this.nickName = ds.getData(x+6,idx);    
+        this.note = ds.getData(x+7,idx);    
+        this.photo = ds.getData(x+8,idx);    
+        this.titleBg = ds.getData(x+9,idx);    
+        this.homePage = ds.getData(x+10,idx);    
+        this.followCount = ds.getData(x+11,idx);    
+        this.fansCount = ds.getData(x+12,idx);
+        this.follow = ds.getData(x+13,idx);
+        this.block1 = ds.getData(x+14,idx); //屏蔽别人
+        this.block2 = ds.getData(x+15,idx); //被别人屏蔽
+        this.email = ds.getData(x+16,idx);
+        this.isFollow = this.follow=="1";
+        this.isBlock1 = this.block1=="1";
+        this.isBlock2 = this.block2=="1";
+    }
+    this.setDataset = function(ds, x, idx) {
+        ds.setData(x+0,idx,this.id);
+        ds.setData(x+1,idx,this.status);    
+        ds.setData(x+2,idx,this.regDatetime);    
+        ds.setData(x+3,idx,this.lastAccessTime);    
+        ds.setData(x+4,idx,this.userName);    
+        ds.setData(x+5,idx,this.mobile);    
+        ds.setData(x+6,idx,this.nickName);    
+        ds.setData(x+7,idx,this.note);    
+        ds.setData(x+8,idx,this.photo);    
+        ds.setData(x+9,idx,this.titleBg);    
+        ds.setData(x+10,idx,this.homePage);    
+        ds.setData(x+11,idx,this.followCount);    
+        ds.setData(x+12,idx,this.fansCount);
+        ds.setData(x+13,idx,this.follow);
+        ds.setData(x+14,idx,this.block1);
+        ds.setData(x+15,idx,this.block2);
+        ds.setData(x+16,idx,this.email);
+    }
+    this.clone = function() {
+        var r = new g5.UserInfo();
+        r.id = this.id;
+        r.status = this.status;
+        r.regDatetime = this.regDatetime;
+        r.lastAccessTime = this.lastAccessTime;    
+        r.userName = this.userName;    
+        r.mobile = this.mobile;    
+        r.nickName = this.nickName;    
+        r.note = this.note;    
+        r.photo = this.photo;    
+        r.titleBg = this.titleBg;    
+        r.homePage = this.homePage;    
+        r.followCount = this.followCount;    
+        r.fansCount = this.fansCount;
+        r.follow = this.follow;
+        r.block1 = this.block1;
+        r.block2 = this.block2;
+        r.email = this.email;
+        r.isFollow = this.isFollow;
+        r.isBlock1 = this.isBlock1;
+        r.isBlock2 = this.isBlock2;
+        return r;
+    }
+}
+
+</varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+  </g5Items>
 </page>
