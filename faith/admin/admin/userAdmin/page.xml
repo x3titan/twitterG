@@ -1,5 +1,5 @@
 <page>
-  <controls count="272">
+  <controls count="287">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -7,34 +7,7 @@
       <dockY>fill</dockY>
       <height>796</height>
       <left>0</left>
-      <onControlLoad><![CDATA[//鼠标点击行激活处理
-g5.userId = null;
-g5.tableClick = function(sender) {
-    var c, x, y;
-    for (y = 0; y < g5.pageSize; y++) {
-        for (x = 0; x < 7; x++) {
-            c = ee.getTableCell(ee.getControl("tablebody2"), x, y);
-            c.style.backgroundColor = "";    
-        }
-    }
-    for (x = 0; x < 7; x++) {
-        c = ee.getTableCell(ee.getControl("tablebody2"), x, sender.rowIndex);
-        c.style.backgroundColor = "#E0EEFF";
-    }
-    if (eb.isEmpty(g5.dataset1)) {
-        g5.userId = null;
-        return;
-    }
-    g5.userId = parseInt(g5.dataset1.getData(2, sender.rowIndex));
-    g5.userName = g5.dataset1.getData(0, sender.rowIndex);
-    g5.nickName = g5.dataset1.getData(1, sender.rowIndex);
-    g5.mobile = g5.dataset1.getData(5, sender.rowIndex);
-    g5.note = g5.dataset1.getData(8, sender.rowIndex);
-}
-
-
-
-//分页处理
+      <onControlLoad><![CDATA[//分页处理
 g5.pageSize = 15;
 g5.pageCurrent = 1;
 g5.pageCount = 1;
@@ -93,17 +66,36 @@ query();
       <heightRatio>0.453333333333333</heightRatio>
       <left>20</left>
       <leftRatio>0.0175901495162709</leftRatio>
-      <onClick>ee.setText(ee.getControl("panel10"), "0");
-ee.setEditText(ee.getControl("edit2"), "");
-ee.setEditText(ee.getControl("edit4"), "");
-ee.setEditText(ee.getControl("edit5"), "");
-ee.setEditText(ee.getControl("edit6"), "");
-ee.setEditText(ee.getControl("edit7"), "");
-ee.setEditText(ee.getControl("edit8"), "");
-ee.setEditText(ee.getControl("edit1"), "");
-
-g5.operation = "new";
-ee.showAni(ee.getControl("panel1"));</onClick>
+      <onClick>if (!g5.tableClick.valid) {
+    alert("请选择有效的记录进行操作");
+    return;
+}
+var userId = query.dataset.getData(0,g5.tableClick.y);
+var status = query.dataset.getData(1,g5.tableClick.y);
+if (status == "DISABLED") {
+    if (!confirm("该用户处于封号状态，是否进行解封操作？")) {
+        return;
+    }
+    if (disableUser.busy) return;
+    disableUser.userId = userId;
+    disableUser.operation = "0";
+    disableUser.onComplete = function() {
+        query();
+    }
+    disableUser();
+} else if (status == "IDL") {
+    if (!confirm("该用户处于正常状态，是否进行封号操作？")) {
+        return;
+    }
+    if (disableUser.busy) return;
+    disableUser.userId = userId;
+    disableUser.operation = "1";
+    disableUser.onComplete = function() {
+        query();
+    }
+    disableUser();
+}
+</onClick>
       <sizeRatio>0.276422764227642</sizeRatio>
       <text>封号/解封</text>
       <top>23</top>
@@ -307,11 +299,12 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <height>52</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>0.342592592592593</sizeRatio>
-      <text>用户名@账号</text>
+      <sizeRatio>0.276595744680851</sizeRatio>
+      <text>用户名
+@账号</text>
       <top>0</top>
-      <width>188</width>
-      <widthRatio>0.0949868073878628</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem12/panel18">
       <bgColorEnabled>true</bgColorEnabled>
@@ -323,7 +316,7 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>51</top>
       <topRatio>0.972972972972973</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem13">
@@ -334,12 +327,12 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <heavy>23</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.174142480211082</leftRatio>
       <sizeRatio>0.486842105263158</sizeRatio>
       <text>状态</text>
       <top>0</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0668425681618294</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem13/panel17">
@@ -352,7 +345,7 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>51</top>
       <topRatio>0.972972972972973</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem14">
@@ -363,13 +356,13 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <heavy>50</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.240985048372911</leftRatio>
       <sizeRatio>0.660714285714286</sizeRatio>
       <text>注册时间
 最后访问时间</text>
       <top>0</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0492524186455585</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem14/panel19">
@@ -382,7 +375,7 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>51</top>
       <topRatio>0.972972972972973</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem1">
@@ -393,13 +386,13 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <heavy>40</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.351802990325418</leftRatio>
       <sizeRatio>0.346666666666667</sizeRatio>
       <text>手机号
 电子邮件</text>
       <top>0</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.131926121372032</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem1/panel20">
@@ -412,7 +405,7 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>51</top>
       <topRatio>0.972972972972973</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem2">
@@ -420,16 +413,16 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <bgColorEnabled>true</bgColorEnabled>
       <fontBold>true</fontBold>
       <fontColor>646464</fontColor>
-      <heavy>60</heavy>
+      <heavy>50</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
-      <left>542</left>
-      <leftRatio>0.470536499560246</leftRatio>
-      <sizeRatio>1.1304347826087</sizeRatio>
+      <left>527</left>
+      <leftRatio>0.476693051890941</leftRatio>
+      <sizeRatio>0.416</sizeRatio>
       <text>头像/背景</text>
       <top>0</top>
-      <width>188</width>
-      <widthRatio>0.040457343887423</widthRatio>
+      <width>153</width>
+      <widthRatio>0.109938434476693</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem2/panel28">
       <bgColorEnabled>true</bgColorEnabled>
@@ -441,7 +434,7 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <sizeRatio>0.0161290322580645</sizeRatio>
       <top>51</top>
       <topRatio>0.972972972972973</topRatio>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem3">
@@ -452,12 +445,12 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <heavy>30</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.563764291996482</leftRatio>
       <sizeRatio>0.626506024096386</sizeRatio>
       <text>关注/粉丝</text>
       <top>0</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0729991204925242</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem3/panel29">
@@ -470,7 +463,7 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>51</top>
       <topRatio>0.972972972972973</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem4">
@@ -478,15 +471,16 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <bgColorEnabled>true</bgColorEnabled>
       <fontBold>true</fontBold>
       <fontColor>646464</fontColor>
+      <heavy>120</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
-      <left>824</left>
-      <leftRatio>0.636763412489006</leftRatio>
-      <sizeRatio>0.541666666666667</sizeRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
+      <sizeRatio>0.166134185303514</sizeRatio>
       <text>简介</text>
       <top>0</top>
-      <width>313</width>
-      <widthRatio>0.0844327176781003</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem4/panel30">
       <bgColorEnabled>true</bgColorEnabled>
@@ -498,7 +492,7 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>51</top>
       <topRatio>0.972972972972973</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableBody" pathname="/divRoot/layouty1/layoutyitem2/tablebody2">
@@ -520,20 +514,27 @@ if (!confirm("删除操作将导致不可返回的后果，如需恢复数据只
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <onUpdate>if (!query.dataset) {
+      <onUpdate><![CDATA[if (!query.dataset) {
     text = "";
     return;
 }
-ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.getData(4,sender.rowIndex));</onUpdate>
-      <sizeRatio>0.354838709677419</sizeRatio>
+var y = sender.rowIndex;
+if (y >= query.dataset.rowCount) {
+    ee.setText(sender, "");
+    return;
+}
+var s = query.dataset.getData(8,y) + "\n@" + query.dataset.getData(4,y);
+ee.setText(sender, s);]]></onUpdate>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem12/panel11">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -546,7 +547,7 @@ ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.ge
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem13">
@@ -557,18 +558,26 @@ ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.ge
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <onUpdate>if (!query.dataset) {
+      <onUpdate><![CDATA[if (!query.dataset) {
     text = "";
     return;
 }
-ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.getData(4,sender.rowIndex));</onUpdate>
+var y = sender.rowIndex;
+var s = query.dataset.getData(1,y);
+if (s == "IDL") {
+    s = "正常";
+} else if (s == "DISABLED") {
+    s = "<font color='#C00000'>封号</font>";
+}
+ee.setText(sender, s);
+]]></onUpdate>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem13/panel12">
@@ -582,7 +591,7 @@ ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.ge
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem14">
@@ -592,13 +601,20 @@ ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.ge
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
+      <onUpdate>if (!query.dataset) {
+    text = "";
+    return;
+}
+var y = sender.rowIndex;
+var s = query.dataset.getData(2,y) + "\n" + query.dataset.getData(3,y);
+ee.setText(sender, s);</onUpdate>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem14/panel13">
@@ -612,7 +628,7 @@ ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.ge
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem1">
@@ -622,26 +638,20 @@ ee.setText(sender, query.dataset.getData(8,sender.rowIndex)+"@"+query.dataset.ge
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <onUpdate><![CDATA[ee.setText(sender, text);
-if (text == "") {
-    var rowCount;
-    if (eb.isEmpty(g5.dataset1)) {
-        rowCount = 0;
-    } else {
-        rowCount = g5.dataset1.rowCount;
-    } 
-    if (sender.rowIndex < rowCount) {
-        ee.setText(sender, "超级用户");
-    }
+      <onUpdate>if (!query.dataset) {
+    text = "";
+    return;
 }
-]]></onUpdate>
+var y = sender.rowIndex;
+var s = query.dataset.getData(6,y) + " \n" + query.dataset.getData(7,y) + " ";
+ee.setText(sender, s);</onUpdate>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem1/panel14">
@@ -655,7 +665,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem2">
@@ -664,23 +674,56 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <onUpdate>if (text == "IDL") {
-    ee.setText(sender, "正常");
-} else if (text == "DIS") {
-    ee.setText(sender, "禁用");
-} else if (text == "DEL") {
-    ee.setText(sender, "删除");
-} else {
-    ee.setText(sender, text);
+      <onUpdate><![CDATA[if (!query.dataset) {
+    text = "";
+    return;
 }
-</onUpdate>
+ee.setText(sender,"");
+var y = sender.rowIndex;
+var img1 = query.dataset.getData(10,y);
+var img2 = query.dataset.getData(11,y);
+var c_photo = sender.eeChildren[1];
+if (y >= query.dataset.rowCount) {
+    ee.setVisible(c_photo, false);
+    ee.setImage(sender,"","trim","","")
+    sender.style.borderRadius =  "0px";
+    return;
+}
+ee.setVisible(c_photo, true);
+
+if (img2!="") {
+    ee.setImage(sender,"url:" + g5.imgUrl + img2,"trim","","")
+} else {
+    ee.setImage(sender,"","trim","","")
+}
+
+var rect = eb.getDivRectSetting(sender);
+ee.setRect(c_photo, -1, -1, rect.h-1, rect.h-1);
+c_photo.style.borderRadius = "50%";
+c_photo.style.borderWidth = "1px";
+c_photo.style.borderColor = "#ffffff";
+c_photo.style.borderStyle = "solid";
+if (img1 == "") {
+    ee.setImage(c_photo,"/faith/main/user.png","trim","","")
+} else {
+    ee.setImage(c_photo,"url:" + g5.imgUrl + img1,"trim","","")
+}
+
+var r = parseInt(rect.h/2) + "px";
+if (img2=="") {
+    sender.style.borderRadius =  "0px";
+} else {
+    sender.style.borderRadius =  r + " 10px 10px " + r;
+}
+
+]]></onUpdate>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem2/panel21">
@@ -689,13 +732,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem2/panel26">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem3">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -703,13 +757,24 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
+      <onUpdate><![CDATA[if (!query.dataset) {
+    text = "";
+    return;
+}
+var y = sender.rowIndex;
+if (y >= query.dataset.rowCount) {
+    ee.setText(sender, "");
+    return;
+}
+var s = query.dataset.getData(14,y) + " / " + query.dataset.getData(15,y);
+ee.setText(sender, s);]]></onUpdate>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem3/panel22">
@@ -723,23 +788,31 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem4">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <onUpdate>if (!query.dataset) {
+    text = "";
+    return;
+}
+var y = sender.rowIndex;
+var s = query.dataset.getData(9,y);
+ee.setText(sender, s);</onUpdate>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem4/panel25">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -752,7 +825,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp141">
@@ -760,15 +833,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>42</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp141/temp1">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -781,7 +855,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp143">
@@ -792,13 +866,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>42</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp143/temp2">
@@ -812,7 +886,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp145">
@@ -822,13 +896,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>42</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp145/temp3">
@@ -842,7 +916,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp147">
@@ -852,13 +926,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>42</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp147/temp4">
@@ -872,7 +946,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp149">
@@ -881,13 +955,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>42</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp149/temp5">
@@ -896,13 +970,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp149/temp99">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp151">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -910,13 +995,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>42</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp151/temp6">
@@ -930,23 +1015,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp153">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>42</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp153/temp7">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -959,7 +1045,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp155">
@@ -967,15 +1053,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>84</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp155/temp8">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -988,7 +1075,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp157">
@@ -999,13 +1086,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>84</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp157/temp9">
@@ -1019,7 +1106,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp159">
@@ -1029,13 +1116,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>84</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp159/temp10">
@@ -1049,7 +1136,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp161">
@@ -1059,13 +1146,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>84</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp161/temp11">
@@ -1079,7 +1166,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp163">
@@ -1088,13 +1175,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>84</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp163/temp12">
@@ -1103,13 +1190,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp163/temp100">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp165">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -1117,13 +1215,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>84</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp165/temp13">
@@ -1137,23 +1235,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp167">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>84</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp167/temp14">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1166,7 +1265,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp169">
@@ -1174,15 +1273,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>126</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp169/temp15">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1195,7 +1295,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp171">
@@ -1206,13 +1306,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>126</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp171/temp16">
@@ -1226,7 +1326,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp173">
@@ -1236,13 +1336,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>126</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp173/temp17">
@@ -1256,7 +1356,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp175">
@@ -1266,13 +1366,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>126</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp175/temp18">
@@ -1286,7 +1386,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp177">
@@ -1295,13 +1395,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>126</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp177/temp19">
@@ -1310,13 +1410,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp177/temp101">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp179">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -1324,13 +1435,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>126</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp179/temp20">
@@ -1344,23 +1455,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp181">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>126</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp181/temp21">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1373,7 +1485,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp183">
@@ -1381,15 +1493,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>168</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp183/temp22">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1402,7 +1515,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp185">
@@ -1413,13 +1526,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>168</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp185/temp23">
@@ -1433,7 +1546,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp187">
@@ -1443,13 +1556,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>168</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp187/temp24">
@@ -1463,7 +1576,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp189">
@@ -1473,13 +1586,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>168</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp189/temp25">
@@ -1493,7 +1606,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp191">
@@ -1502,13 +1615,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>168</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp191/temp26">
@@ -1517,13 +1630,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp191/temp102">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp193">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -1531,13 +1655,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>168</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp193/temp27">
@@ -1551,23 +1675,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp195">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>168</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp195/temp28">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1580,7 +1705,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp197">
@@ -1588,15 +1713,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>210</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp197/temp29">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1609,7 +1735,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp199">
@@ -1620,13 +1746,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>210</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp199/temp30">
@@ -1640,7 +1766,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp201">
@@ -1650,13 +1776,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>210</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp201/temp31">
@@ -1670,7 +1796,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp203">
@@ -1680,13 +1806,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>210</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp203/temp32">
@@ -1700,7 +1826,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp205">
@@ -1709,13 +1835,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>210</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp205/temp33">
@@ -1724,13 +1850,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp205/temp103">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp207">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -1738,13 +1875,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>210</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp207/temp34">
@@ -1758,23 +1895,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp209">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>210</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp209/temp35">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1787,7 +1925,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp211">
@@ -1795,15 +1933,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>252</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp211/temp36">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1816,7 +1955,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp213">
@@ -1827,13 +1966,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>252</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp213/temp37">
@@ -1847,7 +1986,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp215">
@@ -1857,13 +1996,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>252</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp215/temp38">
@@ -1877,7 +2016,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp217">
@@ -1887,13 +2026,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>252</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp217/temp39">
@@ -1907,7 +2046,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp219">
@@ -1916,13 +2055,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>252</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp219/temp40">
@@ -1931,13 +2070,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp219/temp104">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp221">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -1945,13 +2095,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>252</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp221/temp41">
@@ -1965,23 +2115,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp223">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>252</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp223/temp42">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -1994,7 +2145,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp225">
@@ -2002,15 +2153,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>294</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp225/temp43">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2023,7 +2175,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp227">
@@ -2034,13 +2186,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>294</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp227/temp44">
@@ -2054,7 +2206,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp229">
@@ -2064,13 +2216,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>294</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp229/temp45">
@@ -2084,7 +2236,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp231">
@@ -2094,13 +2246,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>294</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp231/temp46">
@@ -2114,7 +2266,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp233">
@@ -2123,13 +2275,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>294</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp233/temp47">
@@ -2138,13 +2290,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp233/temp105">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp235">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -2152,13 +2315,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>294</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp235/temp48">
@@ -2172,23 +2335,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp237">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>294</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp237/temp49">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2201,7 +2365,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp239">
@@ -2209,15 +2373,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>336</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp239/temp50">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2230,7 +2395,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp241">
@@ -2241,13 +2406,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>336</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp241/temp51">
@@ -2261,7 +2426,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp243">
@@ -2271,13 +2436,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>336</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp243/temp52">
@@ -2291,7 +2456,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp245">
@@ -2301,13 +2466,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>336</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp245/temp53">
@@ -2321,7 +2486,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp247">
@@ -2330,13 +2495,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>336</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp247/temp54">
@@ -2345,13 +2510,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp247/temp106">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp249">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -2359,13 +2535,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>336</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp249/temp55">
@@ -2379,23 +2555,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp251">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>336</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp251/temp56">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2408,7 +2585,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp254">
@@ -2416,15 +2593,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>378</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp254/temp57">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2437,7 +2615,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp258">
@@ -2448,13 +2626,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>378</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp258/temp58">
@@ -2468,7 +2646,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp262">
@@ -2478,13 +2656,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>378</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp262/temp59">
@@ -2498,7 +2676,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp266">
@@ -2508,13 +2686,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>378</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp266/temp60">
@@ -2528,7 +2706,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp270">
@@ -2537,13 +2715,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>378</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp270/temp61">
@@ -2552,13 +2730,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp270/temp107">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp274">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -2566,13 +2755,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>378</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp274/temp62">
@@ -2586,23 +2775,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp278">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>378</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp278/temp63">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2615,7 +2805,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp282">
@@ -2623,15 +2813,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>420</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp282/temp64">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2644,7 +2835,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp286">
@@ -2655,13 +2846,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>420</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp286/temp65">
@@ -2675,7 +2866,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp290">
@@ -2685,13 +2876,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>420</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp290/temp66">
@@ -2705,7 +2896,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp294">
@@ -2715,13 +2906,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>420</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp294/temp67">
@@ -2735,7 +2926,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp298">
@@ -2744,13 +2935,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>420</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp298/temp68">
@@ -2759,13 +2950,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp298/temp108">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp302">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -2773,13 +2975,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>420</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp302/temp69">
@@ -2793,23 +2995,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp306">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>420</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp306/temp70">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2822,7 +3025,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp310">
@@ -2830,15 +3033,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>462</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp310/temp71">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -2851,7 +3055,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp314">
@@ -2862,13 +3066,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>462</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp314/temp72">
@@ -2882,7 +3086,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp318">
@@ -2892,13 +3096,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>462</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp318/temp73">
@@ -2912,7 +3116,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp322">
@@ -2922,13 +3126,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>462</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp322/temp74">
@@ -2942,7 +3146,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp326">
@@ -2951,13 +3155,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>462</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp326/temp75">
@@ -2966,13 +3170,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp326/temp109">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp330">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -2980,13 +3195,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>462</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp330/temp76">
@@ -3000,23 +3215,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp334">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>462</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp334/temp77">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -3029,7 +3245,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp338">
@@ -3037,15 +3253,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>504</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp338/temp78">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -3058,7 +3275,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp342">
@@ -3069,13 +3286,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>504</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp342/temp79">
@@ -3089,7 +3306,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp346">
@@ -3099,13 +3316,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>504</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp346/temp80">
@@ -3119,7 +3336,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp350">
@@ -3129,13 +3346,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>504</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp350/temp81">
@@ -3149,7 +3366,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp354">
@@ -3158,13 +3375,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>504</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp354/temp82">
@@ -3173,13 +3390,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp354/temp110">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp358">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -3187,13 +3415,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>504</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp358/temp83">
@@ -3207,23 +3435,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp362">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>504</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp362/temp84">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -3236,7 +3465,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp366">
@@ -3244,15 +3473,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>546</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp366/temp85">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -3265,7 +3495,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp370">
@@ -3276,13 +3506,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>546</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp370/temp86">
@@ -3296,7 +3526,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp374">
@@ -3306,13 +3536,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>546</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp374/temp87">
@@ -3326,7 +3556,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp378">
@@ -3336,13 +3566,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>546</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp378/temp88">
@@ -3356,7 +3586,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp382">
@@ -3365,13 +3595,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>546</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp382/temp89">
@@ -3380,13 +3610,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp382/temp111">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp386">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -3394,13 +3635,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>546</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp386/temp90">
@@ -3414,23 +3655,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp390">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>546</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp390/temp91">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -3443,7 +3685,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp394">
@@ -3451,15 +3693,16 @@ if (text == "") {
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
       <fontColor>545454</fontColor>
+      <hAlign>right</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.354838709677419</sizeRatio>
+      <sizeRatio>0.223404255319149</sizeRatio>
       <text>.</text>
       <top>588</top>
-      <width>188</width>
-      <widthRatio>0.0949464012251149</widthRatio>
+      <width>183</width>
+      <widthRatio>0.165347405452946</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp394/temp92">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -3472,7 +3715,7 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <width>183</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp398">
@@ -3483,13 +3726,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>188</left>
+      <left>183</left>
       <leftRatio>0.0949464012251149</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.458333333333333</sizeRatio>
       <text>.</text>
       <top>588</top>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>0.0735068912710567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp398/temp93">
@@ -3503,7 +3746,7 @@ if (text == "") {
       <sizeRatio>0.0104166666666667</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>72</width>
+      <width>70</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp402">
@@ -3513,13 +3756,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>260</left>
+      <left>253</left>
       <leftRatio>0.168453292496172</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.628571428571429</sizeRatio>
       <text>.</text>
       <top>588</top>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>0.0535987748851455</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp402/temp94">
@@ -3533,7 +3776,7 @@ if (text == "") {
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>157</width>
+      <width>152</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp406">
@@ -3543,13 +3786,13 @@ if (text == "") {
       <fontColor>545454</fontColor>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>417</left>
+      <left>405</left>
       <leftRatio>0.222052067381317</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.211538461538462</sizeRatio>
       <text>.</text>
       <top>588</top>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>0.159264931087289</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp406/temp95">
@@ -3563,7 +3806,7 @@ if (text == "") {
       <sizeRatio>0.00480769230769231</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>125</width>
+      <width>122</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp410">
@@ -3572,13 +3815,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>542</left>
+      <left>527</left>
       <leftRatio>0.381316998468606</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.709677419354839</sizeRatio>
       <text>.</text>
       <top>588</top>
-      <width>188</width>
+      <width>153</width>
       <widthRatio>0.0474732006125574</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp410/temp96">
@@ -3587,13 +3830,24 @@ if (text == "") {
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
       <height>1</height>
-      <heightRatio>0.0227272727272727</heightRatio>
+      <heightRatio>0.0238095238095238</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0161290322580645</sizeRatio>
+      <sizeRatio>0.00561797752808989</sizeRatio>
       <top>41</top>
-      <topRatio>0.977272727272727</topRatio>
-      <width>188</width>
+      <topRatio>0.880952380952381</topRatio>
+      <width>153</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp410/temp112">
+      <height>36</height>
+      <heightRatio>0.857142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0265957446808511</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0476190476190476</topRatio>
+      <width>44</width>
+      <widthRatio>0.234042553191489</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp414">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -3601,13 +3855,13 @@ if (text == "") {
       <fontBold>true</fontBold>
       <height>42</height>
       <heightRatio>0.0661654135338346</heightRatio>
-      <left>730</left>
+      <left>680</left>
       <leftRatio>0.428790199081164</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.354838709677419</sizeRatio>
       <text>.</text>
       <top>588</top>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>0.0949464012251149</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp414/temp97">
@@ -3621,23 +3875,24 @@ if (text == "") {
       <sizeRatio>0.00806451612903226</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>94</width>
+      <width>91</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp418">
       <backgroundColor>f0f0f0</backgroundColor>
       <cursor>pointer</cursor>
       <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
       <height>42</height>
-      <heightRatio>0.0661654135338346</heightRatio>
-      <left>824</left>
-      <leftRatio>0.523736600306279</leftRatio>
+      <heightRatio>0.0666666666666667</heightRatio>
+      <left>771</left>
+      <leftRatio>0.724714160070361</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <sizeRatio>0.303448275862069</sizeRatio>
+      <sizeRatio>0.134185303514377</sizeRatio>
       <text>.</text>
       <top>588</top>
-      <width>313</width>
-      <widthRatio>0.111026033690658</widthRatio>
+      <width>366</width>
+      <widthRatio>0.275285839929639</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp418/temp98">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -3650,7 +3905,7 @@ if (text == "") {
       <sizeRatio>0.00689655172413793</sizeRatio>
       <top>41</top>
       <topRatio>0.977272727272727</topRatio>
-      <width>313</width>
+      <width>366</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel5">
@@ -4197,7 +4452,7 @@ if (text == "") {
       <widthRatio>0.675282714054927</widthRatio>
     </control>
   </controls>
-  <taskSet count="4">
+  <taskSet count="5">
     <taskSetItem name="query">
       <script1>eio.appendString8(eb.getCookie("FAToken")); 
 eio.appendString8(ee.getEditText(ee.getControl("edit3")));
@@ -4264,7 +4519,8 @@ eio.appendDataSet(sqlResult,
     "id,status,regDatetime,lastAccessTime,userName,password,mobile,email,nickName,note,photo," +
     // 11        12        13            14         15         16
     "titleBg,homePage,chatRoomVideo,followCount,fansCount,lastPromptId",
-    pageSize*(pageCurrent-1), pageSize); 
+    pageSize*(pageCurrent-1), pageSize
+); 
 ]]></script2>
       <script3><![CDATA[if (eio.readString8() != "T") {
     alert("无法获取您需要的数据：" + eio.readString8());
@@ -4520,82 +4776,96 @@ alert("修改用户信息完成");
 ee.setVisible(ee.getControl("panel1"), false);
 query();</script3>
     </taskSetItem>
-  </taskSet>
-  <gridLines count="0" />
-  <g5Items count="1">
-    <item name="Record" type="10">
-      <varValue>function() {
-    this.size = 17;
-    this.loadFromDataset = function(ds, x, idx) {
-        this.id = ds.getData(x+0,idx);
-        this.status = ds.getData(x+1,idx);    
-        this.regDatetime = ds.getData(x+2,idx);    
-        this.lastAccessTime = ds.getData(x+3,idx);    
-        this.userName = ds.getData(x+4,idx);    
-        this.mobile = ds.getData(x+5,idx);    
-        this.nickName = ds.getData(x+6,idx);    
-        this.note = ds.getData(x+7,idx);    
-        this.photo = ds.getData(x+8,idx);    
-        this.titleBg = ds.getData(x+9,idx);    
-        this.homePage = ds.getData(x+10,idx);    
-        this.followCount = ds.getData(x+11,idx);    
-        this.fansCount = ds.getData(x+12,idx);
-        this.follow = ds.getData(x+13,idx);
-        this.block1 = ds.getData(x+14,idx); //屏蔽别人
-        this.block2 = ds.getData(x+15,idx); //被别人屏蔽
-        this.email = ds.getData(x+16,idx);
-        this.isFollow = this.follow=="1";
-        this.isBlock1 = this.block1=="1";
-        this.isBlock2 = this.block2=="1";
-    }
-    this.setDataset = function(ds, x, idx) {
-        ds.setData(x+0,idx,this.id);
-        ds.setData(x+1,idx,this.status);    
-        ds.setData(x+2,idx,this.regDatetime);    
-        ds.setData(x+3,idx,this.lastAccessTime);    
-        ds.setData(x+4,idx,this.userName);    
-        ds.setData(x+5,idx,this.mobile);    
-        ds.setData(x+6,idx,this.nickName);    
-        ds.setData(x+7,idx,this.note);    
-        ds.setData(x+8,idx,this.photo);    
-        ds.setData(x+9,idx,this.titleBg);    
-        ds.setData(x+10,idx,this.homePage);    
-        ds.setData(x+11,idx,this.followCount);    
-        ds.setData(x+12,idx,this.fansCount);
-        ds.setData(x+13,idx,this.follow);
-        ds.setData(x+14,idx,this.block1);
-        ds.setData(x+15,idx,this.block2);
-        ds.setData(x+16,idx,this.email);
-    }
-    this.clone = function() {
-        var r = new g5.UserInfo();
-        r.id = this.id;
-        r.status = this.status;
-        r.regDatetime = this.regDatetime;
-        r.lastAccessTime = this.lastAccessTime;    
-        r.userName = this.userName;    
-        r.mobile = this.mobile;    
-        r.nickName = this.nickName;    
-        r.note = this.note;    
-        r.photo = this.photo;    
-        r.titleBg = this.titleBg;    
-        r.homePage = this.homePage;    
-        r.followCount = this.followCount;    
-        r.fansCount = this.fansCount;
-        r.follow = this.follow;
-        r.block1 = this.block1;
-        r.block2 = this.block2;
-        r.email = this.email;
-        r.isFollow = this.isFollow;
-        r.isBlock1 = this.isBlock1;
-        r.isBlock2 = this.isBlock2;
-        return r;
-    }
+    <taskSetItem name="disableUser">
+      <script1>//封号/解封, userId,operation,onComplete()
+if (disableUser.busy) return;
+disableUser.busy = true;
+eio.appendString16(eb.getCookie("FAToken"));
+eio.appendString16(disableUser.userId);
+eio.appendString16(disableUser.operation);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var disableUserId = parseInt(eio.readString16());
+var operation = parseInt(eio.readString16());
+
+//获取用户信息及认证
+var sql,sqlResult;
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var userName = db.getString(sqlResult, "userName");
+
+sql = "exec userDisable " +
+    userId + "," +
+    disableUserId + "," +
+    operation;
+sqlResult = db.executeQuery("DB", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "errorCode") != 0) {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
 }
 
-</varValue>
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    disableUser.busy = false;
+    alert("操作失败：" + eio.readString8());
+    return;
+}
+
+if (disableUser.onComplete) disableUser.onComplete();
+disableUser.busy = false;
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+  <g5Items count="2">
+    <item name="imgUrl" type="10">
+      <varValue>"/incoming/";</varValue>
       <functionParam />
       <functionCode />
+    </item>
+    <item name="tableClick" type="20">
+      <varValue />
+      <functionParam>sender</functionParam>
+      <functionCode><![CDATA[//鼠标点击行激活处理,接口：valid,y
+var c, x, y;
+for (y = 0; y < g5.pageSize; y++) {
+    for (x = 0; x < 7; x++) {
+        c = ee.getTableCell(ee.getControl("tablebody2"), x, y);
+        c.style.backgroundColor = "";    
+    }
+}
+for (x = 0; x < 7; x++) {
+    c = ee.getTableCell(ee.getControl("tablebody2"), x, sender.rowIndex);
+    c.style.backgroundColor = "#E0EEFF";
+}
+g5.tableClick.valid = false;
+if (eb.isEmpty(query.dataset)) return;
+g5.tableClick.y = sender.rowIndex;
+if (g5.tableClick.y>=query.dataset.rowCount) return;
+g5.tableClick.valid = true;
+]]></functionCode>
     </item>
   </g5Items>
 </page>
