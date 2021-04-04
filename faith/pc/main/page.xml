@@ -1,5 +1,5 @@
 <page>
-  <controls count="583">
+  <controls count="587">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -2358,6 +2358,7 @@ sender.c_block1 = ee.getControl("panel6");
 sender.c_block2 = ee.getControl("panel467");
 sender.c_block12 = ee.getControl("panel477");
 sender.c_disabled = ee.getControl("panel481");
+sender.c_freeze = ee.getControl("panel485");
 sender.v_userInfo = new g5.UserInfo();
 sender.v_forceDisplay = false;
 
@@ -2628,7 +2629,12 @@ sender.refreshButton = function() {
     if (!this.v_userInfo) return;
     ee.setVisible(this.c_button1, true);
     ee.setVisible(this.c_button2, true);
-    if (this.v_userInfo.isBlock1 &amp;&amp; this.v_userInfo.isBlock2) {
+    if (this.v_userInfo.status == "DISABLED") {
+        ee.setVisible(this.c_button1, false);
+        ee.setVisible(this.c_button2, false);
+    } else if (this.v_userInfo.status == "FREEZE") {
+        ee.setVisible(this.c_button2, false);
+    } else if (this.v_userInfo.isBlock1 &amp;&amp; this.v_userInfo.isBlock2) {
         //ee.setVisible(this.c_button1, false);
         ee.setVisible(this.c_button2, false);
     } else if (this.v_userInfo.isBlock1) {
@@ -2717,19 +2723,13 @@ sender.showByUserInfo = function(v_userInfo) {
         cy += vspace + eb.getDivRect(ee.getControl("panel72")).h;
     }
         
-    if (v_userInfo.status == "DISABLED") {
-        ee.setVisible(this.c_button1, false);
-        ee.setVisible(this.c_button2, false);
-    } else {
-        ee.setVisible(this.c_button1, true);
-        ee.setVisible(this.c_button2, true);
-        this.refreshButton();
-    }
+    this.refreshButton();
     
     ee.setVisible(this.c_block1, false);
     ee.setVisible(this.c_block2, false);
     ee.setVisible(this.c_block12, false);
     ee.setVisible(this.c_disabled, false);
+    ee.setVisible(this.c_freeze, false);
     if (v_userInfo.isBlock1 &amp;&amp; v_userInfo.isBlock2) {
         g5.changeP2(1);
         ee.setVisible(this.c_block12, true);
@@ -2768,6 +2768,16 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setVisible(this.c_disabled, true);
         ee.setRect(this.c_disabled, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
         var r1 = eb.getDivRectSetting(this.c_disabled);
+        ee.setRect(this,null,null,null,r1.y+r1.h);
+        ee.resizeV(this.parentNode, 1);
+        ee.setVisible(g5.p3, false);
+        ee.setVisible(this.p2sub, false);
+        return;
+    } else if (v_userInfo.status == "FREEZE") {
+        g5.changeP2(1);
+        ee.setVisible(this.c_freeze, true);
+        ee.setRect(this.c_freeze, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
+        var r1 = eb.getDivRectSetting(this.c_freeze);
         ee.setRect(this,null,null,null,r1.y+r1.h);
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
@@ -6916,7 +6926,7 @@ eb.initMouseEvent(sender);
       <dockX>fill</dockX>
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
-      <layerName><![CDATA[  c_block12->相互屏蔽]]></layerName>
+      <layerName><![CDATA[  c_disabled->封号]]></layerName>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>469</top>
@@ -6965,6 +6975,66 @@ eb.initMouseEvent(sender);
       <left>0</left>
       <sizeRatio>0.0566666666666667</sizeRatio>
       <text>该用户被暂时禁封，无法继续访问。</text>
+      <top>64</top>
+      <topRatio>0.232727272727273</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel485">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>275</height>
+      <heightRatio>0.352564102564103</heightRatio>
+      <layerName><![CDATA[  c_freeze->冻结]]></layerName>
+      <left>0</left>
+      <sizeRatio>0.458333333333333</sizeRatio>
+      <top>469</top>
+      <topRatio>0.601282051282051</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel485/panel486">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>1</height>
+      <heightRatio>0.00363636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>PLine1</note>
+      <sizeRatio>0.00166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel485/panel487">
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>冻结状态</text>
+      <top>32</top>
+      <topRatio>0.116363636363636</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel485/panel488">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>该用户被暂时冻结，无法继续访问。</text>
       <top>64</top>
       <topRatio>0.232727272727273</topRatio>
       <width>600</width>
