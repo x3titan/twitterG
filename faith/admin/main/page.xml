@@ -1,5 +1,5 @@
 <page>
-  <controls count="47">
+  <controls count="48">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -40,7 +40,11 @@ g5.divFrame = ee.getControl("layoutyitem12");
 g5.appendPage("主页", "/faith/default", false);
 g5.menu[0].click(0);  
 
- 
+getUserInfo.onComplete = function() {
+    ee.setText(ee.getControl("panel24"), "管理员：" + getUserInfo.nickName + " @" + getUserInfo.userName);
+}
+
+getUserInfo(); 
 </onControlLoad>
       <pageHead><![CDATA[<style>
 .buttonBlue {
@@ -127,12 +131,12 @@ g5.menu[0].click(0);
       <heightRatio>0.514705882352941</heightRatio>
       <left>40</left>
       <leftRatio>0.0351802990325418</leftRatio>
-      <sizeRatio>0.112903225806452</sizeRatio>
+      <sizeRatio>0.148936170212766</sizeRatio>
       <text>后台管理系统</text>
       <top>19</top>
       <topRatio>0.279411764705882</topRatio>
-      <width>310</width>
-      <widthRatio>0.272647317502199</widthRatio>
+      <width>235</width>
+      <widthRatio>0.206684256816183</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel11">
       <dockX>right</dockX>
@@ -208,6 +212,30 @@ window.location.href = ee.getUrl("/admin/login"); </onClick>
       <topRatio>-0.125</topRatio>
       <width>16</width>
       <widthRatio>0.0581818181818182</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel24">
+      <backgroundColor>198DC9</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <fontSize>10</fontSize>
+      <hAlign>left</hAlign>
+      <height>34</height>
+      <heightRatio>0.5</heightRatio>
+      <left>232</left>
+      <leftRatio>0.204045734388742</leftRatio>
+      <onClick>g5.appendPage("账户信息", ee.getUrl("/admin/account/myAccount"));</onClick>
+      <onCreate>sender.className = "buttonGray";
+//ee.setTextColor(sender, "#ffffff");
+//var p = eb.getDivRectSetting(sender).h + "px";
+//sender.style.borderRadius = parseInt(eb.getDivRectSetting(sender).h/2) + "px";
+sender.style.borderRadius = "5px";</onCreate>
+      <sizeRatio>0.0974212034383954</sizeRatio>
+      <text>--</text>
+      <top>26</top>
+      <topRatio>0.382352941176471</topRatio>
+      <width>349</width>
+      <widthRatio>0.306948109058927</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
       <backgroundColor>FAFAFA</backgroundColor>
@@ -836,12 +864,17 @@ g5.leftBar = !g5.leftBar;
   </controls>
   <taskSet count="2">
     <taskSetItem name="getUserInfo">
-      <script1>eio.appendString8(g5.token);
+      <script1>//onComplete();
+if (eb.getCookie("FAToken")=="") {
+    window.location.href = ee.getUrl("/admin/login");
+    return;
+}
+eio.appendString8(eb.getCookie("FAToken"));
 </script1>
       <script2><![CDATA[var token = eio.readString8();
 var sql,sqlResult;
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
-sqlResult = db.executeQuery("PJ", sql);
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
     es.logWarning("数据库执行错误, sql=" + sql);
@@ -856,45 +889,25 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var photo1=db.getString(sqlResult,"photo1");
 es.logWarning(photo1);
 eio.appendString8("T");
-eio.appendString8(db.getString(sqlResult,"photo1"));  
-eio.appendString8(db.getString(sqlResult,"nickName"));
-eio.appendInt32(parseInt(db.getMoney(sqlResult, "balance")*100));
-//eio.appendInt32(parseInt(db.getMoney(sqlResult, "balanceFree")*100)); 
-//eio.appendString8(db.getString(sqlResult,"photo4"));
+eio.appendString16(db.getString(sqlResult,"photo"));  
+eio.appendString16(db.getString(sqlResult,"userName"));
+eio.appendString16(db.getString(sqlResult,"nickName"));
 
 
 
 ]]></script2>
-      <script3><![CDATA[if (eio.readString8()!="T") {
-    window.location.href = ee.pageRoot + "/login";
+      <script3>if (eio.readString8()!="T") {
+    window.location.href = ee.getUrl("/admin/login");
     return;
 }
-g5.photo1 = eio.readString8();
-g5.nickName = eio.readString8();
-g5.balance = eio.readInt32()/100;
-//g5.balanceFree = eio.readInt32()/100;
-//g5.photo4 = eio.readString8();
-if (g5.photo1.length>0) {
-    ee.setImage(ee.getControl("panel4"), "url:/userRes/"+g5.photo1,"fill");
-}else {
-    ee.setImage(ee.getControl("panel4"), "url:/userRes/face.png","fill");    
-}  
+getUserInfo.photo = eio.readString16();
+getUserInfo.userName = eio.readString16();
+getUserInfo.nickName = eio.readString16();
+if (getUserInfo.onComplete) {
+    getUserInfo.onComplete();
+}
 
-ee.setText(ee.getControl("panel23"), g5.nickName);
-ee.setText(ee.getControl("panel24"),"余额"+g5.balance+"元");
-/*
-var s;
-s = (g5.balance + 0.001) + "";
-s = s.substring(0,s.indexOf(".")+3);
-ee.setText(ee.getControl("panel3"), "余额<br/>￥" + s);
-s = (g5.balanceFree + 0.001) + "";
-s = s.substring(0,s.indexOf(".")+3);
-ee.setText(ee.getControl("panel4"), "赠送<br/>￥" + s);
-*/
-//getNewsList();
-//getTask();
-
-]]></script3>
+</script3>
     </taskSetItem>
     <taskSetItem name="news">
       <script1>eio.appendString8(eb.getCookie("pjToken"));
