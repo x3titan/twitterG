@@ -26385,6 +26385,7 @@ sql =
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (dbo.tContent.uplinkType<>'R') and (exBlockList2.id IS NULL) " +
+    " and (exUserInfo.status='IDL') " + 
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -26656,6 +26657,7 @@ var sql =
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (dbo.tContent.uplinkType<>'R') and (exBlockList2.id IS NULL) " +
+    " and (exUserInfo.status='IDL') " + 
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
 
 //es.logCommon(sql);
@@ -31243,6 +31245,26 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock()
     return root;
+} else if (root.v_userInfo.status == "DISABLED") {
+    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  用户被封号，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock()
+    return root;
+} else if (root.v_userInfo.status == "FREEZE") {
+    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  用户被冻结，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock()
+    return root;
 } else if (root.v_userInfo.isBlock2) {
     c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
     c.style.borderWidth = "1px";
@@ -32786,7 +32808,7 @@ c.style.borderRadius = "50%";
 c.v_timer = null;
 root.c_photo = c;
 root.setUserPhoto = function(photo) {
-    if (photo == "") {
+    if ((root.v_userInfo.status == "DISABLED") || (photo == "")) {
         ee.setImage(root.c_photo,"/faith/main/user.png","trim","","")
     } else {
         ee.setImage(root.c_photo,"url:" + g5.imgUrl + photo,"trim","","")
@@ -32822,15 +32844,25 @@ c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
 addText(c, "@"+root.v_userInfo.userName, "left", "middle", "微软雅黑", 12, "6e7f8d", "normal");
 
 //note
-c = createPanel(root, root.id+"panel16", "", 77, cy, w-77-15, 22);
-addText(c, root.v_userInfo.note, "left", "top", "微软雅黑", 12, "14171a", "normal");
-eb.processDock();
-var rect = eb.getDivRect(c.label);
-ee.setRect(c, null, null, null, rect.h);
-cy += rect.h;
+if (root.v_userInfo.note!="") {
+    c = createPanel(root, root.id+"panel16", "", 77, cy, w-77-15, 22);
+    addText(c, root.v_userInfo.note, "left", "top", "微软雅黑", 12, "14171a", "normal");
+    eb.processDock();
+    var rect = eb.getDivRect(c.label);
+    ee.setRect(c, null, null, null, rect.h);
+    cy += rect.h;
+} else {
+    cy += 7;
+}
 
 //button
 if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
+} else if (root.v_userInfo.status == "DISABLED") {
+    c = createPanel(root, root.id+"buttonR1", "", 505, 2, 75, 40);
+    addText(c, "封号", "right", "middle", "微软雅黑", 12, "606060", "");
+} else if (root.v_userInfo.status == "FREEZE") {
+    c = createPanel(root, root.id+"buttonR1", "", 505, 2, 75, 40);
+    addText(c, "冻结", "right", "middle", "微软雅黑", 12, "606060", "");
 } else if (root.v_mode.charAt(0)=="x") {
     c = createPanel(root, root.id+"button11", "", 505, 12, 80, 40);
     addText(c, "已屏蔽", "center", "middle", "微软雅黑", 12, "ffffff", "bold");
