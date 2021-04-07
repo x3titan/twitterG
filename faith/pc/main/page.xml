@@ -2347,6 +2347,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -6867,6 +6868,7 @@ eb.initMouseEvent(sender);
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_block12->相互屏蔽]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>469</top>
@@ -6927,6 +6929,7 @@ eb.initMouseEvent(sender);
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_disabled->封号]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>469</top>
@@ -6987,6 +6990,7 @@ eb.initMouseEvent(sender);
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_freeze->冻结]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>469</top>
@@ -9485,7 +9489,6 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_topBlank = ee.getControl("panel336");
@@ -27638,9 +27641,9 @@ if (options == "hot") {
 } else if (options == "new") {
     cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%'";
 } else if (options == "user") {
-    cond += " dbo.userInfo.userName like '%" + db.encode(searchString) + "%' " +
+    cond += " (dbo.userInfo.userName like '%" + db.encode(searchString) + "%' " +
         " OR dbo.userInfo.nickName like '%" + db.encode(searchString) + "%' " +
-        " OR dbo.userInfo.note like '%" + db.encode(searchString) + "%' ";
+        " OR dbo.userInfo.note like '%" + db.encode(searchString) + "%') ";
 } else if (options == "photo") {
     cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%' and (" +
         "dbo.getPhotoType(dbo.tContent.photo1)='img' OR " +
@@ -27683,7 +27686,7 @@ if (options == "user") {
     "                uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + "     " +
-    "WHERE " + cond + " " +
+    "WHERE " + cond + " and dbo.userInfo.status='IDL' " +
     orderby;
 } else {
     sql =
@@ -27735,7 +27738,7 @@ if (options == "user") {
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "WHERE   (tContent.status<>'DEL') and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " + cond + " " +
+    "WHERE   (tContent.status<>'DEL') and (dbo.userInfo.status='IDL') and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " + cond + " " +
     orderby;
 }
 
@@ -31488,6 +31491,26 @@ if (!showRe) {
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
     addText(c, "  您已被该用户屏蔽，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock();
+    cy+=20;
+} else if (root.v_reUserInfo.status == "DISABLED") {
+    c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  用户被封号，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock();
+    cy+=20;
+} else if (root.v_reUserInfo.status == "FREEZE") {
+    c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  用户被冻结，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock();
     cy+=20;
