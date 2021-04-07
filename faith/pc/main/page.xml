@@ -26192,6 +26192,8 @@ sql =
     "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
     "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) and (exBlockList1.id IS NULL) " +
     "                and (ublockList1.id IS NULL) and (exBlockList2.id IS NULL) " + 
+    " and (exUserInfo.status='IDL' or exUserInfo.status is null) " + 
+    " and (dbo.userInfo.status='IDL') " + 
     "  AND dbo.tContent.status<>'DEL' " + sql1 +
     "ORDER BY dbo.tContent.id DESC ";
    
@@ -26385,7 +26387,7 @@ sql =
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (dbo.tContent.uplinkType<>'R') and (exBlockList2.id IS NULL) " +
-    " and (exUserInfo.status='IDL') " + 
+    " and (exUserInfo.status='IDL' or exUserInfo.status is null) " + 
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -26657,7 +26659,7 @@ var sql =
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (dbo.tContent.uplinkType<>'R') and (exBlockList2.id IS NULL) " +
-    " and (exUserInfo.status='IDL') " + 
+    " and (exUserInfo.status='IDL' or exUserInfo.status is null) " + 
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
 
 //es.logCommon(sql);
@@ -26796,6 +26798,7 @@ sql =
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
     "WHERE (dbo.tContent.status='IDL') and (dbo.tContent.userId = " + userId + ") and (exBlockList1.id IS NULL) and (exBlockList2.id IS NULL) " +
+    " and (exUserInfo.status='IDL' or exUserInfo.status is null) " + 
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
     
 sqlResult = db.executeQuery("DB", sql);
