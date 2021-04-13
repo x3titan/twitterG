@@ -354,6 +354,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1542,6 +1543,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <note>p2</note>
@@ -10513,6 +10515,7 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -20521,7 +20524,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -20764,7 +20766,6 @@ setBookMark();
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName><![CDATA[popup1.p2->B转推菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.327176781002639</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -20793,6 +20794,10 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
     v_reContent = v_reContent.clone();
     ee.setOnClick(this.c_button1, function(button1, event) {
         if (newTwitter.busy) return;
+        if (g5.myUserInfo.status == "FREEZE") {
+            g5.alert1("不能转发", "对不起，您的账户目前处于冻结状态，不能对短文进行直接转发操作。");
+            return;
+        }
         newTwitter.content="";
         newTwitter.uplinkType="L";
         var contentIdB;
@@ -26062,6 +26067,16 @@ if (userName=="guest") {
     eio.appendString8("游客不能对发言进行操作，请注册正式用户。");
     return;
 }
+var myStatus = db.getString(sqlResult,"status");
+if (myStatus == "FREEZE") {
+    eio.appendString8("F");
+    eio.appendString8("对不起，您的账户目前处于冻结状态，不能发表或者回复短文。");
+    return;
+} else if (myStatus != "IDL") {
+    eio.appendString8("F");
+    eio.appendString8("对不起，您的账户目前处于非正常状态（" + myStatus + "），不能发表或者回复短文。");
+    return;
+}
 
 sql = "exec twitterNew " +
     userId + 
@@ -28839,6 +28854,17 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 } 
 var userName = db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
+var myStatus = db.getString(sqlResult,"status");
+if (myStatus == "FREEZE") {
+    eio.appendString8("F");
+    eio.appendString8("对不起，您的账户目前处于冻结状态，不能进行此类操作。");
+    return;
+} else if (myStatus != "IDL") {
+    eio.appendString8("F");
+    eio.appendString8("对不起，您的账户目前处于非正常状态（" + myStatus + "），不能进行此类操作。");
+    return;
+}
+
 if (db.getString(sqlResult,"userName")=="guest") {
     eio.appendString8("F");
     eio.appendString8("游客不能点赞，您如果需要使用这个功能请注册正式用户。");
@@ -28900,6 +28926,16 @@ var userId = db.getString(sqlResult,"id");
 if (db.getString(sqlResult,"userName")=="guest") {
     eio.appendString8("F");
     eio.appendString8("游客不能点踩，您如果需要使用这个功能请注册正式用户。");
+    return;
+}
+var myStatus = db.getString(sqlResult,"status");
+if (myStatus == "FREEZE") {
+    eio.appendString8("F");
+    eio.appendString8("对不起，您的账户目前处于冻结状态，不能进行此类操作。");
+    return;
+} else if (myStatus != "IDL") {
+    eio.appendString8("F");
+    eio.appendString8("对不起，您的账户目前处于非正常状态（" + myStatus + "），不能进行此类操作。");
     return;
 }
 
@@ -31942,6 +31978,10 @@ ee.setOnClick(c,function(sender,event) {
     while(1) {
         if (!sender.v_enabled) break;
         if (likeContent.busy) break;
+        if (g5.myUserInfo.status == "FREEZE") {
+            g5.alert1("不能点赞", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
+            break;
+        }
         var contentIdB;
         if (root.v_content.exUplinkType=="L") {
             contentIdB = root.v_content.exContentId;
@@ -31996,6 +32036,10 @@ ee.setOnClick(c,function(sender,event) {
     while(1) {
         if (!sender.v_enabled) break;
         if (unlikeContent.busy) break;
+        if (g5.myUserInfo.status == "FREEZE") {
+            g5.alert1("不能点踩", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
+            break;
+        }
         var contentIdB;
         if (root.v_content.exUplinkType=="L") {
             contentIdB = root.v_content.exContentId;
