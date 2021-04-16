@@ -1,5 +1,5 @@
 <page>
-  <controls count="600">
+  <controls count="608">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -15971,16 +15971,16 @@ sender.resize = function (img, maxSize) {
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p27->设置-账号-注销]]></layerName>
       <left>0</left>
-      <onCreate><![CDATA[sender.c_edit = ee.getControl("edit15");
-sender.c_button = ee.getControl("panel451");
-sender.c_rProgress = ee.getControl("panel454");
-sender.v_initValue = "";
+      <onCreate>sender.a1 = ee.getControl("panel493");
+sender.a2 = ee.getControl("panel498");
 
 sender.show = function() {
+    if (g5.myUserInfo.status == "DelIn") {
+        this.changePage("a2");
+    } else {
+        this.changePage("a1");
+    }
     g5.changeP2(26);
-    ee.setEditText(this.c_edit, g5.myUserInfo.homePage);
-    this.v_initValue = g5.myUserInfo.homePage;
-    this.refreshProgress(this.c_edit, this.c_rProgress, 50);
 }
 
 sender.activePage = function() {
@@ -15995,31 +15995,21 @@ sender.close = function() {
     ee.setVisible(this, false);
 }
 
-sender.refreshProgress = function(edit, pdiv, maxValue) {
-    var text = ee.getEditText(edit);
-    if (text.length<(maxValue*0.8)) {
-        pdiv.v_color = "#29a5f2";
-        pdiv.v_r = "9";
-        pdiv.refresh(text.length/maxValue);
-        ee.setTextColor(pdiv.parentNode, "rgb(101, 119, 134)");
-        this.c_button.setEnabled(true);        
-    } else if (text.length<=maxValue) {
-        pdiv.v_color = "#ffad1f";
-        pdiv.v_r = "12";
-        pdiv.refresh(text.length/maxValue);    
-        ee.setTextColor(pdiv.parentNode, "#ffad1f");
-        this.c_button.setEnabled(true);        
-    } else {
-        pdiv.v_color = "#e0245e";
-        pdiv.v_r = "14";
-        pdiv.refresh((text.length-maxValue)/maxValue);    
-        ee.setTextColor(pdiv.parentNode, "#e0245e");
-        this.c_button.setEnabled(false);        
+sender.v_currentPageName = "";
+sender.changePage = function(pageName) {
+    if (this.v_currentPageName == "a1") {
+        ee.setVisible(this.a1, false);
+    } else if (this.v_currentPageName == "a2") {
+        ee.setVisible(this.a2, false);
     }
-    ee.setText(pdiv.parentNode, text.length + "/" + maxValue);
-    if (this.v_initValue == text) this.c_button.setEnabled(false);     
+    if (pageName == "a1") {
+        ee.setVisible(this.a1, true);
+    } else if (pageName == "a2") {
+        ee.setVisible(this.a2, true);
+    }
+    this.v_currentPageName = pageName;
 }
-]]></onCreate>
+</onCreate>
       <sizeRatio>1.17</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -16103,6 +16093,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <dockY>top</dockY>
       <height>411</height>
       <heightRatio>0.585470085470086</heightRatio>
+      <layerName><![CDATA[a1->账号正常状态]]></layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
@@ -16161,8 +16152,21 @@ sender.style.borderRight = "";</onCreate>
       <left>464</left>
       <leftRatio>0.773333333333333</leftRatio>
       <note>c_button</note>
-      <onClick>
-///
+      <onClick>g5.popBlack.a6.show(
+    "删除账号",
+    "您的账号将进入删除冷却期，冷却期结束后账号将被永久删除，您是否要继续删除自己的账号？",
+    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+    [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+    function() {
+        delAccount.onComplete = function() {
+        }
+        delAccount();
+    },
+    function() {
+    }
+);
+
+
 </onClick>
       <onCreate>sender.bgColorDisabled = "#8ed0f9";
 sender.bgColorEnabled = "#1da1f2";
@@ -16173,7 +16177,7 @@ sender.setEnabled = function(enabled) {
     this.v_enabled = enabled;
     this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
 }
-sender.setEnabled(false);
+sender.setEnabled(true);
 
 sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -16249,6 +16253,217 @@ eb.initMouseEvent(sender);
 · 冷却期过后，您的账号将被永久删除。如果需要恢复，需要和客服人员联系。</text>
       <top>10</top>
       <topRatio>0.05</topRatio>
+      <width>551</width>
+      <widthRatio>0.964973730297723</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel489/panel498">
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>591</height>
+      <heightRatio>0.841880341880342</heightRatio>
+      <layerName><![CDATA[a2->删除冷却期]]></layerName>
+      <left>0</left>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#e6ecf0";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+
+sender.c_label = ee.getControl("panel509");</onCreate>
+      <outerTop>51</outerTop>
+      <sizeRatio>0.985</sizeRatio>
+      <top>51</top>
+      <topRatio>0.0726495726495727</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel489/panel498/panel499">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>10</height>
+      <heightRatio>0.045662100456621</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel489/panel498/panel500">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>20</height>
+      <heightRatio>0.0359712230215827</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0333333333333333</sizeRatio>
+      <top>461</top>
+      <topRatio>0.829136690647482</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel489/panel498/panel501">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <dockX>right</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.0719424460431655</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>464</left>
+      <leftRatio>0.773333333333333</leftRatio>
+      <note>c_button</note>
+      <onClick>g5.popBlack.a6.show(
+    "停止删除账号",
+    "您的账号处于删除冷却期，冷却期结束后账号将被永久删除，您是否要停止删除自己的账号？",
+    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+    [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","停止删除","停止删除","#ffffff","#ffffff","#ffffff","")],
+    function() {
+        delAccount.onComplete = function() {
+        }
+        delAccount();
+    },
+    function() {
+    }
+);
+
+
+</onClick>
+      <onCreate>sender.bgColorDisabled = "#8ed0f9";
+sender.bgColorEnabled = "#1da1f2";
+sender.bgColorHot = "#1a91da";
+sender.bgColorDown = "#1781c2";
+sender.v_enabled = true;
+sender.setEnabled = function(enabled) {
+    this.v_enabled = enabled;
+    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+}
+sender.setEnabled(true);
+
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorEnabled;
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorDown;
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+}
+eb.initMouseEvent(sender);
+
+
+
+
+
+
+</onCreate>
+      <outerRight>15</outerRight>
+      <sizeRatio>0.330578512396694</sizeRatio>
+      <text>停止删除</text>
+      <top>507</top>
+      <topRatio>0.911870503597122</topRatio>
+      <width>121</width>
+      <widthRatio>0.201666666666667</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel489/panel498/panel506">
+      <backgroundColor>EBEEFA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>center</dockX>
+      <height>242</height>
+      <heightRatio>0.654054054054054</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>14</left>
+      <leftRatio>0.0233333333333333</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";</onCreate>
+      <sizeRatio>0.423817863397548</sizeRatio>
+      <top>20</top>
+      <topRatio>0.0540540540540541</topRatio>
+      <width>571</width>
+      <widthRatio>0.951666666666667</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel489/panel498/panel506/panel507">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>222</height>
+      <heightRatio>0.917355371900827</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0175131348511384</leftRatio>
+      <outerBottom>10</outerBottom>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>0.402903811252269</sizeRatio>
+      <text>· 账号被删除后，您将不能登录本系统，同时您以前发的短文都将不可见，别的用户也无法查看您的个人信息。
+
+· 您确定要删除您的账号后，我们会给您提供3天的冷却期，在这期间，您可以撤销您的删除账号请求。
+
+· 冷却期过后，您的账号将被永久删除。如果需要恢复，需要和客服人员联系。</text>
+      <top>10</top>
+      <topRatio>0.0413223140495868</topRatio>
+      <width>551</width>
+      <widthRatio>0.964973730297723</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel489/panel498/panel508">
+      <backgroundColor>EBEEFA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>center</dockX>
+      <height>171</height>
+      <heightRatio>0.307553956834532</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>14</left>
+      <leftRatio>0.0233333333333333</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";</onCreate>
+      <sizeRatio>0.299474605954466</sizeRatio>
+      <top>275</top>
+      <topRatio>0.494604316546763</topRatio>
+      <width>571</width>
+      <widthRatio>0.951666666666667</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel489/panel498/panel508/panel509">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>151</height>
+      <heightRatio>0.83739837398374</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0175131348511384</leftRatio>
+      <outerBottom>10</outerBottom>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>0.186932849364791</sizeRatio>
+      <text>您目前处于账号冷却期，距离账号永久删除还剩
+3天20小时23分
+您可以随时停止删除。</text>
+      <top>10</top>
+      <topRatio>0.0813008130081301</topRatio>
       <width>551</width>
       <widthRatio>0.964973730297723</widthRatio>
     </control>
@@ -25781,7 +25996,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="63">
+  <taskSet count="65">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -29322,6 +29537,151 @@ if (!db.executeNoneQuery("DB", sql)) {
 }
 unlikeContent.onComplete();
 unlikeContent.busy = false;
+</script3>
+    </taskSetItem>
+    <taskSetItem name="delAccount">
+      <script1>//onComplete
+delAccount.busy = true;
+eio.appendString16(g5.token);
+
+
+
+
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var contentId = parseInt(eio.readString16());
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName = db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+var myStatus = db.getString(sqlResult, "status");
+
+var op;
+if (myStatus == "DelIn") {
+    op = "0";
+} else if (myStatus == "FREEZE") {
+    op = "1";
+} else if (myStatus == "IDL") {
+    op = "1";
+} else {
+    eio.appendString8("F");
+    eio.appendString8("您的账户状态不允许进行删除账号操作");
+    return;
+}
+
+sql = "exec userStartDel " +
+    userId + 
+    "," + op;
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+}
+eio.appendString8("T");
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    delAccount.busy = false;
+    return;
+}
+delAccount.onComplete();
+delAccount.busy = false;
+</script3>
+    </taskSetItem>
+    <taskSetItem name="getDelInTime">
+      <script1>//onComplete(timeRemainSec)
+getDelInTime.busy = true;
+eio.appendString16(g5.token);
+
+
+
+
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var contentId = parseInt(eio.readString16());
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName = db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+var myStatus = db.getString(sqlResult, "status");
+
+var op;
+if (myStatus == "DelIn") {
+    op = "0";
+} else if (myStatus == "FREEZE") {
+    op = "1";
+} else if (myStatus == "IDL") {
+    op = "1";
+} else {
+    eio.appendString8("F");
+    eio.appendString8("您的账户状态不允许进行删除账号操作");
+    return;
+}
+
+sql = "exec userStartDel " +
+    userId + 
+    "," + op;
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+}
+eio.appendString8("T");
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    getDelInTime.busy = false;
+    return;
+}
+getDelInTime.timeRemainSec = eio.readString16();
+getDelInTime.onComplete(parseInt(getDelInTime.timeRemainSec));
+getDelInTime.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="changePassword">
