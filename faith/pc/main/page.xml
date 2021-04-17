@@ -15416,7 +15416,6 @@ sender.refresh = function(progress) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p26->设置-账号-头像和主题背景]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_userPhoto = ee.getControl("panel468");
 sender.c_titleBg = ee.getControl("panel472");
@@ -15970,16 +15969,38 @@ sender.resize = function (img, maxSize) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p27->设置-账号-注销]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.a1 = ee.getControl("panel493");
+      <onCreate><![CDATA[sender.a1 = ee.getControl("panel493");
 sender.a2 = ee.getControl("panel498");
 
 sender.show = function() {
     if (g5.myUserInfo.status == "DelIn") {
         this.changePage("a2");
+        ee.setText(sender.a2.c_label, "");
+        getDelInTime.onComplete = function(timeRemain) {
+            var s = "";
+            var t = "";
+            if (timeRemain>3600*24) {
+                t+=parseInt(timeRemain/3600/24) + "天";
+            }
+            if (timeRemain>3600) {
+                t+=parseInt((timeRemain%(3600*24))/3600) + "小时";
+            }
+            t+=parseInt((timeRemain%(3600))/60) + "分钟";
+            s += "您目前处于账号冷却期，距离账号永久删除还剩";
+            s += "\n<font size='18pt' color='#a06060'><b>" + t + "</b></font>";
+            s += "\n您可以随时停止删除。";
+            ee.setText(sender.a2.c_label, s);
+        }
+        getDelInTime();
     } else {
         this.changePage("a1");
     }
+    if (g5.currentPageIndex == 26) {
+        g5.notPushHistoryCount++;
+    }
+    g5.changeP2(-1);
     g5.changeP2(26);
 }
 
@@ -16009,7 +16030,7 @@ sender.changePage = function(pageName) {
     }
     this.v_currentPageName = pageName;
 }
-</onCreate>
+]]></onCreate>
       <sizeRatio>1.17</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -16159,6 +16180,8 @@ sender.style.borderRight = "";</onCreate>
     [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
     function() {
         delAccount.onComplete = function() {
+            g5.myUserInfo.status = "DelIn";
+            g5.p2.p27.show();
         }
         delAccount();
     },
@@ -16263,6 +16286,7 @@ eb.initMouseEvent(sender);
       <height>591</height>
       <heightRatio>0.841880341880342</heightRatio>
       <layerName><![CDATA[a2->删除冷却期]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -16329,6 +16353,8 @@ sender.c_label = ee.getControl("panel509");</onCreate>
     [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","停止删除","停止删除","#ffffff","#ffffff","#ffffff","")],
     function() {
         delAccount.onComplete = function() {
+            g5.myUserInfo.status = "IDL";
+            g5.p2.p27.show();
         }
         delAccount();
     },
@@ -29644,22 +29670,14 @@ var userName = db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
 var myStatus = db.getString(sqlResult, "status");
 
-var op;
-if (myStatus == "DelIn") {
-    op = "0";
-} else if (myStatus == "FREEZE") {
-    op = "1";
-} else if (myStatus == "IDL") {
-    op = "1";
-} else {
+if (myStatus != "DelIn") {
     eio.appendString8("F");
-    eio.appendString8("您的账户状态不允许进行删除账号操作");
+    eio.appendString8("您的账户状态不正确");
     return;
 }
 
-sql = "exec userStartDel " +
-    userId + 
-    "," + op;
+sql = "exec getUserDelTimeRemain " +
+    userId;
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -29667,12 +29685,9 @@ if (sqlResult == null) {
     return;
 }
 db.read(sqlResult);
-if (db.getString(sqlResult, "errorCode")!="0") {
-    eio.appendString8("F");
-    eio.appendString8(db.getString(sqlResult, "errorString"));
-    return;
-}
 eio.appendString8("T");
+eio.appendString16(db.getString(sqlResult,"timeRemain"));
+
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
     g5.alert1("提示", eio.readString8());
