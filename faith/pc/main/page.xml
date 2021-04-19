@@ -1,5 +1,5 @@
 <page>
-  <controls count="608">
+  <controls count="612">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -2348,7 +2348,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -2361,6 +2360,7 @@ sender.c_block2 = ee.getControl("panel467");
 sender.c_block12 = ee.getControl("panel477");
 sender.c_disabled = ee.getControl("panel481");
 sender.c_freeze = ee.getControl("panel485");
+sender.c_del = ee.getControl("panel510");
 sender.v_userInfo = new g5.UserInfo();
 sender.v_forceDisplay = false;
 
@@ -2636,6 +2636,9 @@ sender.refreshButton = function() {
         ee.setVisible(this.c_button2, false);
     } else if (this.v_userInfo.status == "FREEZE") {
         ee.setVisible(this.c_button2, false);
+    } else if (this.v_userInfo.status == "Del") {
+        ee.setVisible(this.c_button1, false);
+        ee.setVisible(this.c_button2, false);
     } else if (this.v_userInfo.isBlock1 &amp;&amp; this.v_userInfo.isBlock2) {
         //ee.setVisible(this.c_button1, false);
         ee.setVisible(this.c_button2, false);
@@ -2667,13 +2670,13 @@ sender.showByUserInfo = function(v_userInfo) {
     
     var rootH = eb.getDivRect(ee.getControl("panel16")).h;
     //photo
-    if (v_userInfo.status == "DISABLED") {
+    if ((v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del")) {
         ee.getControl("panel23").init("");
     } else {
         ee.getControl("panel23").init(v_userInfo.photo);
     }
     //titleBg
-    if (v_userInfo.status == "DISABLED") {
+    if ((v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del")) {
         ee.getControl("panel20").init("");
     } else {
         ee.getControl("panel20").init(v_userInfo.titleBg);
@@ -2685,7 +2688,7 @@ sender.showByUserInfo = function(v_userInfo) {
     var vspace = 2;
     cy += vspace;
     //note
-    if ((v_userInfo.note != "") &amp;&amp; (v_userInfo.status != "DISABLED")) {
+    if ((v_userInfo.note != "") &amp;&amp; (v_userInfo.status != "DISABLED") &amp;&amp; (v_userInfo.status != "Del")) {
         ee.setRect(ee.getControl("panel69"), null, null, null, 5);
         eb.getDivRect(ee.getControl("panel69")).y = cy;
         ee.setText(ee.getControl("panel69"), v_userInfo.note);
@@ -2696,7 +2699,7 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setVisible(ee.getControl("panel69"), false);
     }
     //homepage
-    if ((v_userInfo.homePage != "") &amp;&amp; (v_userInfo.status != "DISABLED")) {
+    if ((v_userInfo.homePage != "") &amp;&amp; (v_userInfo.status != "DISABLED") &amp;&amp; (v_userInfo.status != "Del")) {
         eb.setDivRect(ee.getControl("layoutx6"),null,cy,null,null);
         ee.setText(ee.getControl("layoutxitem12"), v_userInfo.homePage);
         ee.getControl("layoutxitem12").homePage = v_userInfo.homePage;
@@ -2707,6 +2710,7 @@ sender.showByUserInfo = function(v_userInfo) {
     }
     
     if (v_userInfo.status == "DISABLED") {
+    } else if (v_userInfo.status == "Del") {
     } else {
         eb.setDivRect(ee.getControl("layoutx7"),null,cy,null,null);
         ee.setText(ee.getControl("layoutxitem14"), 
@@ -2716,6 +2720,8 @@ sender.showByUserInfo = function(v_userInfo) {
     }
 
     if (v_userInfo.status == "DISABLED") {
+        ee.setVisible(ee.getControl("panel72"), false);
+    } else if (v_userInfo.status == "Del") {
         ee.setVisible(ee.getControl("panel72"), false);
     } else {
         ee.setVisible(ee.getControl("panel72"), true);
@@ -2732,6 +2738,7 @@ sender.showByUserInfo = function(v_userInfo) {
     ee.setVisible(this.c_block12, false);
     ee.setVisible(this.c_disabled, false);
     ee.setVisible(this.c_freeze, false);
+    ee.setVisible(this.c_del, false);
     if (v_userInfo.isBlock1 &amp;&amp; v_userInfo.isBlock2) {
         g5.changeP2(1);
         ee.setVisible(this.c_block12, true);
@@ -2780,6 +2787,16 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setVisible(this.c_freeze, true);
         ee.setRect(this.c_freeze, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
         var r1 = eb.getDivRectSetting(this.c_freeze);
+        ee.setRect(this,null,null,null,r1.y+r1.h);
+        ee.resizeV(this.parentNode, 1);
+        ee.setVisible(g5.p3, false);
+        ee.setVisible(this.p2sub, false);
+        return;
+    } else if (v_userInfo.status == "Del") {
+        g5.changeP2(1);
+        ee.setVisible(this.c_del, true);
+        ee.setRect(this.c_del, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
+        var r1 = eb.getDivRectSetting(this.c_del);
         ee.setRect(this,null,null,null,r1.y+r1.h);
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
@@ -7051,6 +7068,66 @@ eb.initMouseEvent(sender);
       <left>0</left>
       <sizeRatio>0.0566666666666667</sizeRatio>
       <text>该用户被暂时冻结，无法继续访问。</text>
+      <top>64</top>
+      <topRatio>0.232727272727273</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel510">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>275</height>
+      <heightRatio>0.352564102564103</heightRatio>
+      <layerName><![CDATA[  c_del->销号]]></layerName>
+      <left>0</left>
+      <sizeRatio>0.458333333333333</sizeRatio>
+      <top>522</top>
+      <topRatio>0.669230769230769</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel510/panel511">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>1</height>
+      <heightRatio>0.00363636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>PLine1</note>
+      <sizeRatio>0.00166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel510/panel512">
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>已销号</text>
+      <top>32</top>
+      <topRatio>0.116363636363636</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel510/panel513">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>该用户已经销号，无法继续访问。</text>
       <top>64</top>
       <topRatio>0.232727272727273</topRatio>
       <width>600</width>
@@ -15416,6 +15493,7 @@ sender.refresh = function(progress) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p26->设置-账号-头像和主题背景]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_userPhoto = ee.getControl("panel468");
 sender.c_titleBg = ee.getControl("panel472");
