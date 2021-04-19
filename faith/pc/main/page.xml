@@ -26844,7 +26844,7 @@ sql =
     "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) and (exBlockList1.id IS NULL) " +
     "                and (ublockList1.id IS NULL) and (exBlockList2.id IS NULL) " + 
     " and (exUserInfo.status='IDL' or exUserInfo.status is null) " + 
-    " and (dbo.userInfo.status='IDL') " + 
+    " and (dbo.userInfo.status='IDL' or dbo.userInfo.status='DelIn') " + 
     "  AND dbo.tContent.status<>'DEL' " + sql1 +
     "ORDER BY dbo.tContent.id DESC ";
    
@@ -28344,7 +28344,7 @@ if (options == "user") {
     "                uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + "     " +
-    "WHERE " + cond + " and dbo.userInfo.status='IDL' " +
+    "WHERE " + cond + " and (dbo.userInfo.status='IDL' or dbo.userInfo.status='DelIn') " +
     orderby;
 } else {
     sql =
@@ -28396,7 +28396,7 @@ if (options == "user") {
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "WHERE   (tContent.status<>'DEL') and (dbo.userInfo.status='IDL') and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " + cond + " " +
+    "WHERE   (tContent.status<>'DEL') and (dbo.userInfo.status='IDL' or dbo.userInfo.status='DelIn') and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " + cond + " " +
     orderby;
 }
 

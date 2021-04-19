@@ -1,5 +1,5 @@
 <page>
-  <controls count="287">
+  <controls count="290">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -7,7 +7,9 @@
       <dockY>fill</dockY>
       <height>796</height>
       <left>0</left>
-      <onControlLoad><![CDATA[//分页处理
+      <onControlLoad><![CDATA[g5.p1 = ee.getControl("panel38");
+
+//分页处理
 g5.pageSize = 15;
 g5.pageCurrent = 1;
 g5.pageCount = 1;
@@ -36,7 +38,15 @@ query();
     background-color:#289ccf;
     transition: background-color 0.3s;
 }
-
+   
+.buttonSelectBlue {
+    background-color: ;
+    transition: background-color 0.3s;
+}
+.buttonSelectBlue:hover{
+    background-color:#e0e0ff;
+    transition: background-color 0.6s;
+}
 
 </style>]]></pageHead>
       <top>0</top>
@@ -48,6 +58,7 @@ query();
       <dockY>fill</dockY>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.700087950747581</sizeRatio>
       <top>0</top>
@@ -60,6 +71,7 @@ query();
       <heavyEnabled>false</heavyEnabled>
       <height>60</height>
       <heightRatio>0.0753768844221105</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0527704485488127</sizeRatio>
       <top>0</top>
@@ -71,6 +83,7 @@ query();
       <fieldCount>2</fieldCount>
       <height>35</height>
       <heightRatio>0.583333333333333</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>782</left>
       <leftRatio>0.687774846086192</leftRatio>
       <outerRight>50</outerRight>
@@ -87,6 +100,7 @@ query();
       <fontColor>FFFFFF</fontColor>
       <height>35</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.pageJump(g5.pageCurrent-1);</onClick>
       <sizeRatio>0.139442231075697</sizeRatio>
@@ -105,6 +119,7 @@ query();
       <heightRatio>1</heightRatio>
       <inputFontBold>true</inputFontBold>
       <inputFontColor>198DC9</inputFontColor>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.139442231075697</sizeRatio>
       <text>请输入模糊搜索文字</text>
@@ -119,6 +134,7 @@ query();
       <heavyEnabled>false</heavyEnabled>
       <height>35</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>251</left>
       <leftRatio>0.822950819672131</leftRatio>
       <sizeRatio>0.648148148148148</sizeRatio>
@@ -138,6 +154,7 @@ query();
       <fontColor2>FFFFFF</fontColor2>
       <height>35</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>query();</onClick>
       <sizeRatio>0.648148148148148</sizeRatio>
@@ -152,6 +169,7 @@ query();
       <dockY>fill</dockY>
       <height>23</height>
       <heightRatio>0.657142857142857</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0925925925925926</leftRatio>
       <outerBottom>8</outerBottom>
@@ -173,6 +191,7 @@ query();
       <fontSize>12</fontSize>
       <height>34</height>
       <heightRatio>0.566666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>21</left>
       <leftRatio>0.0184696569920844</leftRatio>
       <onClick>if (!g5.tableClick.valid) {
@@ -226,6 +245,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <fontSize>12</fontSize>
       <height>34</height>
       <heightRatio>0.566666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>158</left>
       <leftRatio>0.13896218117854</leftRatio>
       <onClick>if (!g5.tableClick.valid) {
@@ -279,6 +299,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <fontSize>12</fontSize>
       <height>34</height>
       <heightRatio>0.566666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>298</left>
       <leftRatio>0.262093227792436</leftRatio>
       <onClick>if (!g5.tableClick.valid) {
@@ -311,11 +332,56 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <width>123</width>
       <widthRatio>0.108179419525066</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel40">
+      <backgroundColor>30B5EF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <dockY>bottom</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.566666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>436</left>
+      <leftRatio>0.383465259454705</leftRatio>
+      <onClick><![CDATA[if (!g5.tableClick.valid) {
+    alert("请选择有效的记录进行操作");
+    return;
+}
+
+var userId = query.dataset.getData(0,g5.tableClick.y);
+
+g5.p1.a1.show(sender, "<font color='#00A000'>正常状态</font>,IDL;销号状态,Del;封号状态,DISABLED;冻结状态,FREEZE", function(index, results) {
+    if (index<0) return;
+    if (!confirm("本操作属于危险操作，用户会强制进入新的状态而忽略当前的状态。您是否继续进行本操作？")) {
+        return;
+    }
+    if (setUserStatus.busy) return;
+    setUserStatus.userId = userId;
+    setUserStatus.newStatus = results[1];
+    setUserStatus.onComplete = function() {
+        query();
+    }
+    setUserStatus();
+});]]></onClick>
+      <onCreate>sender.className = "buttonBlue";
+sender.style.backgroundColor = "";
+//var p = eb.getDivRectSetting(sender).h + "px";
+//sender.style.borderRadius = parseInt(eb.getDivRectSetting(sender).h/2) + "px";
+sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
+      <sizeRatio>0.276422764227642</sizeRatio>
+      <text>强置状态</text>
+      <top>26</top>
+      <topRatio>0.433333333333333</topRatio>
+      <width>123</width>
+      <widthRatio>0.108179419525066</widthRatio>
+    </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
       <autoScroll>true</autoScroll>
       <backgroundColor>FF8000</backgroundColor>
       <height>697</height>
       <heightRatio>0.875628140703518</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.61301671064204</sizeRatio>
       <top>60</top>
@@ -330,6 +396,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <dockY>fill</dockY>
       <height>52</height>
       <heightRatio>0.0746054519368723</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <minHeight>370</minHeight>
       <minWidth>1000</minWidth>
@@ -347,6 +414,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <heavy>60</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.284153005464481</sizeRatio>
       <text>用户名
@@ -361,6 +429,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0192307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>51</top>
@@ -376,6 +445,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <heavy>23</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <sizeRatio>0.742857142857143</sizeRatio>
@@ -390,6 +460,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0192307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>51</top>
@@ -405,6 +476,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <heavy>50</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <sizeRatio>0.342105263157895</sizeRatio>
@@ -420,6 +492,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0192307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>51</top>
@@ -435,6 +508,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <heavy>40</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <sizeRatio>0.426229508196721</sizeRatio>
@@ -450,6 +524,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0192307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>51</top>
@@ -465,6 +540,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <heavy>50</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <sizeRatio>0.339869281045752</sizeRatio>
@@ -479,6 +555,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0192307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>51</top>
@@ -494,6 +571,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <heavy>30</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <sizeRatio>0.571428571428571</sizeRatio>
@@ -508,6 +586,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0192307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>51</top>
@@ -523,6 +602,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <heavy>120</heavy>
       <height>52</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <sizeRatio>0.14207650273224</sizeRatio>
@@ -537,6 +617,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0192307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>51</top>
@@ -549,6 +630,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <backgroundImg>xz_bn.png</backgroundImg>
       <height>645</height>
       <heightRatio>0.925394548063128</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <rowCount>15</rowCount>
       <sizeRatio>0.567282321899736</sizeRatio>
@@ -566,6 +648,7 @@ sender.style.borderRadius = "10px 10px 0px 0px";</onCreate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <onUpdate><![CDATA[if (!query.dataset) {
@@ -592,6 +675,7 @@ ee.setText(sender, s);]]></onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -607,6 +691,7 @@ ee.setText(sender, s);]]></onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -625,7 +710,7 @@ if (s == "IDL") {
 } else if (s == "DelIn") {
     s = "<font color='#C00000'>删号冷却期</font>";
 } else if (s == "Del") {
-    s = "<font color='#C00000'>正常删号</font>";
+    s = "<font color='#C00000'>销号</font>";
 }
 ee.setText(sender, s);
 ]]></onUpdate>
@@ -642,6 +727,7 @@ ee.setText(sender, s);
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -656,6 +742,7 @@ ee.setText(sender, s);
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -679,6 +766,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -693,6 +781,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -716,6 +805,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -729,6 +819,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -788,6 +879,7 @@ if (img2=="") {
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -798,6 +890,7 @@ if (img2=="") {
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem2/panel26">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -812,6 +905,7 @@ if (img2=="") {
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -839,6 +933,7 @@ ee.setText(sender, s);]]></onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -853,6 +948,7 @@ ee.setText(sender, s);]]></onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -876,6 +972,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -891,6 +988,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -906,6 +1004,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -921,6 +1020,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -937,6 +1037,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -951,6 +1052,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -967,6 +1069,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -981,6 +1084,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -997,6 +1101,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -1010,6 +1115,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1026,6 +1132,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -1036,6 +1143,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp149/temp99">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -1050,6 +1158,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1066,6 +1175,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -1080,6 +1190,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1096,6 +1207,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -1111,6 +1223,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -1126,6 +1239,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -1141,6 +1255,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1157,6 +1272,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -1171,6 +1287,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1187,6 +1304,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -1201,6 +1319,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1217,6 +1336,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -1230,6 +1350,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1246,6 +1367,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -1256,6 +1378,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp163/temp100">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -1270,6 +1393,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1286,6 +1410,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -1300,6 +1425,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1316,6 +1442,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -1331,6 +1458,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -1346,6 +1474,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -1361,6 +1490,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1377,6 +1507,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -1391,6 +1522,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1407,6 +1539,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -1421,6 +1554,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1437,6 +1571,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -1450,6 +1585,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1466,6 +1602,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -1476,6 +1613,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp177/temp101">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -1490,6 +1628,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1506,6 +1645,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -1520,6 +1660,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1536,6 +1677,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -1551,6 +1693,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -1566,6 +1709,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -1581,6 +1725,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1597,6 +1742,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -1611,6 +1757,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1627,6 +1774,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -1641,6 +1789,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1657,6 +1806,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -1670,6 +1820,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1686,6 +1837,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -1696,6 +1848,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp191/temp102">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -1710,6 +1863,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1726,6 +1880,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -1740,6 +1895,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1756,6 +1912,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -1771,6 +1928,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -1786,6 +1944,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -1801,6 +1960,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1817,6 +1977,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -1831,6 +1992,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1847,6 +2009,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -1861,6 +2024,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1877,6 +2041,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -1890,6 +2055,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1906,6 +2072,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -1916,6 +2083,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp205/temp103">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -1930,6 +2098,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1946,6 +2115,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -1960,6 +2130,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -1976,6 +2147,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -1991,6 +2163,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -2006,6 +2179,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -2021,6 +2195,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2037,6 +2212,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -2051,6 +2227,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2067,6 +2244,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -2081,6 +2259,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2097,6 +2276,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -2110,6 +2290,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2126,6 +2307,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -2136,6 +2318,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp219/temp104">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -2150,6 +2333,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2166,6 +2350,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -2180,6 +2365,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2196,6 +2382,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -2211,6 +2398,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -2226,6 +2414,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -2241,6 +2430,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2257,6 +2447,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -2271,6 +2462,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2287,6 +2479,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -2301,6 +2494,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2317,6 +2511,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -2330,6 +2525,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2346,6 +2542,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -2356,6 +2553,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp233/temp105">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -2370,6 +2568,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2386,6 +2585,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -2400,6 +2600,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2416,6 +2617,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -2431,6 +2633,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -2446,6 +2649,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -2461,6 +2665,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2477,6 +2682,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -2491,6 +2697,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2507,6 +2714,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -2521,6 +2729,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2537,6 +2746,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -2550,6 +2760,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2566,6 +2777,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -2576,6 +2788,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp247/temp106">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -2590,6 +2803,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2606,6 +2820,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -2620,6 +2835,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2636,6 +2852,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -2651,6 +2868,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -2666,6 +2884,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -2681,6 +2900,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2697,6 +2917,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -2711,6 +2932,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2727,6 +2949,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -2741,6 +2964,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2757,6 +2981,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -2770,6 +2995,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2786,6 +3012,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -2796,6 +3023,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp270/temp107">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -2810,6 +3038,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2826,6 +3055,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -2840,6 +3070,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2856,6 +3087,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -2871,6 +3103,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -2886,6 +3119,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -2901,6 +3135,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2917,6 +3152,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -2931,6 +3167,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2947,6 +3184,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -2961,6 +3199,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -2977,6 +3216,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -2990,6 +3230,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3006,6 +3247,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -3016,6 +3258,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp298/temp108">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -3030,6 +3273,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3046,6 +3290,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -3060,6 +3305,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3076,6 +3322,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -3091,6 +3338,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -3106,6 +3354,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -3121,6 +3370,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3137,6 +3387,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -3151,6 +3402,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3167,6 +3419,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -3181,6 +3434,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3197,6 +3451,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -3210,6 +3465,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3226,6 +3482,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -3236,6 +3493,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp326/temp109">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -3250,6 +3508,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3266,6 +3525,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -3280,6 +3540,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3296,6 +3557,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -3311,6 +3573,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -3326,6 +3589,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -3341,6 +3605,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3357,6 +3622,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -3371,6 +3637,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3387,6 +3654,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -3401,6 +3669,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3417,6 +3686,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -3430,6 +3700,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3446,6 +3717,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -3456,6 +3728,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp354/temp110">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -3470,6 +3743,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3486,6 +3760,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -3500,6 +3775,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3516,6 +3792,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -3531,6 +3808,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -3546,6 +3824,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -3561,6 +3840,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3577,6 +3857,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -3591,6 +3872,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3607,6 +3889,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -3621,6 +3904,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3637,6 +3921,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -3650,6 +3935,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3666,6 +3952,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -3676,6 +3963,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp382/temp111">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -3690,6 +3978,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3706,6 +3995,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -3720,6 +4010,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3736,6 +4027,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -3751,6 +4043,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>right</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.tableClick(sender);</onClick>
       <sizeRatio>0.234972677595628</sizeRatio>
@@ -3766,6 +4059,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00546448087431694</sizeRatio>
       <top>42</top>
@@ -3781,6 +4075,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>183</left>
       <leftRatio>0.160949868073879</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3797,6 +4092,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0142857142857143</sizeRatio>
       <top>42</top>
@@ -3811,6 +4107,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.222515391380827</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3827,6 +4124,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00657894736842105</sizeRatio>
       <top>42</top>
@@ -3841,6 +4139,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>545454</fontColor>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>405</left>
       <leftRatio>0.356200527704486</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3857,6 +4156,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00819672131147541</sizeRatio>
       <top>42</top>
@@ -3870,6 +4170,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>527</left>
       <leftRatio>0.463500439753738</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3886,6 +4187,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0065359477124183</sizeRatio>
       <top>42</top>
@@ -3896,6 +4198,7 @@ ee.setText(sender, s);</onUpdate>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp410/temp112">
       <height>36</height>
       <heightRatio>0.837209302325581</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>5</left>
       <leftRatio>0.0326797385620915</leftRatio>
       <sizeRatio>0.818181818181818</sizeRatio>
@@ -3910,6 +4213,7 @@ ee.setText(sender, s);</onUpdate>
       <fontBold>true</fontBold>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>680</left>
       <leftRatio>0.59806508355321</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3926,6 +4230,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.010989010989011</sizeRatio>
       <top>42</top>
@@ -3940,6 +4245,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>43</height>
       <heightRatio>0.0666666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>771</left>
       <leftRatio>0.678100263852243</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
@@ -3956,6 +4262,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.0232558139534884</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.00273224043715847</sizeRatio>
       <top>42</top>
@@ -3970,6 +4277,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>top</dockY>
       <height>18</height>
       <heightRatio>0.0258249641319943</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <outerTop>-7</outerTop>
       <sizeRatio>0.0158311345646438</sizeRatio>
@@ -3985,6 +4293,7 @@ ee.setText(sender, s);</onUpdate>
       <heavyEnabled>false</heavyEnabled>
       <height>39</height>
       <heightRatio>0.0489949748743719</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0343007915567282</sizeRatio>
       <top>757</top>
@@ -3999,6 +4308,7 @@ ee.setText(sender, s);</onUpdate>
       <hAlign>left</hAlign>
       <height>27</height>
       <heightRatio>0.692307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>40</left>
       <leftRatio>0.0351802990325418</leftRatio>
       <sizeRatio>0.139896373056995</sizeRatio>
@@ -4013,6 +4323,7 @@ ee.setText(sender, s);</onUpdate>
       <dockY>top</dockY>
       <height>27</height>
       <heightRatio>0.692307692307692</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>800</left>
       <leftRatio>0.703605980650836</leftRatio>
       <outerRight>50</outerRight>
@@ -4029,6 +4340,7 @@ ee.setText(sender, s);</onUpdate>
       <fontColor>FFFFFF</fontColor>
       <height>27</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.pageJump(g5.pageCurrent-1);</onClick>
       <onCreate>sender.className = "buttonBlue";
@@ -4046,6 +4358,7 @@ sender.style.borderRadius = "0px 0px 0px 5px";</onCreate>
       <fontColor>30B5EF</fontColor>
       <height>27</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>96</left>
       <leftRatio>0.334494773519164</leftRatio>
       <sizeRatio>0.284210526315789</sizeRatio>
@@ -4061,6 +4374,7 @@ sender.style.borderRadius = "0px 0px 0px 5px";</onCreate>
       <dockY>bottom</dockY>
       <height>1</height>
       <heightRatio>0.037037037037037</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0105263157894737</sizeRatio>
       <top>26</top>
@@ -4075,6 +4389,7 @@ sender.style.borderRadius = "0px 0px 0px 5px";</onCreate>
       <dockY>top</dockY>
       <height>1</height>
       <heightRatio>0.037037037037037</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.0105263157894737</sizeRatio>
       <top>0</top>
@@ -4089,6 +4404,7 @@ sender.style.borderRadius = "0px 0px 0px 5px";</onCreate>
       <fontColor>FFFFFF</fontColor>
       <height>27</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>191</left>
       <leftRatio>0.665505226480836</leftRatio>
       <onClick>g5.pageJump(g5.pageCurrent+1);</onClick>
@@ -4130,6 +4446,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>28</left>
       <leftRatio>0.0452342487883683</leftRatio>
       <sizeRatio>0.168224299065421</sizeRatio>
@@ -4145,6 +4462,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <dockX>fill</dockX>
       <height>2</height>
       <heightRatio>0.00350262697022767</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>30</left>
       <leftRatio>0.0484652665589661</leftRatio>
       <outerLeft>30</outerLeft>
@@ -4161,6 +4479,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>60</left>
       <leftRatio>0.0969305331179321</leftRatio>
       <sizeRatio>0.5</sizeRatio>
@@ -4176,6 +4495,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>61</left>
       <leftRatio>0.098546042003231</leftRatio>
       <sizeRatio>0.507042253521127</sizeRatio>
@@ -4191,6 +4511,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>61</left>
       <leftRatio>0.098546042003231</leftRatio>
       <sizeRatio>0.48</sizeRatio>
@@ -4211,6 +4532,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <fontColor2>FFFFFF</fontColor2>
       <height>39</height>
       <heightRatio>0.0683012259194396</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>407</left>
       <leftRatio>0.65751211631664</leftRatio>
       <onClick>if (g5.operation == "new") {
@@ -4231,6 +4553,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <backgroundImgMode>fill</backgroundImgMode>
       <height>18</height>
       <heightRatio>0.461538461538462</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>30</left>
       <leftRatio>0.212765957446809</leftRatio>
       <outerBottom>5</outerBottom>
@@ -4254,6 +4577,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <fontColor2>FFFFFF</fontColor2>
       <height>39</height>
       <heightRatio>0.0683012259194396</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>250</left>
       <leftRatio>0.403877221324717</leftRatio>
       <onClick>ee.setVisible(ee.getControl("panel1"), false);</onClick>
@@ -4269,6 +4593,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <backgroundImgMode>fill</backgroundImgMode>
       <height>18</height>
       <heightRatio>0.461538461538462</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>30</left>
       <leftRatio>0.212765957446809</leftRatio>
       <outerBottom>5</outerBottom>
@@ -4289,6 +4614,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <dockY>top</dockY>
       <height>25</height>
       <heightRatio>0.0437828371278459</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>560</left>
       <leftRatio>0.904684975767367</leftRatio>
       <onClick>ee.setVisible(ee.getControl("panel1"), false);</onClick>
@@ -4308,6 +4634,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <heightRatio>0.245183887915937</heightRatio>
       <inputFontBold>true</inputFontBold>
       <inputFontColor>808080</inputFontColor>
+      <layerVisible>false</layerVisible>
       <left>133</left>
       <leftRatio>0.21486268174475</leftRatio>
       <multiLine>true</multiLine>
@@ -4325,6 +4652,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <heightRatio>0.0630472854640981</heightRatio>
       <inputFontBold>true</inputFontBold>
       <inputFontColor>808080</inputFontColor>
+      <layerVisible>false</layerVisible>
       <left>133</left>
       <leftRatio>0.21486268174475</leftRatio>
       <sizeRatio>0.0861244019138756</sizeRatio>
@@ -4340,6 +4668,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>133</left>
       <leftRatio>0.21486268174475</leftRatio>
       <sizeRatio>0.346153846153846</sizeRatio>
@@ -4355,6 +4684,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>61</left>
       <leftRatio>0.098546042003231</leftRatio>
       <sizeRatio>0.507042253521127</sizeRatio>
@@ -4373,6 +4703,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <inputFontBold>true</inputFontBold>
       <inputFontColor>808080</inputFontColor>
       <inputPassword>true</inputPassword>
+      <layerVisible>false</layerVisible>
       <left>133</left>
       <leftRatio>0.21486268174475</leftRatio>
       <sizeRatio>0.0861244019138756</sizeRatio>
@@ -4388,6 +4719,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>61</left>
       <leftRatio>0.098546042003231</leftRatio>
       <sizeRatio>0.507042253521127</sizeRatio>
@@ -4406,6 +4738,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <inputFontBold>true</inputFontBold>
       <inputFontColor>808080</inputFontColor>
       <inputPassword>true</inputPassword>
+      <layerVisible>false</layerVisible>
       <left>133</left>
       <leftRatio>0.21486268174475</leftRatio>
       <sizeRatio>0.0861244019138756</sizeRatio>
@@ -4421,6 +4754,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>61</left>
       <leftRatio>0.098546042003231</leftRatio>
       <sizeRatio>0.507042253521127</sizeRatio>
@@ -4438,6 +4772,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <heightRatio>0.0630472854640981</heightRatio>
       <inputFontBold>true</inputFontBold>
       <inputFontColor>808080</inputFontColor>
+      <layerVisible>false</layerVisible>
       <left>133</left>
       <leftRatio>0.21486268174475</leftRatio>
       <sizeRatio>0.0861244019138756</sizeRatio>
@@ -4453,6 +4788,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>61</left>
       <leftRatio>0.098546042003231</leftRatio>
       <sizeRatio>0.507042253521127</sizeRatio>
@@ -4470,6 +4806,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <heightRatio>0.0630472854640981</heightRatio>
       <inputFontBold>true</inputFontBold>
       <inputFontColor>808080</inputFontColor>
+      <layerVisible>false</layerVisible>
       <left>133</left>
       <leftRatio>0.21486268174475</leftRatio>
       <sizeRatio>0.0861244019138756</sizeRatio>
@@ -4485,6 +4822,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <hAlign>left</hAlign>
       <height>36</height>
       <heightRatio>0.0630472854640981</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>61</left>
       <leftRatio>0.098546042003231</leftRatio>
       <sizeRatio>0.507042253521127</sizeRatio>
@@ -4502,6 +4840,7 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <heightRatio>0.0630472854640981</heightRatio>
       <inputFontBold>true</inputFontBold>
       <inputFontColor>808080</inputFontColor>
+      <layerVisible>false</layerVisible>
       <left>133</left>
       <leftRatio>0.21486268174475</leftRatio>
       <sizeRatio>0.0861244019138756</sizeRatio>
@@ -4511,8 +4850,134 @@ sender.style.borderRadius = "0px 0px 5px 0px";</onCreate>
       <width>418</width>
       <widthRatio>0.675282714054927</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel38">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>796</height>
+      <heightRatio>1</heightRatio>
+      <layerName>p1 主页透明弹窗</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
+    if (sender.eeChildren[i].close) {
+        sender.eeChildren[i].close();
+    } else {
+        ee.setVisible(sender.eeChildren[i], false);
+    }
+}
+ee.setVisible(sender, false);]]></onClick>
+      <onCreate>sender.a1 = ee.getControl("panel39");</onCreate>
+      <sizeRatio>0.700087950747581</sizeRatio>
+      <top>0</top>
+      <width>1137</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel38/panel39">
+      <backgroundColor>FAFAFA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>482</height>
+      <heightRatio>0.605527638190955</heightRatio>
+      <layerName>a1 弹出菜单</layerName>
+      <layerVisible>false</layerVisible>
+      <left>167</left>
+      <leftRatio>0.146877748460862</leftRatio>
+      <onCreate><![CDATA[sender.c_items = new Array();
+sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#a0a0a0";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = "10px";
+sender.style.boxShadow  = "5px 5px 10px #d0d0d0";
+
+sender.show = function(refDiv, list, onComplete) {
+    var options = list.split(";");
+    var i = 0;
+    while (i<options.length) {
+        if (options[i].trim()=="") {
+            options.splice(i, 1);
+        } else {
+            i++;
+        }
+    }
+    this.itemsClear();
+    var root;
+    var maxX = 0;
+    for (var i=0; i<options.length; i++) {
+        root = this.itemsAdd(options[i].split(","));
+        root.v_index = i;
+        this.c_items.push(root);
+        var rect = eb.getDivRectSetting(root);
+        if (rect.w>maxX) maxX = rect.w;
+    }
+    this.v_result = new Array();
+    this.v_resultIndex = -1;
+    this.f_onComplete = onComplete;
+    ee.setRect(this,null,null,parseInt(maxX*1.3),null);
+    eb.processDock();
+    ee.tiledV(this, 0, 10, 10);
+    ee.tiledResizeV(this, 1);
+    var rect = g5.getRectAbs(refDiv);
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        ee.setRect(this, rect.x - 50, rect.y - eb.getDivRect(this).h - 10, null, null);
+    } else {
+        ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
+    }
+    ee.setVisible(this, true);
+    ee.setVisible(this.parentNode, true);
+}
+
+sender.close = function() {
+    ee.setVisible(this, false);
+    this.f_onComplete(this.v_resultIndex, this.v_result);
+}
+
+sender.itemsClear = function() {
+    while (this.c_items.length>0) {
+        ee.removeControl(this.c_items[this.c_items.length-1]);
+        this.c_items.splice(this.c_items.length-1, 1);
+    }
+}
+
+sender.itemsAdd = function(value) {
+    var c;
+    var root;
+    root = createPanel(this, this.id + "panel" + value[1], "", 10, 10, 1, 50);
+    root.v_value = value;
+    root.className = "buttonSelectBlue";
+    root.style.cursor = "pointer";
+    eb.setDock(root,"fill","disabled");
+    eb.setOuter(root,0,0,1,0);
+    ee.setOnClick(root, function(senderBtn,event) {
+        sender.v_result = root.v_value;
+        sender.v_resultIndex = root.v_index;
+        //window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    
+    c = createPanel(root, root.id+"panel16", "", 10, 10, 10, 22);
+    addText(c, root.v_value[0], "left", "middle", "微软雅黑", 12, "14171a", "bold");
+    c.label.style.whiteSpace = "nowrap";
+    eb.setDock(c,"fill","disabled");
+    eb.setOuter(c,10,0,10,0);
+    var rect = eb.getDivRect(c.label);
+    ee.setRect(root, null, null, rect.w + 20, null);
+
+    return root;
+}
+]]></onCreate>
+      <sizeRatio>1.19012345679012</sizeRatio>
+      <top>101</top>
+      <topRatio>0.126884422110553</topRatio>
+      <width>405</width>
+      <widthRatio>0.356200527704486</widthRatio>
+    </control>
   </controls>
-  <taskSet count="7">
+  <taskSet count="8">
     <taskSetItem name="query">
       <script1>eio.appendString8(eb.getCookie("FAToken")); 
 eio.appendString8(ee.getEditText(ee.getControl("edit3")));
@@ -4958,6 +5423,67 @@ if (freezeUser.onComplete) freezeUser.onComplete();
 freezeUser.busy = false;
 </script3>
     </taskSetItem>
+    <taskSetItem name="setUserStatus">
+      <script1>//userId,newStatus,onComplete()
+if (setUserStatus.busy) return;
+setUserStatus.busy = true;
+eio.appendString16(eb.getCookie("FAToken"));
+eio.appendString16(setUserStatus.userId);
+eio.appendString16(setUserStatus.newStatus);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userId = parseInt(eio.readString16());
+var newStatus = eio.readString16();
+
+//获取用户信息及认证
+var sql,sqlResult;
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var myUserId = db.getString(sqlResult, "id");
+var myUserName = db.getString(sqlResult, "userName");
+
+sql = "exec userSetStatus " +
+    myUserId + "," +
+    userId + "," +
+    db.encode(newStatus);
+sqlResult = db.executeQuery("DB", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "errorCode") != 0) {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    setUserStatus.busy = false;
+    alert("操作失败：" + eio.readString8());
+    return;
+}
+
+if (setUserStatus.onComplete) setUserStatus.onComplete();
+setUserStatus.busy = false;
+</script3>
+    </taskSetItem>
     <taskSetItem name="delFollow">
       <script1>//userId,onComplete(result)
 if (delFollow.busy) return;
@@ -5019,7 +5545,7 @@ delFollow.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="2">
+  <g5Items count="3">
     <item name="imgUrl" type="10">
       <varValue>"/incoming/";</varValue>
       <functionParam />
@@ -5046,6 +5572,22 @@ g5.tableClick.y = sender.rowIndex;
 if (g5.tableClick.y>=query.dataset.rowCount) return;
 g5.tableClick.valid = true;
 ]]></functionCode>
+    </item>
+    <item name="getRectAbs" type="20">
+      <varValue />
+      <functionParam>div</functionParam>
+      <functionCode>var rect = eb.getDivRect(div);
+var result = eb.getDivRect(div);
+while (true) {
+    div = div.parentNode;
+    if (eb.isEmpty(div)) break;
+    if (div.id == "divRoot") break;
+    rect = eb.getDivRect(div);
+    result.x+=rect.x-div.scrollLeft;
+    result.y+=rect.y-div.scrollTop;
+}
+result.y -= document.documentElement.scrollTop;
+return result;</functionCode>
     </item>
   </g5Items>
 </page>
