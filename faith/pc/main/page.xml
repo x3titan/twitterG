@@ -32066,6 +32066,16 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock()
     return root;
+} else if (root.v_userInfo.status == "Del") {
+    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  用户已经销号，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock()
+    return root;
 } else if (root.v_userInfo.status == "FREEZE") {
     c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
     c.style.borderWidth = "1px";
@@ -32344,6 +32354,16 @@ if (!showRe) {
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
     addText(c, "  用户被冻结，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock();
+    cy+=20;
+} else if (root.v_reUserInfo.status == "Del") {
+    c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  用户已销号，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock();
     cy+=20;
@@ -33604,22 +33624,20 @@ root.style.borderStyle = "solid";
 root.style.borderTop = "";
 root.style.borderLeft = "";
 root.style.borderRight = "";
-root.style.cursor = "pointer";
-ee.setOnClick(root,function(sender,event) {
-    g5.p2.p2.show(root.v_userInfo);
-    //if (sender.c_photo.v_timer!=null) {
-    //    clearTimeout(sender.c_photo.v_timer);
-    //    sender.c_photo.v_timer = null;
-    //}
-    //getUserInfo2.busy = false;    
-    ee.showAni(ee.getControl("panel10"), 1);    
-});
-ee.setOnMouseEnter(root, function(sender,e){
-    sender.style.backgroundColor = "rgb(245,248,250)";
-});
-ee.setOnMouseLeave(root, function(sender,e){
-    sender.style.backgroundColor = "#ffffff";
-});
+if (root.v_userInfo.status == "DISABLED") {
+} else if (root.v_userInfo.status == "Del") {
+} else {
+    root.style.cursor = "pointer";
+    ee.setOnClick(root,function(sender,event) {
+        g5.p2.p2.show(root.v_userInfo);
+    });
+    ee.setOnMouseEnter(root, function(sender,e){
+        sender.style.backgroundColor = "rgb(245,248,250)";
+    });
+    ee.setOnMouseLeave(root, function(sender,e){
+        sender.style.backgroundColor = "#ffffff";
+    });
+}
 
 //user photo
 c = createPanel(root, root.id+"panel13", "", 15,cy,50,50);
@@ -33627,7 +33645,7 @@ c.style.borderRadius = "50%";
 c.v_timer = null;
 root.c_photo = c;
 root.setUserPhoto = function(photo) {
-    if ((root.v_userInfo.status == "DISABLED") || (photo == "")) {
+    if ((root.v_userInfo.status == "DISABLED") || (root.v_userInfo.status == "Del") || (photo == "")) {
         ee.setImage(root.c_photo,"/faith/main/user.png","trim","","")
     } else {
         ee.setImage(root.c_photo,"url:" + g5.imgUrl + photo,"trim","","")
@@ -33645,6 +33663,8 @@ ee.setOnMouseLeave(c, function(sender,e) {
 ee.setOnClick(c,function(sender,event) {
     if (root.v_userInfo.status == "DISABLED") {
         g5.alert1("提示", "该用户处于禁封状态，目前无法查看该用户的信息");
+    } else if (root.v_userInfo.status == "Del") {
+        g5.alert1("提示", "该用户已销号，目前无法查看该用户的信息");
     } else {
         ee.getControl("panel280").show(root.c_photo, root.v_userInfo);
     }
@@ -33654,13 +33674,17 @@ ee.setOnClick(c,function(sender,event) {
 //user nick name
 c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
 addText(c, root.v_userInfo.nickName, "left", "middle", "微软雅黑", 12, "14171a", "bold");
-c.style.cursor="pointer";
-ee.setOnMouseEnter(c,function(sender,e){
-    sender.label.rows[0].cells[0].style.textDecoration="underline";
-});
-ee.setOnMouseLeave(c,function(sender,e){
-    sender.label.rows[0].cells[0].style.textDecoration="";
-});
+if (root.v_userInfo.status == "DISABLED") {
+} else if (root.v_userInfo.status == "Del") {
+} else {
+    c.style.cursor="pointer";
+    ee.setOnMouseEnter(c,function(sender,e){
+        sender.label.rows[0].cells[0].style.textDecoration="underline";
+    });
+    ee.setOnMouseLeave(c,function(sender,e){
+        sender.label.rows[0].cells[0].style.textDecoration="";
+    });
+}
 
 //username
 c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
@@ -33686,6 +33710,9 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
 } else if (root.v_userInfo.status == "FREEZE") {
     c = createPanel(root, root.id+"buttonR1", "", 505, 2, 75, 40);
     addText(c, "冻结", "right", "middle", "微软雅黑", 12, "606060", "");
+} else if (root.v_userInfo.status == "Del") {
+    c = createPanel(root, root.id+"buttonR1", "", 505, 2, 75, 40);
+    addText(c, "已销号", "right", "middle", "微软雅黑", 12, "606060", "");
 } else if (root.v_mode.charAt(0)=="x") {
     c = createPanel(root, root.id+"button11", "", 505, 12, 80, 40);
     addText(c, "已屏蔽", "center", "middle", "微软雅黑", 12, "ffffff", "bold");
