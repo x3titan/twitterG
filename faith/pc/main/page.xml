@@ -2348,6 +2348,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -7080,6 +7081,7 @@ eb.initMouseEvent(sender);
       <height>275</height>
       <heightRatio>0.352564102564103</heightRatio>
       <layerName><![CDATA[  c_del->销号]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.458333333333333</sizeRatio>
       <top>522</top>
@@ -10591,7 +10593,6 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -10690,6 +10691,8 @@ sender.render = function(root) {
     ee.setOnClick(root,function(sender,event) {
         if (root.v_userInfo.status == "DISABLED") {
             g5.alert1("提示", "该用户处于禁封状态，目前无法查看与该用户的私信记录");
+        } else if (root.v_userInfo.status == "Del") {
+            g5.alert1("提示", "该用户已销号，目前无法查看与该用户的私信记录");
         } else {
             g5.p2.p14.show(sender.v_userInfo);
         }
@@ -10708,7 +10711,7 @@ sender.render = function(root) {
     c = createPanel(root, root.id + "panel13", "", 16, 9, 50, 50);
     root.c_photo = c;
     c.v_timer = null;
-    if ((root.v_userInfo.photo == "") || (root.v_userInfo.status == "DISABLED")) {
+    if ((root.v_userInfo.photo == "") || (root.v_userInfo.status == "DISABLED") || (root.v_userInfo.status == "Del")) {
         ee.setImage(c,"/faith/main/user.png","trim","","")
     } else {
         ee.setImage(c,"url:" + g5.imgUrl + root.v_userInfo.photo,"trim","","")
@@ -10718,6 +10721,8 @@ sender.render = function(root) {
     ee.setOnClick(c,function(sender,event) {
         if (root.v_userInfo.status == "DISABLED") {
             g5.alert1("提示", "该用户处于禁封状态，目前无法查看该用户的信息");
+        } else if (root.v_userInfo.status == "Del") {
+            g5.alert1("提示", "该用户已销号，目前无法查看该用户的信息");
         } else {
             ee.getControl("panel280").show(root.c_photo, root.v_userInfo);
         }
@@ -10743,6 +10748,8 @@ sender.render = function(root) {
     s = root.v_content;
     if (root.v_userInfo.status == "DISABLED") {
         s = "账户被禁封";
+    } else if (root.v_userInfo.status == "Del") {
+        s = "账户已销号";
     }
     if (s.length > 30) {
         s = s.substr(0,30) + "...";
