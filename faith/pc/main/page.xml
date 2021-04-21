@@ -16848,12 +16848,11 @@ sender.style.borderRight = "";</onCreate>
         [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
         [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定切换","确定切换","#ffffff","#ffffff","#ffffff","")],
         function() {
-            return;
-            delAccount.onComplete = function() {
+            setAccountPrivate.onComplete = function() {
                 g5.myUserInfo.status = "IDL";
                 g5.p2.p28.show();
             }
-            delAccount();
+            setAccountPrivate();
         },
         function() {
         }
@@ -16867,12 +16866,11 @@ sender.style.borderRight = "";</onCreate>
         [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
         [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定切换","确定切换","#ffffff","#ffffff","#ffffff","")],
         function() {
-            return;
-            delAccount.onComplete = function() {
-                g5.myUserInfo.status = "IDL";
+            setAccountPrivate.onComplete = function() {
+                g5.myUserInfo.status = "Private";
                 g5.p2.p28.show();
             }
-            delAccount();
+            setAccountPrivate();
         },
         function() {
         }
@@ -26496,7 +26494,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="65">
+  <taskSet count="66">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -30109,6 +30107,76 @@ eio.appendString8("T");
 }
 delAccount.onComplete();
 delAccount.busy = false;
+</script3>
+    </taskSetItem>
+    <taskSetItem name="setAccountPrivate">
+      <script1>//onComplete
+setAccountPrivate.busy = true;
+eio.appendString16(g5.token);
+
+
+
+
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var contentId = parseInt(eio.readString16());
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName = db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+var myStatus = db.getString(sqlResult, "status");
+
+var op;
+if (myStatus == "Private") {
+    op = "0";
+} else if (myStatus == "IDL") {
+    op = "1";
+} else {
+    eio.appendString8("F");
+    eio.appendString8("您的账户状态不允许进行账户模式的设置");
+    return;
+}
+
+sql = "exec userPrivate " +
+    userId + 
+    "," + op;
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+}
+eio.appendString8("T");
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    setAccountPrivate.busy = false;
+    return;
+}
+setAccountPrivate.onComplete();
+setAccountPrivate.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="getDelInTime">
