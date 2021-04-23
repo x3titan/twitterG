@@ -1,5 +1,5 @@
 <page>
-  <controls count="625">
+  <controls count="629">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -2349,7 +2349,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -2363,6 +2362,7 @@ sender.c_block12 = ee.getControl("panel477");
 sender.c_disabled = ee.getControl("panel481");
 sender.c_freeze = ee.getControl("panel485");
 sender.c_del = ee.getControl("panel510");
+sender.c_private = ee.getControl("panel527");
 sender.v_userInfo = new g5.UserInfo();
 sender.v_forceDisplay = false;
 
@@ -2636,6 +2636,8 @@ sender.refreshButton = function() {
     if (this.v_userInfo.status == "DISABLED") {
         ee.setVisible(this.c_button1, false);
         ee.setVisible(this.c_button2, false);
+    } else if ((this.v_userInfo.status == "Private") &amp;&amp; (!this.v_userInfo.isFollow)) {
+        ee.setVisible(this.c_button2, false);
     } else if (this.v_userInfo.status == "FREEZE") {
         ee.setVisible(this.c_button2, false);
     } else if (this.v_userInfo.status == "Del") {
@@ -2789,6 +2791,16 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setVisible(this.c_freeze, true);
         ee.setRect(this.c_freeze, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
         var r1 = eb.getDivRectSetting(this.c_freeze);
+        ee.setRect(this,null,null,null,r1.y+r1.h);
+        ee.resizeV(this.parentNode, 1);
+        ee.setVisible(g5.p3, false);
+        ee.setVisible(this.p2sub, false);
+        return;
+    } else if ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow)) {
+        g5.changeP2(1);
+        ee.setVisible(this.c_private, true);
+        ee.setRect(this.c_private, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
+        var r1 = eb.getDivRectSetting(this.c_private);
         ee.setRect(this,null,null,null,r1.y+r1.h);
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
@@ -7136,6 +7148,66 @@ eb.initMouseEvent(sender);
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel527">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>275</height>
+      <heightRatio>0.352564102564103</heightRatio>
+      <layerName><![CDATA[  c_private->私密状态]]></layerName>
+      <left>0</left>
+      <sizeRatio>0.458333333333333</sizeRatio>
+      <top>522</top>
+      <topRatio>0.669230769230769</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel527/panel528">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>1</height>
+      <heightRatio>0.00363636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>PLine1</note>
+      <sizeRatio>0.00166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel527/panel529">
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>私密状态</text>
+      <top>32</top>
+      <topRatio>0.116363636363636</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel527/panel530">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>该用户处于私密状态，您需要成为该用户的粉丝才可以访问该用户的主页</text>
+      <top>64</top>
+      <topRatio>0.232727272727273</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel82">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
       <aniPos>leftFlyIn:左侧飞入</aniPos>
@@ -9581,6 +9653,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_topBlank = ee.getControl("panel336");
