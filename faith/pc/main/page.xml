@@ -1,5 +1,5 @@
 <page>
-  <controls count="629">
+  <controls count="628">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -354,7 +354,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1543,7 +1542,6 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <note>p2</note>
@@ -2351,14 +2349,12 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
 sender.p3Items = new Array();
 sender.c_button1 = ee.getControl("panel256");
-sender.c_button2 = ee.getControl("panel115");
 sender.c_block1 = ee.getControl("panel6");
 sender.c_block2 = ee.getControl("panel467");
 sender.c_block12 = ee.getControl("panel477");
@@ -2637,24 +2633,27 @@ sender.refreshButton = function() {
     this.c_button1.v_onClick = new Array();
     if (!this.v_userInfo) return;
     ee.setVisible(this.c_button1, true);
-    ee.setVisible(this.c_button2, true);
+    var visibleMail = true;
     if (this.v_userInfo.status == "DISABLED") {
         ee.setVisible(this.c_button1, false);
-        ee.setVisible(this.c_button2, false);
+        visibleMail = false;
     } else if ((this.v_userInfo.status == "Private") &amp;&amp; (!this.v_userInfo.isFollow)) {
-        ee.setVisible(this.c_button2, false);
+        visibleMail = false;
     } else if (this.v_userInfo.status == "FREEZE") {
-        ee.setVisible(this.c_button2, false);
+        visibleMail = false;
     } else if (this.v_userInfo.status == "Del") {
         ee.setVisible(this.c_button1, false);
-        ee.setVisible(this.c_button2, false);
+        visibleMail = false;
     } else if (this.v_userInfo.isBlock1 &amp;&amp; this.v_userInfo.isBlock2) {
         //ee.setVisible(this.c_button1, false);
-        ee.setVisible(this.c_button2, false);
+        visibleMail = false;
     } else if (this.v_userInfo.isBlock1) {
-        ee.setVisible(this.c_button2, false);
+        visibleMail = false;
     } else if (this.v_userInfo.isBlock2) {
-        ee.setVisible(this.c_button2, false);
+        visibleMail = false;
+    }
+    if (this.v_userInfo.userName == g5.myUserInfo.userName) {
+        visibleMail = false;
     }
     
     if (this.v_userInfo.userName == g5.myUserInfo.userName) {
@@ -2664,10 +2663,9 @@ sender.refreshButton = function() {
                 g5.p2.p17.show();
             },
         );
-        ee.setVisible(this.c_button2, false);
     } else {
         if (this.v_userInfo.isFollow) {
-            this.c_button1.v_style.push(new g5.BStyle("#1da1f2","#ca2055","#b31d4b","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff",""));
+            this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消关注","取消关注","取消关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_button1.v_onClick.push(
                 function (sender, event) {
                     g5.setFollow(showUserPage.v_userInfo,function(v_userInfo) {
@@ -2690,6 +2688,14 @@ sender.refreshButton = function() {
         if (this.v_userInfo.isBlock1) this.c_button1.init(0);
         if (this.v_userInfo.isBlock2) this.c_button1.init(4);
         if (this.v_userInfo.isBlock2 &amp;&amp; this.v_userInfo.isBlock1) this.c_button1.init(0);
+    }
+    if (visibleMail) {
+        this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","发送私信","发送私信","发送私信","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+        this.c_button1.v_onClick.push(
+            function (senderButton, event) {
+                g5.p2.p14.show(sender.v_userInfo);
+            },
+        );
     }
 }
 
@@ -3157,27 +3163,6 @@ sender.setText = function(text) {
       <top>0</top>
       <width>501</width>
       <widthRatio>0.909255898366606</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel115">
-      <backgroundImg>d4.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <fontColor>808080</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>41</height>
-      <heightRatio>0.0525641025641026</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>373</left>
-      <leftRatio>0.621666666666667</leftRatio>
-      <note>c_button2</note>
-      <onClick>g5.p2.p14.show(sender.parentNode.v_userInfo);</onClick>
-      <sizeRatio>0.891304347826087</sizeRatio>
-      <top>272</top>
-      <topRatio>0.348717948717949</topRatio>
-      <width>46</width>
-      <widthRatio>0.0766666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel23">
       <backgroundImg>user.png</backgroundImg>
@@ -21788,8 +21773,8 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
-      <leftRatio>0.000879507475813544</leftRatio>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
         ee.setVisible(sender.eeChildren[i], false);
@@ -22368,6 +22353,7 @@ g5.copyClipboard(sender, value,
       <height>205</height>
       <heightRatio>0.257537688442211</heightRatio>
       <layerName>p4.通用弹出菜单</layerName>
+      <layerVisible>false</layerVisible>
       <left>374</left>
       <leftRatio>0.328935795954266</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
