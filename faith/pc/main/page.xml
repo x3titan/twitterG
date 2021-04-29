@@ -2685,9 +2685,25 @@ sender.refreshButton = function() {
                 }
             );
         }
-        if (this.v_userInfo.isBlock1) this.c_button1.init(0);
-        if (this.v_userInfo.isBlock2) this.c_button1.init(4);
-        if (this.v_userInfo.isBlock2 &amp;&amp; this.v_userInfo.isBlock1) this.c_button1.init(0);
+        var block1 = 1;
+        if (this.v_userInfo.isBlock1) block1 = 0;
+        if (this.v_userInfo.isBlock2) block1 = 1;
+        if (this.v_userInfo.isBlock2 &amp;&amp; this.v_userInfo.isBlock1) block1 = 0;
+        if (block1 == 0) {
+            this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消屏蔽","取消屏蔽","取消屏蔽","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+            this.c_button1.v_onClick.push(
+                function (sender, event) {
+                    g5.setBlock1(g5.p2.p2.v_userInfo, null);
+                },
+            );
+        } else if (block1 == 1) {
+            this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽","屏蔽","屏蔽","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+            this.c_button1.v_onClick.push(
+                function (sender, event) {
+                    g5.setBlock1(g5.p2.p2.v_userInfo, null);
+                },
+            );
+        }
     }
     if (visibleMail) {
         this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","发送私信","发送私信","发送私信","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
