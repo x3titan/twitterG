@@ -2558,6 +2558,14 @@ sender.setIsFollow = function(userId, isFollow) {
                 this.v_userInfo.fansCount++;
                 this.refreshFansFollowCount();
             } else {
+                if (this.v_userInfo.status == "Private") {
+                    g5.changeP2(-1);
+                    var userInfo = this.v_userInfo.clone();
+                    this.v_userInfo = null;
+                    g5.notPushHistoryCount = 1;
+                    this.show(userInfo);
+                    return;
+                }
                 this.v_userInfo.fansCount--;
                 this.refreshFansFollowCount();
             }
