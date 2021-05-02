@@ -26685,7 +26685,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="66">
+  <taskSet count="67">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -29161,6 +29161,68 @@ var f = eio.readString8();
 if (!eb.isEmpty(follow.onComplete)) {
     follow.onComplete();
     follow.onComplete = null;
+}
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="followReq">
+      <script1>//userId, operation(0,1), onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(followReq.userId);
+eio.appendString16(followReq.operation + "");
+g5.blockLoading.show();
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userId = parseInt(eio.readString16());
+var operation = parseInt(eio.readString16());
+var sql,sqlResult; 
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+}
+var myUserId = db.getString(sqlResult,"id");
+if (myUserId == userId) {
+    eio.appendString8("F");
+    eio.appendString8("不能向自己提出申请");
+    return;
+}
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能关注和取消关注账号，您如果需要使用这个功能请注册正式用户。");
+    return;
+}
+
+sql = "exec followUserRequest " + myUserId + "," + userId + "," + operation;
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+
+eio.appendString8("T");
+]]></script2>
+      <script3>g5.blockLoading.close();
+if (eio.readString8() != "T") {
+    g5.alert1("提示", eio.readString8());
+    return;
+}
+if (!eb.isEmpty(followReq.onComplete)) {
+    followReq.onComplete();
+    followReq.onComplete = null;
 }
 
 </script3>
@@ -35290,7 +35352,7 @@ if (style == 1) {
     <item name="setFollow" type="20">
       <varValue />
       <functionParam>v_userInfo,onComplete</functionParam>
-      <functionCode>v_userInfo = v_userInfo.clone();
+      <functionCode><![CDATA[v_userInfo = v_userInfo.clone();
 if (v_userInfo.isFollow) {
     g5.popBlack.a6.show(
         "取消关注@"+v_userInfo.userName+"？",
@@ -35298,6 +35360,25 @@ if (v_userInfo.isFollow) {
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff","")],
         function() {
+            follow.follow = 0;
+            follow.userId = v_userInfo.id;
+            follow.onComplete = function() {
+                g5.setFollowSync(v_userInfo, false);
+                if (onComplete) {
+                    onComplete(v_userInfo);
+                }
+            }
+            follow();
+        }
+    );
+} else if (v_userInfo.status == "Private") {
+    g5.popBlack.a6.show(
+        "私密状态",
+        "该用户处于私密状态，任何对该用户的关注需要经过该用户的认可，认可后您才可以查看该用户的个人资料和短文。您希望现在就提交<b>成为该用户粉丝</b>的申请吗？",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","提交","提交申请","提交申请","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            return;
             follow.follow = 0;
             follow.userId = v_userInfo.id;
             follow.onComplete = function() {
@@ -35319,7 +35400,7 @@ if (v_userInfo.isFollow) {
         }
     }
     follow();
-}</functionCode>
+}]]></functionCode>
     </item>
     <item name="setFollowSync" type="20">
       <varValue />
