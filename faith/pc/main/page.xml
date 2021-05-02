@@ -1,5 +1,5 @@
 <page>
-  <controls count="628">
+  <controls count="629">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -2355,6 +2355,7 @@ sender.p2sub = ee.getControl("panel279");
 sender.p1Items = new Array();
 sender.p3Items = new Array();
 sender.c_button1 = ee.getControl("panel256");
+sender.c_status = ee.getControl("panel115");
 sender.c_block1 = ee.getControl("panel6");
 sender.c_block2 = ee.getControl("panel467");
 sender.c_block12 = ee.getControl("panel477");
@@ -2638,6 +2639,7 @@ sender.refreshFansFollowCount = function() {
 sender.refreshButton = function() {
     this.c_button1.v_style = new Array();
     this.c_button1.v_onClick = new Array();
+    ee.setText(sender.c_status, "");
     if (!this.v_userInfo) return;
     ee.setVisible(this.c_button1, true);
     var visibleMail = true;
@@ -2681,6 +2683,7 @@ sender.refreshButton = function() {
                     });
                 }
             );
+            ee.setText(sender.c_status, "正在关注");
         } else {
             this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_button1.v_onClick.push(
@@ -2703,6 +2706,7 @@ sender.refreshButton = function() {
                     g5.setBlock1(g5.p2.p2.v_userInfo, null);
                 },
             );
+            ee.setText(sender.c_status, "已屏蔽");
         } else if (block1 == 1) {
             this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽","屏蔽","屏蔽","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_button1.v_onClick.push(
@@ -7310,6 +7314,41 @@ eb.initMouseEvent(sender);
       <topRatio>0.232727272727273</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel115">
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>33</height>
+      <heightRatio>0.0423076923076923</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>420</left>
+      <leftRatio>0.7</leftRatio>
+      <onCreate><![CDATA[sender.v_text = "";
+sender.setText = function(text) {
+    this.v_text = text;
+    this.label.style.wordBreak = "keep-all";
+    this.label.style.whiteSpace = "nowrap";
+    eb.setDivRect(this.label, null, null, 1, null);
+    var thisW = eb.getDivRect(sender).w - 10;
+    var s, i;
+    for (i=1; i<text.length; i++) {
+        s = text.substr(0,i) + "...";
+        ee.setText(this, s);
+        var r = eb.getDivRect(sender.label);
+        if (r.w>thisW) break;
+    }
+    s = i>=text.length?text:text.substr(0,i-1) + "...";
+    ee.setText(this, s);
+}
+]]></onCreate>
+      <sizeRatio>0.270491803278689</sizeRatio>
+      <text>状态</text>
+      <top>269</top>
+      <topRatio>0.344871794871795</topRatio>
+      <width>122</width>
+      <widthRatio>0.203333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel82">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
@@ -35378,16 +35417,15 @@ if (v_userInfo.isFollow) {
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","提交","提交申请","提交申请","#ffffff","#ffffff","#ffffff","")],
         function() {
-            return;
-            follow.follow = 0;
-            follow.userId = v_userInfo.id;
-            follow.onComplete = function() {
-                g5.setFollowSync(v_userInfo, false);
+            followReq.userId = v_userInfo.id;
+            followReq.operation = 1;
+            followReq.onComplete = function() {
+                g5.alert1("递交确认", "您的关注申请已经递交，请耐心等待 @" + v_userInfo.userName + " 的许可");
                 if (onComplete) {
                     onComplete(v_userInfo);
                 }
             }
-            follow();
+            followReq();
         }
     );
 } else {
