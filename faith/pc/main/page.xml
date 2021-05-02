@@ -2604,11 +2604,17 @@ sender.setIsBlock1 = function(userId, isBlock1) {
 
 sender.refreshFansFollowCount = function() {
     if (this.v_userInfo) {
-        ee.setText(ee.getControl("panel72"), "  <div id='userPageLink01' style='display:inline;'>" + this.v_userInfo.followCount + "个关注</div>" +
-            "     <div id='userPageLink02' style='display:inline;'>" + this.v_userInfo.fansCount +"个粉丝</div>");
+        var s = 
+            "  <div id='userPageLink01' style='display:inline;'>" + this.v_userInfo.followCount + "个关注</div>" +
+            "     <div id='userPageLink02' style='display:inline;'>" + this.v_userInfo.fansCount +"个粉丝</div>";
+        if (g5.myUserInfo.fansReqCount &amp;&amp; (g5.myUserInfo.fansReqCount>0) &amp;&amp; (this.v_userInfo.id == g5.myUserInfo.id)) {
+            s += "     <div id='userPageLink03' style='display:inline;'>" + g5.myUserInfo.fansReqCount +"个加粉请求</div>";
+        }
+        ee.setText(ee.getControl("panel72"), s);
         var c = ee.getControl("panel72"); 
         c.link01=$g("userPageLink01");
         c.link02=$g("userPageLink02");
+        c.link03=$g("userPageLink03");
         if (this.v_userInfo.followCount>0) {
             c.link01.style.cursor = "pointer";
             ee.setOnMouseEnter(c.link01,function(sender,e){
@@ -2631,6 +2637,18 @@ sender.refreshFansFollowCount = function() {
             });
             ee.setOnClick(c.link02, function(senderLink, event) {
                 g5.p2.p15.show(sender.v_userInfo);
+            });
+        }
+        if (!eb.isEmpty(c.link03)) {
+            c.link03.style.cursor = "pointer";
+            ee.setOnMouseEnter(c.link03,function(sender,e){
+                sender.style.textDecoration="underline";
+            });
+            ee.setOnMouseLeave(c.link03,function(sender,e){
+                sender.style.textDecoration="";
+            });
+            ee.setOnClick(c.link03, function(senderLink, event) {
+                //g5.p2.p15.show(sender.v_userInfo);
             });
         }
     }
@@ -2672,6 +2690,11 @@ sender.refreshButton = function() {
                 g5.p2.p17.show();
             },
         );
+        if (g5.myUserInfo.status == "Private") {
+            ee.setText(sender.c_status, "私密");
+        } else if (g5.myUserInfo.status = "FREEZE") {
+            ee.setText(sender.c_status, "冻结");
+        }
     } else {
         if (this.v_userInfo.isFollow) {
             this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消关注","取消关注","取消关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
@@ -2804,6 +2827,7 @@ sender.showByUserInfo = function(v_userInfo) {
     ee.setVisible(this.c_disabled, false);
     ee.setVisible(this.c_freeze, false);
     ee.setVisible(this.c_del, false);
+    ee.setVisible(this.c_private, false);
     if (v_userInfo.isBlock1 &amp;&amp; v_userInfo.isBlock2) {
         g5.changeP2(1);
         ee.setVisible(this.c_block12, true);
@@ -26957,6 +26981,8 @@ db.executeNoneQuery("DB", sql);
 
 g5.myUserInfo = new g5.UserInfo();
 g5.myUserInfo.loadFromDataset(eio.readDataSet(),0,0);
+g5.myUserInfo.follow = "1";
+g5.myUserInfo.isFollow = true;
 
 g5.refreshUserInfo();
 g5.p2.p1.init();
@@ -27672,6 +27698,8 @@ sql =
     "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
     "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='BLK'; " +
 
+    "select count(*) as c from fansRequest where userId = " + userId + "; " +    
+
     "SELECT   TOP (20) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " +
     "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
@@ -27787,6 +27815,11 @@ if (db.read(sqlResult)) {
 } else {
     eio.appendString16("F");
 }
+
+db.nextResult(sqlResult);
+db.read(sqlResult)
+eio.appendString16(db.getString(sqlResult,"c"));
+
 db.nextResult(sqlResult);
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
@@ -27884,6 +27917,10 @@ showUserPage.privateChatRoomId = eio.readString16();
 showUserPage.hostRecomd = eio.readDataSet();
 showUserPage.isChatRoomPubAdmin = eio.readString16() == "T";
 showUserPage.isChatRoomPubBlack = eio.readString16() == "T";
+showUserPage.fansReqCount = parseInt(eio.readString16());
+if (showUserPage.v_userInfo.id == g5.myUserInfo.id) {
+    g5.myUserInfo.fansReqCount = showUserPage.fansReqCount;
+}
 showUserPage.dataset = eio.readDataSet();
 showUserPage.privateChatRoomRights = eio.readString16() == "T";
 showUserPage.privateChatRoomRights = showUserPage.privateChatRoomRights || (g5.myUserInfo.id==showUserPage.v_userInfo.id);
