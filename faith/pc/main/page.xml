@@ -1542,7 +1542,6 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <note>p2</note>
@@ -2351,7 +2350,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -17315,6 +17313,24 @@ sender.show = function() {
             g5.renderUserBar(item);
             cy += eb.getDivRect(item).h;
             sender.v_items.push(item);
+            ee.setOnClick(item,function(senderButton, event) {
+                var v_style = new Array();
+                var v_onClick = new Array();
+                v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","允许","允许","允许","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+                v_onClick.push(
+                    function (sender, event) {
+                        return;
+                    },
+                );
+                v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","拒绝","拒绝","拒绝","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+                v_onClick.push(
+                    function (sender, event) {
+                        return;
+                        g5.p2.p17.show();
+                    },
+                );
+                g5.popup1.p4.showPos(event.clientX - 50, event.clientY + 20, 200, v_style, v_onClick);
+            });
         }
         eb.processDock();
         var rect = eb.getDivRectSetting(g5.p4);
@@ -20070,6 +20086,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>p4</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.266490765171504</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -21822,6 +21839,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a12 -> 加粉请求列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -22635,6 +22653,19 @@ g5.copyClipboard(sender, value,
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
 
 sender.show = function(refDiv, width, v_style, v_function) {
+    var rect = g5.getRectAbs(refDiv);
+    var x, y;
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        x = rect.x - 50;
+        y = rect.y - eb.getDivRect(this).h - 10;
+    } else {
+        x = rect.x - 50;
+        y = rect.y + rect.h + 10;
+    }
+    this.showPos(x, y, width, v_style, v_function);
+}
+
+sender.showPos = function(x, y, width, v_style, v_function) {
     if (!eb.isEmpty(this.v_items)) {
         for (var i=0; i<this.v_items.length; i++) {
             ee.removeControl(this.v_items[i]);
@@ -22661,12 +22692,7 @@ sender.show = function(refDiv, width, v_style, v_function) {
     }
     g5.tiledV(this, 0, 0, 0);
 
-    var rect = g5.getRectAbs(refDiv);
-    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
-        ee.setRect(this, rect.x - 50, rect.y - eb.getDivRect(this).h - 10, null, null);
-    } else {
-        ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
-    }
+    ee.setRect(this, x, y, null, null);
     
     this.parentNode.v_lastX = -1000
     this.parentNode.v_lastY = -1000;
@@ -22674,6 +22700,7 @@ sender.show = function(refDiv, width, v_style, v_function) {
     ee.setVisible(this.parentNode, true);
     ee.showAni(this, 0);
 }
+
 
 sender.renderItem = function(root) {
     var w = eb.getDivRectSetting(root).w;
