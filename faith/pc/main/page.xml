@@ -2431,6 +2431,8 @@ sender.show = function(v_userInfo, userId, userName) {
         var i;
         if (sender.v_userInfo == null) {
             sender.showByUserInfo(showUserPage.v_userInfo);
+        } else {
+            sender.refreshFansFollowCount();
         }
         for (var i=0; i<sender.p1Items.length; i++) {
             ee.removeControl(sender.p1Items[i]);
@@ -17317,18 +17319,23 @@ sender.show = function() {
                 var v_style = new Array();
                 var v_onClick = new Array();
                 v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","允许","允许","允许","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
-                v_onClick.push(
-                    function (sender, event) {
-                        return;
-                    },
-                );
+                v_onClick.push(function (senderMB, event) {
+                    followAcceptReject.userId = item.v_userInfo.id;
+                    followAcceptReject.operation = 1;
+                    followAcceptReject.onComplete = function() {
+                        sender.remove(item);
+                    } 
+                    followAcceptReject();
+                });
                 v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","拒绝","拒绝","拒绝","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
-                v_onClick.push(
-                    function (sender, event) {
-                        return;
-                        g5.p2.p17.show();
-                    },
-                );
+                v_onClick.push(function (senderMB, event) {
+                    followAcceptReject.userId = item.v_userInfo.id;
+                    followAcceptReject.operation = 0;
+                    followAcceptReject.onComplete = function() {
+                        sender.remove(item);
+                    }
+                    followAcceptReject();
+                });
                 g5.popup1.p4.showPos(event.clientX - 50, event.clientY + 20, 200, v_style, v_onClick);
             });
         }
@@ -17343,6 +17350,21 @@ sender.show = function() {
     }
     g5.loading.show();
     showFansRequest();               
+}
+
+sender.remove = function(item) {
+    for (var i = 0; i < this.v_items.length; i++) {
+        if (this.v_items[i] != item) continue;
+        ee.removeControl(item);
+        this.v_items.splice(i, 1);
+        break;
+    }
+    ee.tiledResizeV(this, 2);
+    if (g5.myUserInfo.fansReqCount) {
+        g5.myUserInfo.fansReqCount--;
+        g5.p2.p2.refreshFansFollowCount();
+    }
+    this.refreshTitle();
 }
 
 sender.loadRecord = function(panel, dataset, index) {
@@ -26969,7 +26991,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="68">
+  <taskSet count="69">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -27919,7 +27941,7 @@ sql =
     "WHERE chatRoomInfo.creatorId = " + userId + " and chatRoomVip.userId = " + myUserId + " " +
     "   and chatRoomInfo.roomType = 'DEF' and chatRoomVip.status='BLK'; " +
 
-    "select count(*) as c from fansRequest where userId = " + userId + "; " +    
+    "select count(*) as c from fansRequest where userId = " + myUserId + "; " +    
 
     "SELECT   TOP (20) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds,  " +
     "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
@@ -29520,6 +29542,68 @@ if (eio.readString8() != "T") {
 if (!eb.isEmpty(followReq.onComplete)) {
     followReq.onComplete();
     followReq.onComplete = null;
+}
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="followAcceptReject">
+      <script1>//userId, operation(0,1), onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(followAcceptReject.userId);
+eio.appendString16(followAcceptReject.operation + "");
+g5.blockLoading.show();
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userId = parseInt(eio.readString16());
+var operation = parseInt(eio.readString16());
+var sql,sqlResult; 
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+}
+var myUserId = db.getString(sqlResult,"id");
+if (myUserId == userId) {
+    eio.appendString8("F");
+    eio.appendString8("不能向自己提出申请");
+    return;
+}
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能关注和取消关注账号，您如果需要使用这个功能请注册正式用户。");
+    return;
+}
+
+sql = "exec followUserAccept " + myUserId + "," + userId + "," + operation;
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+
+eio.appendString8("T");
+]]></script2>
+      <script3>g5.blockLoading.close();
+if (eio.readString8() != "T") {
+    g5.alert1("提示", eio.readString8());
+    return;
+}
+if (!eb.isEmpty(followAcceptReject.onComplete)) {
+    followAcceptReject.onComplete();
+    followAcceptReject.onComplete = null;
 }
 
 </script3>
