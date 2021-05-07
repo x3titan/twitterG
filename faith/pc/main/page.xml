@@ -2351,7 +2351,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -12889,6 +12888,7 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p18->设置-隐私和安全]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.show = function() {
     g5.changeP2(17);
@@ -27545,7 +27545,7 @@ g5.processUrl();
 
 </script3>
     </taskSetItem>
-    <taskSetItem name="getUserInfo2">
+    <taskSetItem name="getUserInfo2_Del">
       <script1>//userId,onComplete(userInfo)
 getUserInfo2.busy = true;
 eio.appendString16(g5.token);
@@ -27788,7 +27788,7 @@ updateUserInfo.onComplete();
 updateUserInfo.busy = false;
 </script3>
     </taskSetItem>
-    <taskSetItem name="getOtherUserInfo">
+    <taskSetItem name="getOtherUserInfo_Del">
       <script1>//userName,onComplete()
 eio.appendString16(g5.token);
 eio.appendString16(getOtherUserInfo.userName);
@@ -28139,9 +28139,9 @@ eio.appendString8("T");
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
-    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide," +
+    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail,exIsHide," +
     "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     0, 99999);
 
@@ -33301,7 +33301,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </item>
     <item name="UserInfo" type="10">
       <varValue>function() {
-    this.size = 17;
+    this.size = 18;
     this.loadFromDataset = function(ds, x, idx) {
         this.id = ds.getData(x+0,idx);
         this.status = ds.getData(x+1,idx);    
@@ -33323,6 +33323,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         this.isFollow = this.follow=="1";
         this.isBlock1 = this.block1=="1";
         this.isBlock2 = this.block2=="1";
+        this.isHide = ds.getData(x+17,idx)=="T";
     }
     this.setDataset = function(ds, x, idx) {
         ds.setData(x+0,idx,this.id);
@@ -33342,6 +33343,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         ds.setData(x+14,idx,this.block1);
         ds.setData(x+15,idx,this.block2);
         ds.setData(x+16,idx,this.email);
+        ds.setData(x+17,idx,this.isHide ? "T":"F");
     }
     this.clone = function() {
         var r = new g5.UserInfo();
@@ -33365,6 +33367,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         r.isFollow = this.isFollow;
         r.isBlock1 = this.isBlock1;
         r.isBlock2 = this.isBlock2;
+        r.isHide = this.isHide;
         return r;
     }
 }
@@ -33774,7 +33777,7 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock()
     return root;
-} else if (root.v_userInfo.status == "Private") {
+} else if ((root.v_userInfo.status == "Private") &amp;&amp; (!root.v_userInfo.isFollow)) {
     c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
