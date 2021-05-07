@@ -27299,7 +27299,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="70">
+  <taskSet count="71">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -29912,6 +29912,68 @@ if (eio.readString8() != "T") {
 if (!eb.isEmpty(followAcceptReject.onComplete)) {
     followAcceptReject.onComplete();
     followAcceptReject.onComplete = null;
+}
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="followHide">
+      <script1>//userId, operation(0,1), onComplete()
+eio.appendString16(g5.token);
+eio.appendString16(followHide.userId);
+eio.appendString16(followHide.operation + "");
+g5.blockLoading.show();
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var userId = parseInt(eio.readString16());
+var operation = parseInt(eio.readString16());
+var sql,sqlResult; 
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+}
+var myUserId = db.getString(sqlResult,"id");
+if (myUserId == userId) {
+    eio.appendString8("F");
+    eio.appendString8("不能向自己提出申请");
+    return;
+}
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能执行此类操作，您如果需要使用这个功能请注册正式用户。");
+    return;
+}
+
+sql = "exec followUserHide " + myUserId + "," + userId + "," + operation;
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+
+eio.appendString8("T");
+]]></script2>
+      <script3>g5.blockLoading.close();
+if (eio.readString8() != "T") {
+    g5.alert1("提示", eio.readString8());
+    return;
+}
+if (!eb.isEmpty(followHide.onComplete)) {
+    followHide.onComplete();
+    followHide.onComplete = null;
 }
 
 </script3>
