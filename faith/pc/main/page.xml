@@ -17517,10 +17517,10 @@ sender.refresh = function(userId) {
 
 sender.refreshTitle = function() {
     var s = "";
-    if (g5.myUserInfo.fansReqCount) {
-        s =g5.myUserInfo.nickName+"<font color=#a0a0a0>@"+g5.myUserInfo.userName+"</font>的加粉请求者(" + g5.myUserInfo.fansReqCount + "人)";
+    if (this.v_items.length>0) {
+        s = "已隐藏的关注者(" + this.v_items+ "人)";
     } else {
-        s =g5.myUserInfo.nickName+"<font color=#a0a0a0>@"+g5.myUserInfo.userName+"</font>的加粉请求者";
+        s = "已隐藏的关注者";
     }
     ee.setText(this.c_title, s);
 }
@@ -17534,7 +17534,7 @@ sender.show = function() {
     sender.v_items = new Array();
     g5.changeP2(-1);
     g5.changeP2(29);
-    showFansRequest.onComplete = function(dataset) {
+    showHideList.onComplete = function(dataset) {
         g5.loading.close();
         var root = sender;
         var cy = 0;
@@ -17581,7 +17581,7 @@ sender.show = function() {
         ee.tiledResizeV(sender, 2);
     }
     g5.loading.show();
-    showFansRequest();               
+    showHideList();               
 }
 
 sender.remove = function(item) {
@@ -27299,7 +27299,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="69">
+  <taskSet count="70">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -30691,6 +30691,75 @@ if (showFansRequest.onComplete) {
     showFansRequest.onComplete(showFansRequest.dataset);
 }
 showFansRequest.busy = false;
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="showHideList">
+      <script1>//onComplete
+if (showHideList.busy) return;
+showHideList.busy = true;
+eio.appendString16(g5.token);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "SELECT   TOP (100) PERCENT dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
+    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
+    "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
+    "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
+    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow,  " +
+    "                CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN ublockList1.id IS NULL  " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
+    "FROM      dbo.follow LEFT OUTER JOIN " +
+    "                dbo.userInfo ON dbo.follow.followId = dbo.userInfo.id LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
+    "                uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
+    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " " +
+    "WHERE   (dbo.follow.userId = " + myUserId + ") and (dbo.follow.hide = 'T') " +
+    "ORDER BY dbo.follow.id DESC; ";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail",
+    0, 99999);
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    showHideList.busy = false;
+    g5.alert1("提示", eio.readString8());
+    return;
+}
+showHideList.dataset = eio.readDataSet();
+
+if (showHideList.onComplete) {
+    showHideList.onComplete(showHideList.dataset);
+}
+showHideList.busy = false;
 
 </script3>
     </taskSetItem>
