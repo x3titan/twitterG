@@ -2701,6 +2701,7 @@ sender.refreshButton = function() {
         }
     } else {
         if (this.v_userInfo.isFollow) {
+            var st = "正在关注";
             this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消关注","取消关注","取消关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_button1.v_onClick.push(
                 function (sender, event) {
@@ -2713,25 +2714,23 @@ sender.refreshButton = function() {
             if (this.v_userInfo.isHide) {
                 this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消隐藏","取消隐藏","取消隐藏","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
                 this.c_button1.v_onClick.push(
-                    function (sender, event) {
-                        g5.setHide(showUserPage.v_userInfo, function(v_userInfo) {
+                    function (senderBtn, event) {
+                        g5.setHide(showUserPage.v_userInfo.clone(), function(v_userInfo) {
                         });
                     }
                 );
             } else {
                 this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","隐藏","隐藏","隐藏","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
                 this.c_button1.v_onClick.push(
-                    function (sender, event) {
-                        g5.setHide(showUserPage.v_userInfo, function(v_userInfo) {
+                    function (senderBtn, event) {
+                        g5.setHide(showUserPage.v_userInfo.clone(), function(v_userInfo) {
                         });
                     }
                 );
             }
-            if (this.v_userInfo.status == "Private") {
-                ee.setText(sender.c_status, "私密 · 正在关注");
-            } else {
-                ee.setText(sender.c_status, "正在关注");
-            }
+            if (this.v_userInfo.status == "Private") st = "私密 · " + st;
+            if (this.v_userInfo.isHide)  st = "隐藏 · " + st;
+            ee.setText(sender.c_status, st);
         } else {
             this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_button1.v_onClick.push(
@@ -36651,9 +36650,9 @@ for (i=0; i<itemList.length; i++) {
     }
 }
 g5.p2.p1.refresh();
-g5.p2.p2.refreshButton();
 if (g5.p2.p2.v_userInfo) g5.p2.p2.v_userInfo.isHide = isHide;
 if (showUserPage.v_userInfo) showUserPage.v_userInfo.isHide = isHide;
+g5.p2.p2.refreshButton();
 ]]></functionCode>
     </item>
     <item name="showCommonText" type="20">
