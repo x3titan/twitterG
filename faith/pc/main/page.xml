@@ -2710,6 +2710,23 @@ sender.refreshButton = function() {
                     });
                 }
             );
+            if (this.v_userInfo.isHide) {
+                this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消隐藏","取消隐藏","取消隐藏","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+                this.c_button1.v_onClick.push(
+                    function (sender, event) {
+                        g5.setHide(showUserPage.v_userInfo, function(v_userInfo) {
+                        });
+                    }
+                );
+            } else {
+                this.c_button1.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","隐藏","隐藏","隐藏","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+                this.c_button1.v_onClick.push(
+                    function (sender, event) {
+                        g5.setHide(showUserPage.v_userInfo, function(v_userInfo) {
+                        });
+                    }
+                );
+            }
             if (this.v_userInfo.status == "Private") {
                 ee.setText(sender.c_status, "私密 · 正在关注");
             } else {
@@ -28067,7 +28084,7 @@ sql =
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
     "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
     "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN uBlockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
+    "                THEN 0 ELSE 1 END AS uIsFollow, uFollow.[hide] as uIsHide, CASE WHEN uBlockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
     "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
     "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
     "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
@@ -28220,7 +28237,7 @@ sql =
     "                AS regDatetime, CONVERT(VARCHAR(50), dbo.userInfo.lastAccessTime, 120) AS lastAccessTime,  " +
     "                dbo.userInfo.userName, dbo.userInfo.mobile, dbo.userInfo.nickName, dbo.userInfo.note, dbo.userInfo.photo,  " +
     "                dbo.userInfo.titleBg, dbo.userInfo.homePage, dbo.userInfo.followCount, dbo.userInfo.fansCount,  " +
-    "                CASE WHEN dbo.follow.id IS NULL THEN 0 ELSE 1 END AS isFollow, CASE WHEN dbo.blockList.id IS NULL  " +
+    "                CASE WHEN dbo.follow.id IS NULL THEN 0 ELSE 1 END AS isFollow, dbo.follow.[hide] as isHide, CASE WHEN dbo.blockList.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS isBlock1, CASE WHEN blockList_1.id IS NULL THEN 0 ELSE 1 END AS isBlock2, dbo.userInfo.email, " +
     "                dbo.userInfo.chatRoomVideo " + 
     "FROM      dbo.blockList RIGHT OUTER JOIN " +
@@ -28330,7 +28347,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendDataSet(sqlResult,
-    "id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2,email," +
+    "id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,isFollow,isBlock1,isBlock2,email,isHide," +
     "chatRoomVideo",
     0, 1);
     
@@ -33176,7 +33193,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="99">
+  <g5Items count="101">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -36559,6 +36576,85 @@ if (enabled) {
         }
     );
 }]]></functionCode>
+    </item>
+    <item name="setHide" type="20">
+      <varValue />
+      <functionParam>v_userInfo,onComplete</functionParam>
+      <functionCode>//做到这里 先要解决全局Hide算法
+v_userInfo = v_userInfo.clone();
+if (v_userInfo.isHide) {
+    g5.popBlack.a6.show(
+        "取消隐藏@"+v_userInfo.userName+"？",
+        "该用户的发言将会重新出现在您的新鲜事，但您将继续保持对该用户的关注状态。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","取消隐藏","取消隐藏","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            followHide.operation = 0;
+            followHide.userId = v_userInfo.id;
+            followHide.onComplete = function() {
+                g5.setHideSync(v_userInfo, false);
+                if (onComplete) {
+                    onComplete(v_userInfo);
+                }
+            }
+            followHide();
+        }
+    );
+} else {
+    g5.popBlack.a6.show(
+        "隐藏@"+v_userInfo.userName+"？",
+        "该用户的发言将不会出现在您的新鲜事，但您仍旧能够保持对该用户的关注状态。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定隐藏","确定隐藏","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            followHide.operation = 1;
+            followHide.userId = v_userInfo.id;
+            followHide.onComplete = function() {
+                g5.setHideSync(v_userInfo, true);
+                if (onComplete) {
+                    onComplete(v_userInfo);
+                }
+            }
+            followHide();
+        }
+    );
+}</functionCode>
+    </item>
+    <item name="setHideSync" type="20">
+      <varValue />
+      <functionParam>v_userInfo, isHide</functionParam>
+      <functionCode><![CDATA[if (v_userInfo.isHide == isHide) return;
+v_userInfo.isHide = isHide;
+
+var itemList = g5.getAllBuff();
+var i,j;
+for (i=0; i<itemList.length; i++) {
+    var items = itemList[i];
+    for (j=0; j<items.length; j++) {
+        if (items[j].v_userInfo) {
+            if (items[j].v_userInfo.id == v_userInfo.id) { 
+                items[j].v_userInfo.isHide = isHide;
+            }
+        }
+        if (items[j].v_reUserInfo) {
+            if (items[j].v_reUserInfo.id == v_userInfo.id) { 
+                items[j].v_reUserInfo.isHide = isHide;
+            }
+        }
+        if (items[j].v_content) {
+            if (items[j].v_content.exUserInfo) {
+                if (items[j].v_content.exUserInfo.id == v_userInfo.id) { 
+                    items[j].v_content.exUserInfo.isHide = isHide;
+                }
+            }
+        }
+    }
+}
+g5.p2.p1.refresh();
+g5.p2.p2.refreshButton();
+if (g5.p2.p2.v_userInfo) g5.p2.p2.v_userInfo.isHide = isHide;
+if (showUserPage.v_userInfo) showUserPage.v_userInfo.isHide = isHide;
+]]></functionCode>
     </item>
     <item name="showCommonText" type="20">
       <varValue />
