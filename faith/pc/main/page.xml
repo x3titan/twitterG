@@ -28089,14 +28089,14 @@ sql =
     "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
     "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
-    "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow,  " +
+    "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow, rFollow.[hide] as rIsHide,  " +
     "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail, dbo.tContent.exUserId, exUserInfo.status AS exStatus,  " +
     "                exUserInfo.regDatetime AS exRegDatetime, exUserInfo.lastAccessTime AS exLastAccessTime,  " +
     "                exUserInfo.userName AS exUserName, exUserInfo.mobile AS exMobile, exUserInfo.email AS exEmail,  " +
     "                exUserInfo.nickName AS exNickName, exUserInfo.note AS exNote, exUserInfo.photo AS exPhoto,  " +
     "                exUserInfo.titleBg AS exTitleBg, exUserInfo.homePage AS exHomePage, exUserInfo.followCount AS exFollowCount,  " +
-    "                exUserInfo.fansCount AS exFansCount, CASE WHEN exFollow.id IS NULL THEN 0 ELSE 1 END AS exIsFollow,  " +
+    "                exUserInfo.fansCount AS exFansCount, CASE WHEN exFollow.id IS NULL THEN 0 ELSE 1 END AS exIsFollow, exFollow.[hide] as exIsHide, " +
     "                CASE WHEN exBlockList1.id IS NULL THEN 0 ELSE 1 END AS exIsBlock1, CASE WHEN exBlockList2.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId,  " +
     "                CASE WHEN exforwardLink.id IS NULL THEN 0 ELSE 1 END AS exIsForward, CASE WHEN exlikeList.id IS NULL  " +
@@ -28113,7 +28113,7 @@ sql =
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + " RIGHT OUTER JOIN " +
     "                dbo.forwardLink AS forwardLink_1 RIGHT OUTER JOIN " +
     "                dbo.tContent RIGHT OUTER JOIN " +
-    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId LEFT OUTER JOIN " +
+    "                dbo.follow ON dbo.tContent.userId = dbo.follow.followId and dbo.follow.[hide]<>'T' LEFT OUTER JOIN " +
     "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS unlikeList_1 ON dbo.tContent.uplinkId = unlikeList_1.contentId AND  " +
@@ -34091,6 +34091,16 @@ if (!showRe) {
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
     addText(c, "  该用户处于私密状态，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    eb.setDivRect(root, null, null, null, cy+9);
+    eb.processDock();
+    cy+=20;
+} else if (root.v_reUserInfo.isFollow &amp;&amp; (root.v_reUserInfo.isHide)) {
+    c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
+    c.style.borderWidth = "1px";
+    c.style.borderColor = "rgb(230,236,240)";
+    c.style.borderStyle = "solid";
+    c.style.borderRadius = "12px";
+    addText(c, "  该用户处被您隐藏，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock();
     cy+=20;
