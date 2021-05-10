@@ -2351,6 +2351,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -17480,7 +17481,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p30->设置-隐私和安全-已隐藏]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -17534,7 +17534,7 @@ sender.refresh = function(userId) {
 sender.refreshTitle = function() {
     var s = "";
     if (this.v_items.length>0) {
-        s = "已隐藏的关注者(" + this.v_items+ "人)";
+        s = "已隐藏的关注者(" + this.v_items.length+ "人)";
     } else {
         s = "已隐藏的关注者";
     }
@@ -17564,27 +17564,9 @@ sender.show = function() {
             cy += eb.getDivRect(item).h;
             sender.v_items.push(item);
             ee.setOnClick(item,function(senderButton, event) {
-                var v_style = new Array();
-                var v_onClick = new Array();
-                v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","允许","允许","允许","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
-                v_onClick.push(function (senderMB, event) {
-                    followAcceptReject.userId = item.v_userInfo.id;
-                    followAcceptReject.operation = 1;
-                    followAcceptReject.onComplete = function() {
-                        sender.remove(item);
-                    } 
-                    followAcceptReject();
+                g5.setHide(item.v_userInfo.clone(), function(v_userInfo) {
+                    sender.remove(item);
                 });
-                v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","拒绝","拒绝","拒绝","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
-                v_onClick.push(function (senderMB, event) {
-                    followAcceptReject.userId = item.v_userInfo.id;
-                    followAcceptReject.operation = 0;
-                    followAcceptReject.onComplete = function() {
-                        sender.remove(item);
-                    }
-                    followAcceptReject();
-                });
-                g5.popup1.p4.showPos(event.clientX - 50, event.clientY + 20, 200, v_style, v_onClick);
             });
         }
         eb.processDock();
@@ -17594,6 +17576,7 @@ sender.show = function() {
             var rect1 = eb.getDivRect(sender.v_items[sender.v_items.length-1]);
             ee.tiledV(sender, 0, rect.h, eb.getClientSize().h - eb.getDivRect(sender.v_items[sender.v_items.length-1]).h - rect.h + 2); 
         }
+        sender.refreshTitle();
         ee.tiledResizeV(sender, 2);
     }
     g5.loading.show();
@@ -30803,7 +30786,7 @@ sql =
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
     "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
     "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
-    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow,  " +
+    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow, uFollow.[hide] as uIsHide,  " +
     "                CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN ublockList1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS uIsBlock2 " +
     "FROM      dbo.follow LEFT OUTER JOIN " +
@@ -30823,7 +30806,7 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail",
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide",
     0, 99999);
 
 ]]></script2>
@@ -34100,7 +34083,7 @@ if (!showRe) {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "  该用户处被您隐藏，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "  该用户被您隐藏，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     eb.processDock();
     cy+=20;
@@ -36660,8 +36643,8 @@ for (i=0; i<itemList.length; i++) {
     }
 }
 g5.p2.p1.refresh();
-if (g5.p2.p2.v_userInfo) g5.p2.p2.v_userInfo.isHide = isHide;
-if (showUserPage.v_userInfo) showUserPage.v_userInfo.isHide = isHide;
+if (g5.p2.p2.v_userInfo &amp;&amp; (g5.p2.p2.v_userInfo.id == v_userInfo.id)) g5.p2.p2.v_userInfo.isHide = isHide;
+if (showUserPage.v_userInfo &amp;&amp; (showUserPage.v_userInfo.id == v_userInfo.id)) showUserPage.v_userInfo.isHide = isHide;
 g5.p2.p2.refreshButton();
 ]]></functionCode>
     </item>
