@@ -2706,6 +2706,7 @@ sender.refreshButton = function() {
     } else {
         if (this.v_userInfo.isFollow) {
             var st = "正在关注";
+            this.c_button1.init(2);
             this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消关注","取消关注","取消关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_buttonMore.v_onClick.push(
                 function (sender, event) {
@@ -2736,6 +2737,7 @@ sender.refreshButton = function() {
             if (this.v_userInfo.isHide)  st = "隐藏 · " + st;
             //ee.setText(sender.c_status, st);
         } else {
+            this.c_button1.init(1);
             this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_buttonMore.v_onClick.push(
                 function (sender, event) {
@@ -2746,11 +2748,12 @@ sender.refreshButton = function() {
                 }
             );
         }
-        var block1 = 1;
+        var block1 = -1;
         if (this.v_userInfo.isBlock1) block1 = 0;
         if (this.v_userInfo.isBlock2) block1 = 1;
         if (this.v_userInfo.isBlock2 &amp;&amp; this.v_userInfo.isBlock1) block1 = 0;
         if (block1 == 0) {
+            this.c_button1.init(0);
             this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消屏蔽","取消屏蔽","取消屏蔽","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_buttonMore.v_onClick.push(
                 function (sender, event) {
@@ -2759,6 +2762,7 @@ sender.refreshButton = function() {
             );
             //ee.setText(sender.c_status, "已屏蔽");
         } else if (block1 == 1) {
+            this.c_button1.init(4);
             this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽","屏蔽","屏蔽","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
             this.c_buttonMore.v_onClick.push(
                 function (sender, event) {
@@ -3285,11 +3289,11 @@ sender.init = function(photoString) {
       <fontColor>1DA1F2</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
-      <height>33</height>
-      <heightRatio>0.0423076923076923</heightRatio>
+      <height>31</height>
+      <heightRatio>0.0397435897435897</heightRatio>
       <layerVisible>false</layerVisible>
       <left>429</left>
-      <leftRatio>0.756666666666667</leftRatio>
+      <leftRatio>0.715</leftRatio>
       <note>c_button1</note>
       <onClick><![CDATA[//    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff",""),
 //    new sender.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
@@ -3448,10 +3452,10 @@ sender.init(0);
 
 ]]></onCreate>
       <outerRight>20</outerRight>
-      <sizeRatio>1</sizeRatio>
+      <sizeRatio>0.939393939393939</sizeRatio>
       <text>...</text>
       <top>269</top>
-      <topRatio>0.35</topRatio>
+      <topRatio>0.344871794871795</topRatio>
       <width>33</width>
       <widthRatio>0.055</widthRatio>
     </control>
@@ -7376,8 +7380,8 @@ eb.initMouseEvent(sender);
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
-      <height>33</height>
-      <heightRatio>0.0423076923076923</heightRatio>
+      <height>31</height>
+      <heightRatio>0.0397435897435897</heightRatio>
       <layerVisible>false</layerVisible>
       <left>482</left>
       <leftRatio>0.803333333333333</leftRatio>
@@ -7392,7 +7396,7 @@ eb.initMouseEvent(sender);
 sender.init = function(index) {
     this.v_index = index;
     this.style.backgroundColor = this.v_style[index].color1;
-    ee.setText(this, this.v_style[index].text1);
+    this.setText(this.v_style[index].text1);
     ee.setTextColor(this, this.v_style[index].tColor1);
     if (this.v_style[index].bdColor=="") {
         this.style.borderWidth = "0px";
@@ -7403,6 +7407,15 @@ sender.init = function(index) {
         this.style.borderStyle = "solid";
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+}
+
+sender.setText = function(text) {
+    ee.setRect(this,null,null,1,null);
+    this.label.style.whiteSpace = "nowrap";
+    ee.setText(this, text);
+    var rect = eb.getDivRect(this.label);
+    ee.setRect(this,null,null,rect.w + 30,null);
+    eb.processDock();
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -7433,10 +7446,11 @@ eb.initMouseEvent(sender);
 
 sender.init(0);</onCreate>
       <outerRight>20</outerRight>
-      <sizeRatio>0.336734693877551</sizeRatio>
+      <sizeRatio>0.316326530612245</sizeRatio>
       <text>button1</text>
       <top>269</top>
       <topRatio>0.344871794871795</topRatio>
+      <vAlign>top</vAlign>
       <width>98</width>
       <widthRatio>0.163333333333333</widthRatio>
     </control>
