@@ -2704,6 +2704,23 @@ sender.refreshButton = function() {
         //    //ee.setText(sender.c_status, "冻结");
         //}
     } else {
+        if (this.v_userInfo.isHide) {
+            this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消隐藏","取消隐藏","取消隐藏","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+            this.c_buttonMore.v_onClick.push(
+                function (senderBtn, event) {
+                    g5.setHide(showUserPage.v_userInfo.clone(), function(v_userInfo) {
+                    });
+                }
+            );
+        } else {
+            this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","隐藏","隐藏","隐藏","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
+            this.c_buttonMore.v_onClick.push(
+                function (senderBtn, event) {
+                    g5.setHide(showUserPage.v_userInfo.clone(), function(v_userInfo) {
+                    });
+                }
+            );
+        }
         if (this.v_userInfo.isFollow) {
             var st = "正在关注";
             this.c_button1.init(2);
@@ -2716,23 +2733,6 @@ sender.refreshButton = function() {
                     });
                 }
             );
-            if (this.v_userInfo.isHide) {
-                this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","取消隐藏","取消隐藏","取消隐藏","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
-                this.c_buttonMore.v_onClick.push(
-                    function (senderBtn, event) {
-                        g5.setHide(showUserPage.v_userInfo.clone(), function(v_userInfo) {
-                        });
-                    }
-                );
-            } else {
-                this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","隐藏","隐藏","隐藏","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
-                this.c_buttonMore.v_onClick.push(
-                    function (senderBtn, event) {
-                        g5.setHide(showUserPage.v_userInfo.clone(), function(v_userInfo) {
-                        });
-                    }
-                );
-            }
             if (this.v_userInfo.status == "Private") st = "私密 · " + st;
             if (this.v_userInfo.isHide)  st = "隐藏 · " + st;
             //ee.setText(sender.c_status, st);
@@ -7385,6 +7385,27 @@ eb.initMouseEvent(sender);
       <layerVisible>false</layerVisible>
       <left>482</left>
       <leftRatio>0.803333333333333</leftRatio>
+      <onClick>if (sender.v_index==0) {
+    g5.setBlock1(g5.p2.p2.v_userInfo, null);
+} else if (sender.v_index==1) {
+    //follow
+    g5.setFollow(showUserPage.v_userInfo, function(v_userInfo) {
+        ee.getControl("panel256").init(2);
+        showUserPage.v_userInfo = v_userInfo.clone();
+    });
+} else if (sender.v_index==2) {
+    //cancel follow
+    g5.setFollow(showUserPage.v_userInfo,function(v_userInfo) {
+        ee.getControl("panel256").init(1);
+        showUserPage.v_userInfo = v_userInfo.clone();
+    });
+} else if (sender.v_index==3) {
+    //edit personal information
+    g5.p2.p17.show();
+} else if (sender.v_index==4) {
+    g5.setBlock1(g5.p2.p2.v_userInfo, null);
+}       
+</onClick>
       <onCreate>sender.v_style = [
     new g5.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff",""),
     new g5.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
@@ -7421,25 +7442,25 @@ sender.setText = function(text) {
 ee.setOnMouseEnter(sender, function(sender,event) { 
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
+    sender.setText(s.text2);
     ee.setTextColor(sender, s.tColor2);
 });
 ee.setOnMouseLeave(sender, function(sender,event) { 
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color1;
-    ee.setText(sender, s.text1);
+    sender.setText(s.text1);
     ee.setTextColor(sender, s.tColor1);
 });
 sender.eeMouseDown = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color3;
-    ee.setText(sender, s.text3);
+    sender.setText(s.text3);
     ee.setTextColor(sender, s.tColor3);
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
+    sender.setText(s.text2);
     ee.setTextColor(sender, s.tColor2);
 }
 eb.initMouseEvent(sender);
@@ -7450,7 +7471,6 @@ sender.init(0);</onCreate>
       <text>button1</text>
       <top>269</top>
       <topRatio>0.344871794871795</topRatio>
-      <vAlign>top</vAlign>
       <width>98</width>
       <widthRatio>0.163333333333333</widthRatio>
     </control>
@@ -17590,9 +17610,9 @@ sender.refresh = function(userId) {
 sender.refreshTitle = function() {
     var s = "";
     if (this.v_items.length>0) {
-        s = "已隐藏的关注者(" + this.v_items.length+ "人)";
+        s = "已隐藏的用户(" + this.v_items.length+ "人)";
     } else {
-        s = "已隐藏的关注者";
+        s = "已隐藏的用户";
     }
     ee.setText(this.c_title, s);
 }
@@ -30845,14 +30865,14 @@ sql =
     "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow, uFollow.[hide] as uIsHide,  " +
     "                CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN ublockList1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS uIsBlock2 " +
-    "FROM      dbo.follow LEFT OUTER JOIN " +
-    "                dbo.userInfo ON dbo.follow.followId = dbo.userInfo.id LEFT OUTER JOIN " +
+    "FROM      dbo.hideList LEFT OUTER JOIN " +
+    "                dbo.userInfo ON dbo.hideList.hideId = dbo.userInfo.id LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
     "                uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " " +
-    "WHERE   (dbo.follow.userId = " + myUserId + ") and (dbo.follow.hide = 'T') " +
-    "ORDER BY dbo.follow.id DESC; ";
+    "WHERE   (dbo.hideList.userId = " + myUserId + ") " +
+    "ORDER BY dbo.hideList.id DESC; ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
