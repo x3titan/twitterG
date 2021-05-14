@@ -28195,7 +28195,9 @@ sql =
     "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId,  " +
     "                CASE WHEN exforwardLink.id IS NULL THEN 0 ELSE 1 END AS exIsForward, CASE WHEN exlikeList.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike, " +
-    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide " +
+    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide, " +
+    "                CASE WHEN reHideList.id IS NULL THEN 0 ELSE 1 END AS reIsHide, " +
+    "                CASE WHEN exHideList.id IS NULL THEN 0 ELSE 1 END AS exIsHide " +
     "FROM      dbo.blockList AS rBlockList RIGHT OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
@@ -28231,6 +28233,8 @@ sql =
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND  " +
     "                exUnlikeList.userId = " + userId + " " + 
     "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + userId + " " +
+    "                left outer join hideList as reHideList on tContent_1.userId = reHideList.hideId and reHideList.userId = " + userId + " " +
+    "                left outer join hideList as exHideList on tContent.exUserId = exHideList.hideId and exHideList.userId = " + userId + " " +
     "WHERE   ((dbo.follow.userId = " + userId + ") AND (dbo.tContent.userId <> " + userId + ") OR " +
     "                (dbo.follow.userId = " + userId + ") AND (dbo.tContent.uplinkType <> 'L')) and (exBlockList1.id IS NULL) " +
     "                and (ublockList1.id IS NULL) and (exBlockList2.id IS NULL) " + 
