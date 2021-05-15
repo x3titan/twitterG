@@ -23082,7 +23082,8 @@ sender.showPos = function(x, y, width, v_style, v_function) {
     this.parentNode.v_lastY = -1000;
     this.parentNode.v_closeCount = 0;
     ee.setVisible(this.parentNode, true);
-    ee.showAni(this, 0);
+    ee.setVisible(this, true);
+    //ee.showAni(this, 0);
 }
 
 
@@ -37100,7 +37101,18 @@ this.bdColor = bdColor;</functionCode>
       <functionCode>//04 19 2020 10:35 UTC
 //yyyy-mm-dd hh:nn:ss
 //0123456789012345678
+g5.writeLog(dbTime);
 if (dbTime.length!=19) return new Date();
+
+return new Date(Date.UTC(
+    parseInt(dbTime.substr(0,4)),
+    parseInt(dbTime.substr(5,2)) - 1,
+    parseInt(dbTime.substr(8,2)),
+    parseInt(dbTime.substr(11,2)),
+    parseInt(dbTime.substr(14,2)),
+    parseInt(dbTime.substr(17,2))
+));
+
 return new Date(
     dbTime.substr(5,2) + " " +
     dbTime.substr(8,2) + " " +
