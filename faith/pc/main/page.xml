@@ -2351,6 +2351,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -8648,6 +8649,7 @@ sender.setLike = function(contentId, isLike) {
         g5.renderUserBar(item);
         items.splice(0,0,item);
         ee.changeParent(item, item.parentNode, 0);
+        likeContent.aniBusy = false;    
     } else {
         for (i=0; i<items.length; i++) {
             if (!items[i].v_userInfo) continue;
@@ -8667,6 +8669,13 @@ sender.setLike = function(contentId, isLike) {
             aniItems.splice(aniItemIndex,1);
             g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
         });
+        eb.setAniEvent(aniItem, 1,
+            function(sender) {
+            },
+            function(sender) {
+                likeContent.aniBusy = false;    
+            }
+        );
         ee.showAni(aniItem, 1);
     }
     if (this.c_tabRoot.currentPageIndex == 3) {
@@ -11188,7 +11197,6 @@ sender.loadDataset = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -11573,12 +11581,16 @@ sender.loadData = function(panel,dataset,index) {
 }
 
 sender.displayTime = function(time) {
-    return (
+    var now = new Date();
+    var r = 
         (time.getMonth()+1) + "月" +
         time.getDate() + "日 " +
         (time.getHours()<10?"0":"") + time.getHours() + ":" +
-        (time.getMinutes()<10?"0":"") + time.getMinutes()
-    );
+        (time.getMinutes()<10?"0":"") + time.getMinutes();
+    if (now.getYear() != time.getYear()) {
+        r =  (time.getYear() + 1900) + "年" + r;
+    }
+    return r;
 }
 
 sender.timeFragment = function() {
@@ -34545,6 +34557,7 @@ ee.setOnClick(c,function(sender,event) {
     while(1) {
         if (!sender.v_enabled) break;
         if (likeContent.busy) break;
+        if (likeContent.aniBusy) break;
         if (g5.myUserInfo.status == "FREEZE") {
             g5.alert1("不能点赞", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
             break;
@@ -34556,6 +34569,7 @@ ee.setOnClick(c,function(sender,event) {
             contentIdB = root.v_content.id;
         }
         likeContent.contentId = contentIdB;
+        likeContent.aniBusy = true;
         likeContent.onComplete = function() {
             root.c_button3.v_enabled = true;
             g5.p2.p9.setLike(contentIdB, contentClone.isLike);
