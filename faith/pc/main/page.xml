@@ -28361,7 +28361,10 @@ sql =
     "                CASE WHEN exBlockList1.id IS NULL THEN 0 ELSE 1 END AS exIsBlock1, CASE WHEN exBlockList2.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId,  " +
     "                CASE WHEN exforwardLink.id IS NULL THEN 0 ELSE 1 END AS exIsForward, CASE WHEN exlikeList.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike " +
+    "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike, " +
+    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide, " +
+    "                CASE WHEN rHideList.id IS NULL THEN 0 ELSE 1 END AS rIsHide, " +
+    "                CASE WHEN exHideList.id IS NULL THEN 0 ELSE 1 END AS exIsHide " +
     "FROM      dbo.blockList AS rBlockList RIGHT OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
@@ -28394,6 +28397,9 @@ sql =
     "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
+    "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + myUserId + " " +
+    "                left outer join hideList as rHideList on tContent_1.userId = rHideList.hideId and rHideList.userId = " + myUserId + " " +
+    "                left outer join hideList as exHideList on tContent.exUserId = exHideList.hideId and exHideList.userId = " + myUserId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (dbo.tContent.uplinkType<>'R') and (exBlockList2.id IS NULL) " +
     " and (exUserInfo.status='IDL' or exUserInfo.status is null) " + 
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
@@ -28450,9 +28456,9 @@ db.nextResult(sqlResult);
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
-    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide," +
+    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail,exIsHide," +
     "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     0, 99999);
 
@@ -28642,7 +28648,10 @@ var sql =
     "                CASE WHEN exBlockList1.id IS NULL THEN 0 ELSE 1 END AS exIsBlock1, CASE WHEN exBlockList2.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS exIsBlock2, dbo.tContent.exUplinkType, dbo.tContent.exContentId,  " +
     "                CASE WHEN exforwardLink.id IS NULL THEN 0 ELSE 1 END AS exIsForward, CASE WHEN exlikeList.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike " +
+    "                THEN 0 ELSE 1 END AS exIsLike, CASE WHEN exunlikeList.id IS NULL THEN 0 ELSE 1 END AS exIsUnlike, " +
+    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide, " +
+    "                CASE WHEN rHideList.id IS NULL THEN 0 ELSE 1 END AS rIsHide, " +
+    "                CASE WHEN exHideList.id IS NULL THEN 0 ELSE 1 END AS exIsHide " +
     "FROM      dbo.blockList AS rBlockList RIGHT OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
@@ -28675,6 +28684,9 @@ var sql =
     "                dbo.likeList AS exLikeList ON dbo.tContent.exContentId = exLikeList.contentId AND  " +
     "                exLikeList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.unlikeList AS exUnlikeList ON dbo.tContent.exContentId = exUnlikeList.contentId AND exUnlikeList.userId = " + myUserId + " " +
+    "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + myUserId + " " +
+    "                left outer join hideList as rHideList on tContent_1.userId = rHideList.hideId and rHideList.userId = " + myUserId + " " +
+    "                left outer join hideList as exHideList on tContent.exUserId = exHideList.hideId and exHideList.userId = " + myUserId + " " +
     "WHERE (dbo.tContent.status='IDL' and dbo.tContent.userId = " + userId + ") and (dbo.tContent.uplinkType<>'R') and (exBlockList2.id IS NULL) " +
     " and (exUserInfo.status='IDL' or exUserInfo.status is null) " + 
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
@@ -28691,9 +28703,9 @@ eio.appendString8("T");
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
     "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail," +
-    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail," +
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
+    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide," +
+    "exUserId,exStatus,exRegDatetime,exLastAccessTime,exUserName,exMobile,exNickName,exNote,exPhoto,exTitleBg,exHomePage,exFollowCount,exFansCount,exIsFollow,exIsBlock1,exIsBlock2,exEmail,exIsHide," +
     "exUplinkType,exContentId,exIsForward,exIsLike,exIsUnlike",
     pageIndex*pageSize, pageSize); 
 ]]></script2>
