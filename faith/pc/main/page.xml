@@ -354,6 +354,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1542,6 +1543,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <note>p2</note>
@@ -11209,6 +11211,7 @@ sender.loadDataset = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -23172,7 +23175,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -23667,7 +23669,6 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>302</left>
       <leftRatio>0.26561125769569</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
@@ -24189,6 +24190,7 @@ sender.c_file = c;
 
 c.onchange = function() {
     if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
+            g5.writeLog("on change");
         var file = sender.c_file.files[0];
         var pos = file.name.lastIndexOf(".");
         var fileExt = pos<0 ? "" : file.name.substring(pos);
@@ -24208,18 +24210,21 @@ c.onchange = function() {
         
         var reader = new FileReader();
         reader.onload = function (event) {
+            g5.writeLog("11111");
             var blob = new Blob([event.target.result]); 
             window.URL = window.URL || window.webkitURL;
             var blobURL = window.URL.createObjectURL(blob); 
             var image = new Image();
             image.src = blobURL;
             image.onload = function() {
+                g5.writeLog("2222");
                 sender.v_data = sender.resize(image);
                 if (sender.v_data) {
                     //upload immediately
                     uploadImage.data = sender.v_data;
                     uploadImage.controlName = sender.id;
                     uploadImage.onComplete = function() {
+                        g5.writeLog("333333");
                         if (sender.parentNode.c_photos.v_photos.length>=4) return;
                         sender.parentNode.c_photos.v_photos.push(uploadImage.newFileName);
                         g5.refreshPhoto(sender.parentNode.c_photos);
