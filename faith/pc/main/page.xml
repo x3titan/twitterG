@@ -30699,15 +30699,17 @@ sql =
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
     "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
     "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
-    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow, uFollow.[hide] as uIsHide,  " +
+    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow, " +
     "                CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN ublockList1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2, " +
+    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide " +
     "FROM      dbo.follow LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.follow.followId = dbo.userInfo.id LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
     "                uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " " +
+    "                left outer join hideList as uHideList on dbo.follow.followId = uHideList.hideId and uHideList.userId = " + myUserId + " " +
     "WHERE   (dbo.follow.userId = " + userId + ") " +
     "ORDER BY dbo.follow.id DESC; ";
 
@@ -30770,15 +30772,17 @@ sql =
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
     "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
     "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
-    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow, uFollow.[hide] as uIsHide, " +
+    "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow, " +
     "                CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN ublockList1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2, " +
+    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide " +
     "FROM      dbo.follow LEFT OUTER JOIN " +
     "                dbo.userInfo ON dbo.follow.userId = dbo.userInfo.id LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
     "                uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " " +
+    "                left outer join hideList as uHideList on dbo.follow.userId = uHideList.hideId and uHideList.userId = " + myUserId + " " +
     "WHERE   (dbo.follow.followId = " + userId + ") " +
     "ORDER BY dbo.follow.id DESC; ";
 
