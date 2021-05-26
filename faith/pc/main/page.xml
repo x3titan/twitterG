@@ -34803,6 +34803,9 @@ c.init = function(styleIndex) {
 }
 
 ee.setOnClick(c,function(sender,event) {
+    g5.setLike(root);
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    return;
     while(1) {
         if (!sender.v_enabled) break;
         if (likeContent.busy) break;
@@ -36999,15 +37002,72 @@ g5.p2.p2.refresh();
     </item>
     <item name="setLike" type="20">
       <varValue />
-      <functionParam>contentId,isLike</functionParam>
-      <functionCode><![CDATA[if (!g5.LikeItem) {
+      <functionParam>root</functionParam>
+      <functionCode><![CDATA[var stopTimer = function() {
+    if (g5.likeItemsTimer) {
+        clearTimeout(g5.likeItemsTimer);
+        g5.likeItemsTimer = null;
+    }
+}
+
+var startTimer = function() {
+    stopTimer();
+    g5.likeItemsTimer = setTimeout(function() {
+        g5.likeItemsTimer = null;
+        if (g5.likeItems.length<=0) return;
+        if (likeContent.busy) {
+            startTimer();
+            return;
+        }
+        likeContent.contentId = g5.likeItems[0].contentId;
+        likeContent.onComplete = function() {
+            g5.writeLog("setLikeComplete:"+likeContent.contentId);
+        }
+        likeContent();
+        g5.likeItems.splice(0,1);
+        startTimer();
+    }, 1000);    
+}
+
+if (!g5.LikeItem) {
     g5.LikeItem = function() {
         this.contentId = 0;
         this.isLike = false;
     }
     g5.likeItems = new Array();
 }
+if (g5.myUserInfo.status == "FREEZE") {
+    g5.alert1("不能点赞", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
+    return;
+}
 
+var contentClone = root.v_content.clone();
+contentClone.isLike = !contentClone.isLike;
+contentClone.likeCount += contentClone.isLike ? 1:-1;
+if (contentClone.likeCount<0) contentClone.likeCount = 0;
+g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
+
+var contentId;
+if (root.v_content.exUplinkType=="L") {
+    contentId = root.v_content.exContentId;
+} else {
+    contentId = root.v_content.id;
+}
+var i;
+for (i=0; i<g5.likeItems.length; i++) {
+    if (g5.likeItems[i].contentId==contentId) break;
+}
+if (i>=g5.likeItems.length) {
+    var item = new g5.LikeItem();
+    item.contentId = contentId;
+    g5.likeItems.push(item);
+} else {
+    g5.likeItems.splice(i,1);
+}
+
+if (g5.likeItems.length>0) {
+    startTimer();
+}
 
 return;
 while(1) {
