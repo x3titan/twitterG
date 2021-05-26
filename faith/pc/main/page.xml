@@ -33511,7 +33511,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="101">
+  <g5Items count="102">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -36996,6 +36996,39 @@ g5.p2.p1.refresh();
 if (g5.p2.p2.v_userInfo &amp;&amp; (g5.p2.p2.v_userInfo.id == v_userInfo.id)) g5.p2.p2.v_userInfo.isHide = isHide;
 g5.p2.p2.refresh();
 ]]></functionCode>
+    </item>
+    <item name="setLike" type="20">
+      <varValue />
+      <functionParam>contentId,isLike</functionParam>
+      <functionCode><![CDATA[while(1) {
+    if (!sender.v_enabled) break;
+    if (likeContent.busy) break;
+    if (likeContent.aniBusy) break;
+    if (g5.myUserInfo.status == "FREEZE") {
+        g5.alert1("不能点赞", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
+        break;
+    }
+    var contentIdB;
+    if (root.v_content.exUplinkType=="L") {
+        contentIdB = root.v_content.exContentId;
+    } else {
+        contentIdB = root.v_content.id;
+    }
+    likeContent.contentId = contentIdB;
+    likeContent.aniBusy = true;
+    likeContent.onComplete = function() {
+        root.c_button3.v_enabled = true;
+        g5.p2.p9.setLike(contentIdB, contentClone.isLike);
+    }
+    likeContent();
+    sender.v_enabled = false;
+    var contentClone = root.v_content.clone();
+    contentClone.isLike = !contentClone.isLike;
+    contentClone.likeCount += contentClone.isLike ? 1:-1;
+    if (contentClone.likeCount<0) contentClone.likeCount = 0;
+    g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
+    break;
+}]]></functionCode>
     </item>
     <item name="showCommonText" type="20">
       <varValue />
