@@ -8686,9 +8686,13 @@ sender.setLike = function(contentId, isLike) {
             g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
         });
         eb.setAniEvent(aniItem, 1,
-            function(sender) {
+            function(senderAni) {
             },
-            function(sender) {
+            function(senderAni) {
+                if (sender.c_tabRoot.currentPageIndex == 3) {
+                    sender.c_tabRoot.changePage(-1);
+                    sender.c_tabRoot.changePage(3);
+                }
                 likeContent.aniBusy = false;    
             }
         );
@@ -37053,6 +37057,8 @@ if (root.v_content.exUplinkType=="L") {
 } else {
     contentId = root.v_content.id;
 }
+g5.p2.p9.setLike(contentId, contentClone.isLike);
+
 var i;
 for (i=0; i<g5.likeItems.length; i++) {
     if (g5.likeItems[i].contentId==contentId) break;
@@ -37068,37 +37074,7 @@ if (i>=g5.likeItems.length) {
 if (g5.likeItems.length>0) {
     startTimer();
 }
-
-return;
-while(1) {
-    if (!sender.v_enabled) break;
-    if (likeContent.busy) break;
-    if (likeContent.aniBusy) break;
-    if (g5.myUserInfo.status == "FREEZE") {
-        g5.alert1("不能点赞", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
-        break;
-    }
-    var contentIdB;
-    if (root.v_content.exUplinkType=="L") {
-        contentIdB = root.v_content.exContentId;
-    } else {
-        contentIdB = root.v_content.id;
-    }
-    likeContent.contentId = contentIdB;
-    likeContent.aniBusy = true;
-    likeContent.onComplete = function() {
-        root.c_button3.v_enabled = true;
-        g5.p2.p9.setLike(contentIdB, contentClone.isLike);
-    }
-    likeContent();
-    sender.v_enabled = false;
-    var contentClone = root.v_content.clone();
-    contentClone.isLike = !contentClone.isLike;
-    contentClone.likeCount += contentClone.isLike ? 1:-1;
-    if (contentClone.likeCount<0) contentClone.likeCount = 0;
-    g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
-    break;
-}]]></functionCode>
+]]></functionCode>
     </item>
     <item name="showCommonText" type="20">
       <varValue />
