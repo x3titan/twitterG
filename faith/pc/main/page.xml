@@ -8676,27 +8676,21 @@ sender.setLike = function(contentId, isLike) {
         }
         if (item == null) return;
         eb.setAni2(item,1,"disappear", "rightFlyOut", "null", 0, true);
-        var aniItem = item;
-        var aniItems = items;
-        var aniItemIndex = i;
         var aniHeight = eb.getDivRectSetting(item).h;
-        eb.setAniEvent(aniItem,1,function(){}, function(sender) {
-            ee.removeControl(aniItem);
-            aniItems.splice(aniItemIndex,1);
-            g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
-        });
-        eb.setAniEvent(aniItem, 1,
+        eb.setAniEvent(item, 1,
             function(senderAni) {
             },
             function(senderAni) {
+                var i = sender.c_tabRoot.p3.v_items.indexOf(senderAni);
+                if (i>=0) sender.c_tabRoot.p3.v_items.splice(i,1);
+                ee.removeControl(senderAni);
                 if (sender.c_tabRoot.currentPageIndex == 3) {
                     sender.c_tabRoot.changePage(-1);
                     sender.c_tabRoot.changePage(3);
                 }
-                likeContent.aniBusy = false;    
             }
         );
-        ee.showAni(aniItem, 1);
+        ee.showAni(item, 1);
     }
     if (this.c_tabRoot.currentPageIndex == 3) {
         this.c_tabRoot.changePage(-1);
@@ -8735,16 +8729,21 @@ sender.setUnlike = function(contentId, isUnlike) {
         }
         if (item == null) return;
         eb.setAni2(item,1,"disappear", "rightFlyOut", "null", 0, true);
-        var aniItem = item;
-        var aniItems = items;
-        var aniItemIndex = i;
         var aniHeight = eb.getDivRectSetting(item).h;
-        eb.setAniEvent(aniItem,1,function(){}, function(sender) {
-            ee.removeControl(aniItem);
-            aniItems.splice(aniItemIndex,1);
-            g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
-        });
-        ee.showAni(aniItem, 1);
+        eb.setAniEvent(item, 1,
+            function(senderAni) {
+            },
+            function(senderAni) {
+                var i = sender.c_tabRoot.p4.v_items.indexOf(senderAni);
+                if (i>=0) sender.c_tabRoot.p4.v_items.splice(i,1);
+                ee.removeControl(senderAni);
+                if (sender.c_tabRoot.currentPageIndex == 4) {
+                    sender.c_tabRoot.changePage(-1);
+                    sender.c_tabRoot.changePage(4);
+                }
+            }
+        );
+        ee.showAni(item, 1);
     }
     if (this.c_tabRoot.currentPageIndex == 4) {
         this.c_tabRoot.changePage(-1);
@@ -33515,7 +33514,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="102">
+  <g5Items count="103">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -34809,37 +34808,6 @@ c.init = function(styleIndex) {
 ee.setOnClick(c,function(sender,event) {
     g5.setLike(root);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
-    return;
-    while(1) {
-        if (!sender.v_enabled) break;
-        if (likeContent.busy) break;
-        if (likeContent.aniBusy) break;
-        if (g5.myUserInfo.status == "FREEZE") {
-            g5.alert1("不能点赞", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
-            break;
-        }
-        var contentIdB;
-        if (root.v_content.exUplinkType=="L") {
-            contentIdB = root.v_content.exContentId;
-        } else {
-            contentIdB = root.v_content.id;
-        }
-        likeContent.contentId = contentIdB;
-        likeContent.aniBusy = true;
-        likeContent.onComplete = function() {
-            root.c_button3.v_enabled = true;
-            g5.p2.p9.setLike(contentIdB, contentClone.isLike);
-        }
-        likeContent();
-        sender.v_enabled = false;
-        var contentClone = root.v_content.clone();
-        contentClone.isLike = !contentClone.isLike;
-        contentClone.likeCount += contentClone.isLike ? 1:-1;
-        if (contentClone.likeCount<0) contentClone.likeCount = 0;
-        g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
-        break;
-    }
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#f3e3eb";
@@ -34870,33 +34838,7 @@ c.init = function(styleIndex) {
     this.childNodes[0].style.color = this.v_defaultColor;
 }
 ee.setOnClick(c,function(sender,event) {
-    while(1) {
-        if (!sender.v_enabled) break;
-        if (unlikeContent.busy) break;
-        if (g5.myUserInfo.status == "FREEZE") {
-            g5.alert1("不能点踩", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
-            break;
-        }
-        var contentIdB;
-        if (root.v_content.exUplinkType=="L") {
-            contentIdB = root.v_content.exContentId;
-        } else {
-            contentIdB = root.v_content.id;
-        }
-        unlikeContent.contentId = contentIdB;
-        unlikeContent.onComplete = function() {
-            root.c_button4.v_enabled = true;
-            g5.p2.p9.setUnlike(contentIdB,contentClone.isUnlike);
-        }
-        unlikeContent();
-        sender.v_enabled = false;
-        var contentClone = root.v_content.clone();
-        contentClone.isUnlike = !contentClone.isUnlike;
-        contentClone.unlikeCount += contentClone.isUnlike ? 1:-1;
-        if (contentClone.unlikeCount<0) contentClone.unlikeCount = 0;
-        g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
-        break;
-    }
+    g5.setUnlike(root);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 ee.setOnMouseEnter(c, function(sender,event) {
@@ -37072,6 +37014,78 @@ if (i>=g5.likeItems.length) {
 }
 
 if (g5.likeItems.length>0) {
+    startTimer();
+}
+]]></functionCode>
+    </item>
+    <item name="setUnlike" type="20">
+      <varValue />
+      <functionParam>root</functionParam>
+      <functionCode><![CDATA[var stopTimer = function() {
+    if (g5.unlikeItemsTimer) {
+        clearTimeout(g5.unlikeItemsTimer);
+        g5.unlikeItemsTimer = null;
+    }
+}
+
+var startTimer = function() {
+    stopTimer();
+    g5.unlikeItemsTimer = setTimeout(function() {
+        g5.unlikeItemsTimer = null;
+        if (g5.unlikeItems.length<=0) return;
+        if (unlikeContent.busy) {
+            startTimer();
+            return;
+        }
+        unlikeContent.contentId = g5.unlikeItems[0].contentId;
+        unlikeContent.onComplete = function() {
+            g5.writeLog("setUnlike,id="+unlikeContent.contentId);
+        }
+        unlikeContent();
+        g5.unlikeItems.splice(0,1);
+        startTimer();
+    }, 1000);    
+}
+
+if (!g5.UnlikeItem) {
+    g5.UnlikeItem = function() {
+        this.contentId = 0;
+        this.isUnlike = false;
+    }
+    g5.unlikeItems = new Array();
+}
+if (g5.myUserInfo.status == "FREEZE") {
+    g5.alert1("不能点赞", "对不起，您的账户目前处于冻结状态，不能对短文进行点赞或者点踩操作。");
+    return;
+}
+
+var contentClone = root.v_content.clone();
+contentClone.isUnlike = !contentClone.isUnlike;
+contentClone.unlikeCount += contentClone.isUnlike ? 1:-1;
+if (contentClone.unlikeCount<0) contentClone.unlikeCount = 0;
+g5.syncTwitter(contentClone,root.v_reContent,root.v_userInfo,root.v_reUserInfo);
+
+var contentId;
+if (root.v_content.exUplinkType=="L") {
+    contentId = root.v_content.exContentId;
+} else {
+    contentId = root.v_content.id;
+}
+g5.p2.p9.setUnlike(contentId, contentClone.isUnlike);
+
+var i;
+for (i=0; i<g5.unlikeItems.length; i++) {
+    if (g5.unlikeItems[i].contentId==contentId) break;
+}
+if (i>=g5.unlikeItems.length) {
+    var item = new g5.UnlikeItem();
+    item.contentId = contentId;
+    g5.unlikeItems.push(item);
+} else {
+    g5.unlikeItems.splice(i,1);
+}
+
+if (g5.unlikeItems.length>0) {
     startTimer();
 }
 ]]></functionCode>
