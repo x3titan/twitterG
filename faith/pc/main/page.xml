@@ -1586,7 +1586,6 @@ sender.p30 = ee.getControl("panel538");
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -1937,6 +1936,8 @@ if (text.length<180) {
     if (dy == 0) return;
     ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
     g5.batchMoveY(g5.p2.p1.v_items,0,dy);
+    eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
+    eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
     eb.processDock();
 }
 
@@ -2296,8 +2297,11 @@ c.onchange = function() {
                         g5.refreshPhoto(ee.getControl("panel7"));
                         if (ee.getControl("panel7").style.visibility=="hidden") {
                             ee.setVisible(ee.getControl("panel7"), true);
-                            ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+462-140);
-                            g5.batchMoveY(g5.p2.p1.v_items,0,462-140);
+                            var cy = 462-140;
+                            ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+cy);
+                            g5.batchMoveY(g5.p2.p1.v_items,0,cy);
+                            eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + cy);
+                            eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + cy);
                             eb.processDock();
                         }
                         ee.getControl("panel1").check();
@@ -2351,6 +2355,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
