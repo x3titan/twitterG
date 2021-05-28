@@ -2356,7 +2356,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -13412,6 +13411,7 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p19->设置-隐私和安全-已屏蔽账号]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniStart>sender.reset();</onAniStart>
       <onCreate><![CDATA[sender.v_lastScrollTop = 0;
@@ -13499,6 +13499,19 @@ sender.show = function() {
     showBlockList();               
 }
 
+sender.deleteUser = function(userId) {
+    var i;
+    for (i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i].v_userInfo.id == userId) break;
+    }
+    if (i>=this.v_items.length) return;
+    ee.removeControl(this.v_items[i]);
+    this.v_items.splice(i,1);
+    ee.tiledResizeV(this, 2);
+    this.refreshTitle();
+}
+
+
 sender.loadRecord = function(panel, dataset, index) {
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset,0,index);
@@ -13515,6 +13528,7 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>376</height>
       <heightRatio>0.535612535612536</heightRatio>
       <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.626666666666667</sizeRatio>
       <top>0</top>
@@ -23406,6 +23420,7 @@ sender.renderItem = function(root) {
     root.c_button = c;
     c.style.cursor = "pointer";
     c.v_style = root.parentNode.v_style[root.v_index];
+    c.v_index = 0;
     addText(c, c.v_style.text1, "left", "middle", "微软雅黑", 12, "ffffff", "");
     c.style.backgroundColor = c.v_style.color1;
     ee.setTextColor(c, c.v_style.tColor1);
@@ -36801,7 +36816,9 @@ for (i=0; i<itemList.length; i++) {
     g5.p2.p1.refresh();
     g5.p2.p2.setIsBlock1(v_userInfo.id, isBlock1);
     g5.p2.p11.refresh();
-    g5.p2.p19.refresh();
+    if (isBlock1) {
+        g5.p2.p19.refresh();
+    } else g5.p2.p19.deleteUser(v_userInfo.id);
     g5.p2.p5.refresh();
     g5.p2.p13.refresh();
     g5.p2.p9.blockUser(v_userInfo.id);
