@@ -1,5 +1,5 @@
 <page>
-  <controls count="649">
+  <controls count="653">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -1586,6 +1586,7 @@ sender.p30 = ee.getControl("panel538");
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -13411,13 +13412,13 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p19->设置-隐私和安全-已屏蔽账号]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAniStart>sender.reset();</onAniStart>
       <onCreate><![CDATA[sender.v_lastScrollTop = 0;
 sender.v_items = new Array();
-sender.c_title = ee.getControl("panel100");
+sender.c_title = ee.getControl("panel420");
 sender.v_loaded = false;
+sender.c_noResult = ee.getControl("panel551");
 
 sender.activePage = function() {
     g5.pushHistory2("/settings/blocked");
@@ -13443,6 +13444,20 @@ sender.refresh = function() {
     }
 }
 
+sender.refreshTitle = function() {
+    var a = this.v_items.length;
+    if (a<=0) {
+        ee.setText(this.c_title, "已屏蔽账号");
+    } else {
+        ee.setText(this.c_title, "已屏蔽账号("+a+"人)");
+    }
+    if (this.v_items.length>0) {
+        ee.setVisible(this.c_noResult, false);
+    } else {
+        ee.setVisible(this.c_noResult, true);
+    }
+    ee.tiledResizeV(this, 2);
+}
 
 sender.show = function() {
     if (this.v_loaded) {
@@ -13470,6 +13485,7 @@ sender.show = function() {
             cy += eb.getDivRect(item).h;
             sender.v_items.push(item);
         }
+        sender.refreshTitle();
         eb.processDock();
         var rect = eb.getDivRectSetting(g5.p4);
         ee.tiledV(sender, 0, rect.h, 500); 
@@ -13492,6 +13508,78 @@ sender.loadRecord = function(panel, dataset, index) {
       <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel208/panel551">
+      <backgroundColor>EDF1FA</backgroundColor>
+      <dockX>fill</dockX>
+      <height>376</height>
+      <heightRatio>0.535612535612536</heightRatio>
+      <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
+      <left>0</left>
+      <sizeRatio>0.626666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel208/panel551/panel552">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>43</height>
+      <heightRatio>0.11436170212766</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.0716666666666667</sizeRatio>
+      <text>您没有屏蔽任何用户</text>
+      <top>246</top>
+      <topRatio>0.654255319148936</topRatio>
+      <vAlign>top</vAlign>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel208/panel551/panel553">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>43</height>
+      <heightRatio>0.11436170212766</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.0716666666666667</sizeRatio>
+      <text>有了之后就会出现在这里</text>
+      <top>284</top>
+      <topRatio>0.75531914893617</topRatio>
+      <vAlign>top</vAlign>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel208/panel551/panel554">
+      <backgroundImg>empty02.gif</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>159</height>
+      <heightRatio>0.422872340425532</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>153</left>
+      <leftRatio>0.255</leftRatio>
+      <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <sizeRatio>0.540816326530612</sizeRatio>
+      <top>79</top>
+      <topRatio>0.210106382978723</topRatio>
+      <vAlign>top</vAlign>
+      <width>294</width>
+      <widthRatio>0.49</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel61">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -37304,7 +37392,8 @@ if (root.parentNode.v_mode=="x") {
     });
     ee.setOnClick(c, function(sender, event) {
         sender.parentNode.parentNode.v_photos.splice(sender.parentNode.v_index,1);
-        g5.refreshPhoto(sender.parentNode.parentNode);    
+        g5.refreshPhoto(sender.parentNode.parentNode);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();    
     })
 }]]></functionCode>
     </item>
