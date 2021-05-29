@@ -2695,7 +2695,7 @@ sender.refreshButton = function() {
         ee.setVisible(this.c_button1, false);
         visibleMail = false;
     } else if (this.v_userInfo.isBlock1 &amp;&amp; this.v_userInfo.isBlock2) {
-        ee.setVisible(this.c_button1, false);
+        //ee.setVisible(this.c_button1, false);
         visibleMail = false;
     } else if (this.v_userInfo.isBlock1) {
         visibleMail = false;
@@ -2786,6 +2786,12 @@ sender.refreshButton = function() {
                 },
             );
         } else if (block1 = 1) {
+            this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","屏蔽","屏蔽","屏蔽","#808080","#000000","#000000","#1da1f2"));
+            this.c_buttonMore.v_onClick.push(
+                function (sender, event) {
+                    g5.setBlock1(g5.p2.p2.v_userInfo, null);
+                },
+            );
             this.c_button1.init(4);
         }
     }
@@ -11023,6 +11029,8 @@ sender.render = function(root) {
     var c, dw = eb.getDivRectSetting(root).w;
     root.style.cursor="pointer";
     ee.setOnClick(root,function(sender,event) {
+        g5.p2.p14.show(sender.v_userInfo);
+        return;
         if (root.v_userInfo.status == "DISABLED") {
             g5.alert1("提示", "该用户处于禁封状态，目前无法查看与该用户的私信记录");
         } else if (root.v_userInfo.status == "Del") {
@@ -11100,10 +11108,10 @@ sender.loadDataset = function(dataset) {
     var rw = rect.w;
     for (i = 0; i < dataset.rowCount; i++) {
         for (j=0; j<this.v_items.length; j++) {
-            if (this.v_items[j].v_userInfo.id == dataset.getData(3,i)) break;    
+            if (this.v_items[j].v_userInfo.id == dataset.getData(4,i)) break;    
         }
         if (j<this.v_items.length) continue;
-        hd = "prvLst_" + dataset.getData(3,i);
+        hd = "prvLst_" + dataset.getData(4,i);
         c = createPanel(root, hd, "", 0, y, rw, 70);
         y += 70;
         this.loadRecord(c, dataset, i);
@@ -11343,7 +11351,7 @@ sender.style.borderStyle = "solid";</onCreate>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem12">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <height>676</height>
+      <height>663</height>
       <heightRatio>0.866666666666667</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
@@ -11743,14 +11751,14 @@ sender.onpointerup = function(event) {
       <backgroundColor>f0f0f0</backgroundColor>
       <heavy>10</heavy>
       <heavyEnabled>false</heavyEnabled>
-      <height>49</height>
-      <heightRatio>0.0628205128205128</heightRatio>
+      <height>62</height>
+      <heightRatio>0.0794871794871795</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>功能按钮区</note>
-      <sizeRatio>0.0816666666666667</sizeRatio>
-      <top>731</top>
-      <topRatio>0.937179487179487</topRatio>
+      <sizeRatio>0.103333333333333</sizeRatio>
+      <top>718</top>
+      <topRatio>0.92051282051282</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -11855,9 +11863,8 @@ sender._input.addEventListener("keydown", function(event) {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel35/layouty6/layoutyitem13/panel121">
       <cursor>pointer</cursor>
       <dockX>right</dockX>
-      <dockY>center</dockY>
       <height>32</height>
-      <heightRatio>0.653061224489796</heightRatio>
+      <heightRatio>0.516129032258065</heightRatio>
       <layerVisible>false</layerVisible>
       <left>556</left>
       <leftRatio>0.926666666666667</leftRatio>
@@ -11886,7 +11893,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <sizeRatio>0.864864864864865</sizeRatio>
       <text>发送</text>
       <top>8</top>
-      <topRatio>0.163265306122449</topRatio>
+      <topRatio>0.129032258064516</topRatio>
       <width>37</width>
       <widthRatio>0.0616666666666667</widthRatio>
     </control>
@@ -23420,7 +23427,6 @@ sender.renderItem = function(root) {
     root.c_button = c;
     c.style.cursor = "pointer";
     c.v_style = root.parentNode.v_style[root.v_index];
-    c.v_index = 0;
     addText(c, c.v_style.text1, "left", "middle", "微软雅黑", 12, "ffffff", "");
     c.style.backgroundColor = c.v_style.color1;
     ee.setTextColor(c, c.v_style.tColor1);
@@ -23440,7 +23446,7 @@ sender.renderItem = function(root) {
         ee.setTextColor(sender, s.tColor1);
     });
     c.eeMouseDown = function(sender,event,x,y) {
-        var s =sender.v_style[sender.v_index];
+        var s =sender.v_style;
         sender.style.backgroundColor = s.color3;
         setTimeout(function() {
             ee.setText(sender, s.text3);
@@ -23448,7 +23454,7 @@ sender.renderItem = function(root) {
         ee.setTextColor(sender, s.tColor3);
     }
     c.eeMouseUp = function(sender,event,x,y) {
-        var s =sender.v_style[sender.v_index];
+        var s =sender.v_style;
         sender.style.backgroundColor = s.color2;
         setTimeout(function() {
             ee.setText(sender, s.text2);
@@ -29524,14 +29530,14 @@ sql =
     "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, tContent_1.forceTopSn as reForceTopSn, CASE WHEN forwardLink_1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike,  " +
     "                CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike, dbo.tContent.userId AS uId,  " +
-    "                dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.status AS uStatus, convert(varchar, dbo.userInfo.regDatetime, 120) AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
     "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
     "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
     "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
-    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
+    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, convert(varchar, userInfo_1.regDatetime, 120) AS rRegDatetime,  " +
     "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
     "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
@@ -29578,14 +29584,14 @@ sql =
     "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, tContent_1.forceTopSn as reForceTopSn, CASE WHEN forwardLink_1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike,  " +
     "                CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike, dbo.tContent.userId AS uId,  " +
-    "                dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.status AS uStatus, convert(varchar, dbo.userInfo.regDatetime, 120) AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
     "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
     "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
     "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
-    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
+    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, convert(varchar, userInfo_1.regDatetime, 120) AS rRegDatetime,  " +
     "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
     "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
@@ -30070,12 +30076,14 @@ if (options == "user") {
     "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
     "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow,  " +
     "                CASE WHEN uBlockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN uBlockList1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2, " +
+    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide " +
     "FROM      dbo.userInfo LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
     "                uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + "     " +
+    "                left outer join hideList as uHideList on dbo.userInfo.id = uHideList.hideId and uHideList.userId = " + userId + " " +
     "WHERE " + cond + " and (dbo.userInfo.status='IDL' or dbo.userInfo.status='DelIn' or dbo.userInfo.status='Private') " +
     orderby;
 } else {
@@ -30106,7 +30114,9 @@ if (options == "user") {
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
     "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow,  " +
     "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail " +
+    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail, " +
+    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide, " +
+    "                CASE WHEN rHideList.id IS NULL THEN 0 ELSE 1 END AS rIsHide " +
     "FROM      dbo.blockList AS rBlockList FULL OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
     "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
@@ -30128,6 +30138,8 @@ if (options == "user") {
     "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
     "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
+    "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + userId + " " +
+    "                left outer join hideList as rHideList on tContent_1.userId = rHideList.hideId and rHideList.userId = " + userId + " " +
     "WHERE   (tContent.status<>'DEL') and (dbo.userInfo.status='IDL' or dbo.userInfo.status='DelIn'or dbo.userInfo.status='Private') and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " + cond + " " +
     orderby;
 }
@@ -30142,14 +30154,14 @@ if (sqlResult == null) {
 eio.appendString8("T");
 if (options == "user") {
     eio.appendDataSet(sqlResult,
-        "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail",
+        "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide",
         pageIndex*pageSize, pageSize);
 } else {
     eio.appendDataSet(sqlResult,
         "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
         "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
-        "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail," +  
-        "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail",
+        "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
+        "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide",
         pageIndex*pageSize, pageSize);
 }]]></script2>
       <script3>g5.loading.close();
@@ -30598,7 +30610,8 @@ sql =
     "                dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount,  " +
     "                dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow,  " +
     "                CASE WHEN uBlockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN uBlockList1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS uIsBlock2 " +
+    "                THEN 0 ELSE 1 END AS uIsBlock2, " +
+    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide " +
     "FROM      (SELECT   chatUserId, MAX(id) AS maxId " +
     "                 FROM      (SELECT   CASE WHEN sendUserId = " + myUserId + " THEN recvUserId WHEN recvUserId = " + myUserId + " THEN sendUserId ELSE - 1 END " +
     "                                                   AS chatUserId, id " +
@@ -30612,6 +30625,7 @@ sql =
     "                uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN " +
     "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " " +
+    "                left outer join hideList as uHideList on derivedtbl_2.chatUserId = uHideList.hideId and uHideList.userId = " + myUserId + " " +
     "WHERE  uBlockList.id IS NULL " +
     "ORDER BY derivedtbl_2.maxId DESC; ";
     
@@ -30623,7 +30637,7 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,"maxId,regDatetime,content,photo1," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail", 
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsBlock", 
     pageIndex*pageSize, pageSize);
 
 
@@ -37077,7 +37091,7 @@ var startTimer = function() {
         }
         likeContent.contentId = g5.likeItems[0].contentId;
         likeContent.onComplete = function() {
-            g5.writeLog("setLikeComplete:"+likeContent.contentId);
+            //g5.writeLog("setLikeComplete:"+likeContent.contentId);
         }
         likeContent();
         g5.likeItems.splice(0,1);
@@ -37149,7 +37163,7 @@ var startTimer = function() {
         }
         unlikeContent.contentId = g5.unlikeItems[0].contentId;
         unlikeContent.onComplete = function() {
-            g5.writeLog("setUnlike,id="+unlikeContent.contentId);
+            //g5.writeLog("setUnlike,id="+unlikeContent.contentId);
         }
         unlikeContent();
         g5.unlikeItems.splice(0,1);
