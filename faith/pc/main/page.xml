@@ -318,21 +318,18 @@ ee.setOnClick = function (div, func) {
 a.css_button1 {
     display:inline-block;
     padding:0.1em 0.5em 0.1em 0.5em;
-    border:0.1em solid #1DA1F2;
+    //border:0.1em solid #1DA1F2;
     margin:0 0.3em 0 0.3em;
     border-radius:0.4em;
     box-sizing: border-box;
     text-decoration:none;
     font-family:'Roboto',sans-serif;
-    font-weight:300;
-    font-size:8pt;
     color:#1DA1F2;
     text-align:center;
     transition: all 0.2s;
 }
 a.css_button1:hover{
-    color:#000000;
-    background-color:#1DA1F2;
+    text-decoration: underline;
 }
 @media all and (max-width:30em){
     .css_button1{
@@ -2755,15 +2752,17 @@ sender.refreshButton = function() {
             //ee.setText(sender.c_status, st);
         } else {
             this.c_button1.init(1);
-            this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#808080","#000000","#000000","#1da1f2"));
-            this.c_buttonMore.v_onClick.push(
-                function (sender, event) {
-                    g5.setFollow(showUserPage.v_userInfo, function(v_userInfo) {
-                        ee.getControl("panel256").init(2);
-                        showUserPage.v_userInfo = v_userInfo.clone();
-                    });
-                }
-            );
+            if ((!this.v_userInfo.isBlock1) &amp;&amp; (!this.v_userInfo.isBlock2)) {
+                this.c_buttonMore.v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#808080","#000000","#000000","#1da1f2"));
+                this.c_buttonMore.v_onClick.push(
+                    function (sender, event) {
+                        g5.setFollow(showUserPage.v_userInfo, function(v_userInfo) {
+                            ee.getControl("panel256").init(2);
+                            showUserPage.v_userInfo = v_userInfo.clone();
+                        });
+                    }
+                );
+            }
         }
         var block1 = -1;
         if (this.v_userInfo.isBlock1) block1 = 0;
@@ -9331,44 +9330,6 @@ sender.show = function(v_contentId, bgRefresh) {
     g5.loading.show();
     showTopicP2();               
 }
-
-/*
-sender.show = function(v_contentId, bgRefresh) {
-    if (this.v_contentId == v_contentId) {
-        this.parentNode.changePage(2);
-        return;
-    }
-    if (showForwardList.busy) return;
-    this.v_contentId = v_contentId;
-    for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
-    sender.v_items = new Array();
-    if (!bgRefresh) this.parentNode.changePage(2);
-    showForwardList.contentId = v_contentId;
-    showForwardList.onComplete = function(dataset) {
-        g5.loading.close();
-        var root = sender;
-        var cy = 0;
-        var itemWidth = eb.getDivRect(root).w;
-        for (var i=0; i<dataset.rowCount; i++) {
-            var item = createPanel(root, "fwdl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
-            sender.loadRecord(item, dataset, i);
-            item.v_mode = "";
-            g5.renderUserBar(item);
-            cy += eb.getDivRect(item).h;
-            sender.v_items.push(item);
-        }
-        eb.processDock();
-        sender.setCount(dataset.rowCount);
-        var rect = eb.getDivRectSetting(g5.p4);
-        if (!bgRefresh) {
-            sender.parentNode.changePage(-1);
-            sender.parentNode.changePage(2);
-        }
-    }
-    g5.loading.show();
-    showForwardList();               
-}
-*/
 
 sender.loadRecord = function(panel, dataset, index) {
     panel.v_userInfo = new g5.UserInfo();
@@ -35137,7 +35098,11 @@ root.setUserPhoto = function(photo) {
         ee.setImage(root.c_photo,"url:" + g5.imgUrl + photo,"trim","","")
     }
 }
-root.setUserPhoto(root.v_content.exUserInfo.photo);
+if (root.v_content.exUserInfo.status == "DISABLED") {
+    root.setUserPhoto("");
+} else {
+    root.setUserPhoto(root.v_content.exUserInfo.photo);
+}
 c.style.cursor="pointer";
 c.style.borderRadius = "50%";
 ee.setOnClick(c,function(sender,event) {
@@ -36515,9 +36480,9 @@ var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&amp;@#\/%?=~_|!:,.;]*[a-z0-9-+&
 var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
 // Email addresses *** here I've changed the expression ***
 var emailAddressPattern = /(([a-zA-Z0-9_\-\.]+)@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6}))+/gim;
-return text
-    .replace(urlPattern, "<a class='css_button1' target='_blank' href='$&amp;' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x1f310; $&amp;</a>")
-    .replace(pseudoUrlPattern, "$1<a class='css_button1' target='_blank' href='http://$2' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x1f310; $2</a>")
+return text //&amp;#x1f310;
+    .replace(urlPattern, "<a class='css_button1' target='_blank' href='$&amp;' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$&amp;</a>")
+    .replace(pseudoUrlPattern, "$1<a class='css_button1' target='_blank' href='http://$2' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$2</a>")
     .replace(emailAddressPattern, "<a class='css_button1' target='_blank' href='mailto:$1' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x2709; $1</a>");
 ]]></functionCode>
     </item>
