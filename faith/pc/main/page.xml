@@ -351,7 +351,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1540,7 +1539,6 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <note>p2</note>
@@ -2369,7 +2367,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -3213,6 +3210,12 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <left>50</left>
       <leftRatio>0.0907441016333938</leftRatio>
       <onClick>window.open(sender.homePage);</onClick>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+
+</onCreate>
       <sizeRatio>0.0698602794411178</sizeRatio>
       <text>主页http://www.baidu.com</text>
       <top>0</top>
@@ -11032,13 +11035,27 @@ sender.render = function(root) {
         sender.style.filter="brightness(100%)";
     });
     
-    c = createPanel(root, root.id + "panel3", "", 75, 6, dw-180, 29);
+    c = createPanel(root, root.id + "panel3", "", 75, 6, dw-110, 29);
     s = root.v_regDatetime;
     s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
-    addText(c, "<b>" + root.v_userInfo.nickName + "</b>" +
-        "<font color = '#A0A0A0'> @" + root.v_userInfo.userName + "</font>" +
-        " · <font>" + s + "</font>",
+    addText(c, "<div><b>" + root.v_userInfo.nickName + "</b>" +
+        "<font color = '#A0A0A0'> @" + root.v_userInfo.userName + "</font></div>" +
+        "<font> · </font><font>" + s + "</font>",
         "left", "middle", "微软雅黑", 12, "000000", "normal");
+    c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+    root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
+    root.c_username = c.label.rows[0].cells[0].childNodes[0]; 
+    var r1 = eb.getDivRect(c.label.rows[0].cells[0]);
+    var r2 = eb.getDivRectSetting(c);
+    var r3 = eb.getDivRect(root.v_timeLabel);
+    if (r1.w>r2.w) {
+        root.c_username.style.width = (r2.w - r3.w - 20) + "px";
+        root.c_username.style.display = "inline-block";
+        root.c_username.style.overflow = "hidden";
+        root.c_username.style.verticalAlign = "text-top";
+        root.c_username.style.textOverflow = "ellipsis";
+        c.label.rows[0].cells[0].childNodes[1].innerHTML = "· ";
+    }
     c = createPanel(root, root.id + "panel5", "", 75, 35, dw-180, 29);
     s = root.v_content;
     if (root.v_userInfo.status == "DISABLED") {
@@ -22698,6 +22715,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -23080,6 +23098,7 @@ sender.close = function() {
       <height>281</height>
       <heightRatio>0.353015075376884</heightRatio>
       <layerName>p3.C其他人选项</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.266490765171504</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
