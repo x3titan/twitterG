@@ -1895,7 +1895,7 @@ ee.setOnMouseLeave(c, function(sender,e) {
       <onChange><![CDATA[var edit = sender.parentNode;
 var text = ee.getEditText(edit);
 
-if (text.split("\n").length-1>10) {
+if (text.split("\n").length-1>20) {
     var s1 = sender.selectionStart;
     var s2 = sender.selectionEnd;
     text = edit.v_lastText;
@@ -1994,10 +1994,24 @@ sender._input.addEventListener("keydown", function(event) {
       <left>75</left>
       <leftRatio>0.125</leftRatio>
       <note>c_photos</note>
-      <onCreate>sender.style.borderRadius = "15px";
+      <onCreate><![CDATA[sender.style.borderRadius = "15px";
 sender.v_mode="x";
 sender.v_photos = new Array();
-</onCreate>
+
+sender.onDeletePhoto = function() {
+    if (sender.v_photos.length<=0) {
+        ee.setVisible(sender, false);
+        var cy = 462-140;
+        cy = -cy;
+        ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+cy);
+        g5.batchMoveY(g5.p2.p1.v_items,0,cy);
+        eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + cy);
+        eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + cy);
+        eb.processDock();
+    }
+}
+
+]]></onCreate>
       <outerBottom>70</outerBottom>
       <sizeRatio>0.588594704684318</sizeRatio>
       <top>70</top>
@@ -2824,8 +2838,8 @@ sender.showByUserInfo = function(v_userInfo) {
     } else {
         ee.getControl("panel20").init(v_userInfo.titleBg);
     }
-    ee.getControl("panel18").setText(v_userInfo.nickName);
-    ee.getControl("panel21").setText("@" + v_userInfo.userName);
+    ee.setText(ee.getControl("panel18"), v_userInfo.nickName);
+    ee.setText(ee.getControl("panel21"), "@" + v_userInfo.userName);
     
     var cy = eb.getDivRect(ee.getControl("panel21")).y + eb.getDivRect(ee.getControl("panel21")).h;
     var vspace = 2;
@@ -3087,30 +3101,18 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
       <layerVisible>false</layerVisible>
       <left>165</left>
       <leftRatio>0.275</leftRatio>
-      <onCreate><![CDATA[sender.v_text = "";
-sender.setText = function(text) {
-    this.v_text = text;
-    this.label.style.wordBreak = "keep-all";
-    this.label.style.whiteSpace = "nowrap";
-    eb.setDivRect(this.label, null, null, 1, null);
-    var thisW = eb.getDivRect(sender).w - 10;
-    var s, i;
-    for (i=1; i<text.length; i++) {
-        s = text.substr(0,i) + "...";
-        ee.setText(this, s);
-        var r = eb.getDivRect(sender.label);
-        if (r.w>thisW) break;
-    }
-    s = i>=text.length?text:text.substr(0,i-1) + "...";
-    ee.setText(this, s);
-}
-]]></onCreate>
-      <sizeRatio>0.161137440758294</sizeRatio>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+
+</onCreate>
+      <sizeRatio>0.136546184738956</sizeRatio>
       <text>昵称nicheng</text>
       <top>265</top>
       <topRatio>0.33974358974359</topRatio>
-      <width>211</width>
-      <widthRatio>0.351666666666667</widthRatio>
+      <width>249</width>
+      <widthRatio>0.415</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel21">
       <fontColor>808080</fontColor>
@@ -3122,30 +3124,17 @@ sender.setText = function(text) {
       <layerVisible>false</layerVisible>
       <left>165</left>
       <leftRatio>0.275</leftRatio>
-      <onCreate><![CDATA[sender.v_text = "";
-sender.setText = function(text) {
-    this.v_text = text;
-    this.label.style.wordBreak = "keep-all";
-    this.label.style.whiteSpace = "nowrap";
-    eb.setDivRect(this.label, null, null, 1, null);
-    var thisW = eb.getDivRect(sender).w - 10;
-    var s, i;
-    for (i=1; i<text.length; i++) {
-        s = text.substr(0,i) + "...";
-        ee.setText(this, s);
-        var r = eb.getDivRect(sender.label);
-        if (r.w>thisW) break;
-    }
-    s = i>=text.length?text:text.substr(0,i-1) + "...";
-    ee.setText(this, s);
-}
-]]></onCreate>
-      <sizeRatio>0.161137440758294</sizeRatio>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+</onCreate>
+      <sizeRatio>0.136546184738956</sizeRatio>
       <text>@用户名</text>
       <top>290</top>
       <topRatio>0.371794871794872</topRatio>
-      <width>211</width>
-      <widthRatio>0.351666666666667</widthRatio>
+      <width>249</width>
+      <widthRatio>0.415</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel69">
       <fontFamily>微软雅黑</fontFamily>
@@ -25107,14 +25096,19 @@ sender.close = function() {
       <height>39</height>
       <heightRatio>0.150579150579151</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>36</left>
-      <leftRatio>0.0942408376963351</leftRatio>
-      <sizeRatio>0.12621359223301</sizeRatio>
+      <left>63</left>
+      <leftRatio>0.164921465968586</leftRatio>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+</onCreate>
+      <sizeRatio>0.152941176470588</sizeRatio>
       <text>删除发言</text>
       <top>18</top>
       <topRatio>0.0694980694980695</topRatio>
-      <width>309</width>
-      <widthRatio>0.808900523560209</widthRatio>
+      <width>255</width>
+      <widthRatio>0.667539267015707</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel260">
       <backgroundColor>00C0C0</backgroundColor>
@@ -37388,6 +37382,7 @@ if (root.parentNode.v_mode=="x") {
     });
     ee.setOnClick(c, function(sender, event) {
         sender.parentNode.parentNode.v_photos.splice(sender.parentNode.v_index,1);
+        if (sender.parentNode.parentNode.onDeletePhoto) sender.parentNode.parentNode.onDeletePhoto();
         g5.refreshPhoto(sender.parentNode.parentNode);
         window.event? window.event.cancelBubble = true : event.stopPropagation();    
     })
