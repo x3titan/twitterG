@@ -1,5 +1,5 @@
 <page>
-  <controls count="653">
+  <controls count="651">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -2367,6 +2367,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -10592,7 +10593,7 @@ sender.loadRecord = function(panel, dataset, index) {
     panel.v_regDatetime = dataset.getData(1,index);
     panel.v_status = dataset.getData(2,index);
     panel.v_type = dataset.getData(3,index);
-    panel.v_content = dataset.getData(4,index);
+    panel.v_text = dataset.getData(4,index);
     panel.v_url = dataset.getData(5,index);
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset,6,index);
@@ -10669,20 +10670,36 @@ sender.renderItem = function(root) {
     root.v_titleText = c;
     var temp = "";
     temp = "<div style='display:inline'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
+    temp += "<div style='display:inline'>";
     if (root.v_type == "R") {
-        temp += " <font color='#1b95e0'><b>回复</b></font>了您的短文";
+        temp += "<font color='#1b95e0'><b> 回复</b></font>了您的短文";
     } else if (root.v_type == "F") {
-        temp += " <font color='#0bc035'><b>转发</b></font>了您的短文";
+        temp += "<font color='#0bc035'><b> 转发</b></font>了您的短文";
     }
+    temp += "<font> · </font><font>" + g5.getMins(root.v_regDatetime) + "</font>";
+    temp += "</div>";
     addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
-    if (root.v_mode.charAt(2) != "x") {
-        root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
-        root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_times
-    }
     c.v_username = root.v_userInfo.userName;
     root.c_titleText = c.label.rows[0].cells[0].childNodes[0];
     root.c_titleText.id = root.id + "_titleText";
     root.c_titleText.v_userName = root.v_userInfo.userName;
+    root.v_timeLabel = c.label.rows[0].cells[0].childNodes[1].childNodes[c.label.rows[0].cells[0].childNodes[1].childNodes.length-1];
+    root.v_content = {};
+    root.v_content.startTime = parseInt((new Date()).getTime()/1000)-root.v_regDatetime;
+    root.v_startTime = parseInt((new Date()).getTime()/1000) - root.v_regDatetime;
+    root.c_username = c.label.rows[0].cells[0].childNodes[0]; 
+    c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+    var r1 = eb.getDivRect(c.label.rows[0].cells[0]);
+    var r2 = eb.getDivRectSetting(c);
+    var r3 = eb.getDivRect(c.label.rows[0].cells[0].childNodes[1]);
+    if (r1.w>r2.w) {
+        root.c_username.style.width = (r2.w - r3.w - 20) + "px";
+        root.c_username.style.display = "inline-block";
+        root.c_username.style.overflow = "hidden";
+        root.c_username.style.verticalAlign = "text-top";
+        root.c_username.style.textOverflow = "ellipsis";
+        //c.label.rows[0].cells[0].childNodes[timeIndex-1].innerHTML = "· ";
+    }
     c.style.cursor="pointer";
     ee.setOnClick(root.c_titleText,function(sender,event) {
         g5.p2.p2.show(root.v_userInfo);
@@ -10698,8 +10715,8 @@ sender.renderItem = function(root) {
     //content
     c = createPanel(root, root.id+"_panel17", "", 75, cy, w-80, 10);
     root.c_content = c;
-    if (root.v_content.length<=0) root.v_content = "<该用户没有留下文字内容>";
-    addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(root.v_content) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
+    if (root.v_text.length<=0) root.v_text = "<该用户没有留下文字内容>";
+    addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(root.v_text) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
     eb.setDock(c,"disabled","disabled");
     eb.processDock();
     var rect = eb.getDivRect(c.label);
@@ -11038,7 +11055,7 @@ sender.render = function(root) {
     c = createPanel(root, root.id + "panel3", "", 75, 6, dw-110, 29);
     s = root.v_regDatetime;
     s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
-    addText(c, "<div><b>" + root.v_userInfo.nickName + "</b>" +
+    addText(c, "<div style='display:inline'><b>" + root.v_userInfo.nickName + "</b>" +
         "<font color = '#A0A0A0'> @" + root.v_userInfo.userName + "</font></div>" +
         "<font> · </font><font>" + s + "</font>",
         "left", "middle", "微软雅黑", 12, "000000", "normal");
@@ -12248,36 +12265,6 @@ eb.initMouseEvent(sender);]]></onCreate>
       <width>33</width>
       <widthRatio>0.055</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel167/panel170">
-      <backgroundColor>FFC080</backgroundColor>
-      <bindControl>panel168</bindControl>
-      <bindTop>bottom</bindTop>
-      <dockX>fill</dockX>
-      <fontBold>true</fontBold>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>45</height>
-      <heightRatio>0.0576923076923077</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onCreate>sender.style.boxSizing="border-box";
-sender.style.borderWidth = "1px";
-sender.style.borderColor = "#e6ecf0";
-sender.style.borderStyle = "solid";
-sender.style.borderTop = "";
-sender.style.borderLeft = "";
-sender.style.borderRight = "";
-
-</onCreate>
-      <sizeRatio>0.075</sizeRatio>
-      <text>   登录和安全</text>
-      <top>51</top>
-      <topRatio>0.0653846153846154</topRatio>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel167/panel171">
       <backgroundColor>FFC080</backgroundColor>
       <cursor>pointer</cursor>
@@ -12310,8 +12297,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    用户名</text>
-      <top>96</top>
-      <topRatio>0.123076923076923</topRatio>
+      <top>46</top>
+      <topRatio>0.058974358974359</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12380,8 +12367,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    头像和主题背景</text>
-      <top>144</top>
-      <topRatio>0.184615384615385</topRatio>
+      <top>94</top>
+      <topRatio>0.120512820512821</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12451,8 +12438,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    手机</text>
-      <top>192</top>
-      <topRatio>0.246153846153846</topRatio>
+      <top>142</top>
+      <topRatio>0.182051282051282</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12522,8 +12509,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    电子邮件</text>
-      <top>239</top>
-      <topRatio>0.306410256410256</topRatio>
+      <top>189</top>
+      <topRatio>0.242307692307692</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12592,8 +12579,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    网址</text>
-      <top>287</top>
-      <topRatio>0.367948717948718</topRatio>
+      <top>237</top>
+      <topRatio>0.303846153846154</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12662,8 +12649,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    简介</text>
-      <top>335</top>
-      <topRatio>0.429487179487179</topRatio>
+      <top>285</top>
+      <topRatio>0.365384615384615</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12732,8 +12719,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    密码</text>
-      <top>383</top>
-      <topRatio>0.491025641025641</topRatio>
+      <top>333</top>
+      <topRatio>0.426923076923077</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12802,8 +12789,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    删除本账号</text>
-      <top>430</top>
-      <topRatio>0.551282051282051</topRatio>
+      <top>380</top>
+      <topRatio>0.487179487179487</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -12924,7 +12911,7 @@ eb.initMouseEvent(sender);
       <sizeRatio>0.177777777777778</sizeRatio>
       <text>进入我的个人主页</text>
       <top>28</top>
-      <topRatio>0.291666666666667</topRatio>
+      <topRatio>0.28125</topRatio>
       <width>225</width>
       <widthRatio>0.375</widthRatio>
     </control>
@@ -13066,33 +13053,6 @@ eb.initMouseEvent(sender);]]></onCreate>
       <width>33</width>
       <widthRatio>0.055</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel189/panel192">
-      <backgroundColor>FFC080</backgroundColor>
-      <dockX>fill</dockX>
-      <fontBold>true</fontBold>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>45</height>
-      <heightRatio>0.0576923076923077</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onCreate>sender.style.boxSizing="border-box";
-sender.style.borderWidth = "1px";
-sender.style.borderColor = "#e6ecf0";
-sender.style.borderStyle = "solid";
-sender.style.borderTop = "";
-sender.style.borderLeft = "";
-sender.style.borderRight = "";
-</onCreate>
-      <sizeRatio>0.075</sizeRatio>
-      <text>   安全</text>
-      <top>51</top>
-      <topRatio>0.0653846153846154</topRatio>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel189/panel193">
       <backgroundColor>FFC080</backgroundColor>
       <cursor>pointer</cursor>
@@ -13125,8 +13085,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    已隐藏</text>
-      <top>96</top>
-      <topRatio>0.123076923076923</topRatio>
+      <top>52</top>
+      <topRatio>0.0666666666666667</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -13196,8 +13156,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    已屏蔽账号</text>
-      <top>145</top>
-      <topRatio>0.185897435897436</topRatio>
+      <top>101</top>
+      <topRatio>0.129487179487179</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -13267,8 +13227,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    正常/私密模式</text>
-      <top>193</top>
-      <topRatio>0.247435897435897</topRatio>
+      <top>149</top>
+      <topRatio>0.191025641025641</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -13338,8 +13298,8 @@ ee.setOnMouseLeave(sender, function(sender,e){
 </onCreate>
       <sizeRatio>0.075</sizeRatio>
       <text>    加粉请求者</text>
-      <top>239</top>
-      <topRatio>0.306410256410256</topRatio>
+      <top>195</top>
+      <topRatio>0.25</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -13583,7 +13543,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p20->设置-账号-修改用户名]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.show = function() {
     g5.changeP2(19);
@@ -13745,6 +13704,7 @@ sender.style.borderLeft = "";</onCreate>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel61/panel166/panel185/panel187">
       <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
       <fontBold>true</fontBold>
       <fontColor>282828</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -13753,14 +13713,16 @@ sender.style.borderLeft = "";</onCreate>
       <height>28</height>
       <heightRatio>0.424242424242424</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>9</left>
-      <leftRatio>0.0155172413793103</leftRatio>
-      <sizeRatio>0.115702479338843</sizeRatio>
+      <left>15</left>
+      <leftRatio>0.0258620689655172</leftRatio>
+      <outerLeft>15</outerLeft>
+      <outerRight>15</outerRight>
+      <sizeRatio>0.0495575221238938</sizeRatio>
       <text>--</text>
       <top>33</top>
       <topRatio>0.5</topRatio>
-      <width>242</width>
-      <widthRatio>0.417241379310345</widthRatio>
+      <width>550</width>
+      <widthRatio>0.974137931034483</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel61/panel166/panel188">
       <backgroundColor>F5F8FA</backgroundColor>
@@ -13887,8 +13849,8 @@ sender.style.borderLeft = "";</onCreate>
       <leftRatio>0.836666666666667</leftRatio>
       <onClick><![CDATA[if (changeNickName.busy) return;
 var p1 = ee.getEditText(ee.getControl("edit19"));
-if (p1.length>50) {
-    g5.alert1("用户名错误", "您输入的用户名过长，用户名的长度不能超过50个英文或者汉字");
+if (p1.length>20) {
+    g5.alert1("用户名错误", "您输入的用户名过长，用户名的长度不能超过20个英文或者汉字");
     return;
 }
 if (p1.length<3) {
@@ -29365,7 +29327,7 @@ var myUserId = db.getString(sqlResult,"id");
 var top = (pageIndex+1)*pageSize;
 sql =
     "exec clearPromptCount " + myUserId + "; " +
-    "SELECT   TOP(" + top + ") dbo.userPrompt.id AS promptId, dbo.userPrompt.regDatetime AS promptRegDatetime,  " +
+    "SELECT   TOP(" + top + ") dbo.userPrompt.id AS promptId, DATEDIFF(second, dbo.userPrompt.regDatetime, getutcdate()) AS promptRegDatetime,  " +
     "                dbo.userPrompt.status AS promptStatus, dbo.userPrompt.type, dbo.userPrompt.[content], dbo.userPrompt.url,  " +
     "                dbo.userPrompt.refUserId AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
@@ -29393,8 +29355,8 @@ if (sqlResult == null) {
 }
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,
-    "promptId, promptRegDatetime,promptStatus,type,content,url," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,",  
+    "promptId,promptRegDatetime,promptStatus,type,content,url," +
+    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide",  
     pageIndex*pageSize, pageSize);]]></script2>
       <script3>if (eio.readString8() != "T") {
     return;
@@ -33839,7 +33801,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
         this.likeCount = parseInt(this.likeCount=="" ? "0":this.likeCount);
         this.unlikeCount = parseInt(this.unlikeCount=="" ? "0":this.unlikeCount);
         this.seconds = parseInt(this.seconds=="" ? "0":this.seconds);
-        this.startTime = parseInt((new Date()).getTime()/1000)-this.seconds
+        this.startTime = parseInt((new Date()).getTime()/1000)-this.seconds;
     }
     this.loadFromDataset = function(ds, x, idx) {
         this.id = ds.getData(x+0,idx);    
@@ -34822,7 +34784,7 @@ if (root.v_mode.charAt(2) == "x") {
     c = createPanel(root, root.id+"_bottom01", "", 16, cy, mainWidth, 26); cy+=33;
     addText(c, g5.getMins(root.v_content.seconds, 2), "left", "middle", "微软雅黑", 12, "808080", "normal");
     root.v_timeLabel = c.label.rows[0].cells[0]; 
-    root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_content.seconds
+    root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_content.seconds;
     c = createPanel(root, root.id+"_btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
     /*
     if ((root.v_content.reCount!="0") || (root.v_content.fwCount!="0") || (root.v_content.likeCount!="0")) {
@@ -35697,6 +35659,8 @@ if (g5.currentPageIndex == 0) {
     } else if (g5.p2.p11.currentPage == "c5") {
         currentPage.push(g5.p2.p11.c_pages.c5.v_items);
     }
+} else if (g5.currentPageIndex == 11) {
+    currentPage.push(g5.p2.p12.v_items);
 }
 return currentPage;</functionCode>
     </item>
