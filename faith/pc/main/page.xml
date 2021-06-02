@@ -11945,6 +11945,33 @@ sender.refresh = function(userId) {
     }
 }
 
+sender.refreshCount = function() {
+    if (!this.v_userInfo) return;
+    if (this.v_userInfo.fansCount<=0) {
+        ee.setText(this.c_title, 
+            "<div style='display:inline'>" + this.v_userInfo.nickName+"<font color=#a0a0a0>@"+this.v_userInfo.userName+"</font></div><font>的粉丝</font>");
+    } else {
+        ee.setText(this.c_title, 
+            "<div style='display:inline'>" + this.v_userInfo.nickName+"<font color=#a0a0a0>@"+this.v_userInfo.userName+"</font></div><font>的粉丝("+this.v_userInfo.fansCount+"人)</font>");
+    }
+    var c = this.c_title;
+    var root = {};
+    c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+    root.v_timeLabel = c.label.rows[0].cells[0].childNodes[1]; 
+    root.c_username = c.label.rows[0].cells[0].childNodes[0]; 
+    var r1 = eb.getDivRect(c.label.rows[0].cells[0]);
+    var r2 = eb.getDivRectSetting(c);
+    var r3 = eb.getDivRect(root.v_timeLabel);
+    if (r1.w>r2.w) {
+        root.c_username.style.width = (r2.w - r3.w - 20) + "px";
+        root.c_username.style.display = "inline-block";
+        root.c_username.style.overflow = "hidden";
+        root.c_username.style.verticalAlign = "text-top";
+        root.c_username.style.textOverflow = "ellipsis";
+    }
+}
+
+
 sender.show = function(v_userInfo) {
     if (this.v_needRefresh) {
         this.v_needRefresh = false;
@@ -11954,10 +11981,9 @@ sender.show = function(v_userInfo) {
         ee.tiledResizeV(this, 2);
         return;
     }
-    ee.setText(this.c_title, 
-        v_userInfo.nickName+"<font color=#a0a0a0>@"+v_userInfo.userName+"</font>的粉丝("+v_userInfo.fansCount+"人)");
-    if (showFansList.busy) return;
     this.v_userInfo = v_userInfo;
+    this.refreshCount();
+    if (showFansList.busy) return;
     document.documentElement.scrollTop = 0;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
@@ -12011,7 +12037,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p16->关注列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -12053,10 +12078,25 @@ sender.refreshCount = function() {
     if (!this.v_userInfo) return;
     if (this.v_userInfo.followCount<=0) {
         ee.setText(this.c_title, 
-            this.v_userInfo.nickName+"<font color=#a0a0a0>@"+this.v_userInfo.userName+"</font>关注的用户");
+            "<div style='display:inline'>" + this.v_userInfo.nickName+"<font color=#a0a0a0>@"+this.v_userInfo.userName+"</font></div><font>关注的用户</font>");
     } else {
         ee.setText(this.c_title, 
-            this.v_userInfo.nickName+"<font color=#a0a0a0>@"+this.v_userInfo.userName+"</font>关注的用户("+this.v_userInfo.followCount+"人)");
+            "<div style='display:inline'>" + this.v_userInfo.nickName+"<font color=#a0a0a0>@"+this.v_userInfo.userName+"</font></div><font>关注的用户("+this.v_userInfo.followCount+"人)</font>");
+    }
+    var c = this.c_title;
+    var root = {};
+    c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+    root.v_timeLabel = c.label.rows[0].cells[0].childNodes[1]; 
+    root.c_username = c.label.rows[0].cells[0].childNodes[0]; 
+    var r1 = eb.getDivRect(c.label.rows[0].cells[0]);
+    var r2 = eb.getDivRectSetting(c);
+    var r3 = eb.getDivRect(root.v_timeLabel);
+    if (r1.w>r2.w) {
+        root.c_username.style.width = (r2.w - r3.w - 20) + "px";
+        root.c_username.style.display = "inline-block";
+        root.c_username.style.overflow = "hidden";
+        root.c_username.style.verticalAlign = "text-top";
+        root.c_username.style.textOverflow = "ellipsis";
     }
 }
 
@@ -12911,7 +12951,7 @@ eb.initMouseEvent(sender);
       <sizeRatio>0.177777777777778</sizeRatio>
       <text>进入我的个人主页</text>
       <top>28</top>
-      <topRatio>0.28125</topRatio>
+      <topRatio>0.291666666666667</topRatio>
       <width>225</width>
       <widthRatio>0.375</widthRatio>
     </control>
@@ -13543,6 +13583,7 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p20->设置-账号-修改用户名]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.show = function() {
     g5.changeP2(19);
@@ -13717,12 +13758,12 @@ sender.style.borderLeft = "";</onCreate>
       <leftRatio>0.0258620689655172</leftRatio>
       <outerLeft>15</outerLeft>
       <outerRight>15</outerRight>
-      <sizeRatio>0.0495575221238938</sizeRatio>
+      <sizeRatio>0.0509090909090909</sizeRatio>
       <text>--</text>
       <top>33</top>
       <topRatio>0.5</topRatio>
       <width>550</width>
-      <widthRatio>0.974137931034483</widthRatio>
+      <widthRatio>0.948275862068966</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel61/panel166/panel188">
       <backgroundColor>F5F8FA</backgroundColor>
@@ -17479,9 +17520,9 @@ sender.refresh = function(userId) {
 sender.refreshTitle = function() {
     var s = "";
     if (g5.myUserInfo.fansReqCount) {
-        s =g5.myUserInfo.nickName+"<font color=#a0a0a0>@"+g5.myUserInfo.userName+"</font>的加粉请求者(" + g5.myUserInfo.fansReqCount + "人)";
+        s ="加粉请求者(" + g5.myUserInfo.fansReqCount + "人)";
     } else {
-        s =g5.myUserInfo.nickName+"<font color=#a0a0a0>@"+g5.myUserInfo.userName+"</font>的加粉请求者";
+        s ="加粉请求者";
     }
     ee.setText(this.c_title, s);
     if (g5.myUserInfo.fansReqCount &amp;&amp; g5.myUserInfo.fansReqCount>0) {
@@ -34391,7 +34432,7 @@ ee.setOnClick(c,function(sender,event) {
 //reUsername
 cy+=17;
 if ((root.v_content.uplinkType == "R") || (root.v_content.uplinkType == "F")){
-    c = createPanel(root, root.id+"_pareUsername01nel17", "", 75, cy, mainWidth-80, 22);
+    c = createPanel(root, root.id+"_pareUsername01nel17", "", 75, cy, mainWidth-80, 24);
     cy += 22;
     addText(c, "<font color='#808080'>" +
         (root.v_content.uplinkType == "R" ? "回复":"转发") +
@@ -35137,6 +35178,15 @@ if (root.v_content.exUserInfo.status == "DISABLED") {
 c.style.cursor="pointer";
 c.style.borderRadius = "50%";
 ee.setOnClick(c,function(sender,event) {
+    if (root.v_content.exUserInfo.status == "DISABLED") {
+        g5.p2.p2.show(root.v_content.exUserInfo);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+        return;
+    } else if (root.v_content.exUserInfo.status == "DEL") {
+        g5.p2.p2.show(root.v_content.exUserInfo);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+        return;
+    }
     ee.getControl("panel280").show(root.c_photo, root.v_content.exUserInfo);
     window.event? window.event.cancelBubble = true : event.stopPropagation();
     return false;
@@ -35814,9 +35864,11 @@ ee.setOnMouseLeave(c, function(sender,e) {
 });
 ee.setOnClick(c,function(sender,event) {
     if (root.v_userInfo.status == "DISABLED") {
-        g5.alert1("提示", "该用户处于禁封状态，目前无法查看该用户的信息");
+        g5.p2.p2.show(root.v_userInfo);
+        //g5.alert1("提示", "该用户处于禁封状态，目前无法查看该用户的信息");
     } else if (root.v_userInfo.status == "Del") {
-        g5.alert1("提示", "该用户已销号，目前无法查看该用户的信息");
+        g5.p2.p2.show(root.v_userInfo);
+        //g5.alert1("提示", "该用户已销号，目前无法查看该用户的信息");
     } else {
         ee.getControl("panel280").show(root.c_photo, root.v_userInfo);
     }
