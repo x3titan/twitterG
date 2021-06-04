@@ -2702,7 +2702,7 @@ sender.refreshButton = function() {
     } else if ((this.v_userInfo.status == "Private") &amp;&amp; (!this.v_userInfo.isFollow)) {
         visibleMail = false;
     } else if (this.v_userInfo.status == "FREEZE") {
-        visibleMail = false;
+        //visibleMail = false;
     } else if (this.v_userInfo.status == "Del") {
         //ee.setVisible(this.c_button1, false);
         //visibleMail = false;
@@ -8195,6 +8195,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -9860,7 +9861,6 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_topBlank = ee.getControl("panel336");
@@ -9872,6 +9872,20 @@ sender.init = function() {
     this.c_buttons.buttonClick(this.c_buttons.c_button1);
     ee.setRect(this.c_topBlank,null,null,null,eb.getDivRectSetting(g5.p4).h);
     g5.tiledV(this,0,0,0);
+}
+
+sender.activePage = function() {
+    ee.setVisible(g5.p4, true);
+    g5.p4.changePage("a3");
+    ee.setVisible(g5.p2.p11, true);
+    this.init();
+    this.changePage("c1");
+    g5.pushHistory2("/search/" + escape(g5.p2.p11.v_searchString));
+}
+
+sender.close = function() {
+    ee.setVisible(g5.p4, false);
+    ee.setVisible(this, false);
 }
 
 sender.search = function(searchString) {
@@ -14681,6 +14695,9 @@ if (p1.length<=0) {
         }
     );
     return;    
+} else if (p1.length>30) {
+    g5.alert1("提示", "电子邮件的地址不能超过30个英文字符。");
+    return;
 }
 
 changeEmail.email = p1;
@@ -36357,8 +36374,7 @@ if (g5.currentPageIndex == 0) {
 } else if (g5.currentPageIndex == 9) {
     g5.p2.p10.close();
 } else if (g5.currentPageIndex == 10) {
-    ee.setVisible(g5.p4, false);
-    ee.setVisible(g5.p2.p11, false);
+    g5.p2.p11.close();
 } else if (g5.currentPageIndex == 11) {
     g5.p2.p12.close();
 } else if (g5.currentPageIndex == 12) {
@@ -36425,12 +36441,7 @@ if (pageIndex == 0) {
 } else if (pageIndex == 9) {
     g5.p2.p10.activePage();
 } else if (pageIndex == 10) {
-    ee.setVisible(g5.p4, true);
-    g5.p4.changePage("a3");
-    ee.setVisible(g5.p2.p11, true);
-    g5.p2.p11.init();
-    g5.p2.p11.changePage("c1");
-    g5.pushHistory2("/search/" + escape(g5.p2.p11.v_searchString));
+    g5.p2.p11.activePage();
 } else if (pageIndex == 11) {
     g5.p2.p12.activePage();
 } else if (pageIndex == 12) {
