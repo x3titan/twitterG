@@ -351,6 +351,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1539,6 +1540,7 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <note>p2</note>
@@ -2367,6 +2369,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -9886,6 +9889,16 @@ sender.activePage = function() {
 sender.close = function() {
     ee.setVisible(g5.p4, false);
     ee.setVisible(this, false);
+}
+
+sender.show = function(searchString) {
+    if (this.v_searchString.length<=0) {
+        this.search(searchString);
+        return;
+    }
+    var pn = this.currentPage;
+    g5.changeP2(10);
+    this.changePage(pn);
 }
 
 sender.search = function(searchString) {
@@ -23485,7 +23498,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -25091,7 +25103,6 @@ sender.onpointermove = function(event) {
       <height>259</height>
       <heightRatio>0.325376884422111</heightRatio>
       <layerName><![CDATA[  a6->通用确认窗口]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>377</left>
       <leftRatio>0.331574318381706</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
@@ -25109,11 +25120,27 @@ sender.onpointermove = function(event) {
     this.onButton1 = onButton1;
     ee.setVisible(this.parentNode, true);
     ee.setVisible(this, true);
-    //ee.showAni(this, 0);
+    document.addEventListener("keydown", this.onKeyDown);
 }
 
 sender.close = function() {
     ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
+    document.removeEventListener("keydown", this.onKeyDown);
+}
+
+sender.onKeyDown = function(event) {
+    event = event || window.event;
+    if (event.keyCode == 13) {
+        sender.close();
+        if (sender.onComplete) sender.onComplete();
+    } else if (event.keyCode == 27) {
+        sender.parentNode.close();
+        if (!eb.isEmpty(sender.onButton1)) {
+            sender.onButton1();
+            sender.onButton1 = null;
+        }
+    }
 }
 
 
@@ -25460,11 +25487,23 @@ ee.setOnMouseLeave(sender, function(sender,event) {
     this.onComplete = onComplete;
     ee.setVisible(this.parentNode, true);
     ee.setVisible(this, true);
+    document.addEventListener("keydown", this.onKeyDown);
 }
 
 sender.close = function() {
     ee.setVisible(this, false);
     ee.setVisible(this.parentNode, false);
+    document.removeEventListener("keydown", this.onKeyDown);
+}
+
+
+sender.onKeyDown = function(event) {
+    event = event || window.event;
+    if (event.keyCode == 13) {
+        sender.close();
+        sender.onComplete();        
+    }
+    //g5.writeLog(event.keyCode+"");
 }
 
 
@@ -36560,7 +36599,7 @@ if (pn=="/bookmarks") {
 } else if (pn=="/settings") {
     g5.p2.p10.show();
 } else if (pns[0]=="search") {
-    g5.p2.p11.search(unescape(pns[1]));    
+    g5.p2.p11.show(unescape(pns[1]));    
 } else if (pn=="/notifications") {
     g5.p2.p12.show();
 } else if (pns[0]=="messages" &amp;&amp; pns[1]) {
