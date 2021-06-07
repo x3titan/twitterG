@@ -40,6 +40,9 @@ setInterval(function() {
 setInterval(function() {
     g5.refreshScroll();
 }, 500);
+setInterval(function() {
+    g5.refreshContent();
+}, 100);
 
 eb.processDock();
 
@@ -33683,7 +33686,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="103">
+  <g5Items count="104">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -36320,6 +36323,48 @@ ee.setRect(g5.pLine1, left+p1w,null,null,null);
 ee.setRect(g5.pLine2, left+p1w+p2w,null,null,null);
 
 eb.processDock();]]></functionCode>
+    </item>
+    <item name="refreshContent" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode><![CDATA[if (!g5.RC_LastTime) g5.RC_LastTime = new Date();
+if (!g5.RC_Interval) g5.RC_Interval = 10000;
+if (!g5.RC_CID) g5.RC_CID = new Array();
+
+if ((new Date()).getTime() - g5.RC_LastTime.getTime() < g5.RC_Interval) return;
+g5.RC_LastTime = new Date();
+
+var buffs = g5.contentGetCurrentBuffs();
+var cId = new Array();
+var i,j;
+for (i=0; i<buffs.length; i++) {
+    for (j=0; j<buffs[i].length; j++) {
+        var r = g5.getRectAbs(buffs[i][j]);
+        if (r.y + r.h < 0) continue;
+        if (r.y > eb.getClientSize().h) continue;
+        cId.push(buffs[i][j].v_content.id);
+    }
+}
+var diff = false;
+while (true) {
+    if (cId.length!=g5.RC_CID.length) {
+        diff = true;
+        break;
+    }
+    for (i=0; i<cId.length; i++) {
+        if (cId[i]!=g5.RC_CID[i]) {
+            diff = true;
+            break;
+        }
+    }
+    break;
+}
+if (diff) {
+    g5.RC_Interval = 10000;
+}
+
+g5.writeLog(cId + "\n" + (g5.RC_Interval/1000)+"s", true);
+]]></functionCode>
     </item>
     <item name="refreshScroll" type="20">
       <varValue />
