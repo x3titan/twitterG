@@ -340,7 +340,27 @@ a.css_button1:hover{
         margin:0.01em auto;
 }
 </style>
-]]></pageHead>
+
+
+<style>
+.red3 {
+    //animation: 0.3s red3ani 3;
+    animation: 0.7s red3ani2 1;
+}
+@keyframes red3ani {
+  0% { color: #657786; }
+  20% { color: #ff0000; }
+  100% { color: #657786; }
+}
+@keyframes red3ani2 {
+  0% { font-size: 22px; color: #000000; }
+  //20% { color: #ff0000; }
+  100% { font-size: 16px; color: #657786; }
+}
+.b2{
+    display:inline-block;
+}
+</style>]]></pageHead>
       <pageTitle>拳头聊天室</pageTitle>
       <top>0</top>
       <width>1137</width>
@@ -354,7 +374,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1543,7 +1562,6 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <note>p2</note>
@@ -2372,7 +2390,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -3071,7 +3088,8 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
 
 ]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
-      <top>0</top>
+      <top>-1</top>
+      <topRatio>-0.00128205128205128</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -23501,6 +23519,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -25106,6 +25125,7 @@ sender.onpointermove = function(event) {
       <height>259</height>
       <heightRatio>0.325376884422111</heightRatio>
       <layerName><![CDATA[  a6->通用确认窗口]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>377</left>
       <leftRatio>0.331574318381706</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
@@ -35192,6 +35212,15 @@ if (root.v_mode.charAt(2) != "x") {
     }
     addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
     c.init(root.v_content.isForward ? 1:0, root.v_content.fwCount);
+    ee.setOnClick(c, function(senderBtn, event) {
+        senderBtn.label.rows[0].cells[0].className = "";
+        setTimeout(function() {
+            senderBtn.label.rows[0].cells[0].className = "red3";
+        }, 100);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });    
+
+    
     //label3
     c = createPanel(root, root.id+"_panel5", "", b3+35, cy+7, 40, 22);
     root.c_label3 = c;
@@ -36473,7 +36502,13 @@ g5.writeLog(cId + "\n" + (g5.RC_Interval/1000)+"s", true);
     value = parseInt(value);
     var a = ee.getText(label);
     a = a==""?0:parseInt(a);
-    ee.setText(label, value==0?"":(value+""));
+    if (value!=a) {
+        ee.setText(label, value==0?"":(value+""));
+        label.label.rows[0].cells[0].className = "";
+        setTimeout(function() {
+            label.label.rows[0].cells[0].className = "red3";
+        }, 100);
+    }
     return value != a;
 }
 
