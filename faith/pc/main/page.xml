@@ -36397,12 +36397,15 @@ eb.processDock();]]></functionCode>
     <item name="refreshContent" type="20">
       <varValue />
       <functionParam />
-      <functionCode><![CDATA[if (!g5.RC_LastTime) g5.RC_LastTime = new Date();
-if (!g5.RC_Interval) g5.RC_Interval = 10000;
+      <functionCode><![CDATA[g5.RC_MIN = 5000;
+g5.RC_MAX = 10*60*1000;
+if (!g5.RC_LastTime) g5.RC_LastTime = new Date();
+if (!g5.RC_LastTime1s) g5.RC_LastTime1s = new Date();
+if (!g5.RC_Interval) g5.RC_Interval = g5.RC_MIN;
 if (!g5.RC_CID) g5.RC_CID = new Array();
 
-if ((new Date()).getTime() - g5.RC_LastTime.getTime() < g5.RC_Interval) return;
-g5.RC_LastTime = new Date();
+if ((new Date()).getTime() - g5.RC_LastTime1s.getTime() < 1000) return;
+g5.RC_LastTime1s = new Date();
 
 var buffs = g5.contentGetCurrentBuffs();
 var cId = new Array();
@@ -36415,7 +36418,6 @@ for (i=0; i<buffs.length; i++) {
         cId.push(buffs[i][j].v_content.id);
     }
 }
-
 var diff = false;
 while (true) {
     if (cId.length!=g5.RC_CID.length) {
@@ -36431,13 +36433,17 @@ while (true) {
     break;
 }
 if (diff) {
-    g5.RC_Interval = 10000;
+    g5.RC_Interval = g5.RC_MIN;
 }
 g5.RC_CID = cId;
+
+if ((new Date()).getTime() - g5.RC_LastTime.getTime() < g5.RC_Interval) return;
+g5.RC_LastTime = new Date();
 
 if (updateContents.busy) return;
 updateContents.cIds = cId;
 updateContents.onComplete = function(dataset) {
+    var changed = false;
     for (var i=0; i<dataset.rowCount; i++) {
         var v_content = new g5.ContentInfo();
         v_content.id = dataset.getData(0,i);
@@ -36445,10 +36451,16 @@ updateContents.onComplete = function(dataset) {
         v_content.fwCount = dataset.getData(2,i);
         v_content.likeCount = dataset.getData(3,i);
         v_content.unlikeCount = dataset.getData(4,i);
-        g5.refreshContentCount(v_content);
+        changed = changed || g5.refreshContentCount(v_content);
     }
-    g5.writeLog("v_content:"+dataset.rowCount);
+    if (!changed) {
+        g5.RC_Interval = Math.min(parseInt(g5.RC_Interval*1.5), g5.RC_MAX);
+    } else {
+        g5.RC_Interval = g5.RC_MIN;
+    }
+    g5.writeLog("v_content:"+dataset.rowCount+","+changed);
 }
+
 updateContents();
 
 g5.writeLog(cId + "\n" + (g5.RC_Interval/1000)+"s", true);
@@ -36457,21 +36469,29 @@ g5.writeLog(cId + "\n" + (g5.RC_Interval/1000)+"s", true);
     <item name="refreshContentCount" type="20">
       <varValue />
       <functionParam>v_content</functionParam>
-      <functionCode><![CDATA[
+      <functionCode><![CDATA[var modify = function(label, value) {
+    value = parseInt(value);
+    var a = ee.getText(label);
+    a = a==""?0:parseInt(a);
+    ee.setText(label, value==0?"":(value+""));
+    return value != a;
+}
 
 var buffs = g5.contentGetCurrentBuffs();
 var i,j,c;
+var result = false;
 for (i=0; i<buffs.length; i++) {
     for (j=0; j<buffs[i].length; j++) {
         c = buffs[i][j];
         if (!c.v_content) continue;
         if (c.v_content.id != v_content.id) continue;
-        if (c.c_label1) ee.setText(c.c_label1, parseInt(v_content.reCount)<=0?"":v_content.reCount);
-        if (c.c_label2) ee.setText(c.c_label2, parseInt(v_content.fwCount)<=0?"":v_content.fwCount);
-        if (c.c_label3) ee.setText(c.c_label3, parseInt(v_content.likeCount)<=0?"":v_content.likeCount);
-        if (c.c_label4) ee.setText(c.c_label4, parseInt(v_content.unlikeCount)<=0?"":v_content.unlikeCount);
+        result = result || modify(c.c_label1, v_content.reCount);
+        result = result || modify(c.c_label2, v_content.fwCount);
+        result = result || modify(c.c_label3, v_content.likeCount);
+        result = result || modify(c.c_label4, v_content.unlikeCount);
     }
 }
+return result;
 ]]></functionCode>
     </item>
     <item name="refreshScroll" type="20">
