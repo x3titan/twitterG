@@ -345,7 +345,7 @@ a.css_button1:hover{
 <style>
 .red3 {
     //animation: 0.3s red3ani 3;
-    animation: 0.7s red3ani2 1;
+    animation: 0.5s red3ani2 1;
 }
 @keyframes red3ani {
   0% { color: #657786; }
@@ -353,9 +353,9 @@ a.css_button1:hover{
   100% { color: #657786; }
 }
 @keyframes red3ani2 {
-  0% { font-size: 22px; color: #000000; }
-  //20% { color: #ff0000; }
-  100% { font-size: 16px; color: #657786; }
+  0% { font-size: 20px; font-weight: 700; }
+  30% { font-size: 20px; font-weight: 700; }
+  100% { font-size: 16px; font-weight: 400; }
 }
 .b2{
     display:inline-block;
@@ -36480,7 +36480,7 @@ updateContents.onComplete = function(dataset) {
         v_content.fwCount = dataset.getData(2,i);
         v_content.likeCount = dataset.getData(3,i);
         v_content.unlikeCount = dataset.getData(4,i);
-        changed = changed || g5.refreshContentCount(v_content);
+        changed = g5.refreshContentCount(v_content) || changed;
     }
     if (!changed) {
         g5.RC_Interval = Math.min(parseInt(g5.RC_Interval*1.5), g5.RC_MAX);
@@ -36520,10 +36520,10 @@ for (i=0; i<buffs.length; i++) {
         c = buffs[i][j];
         if (!c.v_content) continue;
         if (c.v_content.id != v_content.id) continue;
-        result = result || modify(c.c_label1, v_content.reCount);
-        result = result || modify(c.c_label2, v_content.fwCount);
-        result = result || modify(c.c_label3, v_content.likeCount);
-        result = result || modify(c.c_label4, v_content.unlikeCount);
+        result = modify(c.c_label1, v_content.reCount) || result;
+        result = modify(c.c_label2, v_content.fwCount) || result;
+        result = modify(c.c_label3, v_content.likeCount) || result;
+        result = modify(c.c_label4, v_content.unlikeCount) || result;
     }
 }
 return result;
