@@ -347,11 +347,6 @@ a.css_button1:hover{
     //animation: 0.3s red3ani 3;
     animation: 0.5s red3ani2 1;
 }
-@keyframes red3ani {
-  0% { color: #657786; }
-  20% { color: #ff0000; }
-  100% { color: #657786; }
-}
 @keyframes red3ani2 {
   0% { font-size: 20px; font-weight: 700; }
   30% { font-size: 20px; font-weight: 700; }
@@ -30280,7 +30275,9 @@ if (options == "user") {
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
     "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + userId + " " +
     "                left outer join hideList as rHideList on tContent_1.userId = rHideList.hideId and rHideList.userId = " + userId + " " +
-    "WHERE   (tContent.status<>'DEL') and (dbo.userInfo.status='IDL' or dbo.userInfo.status='DelIn'or dbo.userInfo.status='Private') and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " + cond + " " +
+    "WHERE   (tContent.status<>'DEL') and (dbo.userInfo.status='IDL' or dbo.userInfo.status='DelIn'or dbo.userInfo.status='Private') " +
+    "   and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " +
+    "   and (uHideList.id IS NULL) " + cond + " " +
     orderby;
 }
 
@@ -31682,6 +31679,7 @@ if (myStatus == "FREEZE") {
     eio.appendString8("F");
     eio.appendString8("对不起，您的账户目前处于冻结状态，不能进行此类操作。");
     return;
+} else if (myStatus == "Private") {
 } else if (myStatus != "IDL") {
     eio.appendString8("F");
     eio.appendString8("对不起，您的账户目前处于非正常状态（" + myStatus + "），不能进行此类操作。");
