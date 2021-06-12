@@ -7,11 +7,18 @@
       <dockY>fill</dockY>
       <height>796</height>
       <left>0</left>
-      <onControlLoad>ee.setAutoScroll($g("divRoot"), "hidden");
+      <onControlLoad><![CDATA[ee.setAutoScroll($g("divRoot"), "hidden");
 document.body.style.backgroundColor = "#ffffff";
 document.body.style.overflowY  = "scroll";
 document.body.style.overflowX  = "hidden";
 document.body.style.webkitTapHighlightColor = "rgba(0,0,0,0)";
+
+var sUserAgent = navigator.userAgent;
+if (sUserAgent.indexOf('Android') > -1 || sUserAgent.indexOf('iPhone') > -1 || sUserAgent.indexOf('iPad') > -1 || sUserAgent.indexOf('iPod') > -1 || sUserAgent.indexOf('Symbian') > -1) {
+    g5.clientType = "mobile";
+} else {
+    g5.clientType = "pc";
+}
 
 var c = document.getElementById("divRoot");
 c.style.overflow = "";
@@ -19,6 +26,14 @@ var c = document.getElementById("ee_divRoot");
 c.style.overflow = "";
 var c = ee.getControl("panel134");
 c.style.overflow = "";
+
+if (g5.clientType == "mobile") {
+    //eb.setDock(ee.getControl("panel134"),"disabled","fill");
+    //document.body.style.width = "600px";
+    //ee.setRect($g("divRoot"),null,null,600,null);
+}
+
+
 
 var url = new URL(window.location.href);
 var pns = url.pathname.toLowerCase().split("/")
@@ -57,8 +72,7 @@ eb.processDock();
 
 
 
-
-                                            </onControlLoad>
+                                            ]]></onControlLoad>
       <onPageCreate><![CDATA[//history control
 window.addEventListener("popstate", function (a) {
     g5.processUrl();
@@ -262,7 +276,9 @@ ee.setOnClick = function (div, func) {
 
 
 ]]></onPageCreate>
-      <pageHead><![CDATA[<style>
+      <pageHead><![CDATA[<meta name="viewport" content="width=600px,user-scalable=no" />
+
+<style>
 .scrollBar01::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
     border-radius: 2px;
