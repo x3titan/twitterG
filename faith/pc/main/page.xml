@@ -1,5 +1,5 @@
 <page>
-  <controls count="651">
+  <controls count="657">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -16,8 +16,10 @@ document.body.style.webkitTapHighlightColor = "rgba(0,0,0,0)";
 var sUserAgent = navigator.userAgent;
 if (sUserAgent.indexOf('Android') > -1 || sUserAgent.indexOf('iPhone') > -1 || sUserAgent.indexOf('iPad') > -1 || sUserAgent.indexOf('iPod') > -1 || sUserAgent.indexOf('Symbian') > -1) {
     g5.clientType = "mobile";
+    g5.isMobile = true;
 } else {
     g5.clientType = "pc";
+    g5.isMobile = false;
 }
 
 
@@ -28,13 +30,13 @@ c.style.overflow = "";
 var c = ee.getControl("panel134");
 c.style.overflow = "";
 
-if (g5.clientType == "mobile") {
-    //eb.setDock(ee.getControl("panel134"),"disabled","fill");
-    //document.body.style.width = "600px";
-    //ee.setRect($g("divRoot"),null,null,600,null);
+if (g5.isMobile) {
+    g5.p1.changePage("p3");
+    ee.setRect(g5.p2,0,0,600,null);
+    ee.setRect(g5.p4,0,0,600,null);
+    ee.setVisible(g5.pLine1, false);
+    ee.setVisible(g5.pLine2, false);
 }
-
-
 
 var url = new URL(window.location.href);
 var pns = url.pathname.toLowerCase().split("/")
@@ -565,1007 +567,6 @@ sender.scrollAniProcess = function() {
       <width>1137</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <fontBold>true</fontBold>
-      <fontColor>C0C0C0</fontColor>
-      <fontFamily>Helvetica</fontFamily>
-      <fontSize>100</fontSize>
-      <height>571</height>
-      <heightRatio>0.717336683417085</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>p1</note>
-      <onCreate>sender.v_fitInner = true;
-sender.style.position="fixed";
-sender.addEventListener("mousewheel",function(event){
-    return true;
-    g5.mainDiv.onWheel(event.wheelDelta);
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
-    event.returnValue = false;
-    return false;
-},false);
-</onCreate>
-      <sizeRatio>1.90333333333333</sizeRatio>
-      <top>-2</top>
-      <topRatio>-0.00251256281407035</topRatio>
-      <width>300</width>
-      <widthRatio>0.263852242744063</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImg>dark1.png</backgroundImg>
-      <backgroundImgMode>stretch</backgroundImgMode>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>571</height>
-      <heightRatio>1</heightRatio>
-      <layerName><![CDATA[P1->1->标准菜单]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>1.90333333333333</sizeRatio>
-      <top>0</top>
-      <width>300</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27">
-      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
-      <aniPos>leftFlyIn:左侧飞入</aniPos>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>571</height>
-      <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>1.90333333333333</sizeRatio>
-      <top>0</top>
-      <width>300</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel141">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundSkin>LRBtn9</backgroundSkin>
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontColor>FFFFFF</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>46</left>
-      <leftRatio>0.153333333333333</leftRatio>
-      <onClick>g5.popBlack.a3.showNew();</onClick>
-      <sizeRatio>0.207207207207207</sizeRatio>
-      <text>发言</text>
-      <top>489</top>
-      <topRatio>0.856392294220666</topRatio>
-      <width>222</width>
-      <widthRatio>0.74</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel144">
-      <backgroundImg>fist.jpg</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <height>48</height>
-      <heightRatio>0.0840630472854641</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>40</left>
-      <leftRatio>0.133333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p1.show();]]></onClick>
-      <sizeRatio>0.738461538461539</sizeRatio>
-      <top>7</top>
-      <topRatio>0.0122591943957968</topRatio>
-      <width>65</width>
-      <widthRatio>0.216666666666667</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel127">
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>43</left>
-      <leftRatio>0.143333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p1.show();]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>"+
-    " " + ee.getText(sender));
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "24px";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>0.353846153846154</sizeRatio>
-      <text>新鲜事</text>
-      <top>72</top>
-      <topRatio>0.126094570928196</topRatio>
-      <width>130</width>
-      <widthRatio>0.433333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel150">
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>43</left>
-      <leftRatio>0.143333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p13.show();]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMail+"</svg>"+
-    " " + ee.getText(sender));
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "24px";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>0.446601941747573</sizeRatio>
-      <text>私信</text>
-      <top>186</top>
-      <topRatio>0.325744308231173</topRatio>
-      <width>103</width>
-      <widthRatio>0.343333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel151">
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>43</left>
-      <leftRatio>0.143333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p5.show();]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMark+"</svg>"+
-    " " + ee.getText(sender));
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "24px";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>0.446601941747573</sizeRatio>
-      <text>书签</text>
-      <top>243</top>
-      <topRatio>0.425569176882662</topRatio>
-      <width>103</width>
-      <widthRatio>0.343333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel152">
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>43</left>
-      <leftRatio>0.143333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p2.show(g5.myUserInfo);
-
-]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconFace+"</svg>"+
-    " " + ee.getText(sender));
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "24px";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>0.319444444444444</sizeRatio>
-      <text>个人主页</text>
-      <top>299</top>
-      <topRatio>0.523642732049037</topRatio>
-      <width>144</width>
-      <widthRatio>0.48</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel153">
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>43</left>
-      <leftRatio>0.143333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p10.show();
-
-]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconConfig+"</svg>"+
-    " " + ee.getText(sender));
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "24px";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>0.289308176100629</sizeRatio>
-      <text>设置和隐私</text>
-      <top>356</top>
-      <topRatio>0.623467600700525</topRatio>
-      <width>159</width>
-      <widthRatio>0.53</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel148">
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>43</left>
-      <leftRatio>0.143333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-eb.delCookie("twitterGToken");
-window.location.href = ee.getUrl("/pc/new");]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconExit+"</svg>"+
-    " " + ee.getText(sender));
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "24px";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>0.319444444444444</sizeRatio>
-      <text>退出登录</text>
-      <top>413</top>
-      <topRatio>0.723292469352014</topRatio>
-      <width>144</width>
-      <widthRatio>0.48</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel94">
-      <cursor>pointer</cursor>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>43</left>
-      <leftRatio>0.143333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p12.show();]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconBell+"</svg>"+
-    " " + ee.getText(sender));
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "24px";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>0.323943661971831</sizeRatio>
-      <text>通知</text>
-      <top>129</top>
-      <topRatio>0.225919439579685</topRatio>
-      <width>142</width>
-      <widthRatio>0.473333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImg>dark1.png</backgroundImg>
-      <backgroundImgMode>stretch</backgroundImgMode>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>571</height>
-      <heightRatio>1</heightRatio>
-      <layerName><![CDATA[P1->2->收窄菜单]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>1.90333333333333</sizeRatio>
-      <top>0</top>
-      <width>300</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200">
-      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
-      <aniPos>leftFlyIn:左侧飞入</aniPos>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>571</height>
-      <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>1.90333333333333</sizeRatio>
-      <top>0</top>
-      <width>300</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel201">
-      <backgroundImg>fingerP.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontColor>1E90FF</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <height>56</height>
-      <heightRatio>0.0980735551663748</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>120</left>
-      <leftRatio>0.4</leftRatio>
-      <onClick>g5.popBlack.a3.showNew();</onClick>
-      <onCreate><![CDATA[sender.baseColor1 = "rgb(29, 161, 242)";
-//sender.style.backgroundColor = sender.baseColor1;
-//ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 8px 8px;fill:#ffffff;vertical-align:middle;\">"+g5.iconNew+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    //sender.style.backgroundColor = "#1a91da";
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    //sender.style.backgroundColor = sender.baseColor1;
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    //sender.style.backgroundColor = "#1781c2";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    //sender.style.backgroundColor = "#1a91da";
-}
-eb.initMouseEvent(sender);
-//sender.style.borderRadius = "50%";
-
-]]></onCreate>
-      <sizeRatio>0.933333333333333</sizeRatio>
-      <top>459</top>
-      <topRatio>0.80385288966725</topRatio>
-      <width>60</width>
-      <widthRatio>0.2</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel202">
-      <backgroundImg>fist.jpg</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <height>37</height>
-      <heightRatio>0.0647985989492119</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>131</left>
-      <leftRatio>0.436666666666667</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p1.show();]]></onClick>
-      <sizeRatio>0.973684210526316</sizeRatio>
-      <top>16</top>
-      <topRatio>0.0280210157618214</topRatio>
-      <width>38</width>
-      <widthRatio>0.126666666666667</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel210">
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>127</left>
-      <leftRatio>0.423333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p1.show();]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>主页</text>
-      <top>74</top>
-      <topRatio>0.129597197898424</topRatio>
-      <width>46</width>
-      <widthRatio>0.153333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel203">
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>127</left>
-      <leftRatio>0.423333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p13.show();]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMail+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>私信</text>
-      <top>181</top>
-      <topRatio>0.316987740805604</topRatio>
-      <width>46</width>
-      <widthRatio>0.153333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel204">
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>127</left>
-      <leftRatio>0.423333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p5.show();]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMark+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>书签</text>
-      <top>235</top>
-      <topRatio>0.411558669001751</topRatio>
-      <width>46</width>
-      <widthRatio>0.153333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel205">
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>127</left>
-      <leftRatio>0.423333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p2.show(g5.myUserInfo);
-]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconFace+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>个人资料</text>
-      <top>289</top>
-      <topRatio>0.506129597197898</topRatio>
-      <width>46</width>
-      <widthRatio>0.153333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel206">
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>127</left>
-      <leftRatio>0.423333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p10.show();
-
-]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconConfig+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>设置和隐私</text>
-      <top>342</top>
-      <topRatio>0.598949211908932</topRatio>
-      <width>46</width>
-      <widthRatio>0.153333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel207">
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>127</left>
-      <leftRatio>0.423333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-eb.delCookie("twitterGToken");
-window.location.href = ee.getUrl("/pc/new");]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconExit+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>退出登录</text>
-      <top>396</top>
-      <topRatio>0.693520140105079</topRatio>
-      <width>46</width>
-      <widthRatio>0.153333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel352">
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <fontBold>true</fontBold>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
-      <height>46</height>
-      <heightRatio>0.0805604203152364</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>127</left>
-      <leftRatio>0.423333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p12.show();
-
-]]></onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconBell+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
-    ee.setTextColor(sender, "#1fa2f2");
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = "";
-    ee.setTextColor(sender, sender.baseColor);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
-}
-eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
-
-
-
-
-
-
-]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>通知</text>
-      <top>128</top>
-      <topRatio>0.224168126094571</topRatio>
-      <width>46</width>
-      <widthRatio>0.153333333333333</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -1574,9 +575,10 @@ sender.style.borderRadius = "50%";
       <fontSize>100</fontSize>
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
+      <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
-      <note>p2</note>
       <onCreate>sender.v_fitInner = true;
 sender.p1 = ee.getControl("panel41");
 sender.p2 = ee.getControl("panel16");
@@ -1603,6 +605,7 @@ sender.p27 = ee.getControl("panel489");
 sender.p28 = ee.getControl("panel514");
 sender.p29 = ee.getControl("panel531");
 sender.p30 = ee.getControl("panel538");
+ee.setVisible(sender, true);
 
 </onCreate>
       <sizeRatio>1.3</sizeRatio>
@@ -13028,6 +12031,7 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p18->设置-隐私和安全]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.show = function() {
     g5.changeP2(17);
@@ -17981,10 +16985,10 @@ sender.loadRecord = function(panel, dataset, index) {
       <fontSize>100</fontSize>
       <height>722</height>
       <heightRatio>0.907035175879397</heightRatio>
+      <layerName>===P3===</layerName>
       <layerVisible>false</layerVisible>
       <left>906</left>
       <leftRatio>0.796833773087071</leftRatio>
-      <note>p3</note>
       <onCreate>sender.v_fitInner = true;
 sender.p3 = ee.getControl("panel116");
 sender.p8 = ee.getControl("panel298");
@@ -17992,6 +16996,7 @@ sender.p9 = ee.getControl("panel365");
 sender.p10 = ee.getControl("panel61");
 sender.p11 = ee.getControl("panel370");
 sender.p12 = ee.getControl("panel388");
+ee.setVisible(sender, true);
 
 sender.style.position="fixed";
 sender.addEventListener("mousewheel",function(event){
@@ -20703,7 +19708,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <bgColorEnabled>true</bgColorEnabled>
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
-      <layerName>p4</layerName>
+      <layerName>===P4===</layerName>
       <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.266490765171504</leftRatio>
@@ -22620,6 +21625,1251 @@ eb.initMouseEvent(sender);]]></onCreate>
       <topRatio>0.188679245283019</topRatio>
       <width>33</width>
       <widthRatio>0.0557432432432432</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontBold>true</fontBold>
+      <fontColor>C0C0C0</fontColor>
+      <fontFamily>Helvetica</fontFamily>
+      <fontSize>100</fontSize>
+      <height>571</height>
+      <heightRatio>0.717336683417085</heightRatio>
+      <layerName>===P1===</layerName>
+      <left>0</left>
+      <onCreate>sender.p1 = ee.getControl("panel26");
+sender.p2 = ee.getControl("panel199");
+sender.p3 = ee.getControl("panel170");
+sender.line1 = ee.getControl("panel555");
+ee.setVisible(sender, true);
+
+sender.currentPageName = "";
+sender.v_fitInner = true;
+sender.style.position="fixed";
+sender.addEventListener("mousewheel",function(event){
+    return true;
+    g5.mainDiv.onWheel(event.wheelDelta);
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    event.returnValue = false;
+    return false;
+},false);
+
+sender.changePage = function(pageName) {
+    if (this.currentPageName == "p1") {
+        ee.setVisible(this.p1, false);
+    } else if (this.currentPageName == "p2") {
+        ee.setVisible(this.p2, false);
+    } else if (this.currentPageName == "p3") {
+        ee.setVisible(this.p3, false);
+    }
+    if (pageName == "p1") {
+        ee.setVisible(this.p1, true);
+        ee.setRect(this,null,0,null,570);
+    } else if (pageName == "p2") {
+        ee.setVisible(this.p2, true);
+        ee.setRect(this,null,0,null,570);
+    } else if (pageName == "p3") {
+        ee.setVisible(this.p3, true);
+        ee.setRect(this,null,eb.getClientSize().h-50,600,50);
+        ee.setRect(this.line1,null,eb.getClientSize().h-50,null,null);
+    }
+    this.currentPageName = pageName;
+}
+
+
+</onCreate>
+      <sizeRatio>1.03442028985507</sizeRatio>
+      <top>-2</top>
+      <topRatio>-0.00251256281407035</topRatio>
+      <width>552</width>
+      <widthRatio>0.485488126649077</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImg>dark1.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>571</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[p1.p1->标准菜单]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.03442028985507</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>571</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.03442028985507</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel141">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundSkin>LRBtn9</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>46</left>
+      <leftRatio>0.0833333333333333</leftRatio>
+      <onClick>g5.popBlack.a3.showNew();</onClick>
+      <sizeRatio>0.207207207207207</sizeRatio>
+      <text>发言</text>
+      <top>489</top>
+      <topRatio>0.856392294220666</topRatio>
+      <width>222</width>
+      <widthRatio>0.402173913043478</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel144">
+      <backgroundImg>fist.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <height>48</height>
+      <heightRatio>0.0840630472854641</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>40</left>
+      <leftRatio>0.072463768115942</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+g5.p2.p1.show();]]></onClick>
+      <sizeRatio>0.738461538461539</sizeRatio>
+      <top>7</top>
+      <topRatio>0.0122591943957968</topRatio>
+      <width>65</width>
+      <widthRatio>0.117753623188406</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel127">
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>43</left>
+      <leftRatio>0.0778985507246377</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+g5.p2.p1.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>"+
+    " " + ee.getText(sender));
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "24px";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.353846153846154</sizeRatio>
+      <text>新鲜事</text>
+      <top>72</top>
+      <topRatio>0.126094570928196</topRatio>
+      <width>130</width>
+      <widthRatio>0.235507246376812</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel150">
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>43</left>
+      <leftRatio>0.0778985507246377</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+g5.p2.p13.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMail+"</svg>"+
+    " " + ee.getText(sender));
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "24px";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.446601941747573</sizeRatio>
+      <text>私信</text>
+      <top>186</top>
+      <topRatio>0.325744308231173</topRatio>
+      <width>103</width>
+      <widthRatio>0.186594202898551</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel151">
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>43</left>
+      <leftRatio>0.0778985507246377</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p5.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMark+"</svg>"+
+    " " + ee.getText(sender));
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "24px";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.446601941747573</sizeRatio>
+      <text>书签</text>
+      <top>243</top>
+      <topRatio>0.425569176882662</topRatio>
+      <width>103</width>
+      <widthRatio>0.186594202898551</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel152">
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>43</left>
+      <leftRatio>0.0778985507246377</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p2.show(g5.myUserInfo);
+
+]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconFace+"</svg>"+
+    " " + ee.getText(sender));
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "24px";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.319444444444444</sizeRatio>
+      <text>个人主页</text>
+      <top>299</top>
+      <topRatio>0.523642732049037</topRatio>
+      <width>144</width>
+      <widthRatio>0.260869565217391</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel153">
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>43</left>
+      <leftRatio>0.0778985507246377</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p10.show();
+
+]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconConfig+"</svg>"+
+    " " + ee.getText(sender));
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "24px";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.289308176100629</sizeRatio>
+      <text>设置和隐私</text>
+      <top>356</top>
+      <topRatio>0.623467600700525</topRatio>
+      <width>159</width>
+      <widthRatio>0.28804347826087</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel148">
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>43</left>
+      <leftRatio>0.0778985507246377</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+eb.delCookie("twitterGToken");
+window.location.href = ee.getUrl("/pc/new");]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconExit+"</svg>"+
+    " " + ee.getText(sender));
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "24px";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.319444444444444</sizeRatio>
+      <text>退出登录</text>
+      <top>413</top>
+      <topRatio>0.723292469352014</topRatio>
+      <width>144</width>
+      <widthRatio>0.260869565217391</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel26/panel27/panel94">
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>43</left>
+      <leftRatio>0.0778985507246377</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p12.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconBell+"</svg>"+
+    " " + ee.getText(sender));
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "24px";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.323943661971831</sizeRatio>
+      <text>通知</text>
+      <top>129</top>
+      <topRatio>0.225919439579685</topRatio>
+      <width>142</width>
+      <widthRatio>0.257246376811594</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImg>dark1.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>571</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[p1.p2->收窄菜单]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.03442028985507</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>571</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.03442028985507</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel201">
+      <backgroundImg>fingerP.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>1E90FF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>56</height>
+      <heightRatio>0.0980735551663748</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>246</left>
+      <leftRatio>0.445652173913043</leftRatio>
+      <onClick>g5.popBlack.a3.showNew();</onClick>
+      <onCreate><![CDATA[sender.baseColor1 = "rgb(29, 161, 242)";
+//sender.style.backgroundColor = sender.baseColor1;
+//ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 8px 8px;fill:#ffffff;vertical-align:middle;\">"+g5.iconNew+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    //sender.style.backgroundColor = "#1a91da";
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    //sender.style.backgroundColor = sender.baseColor1;
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    //sender.style.backgroundColor = "#1781c2";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    //sender.style.backgroundColor = "#1a91da";
+}
+eb.initMouseEvent(sender);
+//sender.style.borderRadius = "50%";
+
+]]></onCreate>
+      <sizeRatio>0.933333333333333</sizeRatio>
+      <top>459</top>
+      <topRatio>0.80385288966725</topRatio>
+      <width>60</width>
+      <widthRatio>0.108695652173913</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel202">
+      <backgroundImg>fist.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <height>37</height>
+      <heightRatio>0.0647985989492119</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>257</left>
+      <leftRatio>0.465579710144928</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+g5.p2.p1.show();]]></onClick>
+      <sizeRatio>0.973684210526316</sizeRatio>
+      <top>16</top>
+      <topRatio>0.0280210157618214</topRatio>
+      <width>38</width>
+      <widthRatio>0.0688405797101449</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel210">
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>253</left>
+      <leftRatio>0.458333333333333</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+g5.p2.p1.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>主页</text>
+      <top>74</top>
+      <topRatio>0.129597197898424</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel203">
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>253</left>
+      <leftRatio>0.458333333333333</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+g5.p2.p13.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMail+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>私信</text>
+      <top>181</top>
+      <topRatio>0.316987740805604</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel204">
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>253</left>
+      <leftRatio>0.458333333333333</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p5.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMark+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>书签</text>
+      <top>235</top>
+      <topRatio>0.411558669001751</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel205">
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>253</left>
+      <leftRatio>0.458333333333333</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p2.show(g5.myUserInfo);
+]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconFace+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>个人资料</text>
+      <top>289</top>
+      <topRatio>0.506129597197898</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel206">
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>253</left>
+      <leftRatio>0.458333333333333</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p10.show();
+
+]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconConfig+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>设置和隐私</text>
+      <top>342</top>
+      <topRatio>0.598949211908932</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel207">
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>253</left>
+      <leftRatio>0.458333333333333</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+eb.delCookie("twitterGToken");
+window.location.href = ee.getUrl("/pc/new");]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconExit+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>退出登录</text>
+      <top>396</top>
+      <topRatio>0.693520140105079</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel352">
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>253</left>
+      <leftRatio>0.458333333333333</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p12.show();
+
+]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconBell+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>通知</text>
+      <top>128</top>
+      <topRatio>0.224168126094571</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel170">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>571</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[p1.p3->手机菜单]]></layerName>
+      <left>0</left>
+      <sizeRatio>1.03442028985507</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel170/panel192">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>571</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.951666666666667</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1.08695652173913</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel170/panel192/panel557">
+      <cursor>pointer</cursor>
+      <dockY>center</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>67</left>
+      <leftRatio>0.121376811594203</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+g5.p2.p1.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconHomePage+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>主页</text>
+      <top>262</top>
+      <topRatio>0.458844133099825</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel170/panel192/panel558">
+      <cursor>pointer</cursor>
+      <dockY>center</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>161</left>
+      <leftRatio>0.291666666666667</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+g5.p2.p13.show();]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMail+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>私信</text>
+      <top>262</top>
+      <topRatio>0.458844133099825</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel170/panel192/panel563">
+      <cursor>pointer</cursor>
+      <dockY>center</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>46</height>
+      <heightRatio>0.0805604203152364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>249</left>
+      <leftRatio>0.451086956521739</leftRatio>
+      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
+for (var i=0; i<items.length; i++) {
+    if (eb.isEmpty(items[i].baseColor)) continue;
+    if (items[i]==sender) {
+        items[i].baseColor="#1fa2f2";
+    } else {
+        items[i].baseColor="#14171a";
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+g5.p2.p12.show();
+
+]]></onClick>
+      <onCreate><![CDATA[sender.baseColor = "#14171a";
+ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconBell+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.backgroundColor = "#e8f5fe";
+    ee.setTextColor(sender, "#1fa2f2");
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.backgroundColor = "";
+    ee.setTextColor(sender, sender.baseColor);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#d2ecfc";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#e8f5fe";
+}
+eb.initMouseEvent(sender);
+sender.style.borderRadius = "50%";
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>通知</text>
+      <top>262</top>
+      <topRatio>0.458844133099825</topRatio>
+      <width>46</width>
+      <widthRatio>0.0833333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel170/panel555">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>2</height>
+      <heightRatio>0.00350262697022767</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>line1</note>
+      <onCreate>sender.style.position="fixed";</onCreate>
+      <sizeRatio>0.0036231884057971</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel242">
       <backgroundColor>E6ECF0</backgroundColor>
@@ -31771,6 +32021,7 @@ if (myStatus == "FREEZE") {
     eio.appendString8("F");
     eio.appendString8("对不起，您的账户目前处于冻结状态，不能进行此类操作。");
     return;
+} else if (myStatus == "Private") {
 } else if (myStatus != "IDL") {
     eio.appendString8("F");
     eio.appendString8("对不起，您的账户目前处于非正常状态（" + myStatus + "），不能进行此类操作。");
@@ -36366,6 +36617,8 @@ for (var j=0; j<currentItemsArr.length; j++) {
     }
 }
 
+
+if (g5.isMobile) return;
 var cw = $g("divRoot").offsetWidth;    
 if (eb.isEmpty(refresh)) refresh = false;
 if ((g5.lastWidth == cw)&amp;&amp;(!refresh)) return;
