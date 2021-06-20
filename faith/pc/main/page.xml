@@ -1,5 +1,5 @@
 <page>
-  <controls count="684">
+  <controls count="685">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -21678,6 +21678,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>571</height>
       <heightRatio>0.717336683417085</heightRatio>
       <layerName>===P1===</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel26");
 sender.p2 = ee.getControl("panel199");
@@ -22707,6 +22708,7 @@ sender.style.borderRadius = "50%";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1.p3->手机菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.03442028985507</sizeRatio>
       <top>0</top>
@@ -23125,23 +23127,57 @@ sender.onpointermove = function(event) {
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel572">
       <backgroundColor>E6ECF0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
       <dockX>right</dockX>
       <dockY>bottom</dockY>
-      <height>120</height>
-      <heightRatio>0.150753768844221</heightRatio>
+      <heightRatio>0.125628140703518</heightRatio>
       <layerName>pButton</layerName>
-      <layerVisible>false</layerVisible>
-      <left>997</left>
+      <left>1017</left>
       <leftRatio>0.876868953386104</leftRatio>
       <onCreate>sender.style.position="fixed";</onCreate>
       <outerBottom>100</outerBottom>
       <outerRight>20</outerRight>
       <sizeRatio>1</sizeRatio>
-      <top>576</top>
-      <topRatio>0.723618090452261</topRatio>
-      <width>120</width>
-      <widthRatio>0.105540897097625</widthRatio>
+      <top>596</top>
+      <topRatio>0.748743718592965</topRatio>
+      <widthRatio>0.0879507475813544</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel572/panel578">
+      <backgroundImg>fingerP.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>1E90FF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <heightRatio>0.466666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>g5.popBlack.a3.showNew();</onClick>
+      <onCreate><![CDATA[sender.baseColor1 = "rgb(29, 161, 242)";
+//sender.style.backgroundColor = sender.baseColor1;
+//ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 8px 8px;fill:#ffffff;vertical-align:middle;\">"+g5.iconNew+"</svg>");
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    //sender.style.backgroundColor = "#1a91da";
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    //sender.style.backgroundColor = sender.baseColor1;
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    //sender.style.backgroundColor = "#1781c2";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    //sender.style.backgroundColor = "#1a91da";
+}
+eb.initMouseEvent(sender);
+//sender.style.borderRadius = "50%";
+
+]]></onCreate>
+      <sizeRatio>0.466666666666667</sizeRatio>
+      <top>0</top>
+      <topRatio>0.241666666666667</topRatio>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -37449,7 +37485,26 @@ for (var j=0; j<currentItemsArr.length; j++) {
 }
 
 
-if (g5.isMobile) return;
+if (g5.isMobile) {
+    var pButton = false;
+    if (g5.currentPageIndex==0) {
+        if (document.documentElement.scrollTop>1) pButton = true;
+    } else if (g5.currentPageIndex == 1) {
+        pButton = true;
+    } else if (g5.currentPageIndex == 4) {
+        pButton = true;
+    } else if (g5.currentPageIndex == 8) {
+        pButton = true;
+    } else if (g5.currentPageIndex == 10) {
+        pButton = true;
+    } else if (g5.currentPageIndex == 11) {
+        pButton = true;
+    }
+    ee.setVisible(g5.pButton, pButton);
+
+    return;
+}
+
 var cw = $g("divRoot").offsetWidth;    
 if (eb.isEmpty(refresh)) refresh = false;
 if ((g5.lastWidth == cw)&amp;&amp;(!refresh)) return;
