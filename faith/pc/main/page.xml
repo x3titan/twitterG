@@ -1,5 +1,5 @@
 <page>
-  <controls count="685">
+  <controls count="698">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -577,7 +577,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -606,6 +605,7 @@ sender.p27 = ee.getControl("panel489");
 sender.p28 = ee.getControl("panel514");
 sender.p29 = ee.getControl("panel531");
 sender.p30 = ee.getControl("panel538");
+sender.p31 = ee.getControl("panel579");
 ee.setVisible(sender, true);
 
 </onCreate>
@@ -16978,6 +16978,688 @@ sender.loadRecord = function(panel, dataset, index) {
       <width>294</width>
       <widthRatio>0.49</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <height>756</height>
+      <heightRatio>0.969230769230769</heightRatio>
+      <layerName><![CDATA[p2.p31->发短文手机版]]></layerName>
+      <left>0</left>
+      <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <onCreate><![CDATA[sender.c_photos = ee.getControl("panel587");
+sender.c_input = ee.getControl("edit16");
+sender.c_title = ee.getControl("panel589");
+sender.c_button = ee.getControl("panel592");
+sender.c_cirText = ee.getControl("panel581");
+sender.c_cir = ee.getControl("panel580");
+
+sender.show = function(title) {
+    this.init(title);
+    ee.setVisible(ee.getControl("panel112"), true);
+    ee.setVisible(this, true);
+    ee.getControl("panel51").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel51"));
+}
+
+sender.init = function(titleText, keepLast) {
+    if (eb.isEmpty(titleText)) titleText = "";
+    ee.setText(this.c_title, titleText);
+    if (!keepLast) ee.setEditText(this.c_input, "");
+    this.c_photos.v_photos = new Array();
+    g5.refreshPhoto(this.c_photos);
+    this.check();
+    this.c_cir.refresh(0);
+    ee.setText(this.c_cirText, "");    
+}
+
+sender.activePage = function() {
+    g5.pushHistory2("/compose");
+    ee.setVisible(this, true);
+    ee.resizeV(this, 2);
+    //ee.tiledV(this,0,0,0);
+    //ee.tiledResizeV(this, 2);
+}
+
+sender.close = function() {
+    ee.setVisible(this, false);
+    this.c_photos.v_photos = new Array();
+    g5.refreshPhoto(this.c_photos);
+}
+
+sender.check = function() {
+    this.c_button.setEnabled(
+        ((ee.getEditText(this.c_input).trim().length>0) &amp;&amp;(ee.getEditText(this.c_input).trim().length<=200)) ||
+        this.c_photos.v_photos.length>0
+    );    
+}
+
+sender.showNew = function() {
+    this.init("发言", this.v_lastOp == "new");
+    this.v_lastOp = "new";
+    this.onComplete = function() {
+        if (newTwitter.busy) return;
+        newTwitter.uplinkType = "N";
+        newTwitter.uplinkId = 0;
+        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.photos = sender.c_photos.v_photos;
+        newTwitter.onComplete = function(contentId) {
+            sender.v_lastOp = "";
+            history.go(-1);
+            var newContent = new g5.ContentInfo();
+            newContent.id = contentId;
+            newContent.seconds = 0;
+            newContent.status = "IDL";
+            newContent.uplinkType = "N";
+            newContent.uplinkId = 0;
+            newContent.content = newTwitter.content;
+            newContent.photos = newTwitter.photos;
+            newContent.reCount = 0;
+            newContent.fwCount = 0;
+            newContent.likeCount = 0;
+            newContent.unlikeCount = 0;
+            newContent.isForward = false;
+            newContent.isLike = false;
+            newContent.isUnlike = false;
+            g5.p2.p1.insert(newContent.clone(),new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
+            if (showUserPage.v_userInfo) {
+                if (showUserPage.v_userInfo.id == g5.myUserInfo.id) {
+                    g5.p2.p2.insert(newContent.clone(),new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
+                }
+            }
+        }
+        newTwitter();
+    }
+    g5.changeP2(30);
+    ee.getControl("panel51").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel51"));
+}
+
+sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
+    this.init("回复发言", this.v_lastOp == "re" &amp;&amp; this.v_lastId == v_content.id);
+    this.v_lastOp = "re";
+    this.v_lastId = v_content.id;
+    this.onComplete = function() {
+        if (newTwitter.busy) return;
+        var contentIdB;
+        if (v_content.exUplinkType=="L") {
+            contentIdB = v_content.exContentId;
+        } else {
+            contentIdB = v_content.id;
+        }
+        newTwitter.uplinkType = "R";
+        newTwitter.uplinkId = contentIdB;
+        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.photos = sender.c_photos.v_photos;
+        newTwitter.onComplete = function(contentId) {
+            sender.v_lastOp = "";
+            history.go(-1);
+            var newContent = new g5.ContentInfo();
+            newContent.id = contentId;
+            newContent.seconds = 0;
+            newContent.status = "IDL";
+            newContent.uplinkType = "R";
+            newContent.uplinkId = contentIdB;
+            newContent.content = newTwitter.content;
+            newContent.photos = newTwitter.photos;
+            newContent.reCount = 0;
+            newContent.fwCount = 0;
+            newContent.likeCount = 0;
+            newContent.unlikeCount = 0;
+            newContent.isForward = false;
+            newContent.isLike = false;
+            newContent.isUnlike = false;
+            var newReContent = v_content.clone();
+            if (newReContent.exUplinkType=="L") newReContent.id = newReContent.exContentId;
+            g5.p2.p1.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            g5.p2.p2.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            g5.p2.p9.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            v_content.reCount++;
+            g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
+        }
+        newTwitter();
+    }
+    g5.changeP2(30);
+    ee.getControl("panel51").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel51"));
+}
+
+sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
+    this.init("带评论转发", this.v_lastOp == "fw" &amp;&amp; this.v_lastId == v_content.id);
+    this.v_lastOp = "fw";
+    this.v_lastId = v_content.id;
+    this.onComplete = function() {
+        if (newTwitter.busy) return;
+        var contentIdB;
+        if (v_content.exUplinkType=="L") {
+            contentIdB = v_content.exContentId;
+        } else {
+            contentIdB = v_content.id;
+        }
+        newTwitter.uplinkType = "F";
+        newTwitter.uplinkId = contentIdB;
+        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.photos = sender.c_photos.v_photos;
+        newTwitter.onComplete = function(contentId) {
+            sender.v_lastOp = "";
+            history.go(-1);
+            var newContent = new g5.ContentInfo();
+            newContent.id = contentId;
+            newContent.seconds = 0;
+            newContent.status = "IDL";
+            newContent.uplinkType = "F";
+            newContent.uplinkId = contentIdB;
+            newContent.content = newTwitter.content;
+            newContent.photos = newTwitter.photos;
+            newContent.reCount = 0;
+            newContent.fwCount = 0;
+            newContent.likeCount = 0;
+            newContent.unlikeCount = 0;
+            newContent.isForward = false;
+            newContent.isLike = false;
+            newContent.isUnlike = false;
+            var newReContent = v_content.clone();
+            if (newReContent.exUplinkType=="L") newReContent.id = newReContent.exContentId;
+            g5.p2.p1.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            g5.p2.p2.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            g5.p2.p9.insert(newContent.clone(),newReContent,g5.myUserInfo,v_userInfo);
+            v_content.fwCount++;
+            g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
+        }
+        newTwitter();
+    }
+    g5.changeP2(30);
+    ee.getControl("panel51").v_photos = new Array();
+    g5.refreshPhoto(ee.getControl("panel51"));
+}]]></onCreate>
+      <sizeRatio>1.26</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel591">
+      <backgroundColor>FFC080</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>51</height>
+      <heightRatio>0.0674603174603175</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <leftRatio>0.285</leftRatio>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#ccd6dd";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+sender.style.borderRightColor = "#e6ecf0";</onCreate>
+      <sizeRatio>0.085</sizeRatio>
+      <top>0</top>
+      <topRatio>0.0317460317460317</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel591/panel594">
+      <cursor>pointer</cursor>
+      <dockY>center</dockY>
+      <height>33</height>
+      <heightRatio>0.647058823529412</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>20</left>
+      <leftRatio>0.0333333333333333</leftRatio>
+      <onClick>history.go(-1);
+window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 26 26\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:5px 0px 0px 4px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.icon.back+"</svg>";
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+sender.eeMouseDown = function(sender, event, x, y) {
+    sender.style.backgroundColor = "#cfdfea";
+}
+sender.eeMouseUp = function(sender, event, x, y) {
+    sender.style.backgroundColor = "#dfeffa";
+}
+eb.initMouseEvent(sender);]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text><![CDATA[<]]></text>
+      <top>9</top>
+      <topRatio>0.176470588235294</topRatio>
+      <width>33</width>
+      <widthRatio>0.055</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel591/panel589">
+      <fontBold>true</fontBold>
+      <fontColor>505050</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>48</height>
+      <heightRatio>0.941176470588235</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>63</left>
+      <leftRatio>0.105</leftRatio>
+      <sizeRatio>0.115107913669065</sizeRatio>
+      <text>发表短文或回复</text>
+      <top>1</top>
+      <topRatio>0.0196078431372549</topRatio>
+      <width>417</width>
+      <widthRatio>0.695</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel591/panel592">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>33</height>
+      <heightRatio>0.647058823529412</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>501</left>
+      <leftRatio>0.835</leftRatio>
+      <onClick><![CDATA[if (!sender.v_enabled) return;
+var content = ee.getEditText(sender.parentNode.parentNode.c_input);
+var photos = sender.parentNode.parentNode.c_photos.v_photos;
+if ((content.length<=0) &amp;&amp; (photos.length<=0)) {
+    g5.alert1("提示", "发言内容不能为空，您至少要留有文字或者至少一张图片或者视频。");
+    return;
+}
+
+if (sender.parentNode.parentNode.onComplete) {
+    sender.parentNode.parentNode.onComplete();
+}]]></onClick>
+      <onCreate>sender.bgColorDisabled = "#8ed0f9";
+sender.bgColorEnabled = "#1da1f2";
+sender.bgColorHot = "#1a91da";
+sender.bgColorDown = "#1781c2";
+sender.v_enabled = true;
+sender.setEnabled = function(enabled) {
+    this.v_enabled = enabled;
+    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+}
+sender.setEnabled(false);
+
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorEnabled;
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorDown;
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    if (!sender.v_enabled) return;
+    sender.style.backgroundColor = sender.bgColorHot;
+}
+eb.initMouseEvent(sender);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.397590361445783</sizeRatio>
+      <text>发言</text>
+      <top>8</top>
+      <topRatio>0.156862745098039</topRatio>
+      <width>83</width>
+      <widthRatio>0.138333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel580">
+      <backgroundColor>EAEAF4</backgroundColor>
+      <dockX>right</dockX>
+      <height>39</height>
+      <heightRatio>0.0515873015873016</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>521</left>
+      <leftRatio>0.885</leftRatio>
+      <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
+sender.v_x = parseInt(eb.getDivRect(sender).w/2);
+sender.v_y = parseInt(eb.getDivRect(sender).h/2);
+sender.v_r = 9;
+sender.v_color = "#29a5f2";
+sender.v_bgColor = "#ecf0f3";
+sender.v_width = "4px";
+sender.v_progress = "0.0001";
+sender.refresh = function(progress) {
+    var path = this.childNodes[0].childNodes[0];
+    path.style.stroke=sender.v_bgColor;
+    path.style.strokeWidth=sender.v_width;
+    var des = ["M",this.v_x,this.v_y-this.v_r,"A",this.v_r,this.v_r,0,1,1,this.v_x-0.0001,this.v_y-this.v_r];
+    path.setAttribute("d", des.join(" "));
+    
+    if (!eb.isEmpty(progress)) this.v_progress = progress;
+    this.v_progress = Math.min(0.9999,this.v_progress);
+    this.v_progress = Math.max(0.0001,this.v_progress);
+    path = this.childNodes[0].childNodes[1];
+    var ag = 90+360-this.v_progress*360;  
+    var ag = ag*(Math.PI/180);
+    var dx = (this.v_x+(Math.cos(ag)*this.v_r)).toFixed(2);
+    var dy = (this.v_y-(Math.sin(ag)*this.v_r)).toFixed(2);
+    var opt = window.Number(this.v_progress>0.5);
+    des = ["M",this.v_x,(this.v_y-this.v_r)+"","A",this.v_r,this.v_r,0,opt,1,dx,dy];
+    path.style.stroke=sender.v_color;
+    path.style.strokeWidth=sender.v_width;
+    path.setAttribute("d", des.join(" "));
+}
+
+
+
+]]></onCreate>
+      <outerRight>40</outerRight>
+      <sizeRatio>1</sizeRatio>
+      <text>圆形进度条</text>
+      <top>227</top>
+      <topRatio>0.30026455026455</topRatio>
+      <width>39</width>
+      <widthRatio>0.065</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel581">
+      <backgroundColor>EAEAF4</backgroundColor>
+      <dockX>right</dockX>
+      <fontFamily>Helvetica</fontFamily>
+      <height>39</height>
+      <heightRatio>0.0515873015873016</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>521</left>
+      <leftRatio>0.885</leftRatio>
+      <outerRight>40</outerRight>
+      <sizeRatio>1</sizeRatio>
+      <text>.</text>
+      <top>227</top>
+      <topRatio>0.30026455026455</topRatio>
+      <width>39</width>
+      <widthRatio>0.065</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel134/panel135/panel579/edit16">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>fill</dockX>
+      <fontColor>657786</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>154</height>
+      <heightRatio>0.203703703703704</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>12</inputFontSize>
+      <layerVisible>false</layerVisible>
+      <left>30</left>
+      <leftRatio>0.05</leftRatio>
+      <multiLine>true</multiLine>
+      <onChange><![CDATA[var edit = sender.parentNode;
+var text = ee.getEditText(sender.parentNode);
+if (text.split("\n").length-1>10) {
+    var s1 = sender.selectionStart;
+    var s2 = sender.selectionEnd;
+    text = edit.v_lastText;
+    ee.setEditText(edit, text);
+    sender.setSelectionRange(s1-1,s2-1);
+} else {
+    ee.setEditText(edit, text);
+}
+edit.v_lastText = text;
+
+var cir = sender.parentNode.parentNode.c_cir;
+var cirText = sender.parentNode.parentNode.c_cirText;
+if (text.length<180) {
+    cir.v_color = "#29a5f2";
+    cir.v_r = "9";
+    cir.refresh(text.length/200);
+    ee.setText(cirText, "");    
+} else if (text.length<=200) {
+    cir.v_color = "#ffad1f";
+    cir.v_r = "12";
+    cir.refresh(text.length/200);    
+    ee.setText(cirText, 200-text.length);    
+    ee.setTextColor(cirText, "#ffad1f");
+} else {
+    cir.v_color = "#e0245e";
+    cir.v_r = "14";
+    cir.refresh((text.length-200)/100);    
+    ee.setText(cirText, 200-text.length);
+    ee.setTextColor(cirText, "#e0245e");
+}
+sender.parentNode.parentNode.check();
+]]></onChange>
+      <onCreate>sender._input.style.resize = "none";</onCreate>
+      <outerLeft>30</outerLeft>
+      <outerRight>30</outerRight>
+      <sizeRatio>0.28</sizeRatio>
+      <text>在这里输入您的发言内容</text>
+      <top>64</top>
+      <topRatio>0.0846560846560847</topRatio>
+      <width>540</width>
+      <widthRatio>0.916666666666667</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel585">
+      <dockX>fill</dockX>
+      <height>334</height>
+      <heightRatio>0.441798941798942</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>30</left>
+      <leftRatio>0.05</leftRatio>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = "15px";
+
+</onCreate>
+      <outerLeft>30</outerLeft>
+      <outerRight>30</outerRight>
+      <sizeRatio>0.607272727272727</sizeRatio>
+      <top>274</top>
+      <topRatio>0.362433862433862</topRatio>
+      <width>540</width>
+      <widthRatio>0.916666666666667</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel585/panel586">
+      <backgroundColor>F5F5FF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>657786</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>334</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.617336152219873</sizeRatio>
+      <text>您还没有分享图片或者视频
+分享图片或视频后会出现在这里
+您最多分享4张图片或者1个视频</text>
+      <top>0</top>
+      <width>540</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel585/panel587">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>657786</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>334</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>sender.v_mode = "x";
+sender.v_photos = new Array();</onCreate>
+      <sizeRatio>0.617336152219873</sizeRatio>
+      <top>0</top>
+      <width>540</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel588">
+      <backgroundImg>CPY0003.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <height>36</height>
+      <heightRatio>0.0476190476190476</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>91</left>
+      <leftRatio>0.151666666666667</leftRatio>
+      <onClick><![CDATA[if (sender.parentNode.c_photos.v_photos.length>=4) {
+    g5.alert1("提示", "对不起，您最多上传4张照片或者视频");
+    return;
+}
+
+g5.popBlack2.a1.show(function(ytbVideo) {
+    var i = 0;
+    for (i=0; i<sender.parentNode.c_photos.v_photos.length; i++) {
+        var s = sender.parentNode.c_photos.v_photos[i];
+        if (s.length<4) continue;
+        if (s.substr(0,4)=="?YTB") {
+            break;
+        }
+    }
+    if (i>=sender.parentNode.c_photos.v_photos.length) {
+        sender.parentNode.c_photos.v_photos.push(ytbVideo);
+    } else {
+        sender.parentNode.c_photos.v_photos.splice(i,1,ytbVideo);
+    }
+    
+    g5.refreshPhoto(sender.parentNode.c_photos);
+    sender.parentNode.check();
+});
+]]></onClick>
+      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 4500 4500\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:7px 8px 8px 4px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">" + g5.icon.youtube + "</svg>";
+sender.style.borderRadius = "50%";
+
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <top>226</top>
+      <topRatio>0.298941798941799</topRatio>
+      <width>36</width>
+      <widthRatio>0.06</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel590">
+      <backgroundColor>008080</backgroundColor>
+      <cursor>pointer</cursor>
+      <height>36</height>
+      <heightRatio>0.0476190476190476</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>45</left>
+      <leftRatio>0.075</leftRatio>
+      <onClick>sender.c_file.click();</onClick>
+      <onCreate><![CDATA[sender.maxSqr = 700*700;
+sender.compressRatio = 0.85;
+
+sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M19.75 2H4.25C3.01 2 2 3.01 2 4.25v15.5C2 20.99 3.01 22 4.25 22h15.5c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2zM4.25 3.5h15.5c.413 0 .75.337.75.75v9.676l-3.858-3.858c-.14-.14-.33-.22-.53-.22h-.003c-.2 0-.393.08-.532.224l-4.317 4.384-1.813-1.806c-.14-.14-.33-.22-.53-.22-.193-.03-.395.08-.535.227L3.5 17.642V4.25c0-.413.337-.75.75-.75zm-.744 16.28l5.418-5.534 6.282 6.254H4.25c-.402 0-.727-.322-.744-.72zm16.244.72h-2.42l-5.007-4.987 3.792-3.85 4.385 4.384v3.703c0 .413-.337.75-.75.75z\"></path><circle cx=\"8.868\" cy=\"8.309\" r=\"1.542\"></circle></g></svg>";
+sender.style.borderRadius = "50%";
+
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+
+
+//implementation
+var c = document.createElement("input");
+c.setAttribute("type", "file");
+c.setAttribute("accept", "image/*");
+c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
+sender.insertBefore(c, sender.childNodes[0]);
+sender.c_file = c;
+
+c.onchange = function() {
+    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
+        var file = sender.c_file.files[0];
+        var pos = file.name.lastIndexOf(".");
+        var fileExt = pos<0 ? "" : file.name.substring(pos);
+        
+        //onUserSelectedFile(file.name,fileExt)
+        fileExt = fileExt.toLowerCase();
+        if ((fileExt != ".bmp") &amp;&amp;
+            (fileExt != ".jpg") &amp;&amp;
+            (fileExt != ".jpeg") &amp;&amp;
+            (fileExt != ".png") &amp;&amp;
+            (fileExt != ".tif") &amp;&amp;
+            (fileExt != ".tiff")) return;
+        if (sender.parentNode.c_photos.v_photos.length>=4) {
+            g5.alert1("提示", "对不起，您最多只能上传4张图片。");
+            return;
+        }         
+        
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var blob = new Blob([event.target.result]); 
+            window.URL = window.URL || window.webkitURL;
+            var blobURL = window.URL.createObjectURL(blob); 
+            var image = new Image();
+            image.src = blobURL;
+            image.onload = function() {
+                sender.v_data = sender.resize(image);
+                if (sender.v_data) {
+                    //upload immediately
+                    uploadImage.data = sender.v_data;
+                    uploadImage.controlName = sender.id;
+                    uploadImage.onComplete = function() {
+                        if (sender.parentNode.c_photos.v_photos.length>=4) return;
+                        sender.parentNode.c_photos.v_photos.push(uploadImage.newFileName);
+                        g5.refreshPhoto(sender.parentNode.c_photos);
+                        sender.parentNode.check();
+                        return;
+                    }
+                    uploadImage();
+                    sender.v_data = "";
+                }
+            }
+        }
+        reader.readAsArrayBuffer(file);
+    } else {
+        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
+    }
+}
+
+sender.resize = function (img) {
+    var canvas = document.createElement("canvas");
+    var imgW = img.width;
+    var imgH = img.height;
+    var dw,dh;
+    if (imgW*imgH>this.maxSqr) {
+        var ratio = imgW / imgH;
+        var y = Math.sqrt(this.maxSqr/ratio);
+        canvas.width = parseInt(ratio*y);
+        canvas.height = parseInt(y);
+    } else {
+        canvas.width = imgW;
+        canvas.height = imgH;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
+}
+]]></onCreate>
+      <sizeRatio>1</sizeRatio>
+      <text>图片</text>
+      <top>226</top>
+      <topRatio>0.298941798941799</topRatio>
+      <width>36</width>
+      <widthRatio>0.06</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -23131,6 +23813,7 @@ sender.onpointermove = function(event) {
       <dockY>bottom</dockY>
       <heightRatio>0.125628140703518</heightRatio>
       <layerName>pButton</layerName>
+      <layerVisible>false</layerVisible>
       <left>1017</left>
       <leftRatio>0.876868953386104</leftRatio>
       <onCreate>sender.style.position="fixed";</onCreate>
@@ -23154,7 +23837,7 @@ sender.onpointermove = function(event) {
       <heightRatio>0.466666666666667</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick>g5.popBlack.a3.showNew();</onClick>
+      <onClick>g5.p2.p31.showNew();</onClick>
       <onCreate><![CDATA[sender.baseColor1 = "rgb(29, 161, 242)";
 //sender.style.backgroundColor = sender.baseColor1;
 //ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 8px 8px;fill:#ffffff;vertical-align:middle;\">"+g5.iconNew+"</svg>");
@@ -36206,7 +36889,11 @@ ee.setOnMouseLeave(c, function(sender,event) {
 });
 root.c_button1 = c;
 ee.setOnClick(c,function(sender,event) {
-    g5.popBlack.a3.showRe(root.v_content.clone(),root.v_reContent.clone(),root.v_userInfo,root.v_reUserInfo);
+    if (g5.isMobile) {
+        g5.p2.p31.showRe(root.v_content.clone(),root.v_reContent.clone(),root.v_userInfo,root.v_reUserInfo);
+    } else {
+        g5.popBlack.a3.showRe(root.v_content.clone(),root.v_reContent.clone(),root.v_userInfo,root.v_reUserInfo);
+    }
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 
@@ -37819,6 +38506,8 @@ if (g5.currentPageIndex == 0) {
     g5.p2.p29.close();
 } else if (g5.currentPageIndex == 29) {
     g5.p2.p30.close();
+} else if (g5.currentPageIndex == 30) {
+    g5.p2.p31.close();
 }
 
 if (pageIndex == 0) {
@@ -37886,6 +38575,8 @@ if (pageIndex == 0) {
     g5.p2.p29.activePage();
 } else if (pageIndex == 29) {
     g5.p2.p30.activePage();
+} else if (pageIndex == 30) {
+    g5.p2.p31.activePage();
 }
 g5.currentPageIndex = pageIndex;
 return true;]]></functionCode>
@@ -38001,6 +38692,8 @@ if (pn=="/bookmarks") {
     g5.p2.p29.show();
 } else if (pn == "/settings/hide") {
     g5.p2.p30.show();
+} else if (pn == "/compose") {
+    g5.p2.p31.showNew();
 } else {
     if (pns[1]=="following") {
         g5.p2.p16.showByUserName(unescape(pns[0]));
