@@ -24049,10 +24049,11 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
     this.v_userInfo = v_userInfo;
     this.v_reUserInfo = v_reUserInfo;
     var rect = g5.getRectAbs(refDiv);
+    var sr = eb.getDivRectSetting(this);
     if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
-        ee.setRect(this, rect.x - 50, rect.y - eb.getDivRect(this).h - 10, null, null);
+        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y - eb.getDivRect(this).h - 10, null, null);
     } else {
-        ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
+        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y+rect.h+10, null, null);
     }
     ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 删除");
     if (this.v_content.forceTopSn == "0") {
@@ -24354,10 +24355,11 @@ sender.show = function(refDiv, content, userInfo) {
     this.v_content = content
     this.v_userInfo = userInfo;
     var rect = g5.getRectAbs(refDiv);
+    var sr = eb.getDivRectSetting(this);
     if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
-        ee.setRect(this, rect.x - 50, rect.y - eb.getDivRect(this).h - 10, null, null);
+        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y - eb.getDivRect(this).h - 10, null, null);
     } else {
-        ee.setRect(this, rect.x - 50, rect.y+rect.h+10, null, null);
+        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y+rect.h+10, null, null);
     }
     if (userInfo.isBlock1) {
         ee.setText(this.c_button1,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
@@ -24697,6 +24699,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -27847,6 +27850,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a9->手机弹出菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.c_titleBg = ee.getControl("panel562");
@@ -28558,7 +28562,6 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
     if (sender.eeChildren[i].style.visibility != "hidden") {
@@ -28635,7 +28638,6 @@ if (currentDist>100) {
       <height>300</height>
       <heightRatio>0.376884422110553</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.224274406332454</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -28740,10 +28742,11 @@ sender.refresh = function() {
     ee.setRect(this, null, null, null, cy + 20);
     
     var rect = g5.getRectAbs(this.refDiv);
+    var sr = eb.getDivRectSetting(this);
     if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
-        ee.setRect(this, rect.x - 50, rect.y - eb.getDivRect(this).h - (-10), null, null);
+        ee.setRect(this, Math.max(0,rect.x - 50), rect.y - eb.getDivRect(this).h - (-10), null, null);
     } else {
-        ee.setRect(this, rect.x - 50, rect.y+rect.h + (-10), null, null);
+        ee.setRect(this, Math.max(0,rect.x - 50), rect.y+rect.h + (-10), null, null);
     }
     
     ee.setVisible(this.parentNode, true);
