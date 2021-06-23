@@ -255,11 +255,12 @@ ee.setOnClick = function (div, func) {
         eb.addEvent(div, "touchstart", function (event) {
             div.eeMouseDownX = event.changedTouches[0].screenX;
             div.eeMouseDownY = event.changedTouches[0].screenY;
+            div.eeTouchStartTime = new Date();
         }, false);
         eb.addEvent(div, "touchend", function (event) {
             var d = Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX);
             d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
-            if (d < 50) {
+            if ((d < 30) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime()<300)) {
                 if (div.eeOnClick) {
                     //setTimeout(function () { //?
                     div.eeOnClick(div, event);
@@ -38367,6 +38368,8 @@ var cId = new Array();
 var i,j;
 for (i=0; i<buffs.length; i++) {
     for (j=0; j<buffs[i].length; j++) {
+        if (!buffs[i][j].v_content) continue;
+        if (!buffs[i][j].v_content.id) continue;
         var r = g5.getRectAbs(buffs[i][j]);
         if (r.y + r.h < 0) continue;
         if (r.y > eb.getClientSize().h) continue;
