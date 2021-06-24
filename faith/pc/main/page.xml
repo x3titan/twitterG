@@ -95,6 +95,19 @@ function onYouTubeIframeAPIReady() {
 
 }
 
+
+//var lastTouchEnd = 0;
+//document.documentElement.addEventListener('touchend', function (event) {
+//    var now = Date.now();
+//    if (now - lastTouchEnd <= 300) {
+//        event.preventDefault();
+//        return false;
+//    }
+//    lastTouchEnd = now;
+//}, false);
+
+
+
 initLButton = function(button,text,dy,icon,size,dx) {
     if (eb.isEmpty(size)) size = "24 24";
     if (eb.isEmpty(dx)) dx = "0";
@@ -260,7 +273,7 @@ ee.setOnClick = function (div, func) {
         eb.addEvent(div, "touchend", function (event) {
             var d = Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX);
             d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
-            if ((d < 30) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime()<300)) {
+            if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime()<300)) {
                 if (div.eeOnClick) {
                     //setTimeout(function () { //?
                     div.eeOnClick(div, event);
@@ -299,6 +312,9 @@ ee.setOnClick = function (div, func) {
     background-color: #E0E0EF;
 }
 
+body {
+  touch-action: pan-y;
+}
 
 </style>
 
