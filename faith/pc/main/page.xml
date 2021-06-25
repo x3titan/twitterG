@@ -776,7 +776,12 @@ sender.loadFromServer = function() {
         }
         var item = null;
         for (i=0; i< dataset.rowCount; i++) {
+            //item = document.createElement("div");
+            //item.style.overflow = "hidden";
+            //item.style.position = "absolute";
+            //eb.setDivRect(item,0,cy,itemWidth,100);
             item = createPanel(root, "p2p1_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            //ee.setVisible(item,false);
             g5.loadTwitterRecord(item, dataset, i);
             if (item.v_content.status == "DEL") {
                 ee.removeControl(item);
@@ -790,6 +795,7 @@ sender.loadFromServer = function() {
                 root.v_items.splice(i, 0, item);
             }
             cy += 0 + eb.getDivRect(item).h;
+            //root.appendChild(item);
         }
         if (!updateHomepage.isForward) {
             if (dataset.rowCount>0) {
@@ -29561,6 +29567,9 @@ sender.show = function() {
 }
 
 sender.show2 = function() {
+    if (g5.isMobile) {
+        return this.show();
+    }
     ee.setVisible(this, true);
     ee.setVisible(this.c_text, false);
     this.c_ani.className = "aniLoading";
@@ -30391,7 +30400,8 @@ if (newTwitter.userPage=="x") {
 }</script3>
     </taskSetItem>
     <taskSetItem name="updateHomepage">
-      <script1>//busy,contentId,isForward,onComplete(dataset)
+      <script1>g5.writeLog("send req");
+//busy,contentId,isForward,onComplete(dataset)
 if (updateHomepage.busy) return;
 updateHomepage.busy = true;
 eio.appendString16(g5.token);
@@ -30532,12 +30542,16 @@ eio.appendDataSet(sqlResult,
 
 
 ]]></script2>
-      <script3>if (eio.readString8() != "T") {
+      <script3>g5.writeLog("resp");
+
+if (eio.readString8() != "T") {
     updateHomepage.busy = false;
     return;
 }
 updateHomepage.dataset = eio.readDataSet();
+g5.writeLog("read dataset");
 updateHomepage.onComplete(updateHomepage.dataset); 
+g5.writeLog("refresh page complete");
 updateHomepage.busy = false;
                         
 </script3>
@@ -36541,7 +36555,7 @@ if (root.v_mode.charAt(2) == "x") {
 c.label.style.wordBreak = "break-all";
 //eb.setFontSizeAuto(c, 25);
 eb.setDock(c,"disabled","disabled");
-eb.processDock();
+//eb.processDock();
 var rect = eb.getDivRect(c.label);
 ee.setRect(c, null, null, null, rect.h);
 rect = eb.getDivRect(c);
@@ -37191,7 +37205,7 @@ if (root.v_mode.charAt(2) != "x") {
 //set total height
 rect = eb.getDivRect(root.c_button1);
 eb.setDivRect(root, null, null, null, rect.y + rect.h + 7);
-eb.processDock();
+//eb.processDock();
 if (!eb.isEmpty(root.c_photos)) {
     if (!eb.isEmpty(root.c_photos.c_video)) {
         root.c_photos.v_videoY = g5.getVideoY(root.parentNode, root.c_photos.c_video);
@@ -39913,6 +39927,9 @@ return result;</functionCode>
       <functionParam>text, status</functionParam>
       <functionCode><![CDATA[if (eb.isEmpty(status)) status = false;
 ee.setVisible(ee.getControl("panel288"), true);
+if (g5.isMobile) {
+    ee.setRect(ee.getControl("panel288"), 0,null,null,null);
+}
 if (status) {
     ee.setText(ee.getControl("panel113"),text);
     return;
