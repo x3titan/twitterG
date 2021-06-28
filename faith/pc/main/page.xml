@@ -36393,7 +36393,7 @@ if (root.v_content.exUplinkType == "L") {
     }
     sTemp += "转发了</div>";    
     addText(c, sTemp, "left", "middle", "微软雅黑", 10, "#657786", "normal");
-    c.fw=$g(root.id+"_fwL01");
+    c.fw=c.label.rows[0].cells[0].childNodes[2];
     ee.setOnClick(c,function(sender,event) {
         g5.p2.p2.show(root.v_content.exUserInfo);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -36639,10 +36639,10 @@ if (!showRe) {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "　该用户已被您隐藏，可以查看原文。　<font id='"+root.id+"_blockF01' color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "　该用户已被您隐藏，可以查看原文。　<font color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     cy+=20;
-    c.c_button1 = $g(root.id+"_blockF01");
+    c.c_button1 = c.label.rows[0].cells[0].childNodes[1];
     ee.setOnClick(c.c_button1,function(sender,event) {
         g5.p2.p9.show(null,null,null,null,root.v_reContent.id,true);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -36659,10 +36659,10 @@ if (!showRe) {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "　该用户已被您屏蔽，可以查看原文。　<font id='"+root.id+"_blockF01' color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "　该用户已被您屏蔽，可以查看原文。　<font color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     cy+=20;
-    c.c_button1 = $g(root.id+"_blockF01");
+    c.c_button1 = c.label.rows[0].cells[0].childNodes[1];
     ee.setOnClick(c.c_button1,function(sender,event) {
         g5.p2.p9.show(null,null,null,null,root.v_reContent.id,true);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -36675,6 +36675,7 @@ if (!showRe) {
     });
 } else if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_content.photos.length>0) &amp;&amp; (root.v_reContent.photos.length>0)) {
     c = createPanel(root, root.id+"_panel2", "", 75, cy-7, mainWidth-2, 146);
+    var cRe = c;
     cy += 146 + 10;
     var p1w = mainWidth-2;
     c.style.borderRadius = "15px";
@@ -36695,7 +36696,7 @@ if (!showRe) {
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     //rePhoto
-    c = createPanel($g(root.id+"_panel2"), root.id+"_panel8", "", 11, 11, 20, 20);
+    c = createPanel(cRe, root.id+"_panel8", "", 11, 11, 20, 20);
     c.style.cursor="pointer";
     c.style.borderRadius = "50%";
     c.v_username = root.v_reUserInfo.userName;
@@ -36731,7 +36732,7 @@ if (!showRe) {
         //}
     });
     //reUserName,reNickName,reTime
-    c = createPanel($g(root.id+"_panel2"), root.id+"_panel11", "", 35, 7, p1w*0.883734939759036, 25);
+    c = createPanel(cRe, root.id+"_panel11", "", 35, 7, p1w*0.883734939759036, 25);
     addText(c, "<div style='display:inline'><b>" + root.v_reUserInfo.nickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserInfo.userName + "</font></div><font> · </font><font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reContent.seconds) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     root.c_reTitleText = c.label.rows[0].cells[0].childNodes[0];
     root.c_reTitleText.id = root.id + "_reTitleText";
@@ -36762,12 +36763,12 @@ if (!showRe) {
         sender.childNodes[0].style.textDecoration="";
     });
     //reContent
-    c = createPanel($g(root.id+"_panel2"), root.id+"_panel25", "", 120, 36, p1w-130, 100);
+    c = createPanel(cRe, root.id+"_panel25", "", 120, 36, p1w-130, 100);
     addText(c, g5.showCommonText(root.v_reContent.content), "left", "top", "微软雅黑", 12, "000000", "normal");
     c.label.style.wordBreak = "break-all";
     //rePhotos                                                                                          
     if (root.v_reContent.photos.length>0) {
-        c = createPanel($g(root.id+"_panel2"), root.id+"_panel26", "", 11, 36, 100,100);
+        c = createPanel(cRe, root.id+"_panel26", "", 11, 36, 100,100);
         c.style.borderRadius = "15px";
         c.style.borderWidth = "1px";
         c.style.borderColor = "rgb(230,236,240)";
@@ -36780,6 +36781,7 @@ if (!showRe) {
 } else if (root.v_content.uplinkType == "F") {
     var p1ratio = 2.64;
     c = createPanel(root, root.id+"_panel2", "", 75, cy, mainWidth-2, 100);
+    var cRe = c;
     c.style.borderRadius = "15px";
     c.style.cursor = "pointer"; 
     c.style.borderWidth = "1px";
@@ -36800,7 +36802,7 @@ if (!showRe) {
     
     var p1w = eb.getDivRect(c).w;
     var p1h = p1w / p1ratio;
-    c = createPanel($g(root.id+"_panel2"), root.id+"_panel6", "", 0, 0, p1w, 100);
+    c = createPanel(cRe, root.id+"_panel6", "", 0, 0, p1w, 100);
     eb.setDock(c,"disabled","disabled");
     //rePhoto
     c = createPanel($g(root.id+"_panel6"), root.id+"_panel8", "", 16, 12, 20, 20);
@@ -36809,13 +36811,6 @@ if (!showRe) {
     c.style.cursor="pointer";
     ee.setOnClick(c,function(sender,event) {
         ee.getControl("panel280").show(root.c_rePhoto, root.v_reUserInfo);
-        //showUserPage.userName=sender.v_username;
-        //showUserPage();
-        //if (sender.v_timer!=null) {
-        //    clearTimeout(sender.v_timer);
-        //    sender.v_timer = null;
-        //}
-        //getUserInfo2.busy = false;
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     root.c_rePhoto = c;
@@ -36895,10 +36890,7 @@ if (!showRe) {
         root.c_rePhotos = c;
     }
     
-    //c = createPanel($g(root.id+"_panel2"), root.id+"_panel7", "", 0, 0, p1w, p1y);
-    //addSkin(c, "/faith/skins/bodyMask1.png","9x",57,56,19,20,20,18,19,20,20,18);
-    //c.style.pointerEvents = "none";
-    c = $g(root.id+"_panel2");
+    c = cRe;
     ee.setRect(c, null, null, null, p1y);
     c = $g(root.id+"_panel6");
     ee.setRect(c, null, null, null, p1y);
@@ -36911,56 +36903,6 @@ if (root.v_mode.charAt(2) == "x") {
     root.v_timeLabel = c.label.rows[0].cells[0]; 
     root.v_startTime = parseInt((new Date()).getTime()/1000)-root.v_content.seconds;
     c = createPanel(root, root.id+"_btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
-    /*
-    if ((root.v_content.reCount!="0") || (root.v_content.fwCount!="0") || (root.v_content.likeCount!="0")) {
-        c = createPanel(root, root.id+"_bottom02", "", 16, cy-6, mainWidth, 22); cy+=33;
-        temp = "";
-        if (root.v_content.reCount!="0") {
-            temp += "<font color='#000000'><b>"+root.v_content.reCount+"</b></font> 回复      ";
-        }
-        if (root.v_content.fwCount!="0") {
-            temp += "<div id='"+root.id+"_fw01' style='display:inline;'><font color='#000000'><b>"+root.v_content.fwCount+"</b></font> 转发</div>      ";
-        }
-        if (root.v_content.likeCount!="0") {
-            temp += "<div id='"+root.id+"_like01' style='display:inline;'>收到<font color='#000000'><b>"+root.v_content.likeCount+"</b></font>个赞</div>      ";
-        }
-        addText(c, temp, "left", "middle", "微软雅黑", 12, "808080", "normal");
-        temp = $g(root.id+"_fw01");
-        if (temp!=null) {
-            temp.v_contentId = root.v_content.id;
-            temp.style.cursor="pointer";
-            ee.setOnClick(temp,function(sender,event) {
-                showForwardList.contentId=sender.v_contentId;
-                showForwardList();
-                window.event? window.event.cancelBubble = true : event.stopPropagation();
-            });
-            ee.setOnMouseEnter(temp,function(sender,e){
-                sender.style.textDecoration="underline";
-            });
-            ee.setOnMouseLeave(temp,function(sender,e){
-                sender.style.textDecoration="";
-            });
-        }
-        temp = $g(root.id+"_like01");
-        if (temp!=null) {
-            temp.v_contentId = root.v_content.id;
-            temp.style.cursor="pointer";
-            ee.setOnClick(temp,function(sender,event) {
-                showLikeList.contentId=sender.v_contentId;
-                showLikeList();
-                window.event? window.event.cancelBubble = true : event.stopPropagation();
-            });
-            ee.setOnMouseEnter(temp,function(sender,e){
-                sender.style.textDecoration="underline";
-            });
-            ee.setOnMouseLeave(temp,function(sender,e){
-                sender.style.textDecoration="";
-            });
-        }
-        c = createPanel(root, root.id+"_btnline02", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
-    }
-    */
-    
 }
 
 //button1
