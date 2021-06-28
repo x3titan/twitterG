@@ -618,7 +618,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -664,7 +663,6 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -811,6 +809,7 @@ sender.loadFromServer = function() {
         var item = null;
         for (i=0; i< dataset.rowCount; i++) {
             item = document.createElement("div");
+            item.id = "p2p1_" + dataset.getData(0,i);
             item.style.overflow = "hidden";
             item.style.position = "absolute";
             eb.setDivRect(item,0,cy,itemWidth,200);
@@ -23815,6 +23814,7 @@ sender.style.borderRadius = "50%";
       <height>582</height>
       <heightRatio>0.731155778894472</heightRatio>
       <layerName>LOG</layerName>
+      <layerVisible>false</layerVisible>
       <left>705</left>
       <leftRatio>0.620052770448549</leftRatio>
       <onCreate>sender.style.position="fixed";</onCreate>
@@ -36589,6 +36589,7 @@ ee.setRect(c, null, null, null, rect.h);
 rect = eb.getDivRectSetting(c);
 cy = rect.y + rect.h + 1;
 */
+/*
 c = createPanel(g5.pLine1, root.id+"_panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
 root.c_content = c;
 if (root.v_mode.charAt(2) == "x") {
@@ -36602,6 +36603,30 @@ ee.setRect(c, null, null, null, rect.h);
 rect = eb.getDivRectSetting(c);
 cy = rect.y + rect.h + 1;
 ee.changeParent(c,root);
+*/
+cy += 5;
+c = createPanel(root, root.id+"_panel17", "", 78, cy, mainWidth, null);
+root.c_content = c;
+c.style.wordWrap = "break-word";
+c.style.wordBreak = "break-all";
+c.style.whiteSpace = "normal";
+c.style.fontFamily = "微软雅黑";
+c.style.color = "#000000";
+if (root.v_content.content.length>0) {
+    if (root.v_mode.charAt(2) == "x") {
+        c.innerHTML = "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(root.v_content.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
+    } else {
+        c.innerHTML = "<font style='font-size:12pt; line-height:1.2;'>" + g5.showCommonText(root.v_content.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
+    }
+    ee.changeParent(c,g5.pLine1);
+    var rect = eb.getDivRect(c);
+    ee.changeParent(c,root);
+    ee.setRect(c, null, null, null, rect.h);
+    cy += rect.h + 6;
+} else {
+    cy += 6;
+}
+
 
 //photos
 if (root.v_content.photos.length>0) {
@@ -39494,7 +39519,14 @@ if (g5.unlikeItems.length>0) {
     <item name="showCommonText" type="20">
       <varValue />
       <functionParam>text</functionParam>
-      <functionCode><![CDATA[text = text.replace("<","&amp;lt;").replace(">","&amp;gt;");
+      <functionCode><![CDATA[text = text.replace(/[<">']/g, (a) => {
+    return {
+        '<': '&amp;lt;',
+        '"': '&amp;quot;',
+        '>': '&amp;gt;',
+        "'": '&amp;#39;'
+    }[a]
+});
 text = g5.processTextUrl(text);
 return text;]]></functionCode>
     </item>
