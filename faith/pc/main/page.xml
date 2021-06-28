@@ -279,6 +279,40 @@ ee.setOnClick = function (div, func) {
     }
 }
 
+function addText(div, text, hAlign, vAlign, font, size, color, weight) {
+    var div1 = document.createElement("div");
+    div1.style.position = "absolute";
+    div1.style.overflow = "hidden";
+    var table = document.createElement("table");
+    var row = table.insertRow();
+    var cell = row.insertCell();
+    table.style.position = "absolute";
+    table.style.whiteSpace = "pre-wrap";
+    cell.style.fontFamily = font;
+    cell.style.fontSize = size + "pt";
+    cell.style.fontWeight = weight;
+    if (color.length == 6) {
+        cell.style.color = "#" + color;
+    } else {
+        cell.style.color = color;
+    }
+    cell.style.textAlign = hAlign;
+    cell.style.verticalAlign = vAlign;
+    cell.innerHTML = text;
+    div.label = table;
+    div.label.hAlign = hAlign;
+    div.label.vAlign = vAlign;
+    if (div.childNodes.length <= 0) {
+        div.appendChild(div1);
+    } else if (eb.isEmpty(div._input)) {
+        div.appendChild(div1);
+    } else {
+        div.insertBefore(div1, div._input);
+    }
+    div1.appendChild(table);
+    var r = eb.getDivRectSetting(div);
+    ee.setRect(div, r.x, r.y, r.w, r.h, true);
+}
 
 ]]></onPageCreate>
       <pageHead><![CDATA[<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -776,12 +810,13 @@ sender.loadFromServer = function() {
         }
         var item = null;
         for (i=0; i< dataset.rowCount; i++) {
-            //item = document.createElement("div");
-            //item.style.overflow = "hidden";
-            //item.style.position = "absolute";
-            //eb.setDivRect(item,0,cy,itemWidth,100);
-            item = createPanel(root, "p2p1_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
-            //ee.setVisible(item,false);
+            item = document.createElement("div");
+            item.style.overflow = "hidden";
+            item.style.position = "absolute";
+            eb.setDivRect(item,0,cy,itemWidth,200);
+            
+            //item = createPanel(root, "p2p1_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            
             g5.loadTwitterRecord(item, dataset, i);
             if (item.v_content.status == "DEL") {
                 ee.removeControl(item);
@@ -794,8 +829,9 @@ sender.loadFromServer = function() {
             } else {
                 root.v_items.splice(i, 0, item);
             }
-            cy += 0 + eb.getDivRect(item).h;
-            //root.appendChild(item);
+            cy += 0 + eb.getDivRectSetting(item).h;
+            
+            root.appendChild(item);
         }
         if (!updateHomepage.isForward) {
             if (dataset.rowCount>0) {
@@ -36239,7 +36275,7 @@ root.style.borderRight = "";
 if ((root.v_mode.substr(0,2) != "  ") &amp;&amp; (root.v_mode.substr(0,2) != "T ")) {
     root.style.borderBottom = "";                       
 }
-var w = eb.getDivRect(root).w;
+var w = eb.getDivRectSetting(root).w;
 var c;
 
 eb.setAni2(root,1,"disappear", "rightFlyOut", "null", 0, true);
@@ -36800,12 +36836,10 @@ if (!showRe) {
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     
-    var p1w = eb.getDivRect(c).w;
+    var p1w = eb.getDivRectSetting(c).w;
     var p1h = p1w / p1ratio;
-    c = createPanel(cRe, root.id+"_panel6", "", 0, 0, p1w, 100);
-    eb.setDock(c,"disabled","disabled");
     //rePhoto
-    c = createPanel($g(root.id+"_panel6"), root.id+"_panel8", "", 16, 12, 20, 20);
+    c = createPanel(cRe, root.id+"_panel8", "", 16, 12, 20, 20);
     c.style.borderRadius = "50%";
     c.v_username = root.v_reUserInfo.userName;
     c.style.cursor="pointer";
@@ -36826,21 +36860,13 @@ if (!showRe) {
     ee.setOnMouseEnter(c, function(sender,e) {
         sender.style.webkitFilter="brightness(80%)";
         sender.style.filter="brightness(80%)";
-        //if (sender.v_timer!=null) clearTimeout(sender.v_timer);
-        //sender.v_timer = setTimeout(function() {
-        //    ee.getControl("panel280").show(root.v_reUserId, root.c_rePhoto);
-        //}, 200);
     });
     ee.setOnMouseLeave(c, function(sender,e) {
         sender.style.webkitFilter="brightness(100%)";
         sender.style.filter="brightness(100%)";
-        //if (sender.v_timer!=null) {
-        //    clearTimeout(sender.v_timer);
-        //    sender.v_timer = null;
-        //}
     });
     //reUserName,reNickName,reTime
-    c = createPanel($g(root.id+"_panel6"), root.id+"_panel11", "", 45, 8, p1w*0.863734939759036, 28);
+    c = createPanel(cRe, root.id+"_panel11", "", 45, 8, p1w*0.863734939759036, 28);
     addText(c, "<div style='display:inline'><b>" + root.v_reUserInfo.nickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserInfo.userName + "</font></div><font> · </font><font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reContent.seconds) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
     root.v_reTimeLabel = c.label.rows[0].cells[0].childNodes[2]; 
     root.c_reTitleText = c.label.rows[0].cells[0].childNodes[0];
@@ -36871,7 +36897,7 @@ if (!showRe) {
         sender.childNodes[0].style.textDecoration="";
     });
     //reContent
-    c = createPanel($g(root.id+"_panel6"), root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, 10);
+    c = createPanel(cRe, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, 10);
     addText(c, g5.showCommonText(root.v_reContent.content), "left", "top", "微软雅黑", 12, "000000", "normal");
     c.label.style.wordBreak = "break-all";
     //eb.setFontSizeAuto(c, 25);
@@ -36882,8 +36908,8 @@ if (!showRe) {
     var p1y = rect.y + rect.h + p1h * 0.05;
     //rePhotos
     if (root.v_reContent.photos.length>0) {
-        c = createPanel($g(root.id+"_panel6"), root.id+"_panel26", "", 0, p1y, p1w, parseInt(p1w*0.565));
-        p1y += eb.getDivRect(c).h;
+        c = createPanel(cRe, root.id+"_panel26", "", 0, p1y, p1w, parseInt(p1w*0.565));
+        p1y += eb.getDivRectSetting(c).h;
         c.v_photos = root.v_reContent.photos;
         c.v_mode = "";
         g5.refreshPhoto(c);
@@ -36891,8 +36917,6 @@ if (!showRe) {
     }
     
     c = cRe;
-    ee.setRect(c, null, null, null, p1y);
-    c = $g(root.id+"_panel6");
     ee.setRect(c, null, null, null, p1y);
     cy += p1y + w*0.03;
 }    
@@ -37127,18 +37151,18 @@ if (root.v_mode.charAt(2) != "x") {
 
 
 //set total height
-rect = eb.getDivRect(root.c_button1);
+rect = eb.getDivRectSetting(root.c_button1);
 eb.setDivRect(root, null, null, null, rect.y + rect.h + 7);
 if (!eb.isEmpty(root.c_photos)) {
     if (!eb.isEmpty(root.c_photos.c_video)) {
         root.c_photos.v_videoY = g5.getVideoY(root.parentNode, root.c_photos.c_video);
-        root.c_photos.v_videoH = eb.getDivRect(root.c_photos.c_video).h;
+        root.c_photos.v_videoH = eb.getDivRectSetting(root.c_photos.c_video).h;
     }
 }
 if (!eb.isEmpty(root.c_rePhotos)) {
     if (!eb.isEmpty(root.c_rePhotos.c_video)) {
         root.c_rePhotos.v_videoY = g5.getVideoY(root.parentNode, root.c_rePhotos.c_video);
-        root.c_rePhotos.v_videoH = eb.getDivRect(root.c_rePhotos.c_video).h;
+        root.c_rePhotos.v_videoH = eb.getDivRectSetting(root.c_rePhotos.c_video).h;
     }
 }
 
