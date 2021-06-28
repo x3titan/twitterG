@@ -36573,6 +36573,7 @@ if ((root.v_content.uplinkType == "R") || (root.v_content.uplinkType == "F")){
 }
 
 //v_text
+/*
 c = createPanel(root, root.id+"_panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
 root.c_content = c;
 if (root.v_mode.charAt(2) == "x") {
@@ -36585,8 +36586,22 @@ c.label.style.wordBreak = "break-all";
 eb.setDock(c,"disabled","disabled");
 var rect = eb.getDivRect(c.label);
 ee.setRect(c, null, null, null, rect.h);
-rect = eb.getDivRect(c);
+rect = eb.getDivRectSetting(c);
 cy = rect.y + rect.h + 1;
+*/
+c = createPanel(g5.pLine1, root.id+"_panel17", "", 75, cy, mainWidth, w*0.0547667342799189);
+root.c_content = c;
+if (root.v_mode.charAt(2) == "x") {
+    addText(c, "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(root.v_content.content) + "</font>", "left", "top", "微软雅黑", 16, "000000", "normal");
+} else {
+    addText(c, "<font style='line-height:1.2;'>" + g5.showCommonText(root.v_content.content) + "</font>", "left", "top", "微软雅黑", 12, "000000", "normal");
+}
+c.label.style.wordBreak = "break-all";
+var rect = eb.getDivRect(c.label);
+ee.setRect(c, null, null, null, rect.h);
+rect = eb.getDivRectSetting(c);
+cy = rect.y + rect.h + 1;
+ee.changeParent(c,root);
 
 //photos
 if (root.v_content.photos.length>0) {
@@ -36897,15 +36912,16 @@ if (!showRe) {
         sender.childNodes[0].style.textDecoration="";
     });
     //reContent
-    c = createPanel(cRe, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, 10);
+    c = createPanel(g5.pLine1, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, 10);
     addText(c, g5.showCommonText(root.v_reContent.content), "left", "top", "微软雅黑", 12, "000000", "normal");
     c.label.style.wordBreak = "break-all";
-    //eb.setFontSizeAuto(c, 25);
     eb.setDock(c,"disabled","disabled");
     rect = eb.getDivRect(c.label);
     ee.setRect(c, null, null, null, rect.h);
     rect = eb.getDivRect(c);
     var p1y = rect.y + rect.h + p1h * 0.05;
+    ee.changeParent(c,cRe);
+    
     //rePhotos
     if (root.v_reContent.photos.length>0) {
         c = createPanel(cRe, root.id+"_panel26", "", 0, p1y, p1w, parseInt(p1w*0.565));
@@ -39568,7 +39584,7 @@ for (i=0; i<root.v_items.length; i++) {
     ee.removeControl(root.v_items[i]);
 }
 root.v_items = new Array();
-var rect = eb.getDivRect(root);
+var rect = eb.getDivRectSetting(root);
 var item;
 if (root.v_photos.length==1) {
     item = createPanel(root, root.id+"_photo1", "", 0, 0, rect.w, rect.h);
