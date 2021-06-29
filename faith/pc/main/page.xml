@@ -36607,10 +36607,11 @@ ee.changeParent(c,root);
 cy += 5;
 c = createPanel(root, root.id+"_panel17", "", 78, cy, mainWidth, null);
 root.c_content = c;
+c.style.overflow = "";
 c.style.wordWrap = "break-word";
 c.style.wordBreak = "break-all";
 c.style.whiteSpace = "normal";
-c.style.fontFamily = "微软雅黑";
+c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
 c.style.color = "#000000";
 if (root.v_content.content.length>0) {
     if (root.v_mode.charAt(2) == "x") {
@@ -36621,8 +36622,12 @@ if (root.v_content.content.length>0) {
     ee.changeParent(c,g5.pLine1);
     var rect = eb.getDivRect(c);
     ee.changeParent(c,root);
-    ee.setRect(c, null, null, null, rect.h);
+    //eb.setDivRect(c, null, null, null, rect.h);
     cy += rect.h + 6;
+    
+    //if (!g5.cntTemp) g5.cntTemp =0;
+    //g5.cntTemp++
+    //g5.writeLog(g5.cntTemp, true);
 } else {
     cy += 6;
 }
@@ -36937,6 +36942,7 @@ if (!showRe) {
         sender.childNodes[0].style.textDecoration="";
     });
     //reContent
+    /*
     c = createPanel(g5.pLine1, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, 10);
     addText(c, g5.showCommonText(root.v_reContent.content), "left", "top", "微软雅黑", 12, "000000", "normal");
     c.label.style.wordBreak = "break-all";
@@ -36946,6 +36952,30 @@ if (!showRe) {
     rect = eb.getDivRect(c);
     var p1y = rect.y + rect.h + p1h * 0.05;
     ee.changeParent(c,cRe);
+    */
+    
+    c = createPanel(cRe, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, null);
+    c.style.wordWrap = "break-word";
+    c.style.wordBreak = "break-all";
+    c.style.whiteSpace = "normal";
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.color = "#000000";
+    var p1y;
+    if (root.v_reContent.content.length>0) {
+        c.innerHTML = g5.showCommonText(root.v_reContent.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>");
+        ee.changeParent(c,g5.pLine1);
+        var rect = eb.getDivRect(c);
+        ee.changeParent(c,cRe);
+        eb.setDivRect(c, null, null, null, rect.h);
+        p1y = rect.y + rect.h + p1h * 0.05;
+        
+        if (!g5.cntTemp) g5.cntTemp =0;
+        g5.cntTemp++
+        g5.writeLog(g5.cntTemp, true);
+    } else {
+        p1y = 36 + p1h * 0.05;
+    }
     
     //rePhotos
     if (root.v_reContent.photos.length>0) {
