@@ -792,17 +792,17 @@ sender.loadFromServer = function() {
     updateHomepage.onComplete = function(dataset) {
         var i, item;
         var root = sender;
-        var itemWidth = eb.getDivRect(root).w;
+        var itemWidth = eb.getDivRectSetting(root).w;
         var cy = eb.getDivRectSetting(g5.p4.a1).h;
         g5.loading.close();
-        ee.setRect(g5.p2.p1.a1, null, cy, null,null);
-        cy+=eb.getDivRect(g5.p2.p1.a1).h;
+        eb.setDivRect(g5.p2.p1.a1, null, cy, null,null);
+        cy+=eb.getDivRectSetting(g5.p2.p1.a1).h;
         if (updateHomepage.contentId == 0) {
             for (i=0; i<root.v_items.length; i++) ee.removeControl(root.v_items[i]);
             root.v_items = new Array();
         } else if (updateHomepage.isForward) {
             if (root.v_items.length>0) {
-                var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
+                var rect = eb.getDivRectSetting(root.v_items[root.v_items.length-1]);
                 cy = rect.y + rect.h;
             }
         }
@@ -836,11 +836,11 @@ sender.loadFromServer = function() {
         if (!updateHomepage.isForward) {
             if (dataset.rowCount>0) {
                 if (dataset.rowCount<root.v_items.length) {
-                    var dy = cy - eb.getDivRect(root.v_items[dataset.rowCount]).y; 
+                    var dy = cy - eb.getDivRectSetting(root.v_items[dataset.rowCount]).y; 
                     g5.batchMoveY(root.v_items,dataset.rowCount,dy);
                 }
             }
-            var rect = eb.getDivRect(root.v_items[root.v_items.length-1]);
+            var rect = eb.getDivRectSetting(root.v_items[root.v_items.length-1]);
             cy = rect.y + rect.h;
         }
         if (dataset.rowCount<=0) {
@@ -857,7 +857,6 @@ sender.loadFromServer = function() {
             }    
         }
         eb.setDivRect(g5.p2.p1,null,null,null,cy);
-        eb.processDock();
     }
     g5.loading.show2();
     updateHomepage();    
@@ -37219,7 +37218,6 @@ if (root.v_mode.charAt(2) != "x") {
     root.c_label3 = null;
     root.c_label4 = null;
 }
-
 
 //set total height
 rect = eb.getDivRectSetting(root.c_button1);
