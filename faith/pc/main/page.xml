@@ -36524,7 +36524,7 @@ ee.setOnMouseLeave(root.c_titleText,function(sender,e){
 });
 */
 
-c = createPanel(root, root.id+"_panel16", "", 78, cy-3, mainWidth-80, null);
+c = createPanel(root, root.id+"_panel16", "", 78, cy-1, mainWidth-80, null);
 c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
 c.style.fontSize = "12pt";
 c.style.whiteSpace = "nowrap";
@@ -36615,7 +36615,7 @@ if ((root.v_content.uplinkType == "R") || (root.v_content.uplinkType == "F")){
 */
 cy+=17;
 if ((root.v_content.uplinkType == "R") || (root.v_content.uplinkType == "F")){
-    c = createPanel(root, root.id+"_pareUsername01nel17", "", 78, cy, mainWidth-80, null);
+    c = createPanel(root, root.id+"_pareUsername01nel17", "", 78, cy+2, mainWidth-80, null);
     cy += 22;
     c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     c.style.fontSize = "12pt";
@@ -36979,26 +36979,17 @@ if (!showRe) {
         sender.style.filter="brightness(100%)";
     });
     //reUserName,reNickName,reTime
-    c = createPanel(cRe, root.id+"_panel11", "", 45, 8, p1w*0.863734939759036, 28);
-    addText(c, "<div style='display:inline'><b>" + root.v_reUserInfo.nickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserInfo.userName + "</font></div><font> · </font><font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reContent.seconds) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
-    root.v_reTimeLabel = c.label.rows[0].cells[0].childNodes[2]; 
-    root.c_reTitleText = c.label.rows[0].cells[0].childNodes[0];
+    c = createPanel(cRe, root.id+"_panel11", "", 48, 11, p1w*0.863734939759036, null);
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.whiteSpace = "nowrap";
+    c.style.cursor="pointer";
+    c.innerHTML = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-270)+"px'><b>" + root.v_reUserInfo.nickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserInfo.userName + "</font></div><font> · </font><font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reContent.seconds) + "</font>";
+    root.v_reTimeLabel = c.childNodes[2]; 
+    root.c_reTitleText = c.childNodes[0];
     root.c_reTitleText.id = root.id + "_reTitleText";
     root.c_reTitleText.v_userName = root.v_reUserInfo.userName;
-    c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
-    root.c_reUsername = c.label.rows[0].cells[0].childNodes[0]; 
-    var r1 = eb.getDivRect(c.label.rows[0].cells[0]);
-    var r2 = eb.getDivRectSetting(c);
-    var r3 = eb.getDivRect(root.v_reTimeLabel);
-    if (r1.w>r2.w) {
-        root.c_reUsername.style.width = (r2.w - r3.w - 20) + "px";
-        root.c_reUsername.style.display = "inline-block";
-        root.c_reUsername.style.overflow = "hidden";
-        root.c_reUsername.style.verticalAlign = "text-top";
-        root.c_reUsername.style.textOverflow = "ellipsis";
-        c.label.rows[0].cells[0].childNodes[1].innerHTML = "· ";
-    }
-    c.style.cursor="pointer";
+    root.c_reUsername = c.childNodes[0]; 
     ee.setOnClick(root.c_reTitleText,function(sender,event) {
         g5.p2.p2.show(root.v_reUserInfo);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -37010,18 +37001,6 @@ if (!showRe) {
         sender.childNodes[0].style.textDecoration="";
     });
     //reContent
-    /*
-    c = createPanel(g5.pLine1, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, 10);
-    addText(c, g5.showCommonText(root.v_reContent.content), "left", "top", "微软雅黑", 12, "000000", "normal");
-    c.label.style.wordBreak = "break-all";
-    eb.setDock(c,"disabled","disabled");
-    rect = eb.getDivRect(c.label);
-    ee.setRect(c, null, null, null, rect.h);
-    rect = eb.getDivRect(c);
-    var p1y = rect.y + rect.h + p1h * 0.05;
-    ee.changeParent(c,cRe);
-    */
-    
     c = createPanel(cRe, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, null);
     c.style.wordWrap = "break-word";
     c.style.wordBreak = "break-all";
@@ -37037,7 +37016,6 @@ if (!showRe) {
         ee.changeParent(c,cRe);
         //eb.setDivRect(c, null, null, null, rect.h);
         p1y = rect.y + rect.h + p1h * 0.05;
-        
         if (!g5.cntTemp) g5.cntTemp =0;
         g5.cntTemp++
         g5.writeLog(g5.cntTemp, true);
