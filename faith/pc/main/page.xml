@@ -36474,6 +36474,7 @@ ee.setOnMouseLeave(c, function(sender,e) {
 var mainWidth = parseInt((w-75)*0.97);
     
 //v_titleText
+/*
 c = createPanel(root, root.id+"_panel16", "", 75, cy-3, mainWidth-80, 26);
 root.v_titleText = c;
 var temp = "";
@@ -36521,6 +36522,58 @@ ee.setOnMouseEnter(root.c_titleText,function(sender,e){
 ee.setOnMouseLeave(root.c_titleText,function(sender,e){
     sender.childNodes[0].style.textDecoration="";
 });
+*/
+
+c = createPanel(root, root.id+"_panel16", "", 75, cy-3, mainWidth-80, 26);
+root.v_titleText = c;
+var temp = "";
+if (root.v_mode.charAt(2) == "x") {
+    temp = "<div style='display:inline'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
+} else {
+    temp = "<div style='display:inline'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
+    temp+="<font> · </font><font>" + g5.getMins(root.v_content.seconds) + "</font>";
+}
+temp += "<font color='#808080'></font>";
+addText(c, temp, "left", "middle", "微软雅黑", 12, "000000", "normal");
+c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+if (root.v_mode.charAt(2) != "x") {
+    root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
+    root.c_forceTopLabel = c.label.rows[0].cells[0].childNodes[3]; 
+    root.c_username = c.label.rows[0].cells[0].childNodes[0]; 
+    var r1 = eb.getDivRect(c.label.rows[0].cells[0]);
+    var r2 = eb.getDivRectSetting(c);
+    var r3 = eb.getDivRect(root.v_timeLabel);
+    if (r1.w>r2.w) {
+        root.c_username.style.width = (r2.w - r3.w - 20) + "px";
+        root.c_username.style.display = "inline-block";
+        root.c_username.style.overflow = "hidden";
+        root.c_username.style.verticalAlign = "text-top";
+        root.c_username.style.textOverflow = "ellipsis";
+        c.label.rows[0].cells[0].childNodes[1].innerHTML = "· ";
+    }
+} else {
+    root.c_forceTopLabel = c.label.rows[0].cells[0].childNodes[1]; 
+    c.label.style.tableLayout = "fixed";
+    c.label.rows[0].cells[0].style.overflow = "hidden";
+    c.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+    c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+}
+c.v_username = root.v_userInfo.userName;
+root.c_titleText = c.label.rows[0].cells[0].childNodes[0];
+root.c_titleText.id = root.id + "_titleText";
+root.c_titleText.v_userName = root.v_userInfo.userName;
+c.style.cursor="pointer";
+ee.setOnClick(root.c_titleText,function(sender,event) {
+    g5.p2.p2.show(root.v_userInfo);
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
+ee.setOnMouseEnter(root.c_titleText,function(sender,e){
+    sender.childNodes[0].style.textDecoration="underline";
+});
+ee.setOnMouseLeave(root.c_titleText,function(sender,e){
+    sender.childNodes[0].style.textDecoration="";
+});
+
 
 //right corner button
 c = createPanel(root, root.id+"_optionBtn1", "", w-45, cy-3, 27, 27);
