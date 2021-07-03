@@ -314,6 +314,25 @@ function addText(div, text, hAlign, vAlign, font, size, color, weight) {
     ee.setRect(div, r.x, r.y, r.w, r.h, true);
 }
 
+ee.setOnMouseEnter = function (div, func) {
+    div.eeOnMouseEnter = func;
+    eb.addEvent(div, "mouseenter", function(e) {
+        div.eeOnMouseEnter(div, e);
+    }, false);
+    eb.addEvent(div, "mouseover", function(e) {
+        div.eeOnMouseEnter(div, e);
+    }, false);
+}
+
+ee.setOnMouseLeave = function (div, func) {
+    div.eeOnMouseLeave = func;
+    eb.addEvent(div, "mouseleave", function(e) {
+        div.eeOnMouseLeave(div, e);
+    }, false);
+    eb.addEvent(div, "mouseout", function(e) {
+        div.eeOnMouseLeave(div, e);
+    }, false);
+}
 ]]></onPageCreate>
       <pageHead><![CDATA[<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
@@ -36261,8 +36280,8 @@ if (panel.v_rePhoto4.length>0) panel.v_rePhotos.push(panel.v_rePhoto4);
     <item name="renderTwitter" type="20">
       <varValue />
       <functionParam>root</functionParam>
-      <functionCode><![CDATA[if (eb.isEmpty(root.v_userInfo.photo)) root.v_userInfo.photo = "";
-if (eb.isEmpty(root.v_content.photo1)) root.v_content.photo1 = "";
+      <functionCode><![CDATA[if (!root.v_userInfo.photo) root.v_userInfo.photo = "";
+if (!root.v_content.photo1) root.v_content.photo1 = "";
 while (root.v_mode.length<5) root.v_mode += " ";
 
 root.style.boxSizing="border-box";
@@ -36415,7 +36434,6 @@ if ((root.v_mode.charAt(2) != "x") &amp;&amp; (root.v_content.status!="DEL"))  {
         sender.style.backgroundColor = "#ffffff";
     });
 }
-
  
 if (root.v_content.exUplinkType == "L") {
     //direct forward
@@ -36522,6 +36540,21 @@ ee.setOnMouseEnter(root.c_titleText,function(sender,e){
 ee.setOnMouseLeave(root.c_titleText,function(sender,e){
     sender.childNodes[0].style.textDecoration="";
 });
+*/
+
+/*
+for (var k = 0; k<10; k++) {
+    c = createPanel(root, root.id+"_aaa", "", 78, cy-1, mainWidth-80, null);
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.whiteSpace = "nowrap";
+    c.style.cursor="pointer";
+    c.innerHTML = "ABCas;jfdlskjdf;lksjdf;lkjas;f";
+    ee.setOnMouseEnter(c, function(sender,e){
+        //sender.style.backgroundColor = "rgb(245,248,250)";
+    });
+}
+return;
 */
 
 c = createPanel(root, root.id+"_panel16", "", 78, cy-1, mainWidth-80, null);
@@ -36674,7 +36707,7 @@ cy = rect.y + rect.h + 1;
 ee.changeParent(c,root);
 */
 cy += 5;
-c = createPanel(root, root.id+"_panel17", "", 78, cy, mainWidth, null);
+c = createPanel(root, root.id+"_panel17", "", 78, cy-2, mainWidth, null);
 root.c_content = c;
 c.style.overflow = "";
 c.style.wordWrap = "break-word";
