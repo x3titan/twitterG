@@ -38454,6 +38454,8 @@ if (!g5.RC_LastTime1s) g5.RC_LastTime1s = new Date();
 if (!g5.RC_Interval) g5.RC_Interval = g5.RC_MIN;
 if (!g5.RC_CID) g5.RC_CID = new Array();
 
+if (g5.likeBusy|| g5.unlikeBusy) return;
+
 if ((new Date()).getTime() - g5.RC_LastTime1s.getTime() < 1000) return;
 g5.RC_LastTime1s = new Date();
 
@@ -39464,6 +39466,7 @@ g5.p2.p5.refresh();
 
 var startTimer = function() {
     stopTimer();
+    g5.likeBusy = true;
     g5.likeItemsTimer = setTimeout(function() {
         g5.likeItemsTimer = null;
         if (g5.likeItems.length<=0) return;
@@ -39473,6 +39476,7 @@ var startTimer = function() {
         }
         likeContent.contentId = g5.likeItems[0].contentId;
         likeContent.onComplete = function() {
+            g5.likeBusy = false;
             //g5.writeLog("setLikeComplete:"+likeContent.contentId);
         }
         likeContent();
@@ -39536,6 +39540,7 @@ if (g5.likeItems.length>0) {
 
 var startTimer = function() {
     stopTimer();
+    g5.unlikeBusy = true;
     g5.unlikeItemsTimer = setTimeout(function() {
         g5.unlikeItemsTimer = null;
         if (g5.unlikeItems.length<=0) return;
@@ -39546,6 +39551,7 @@ var startTimer = function() {
         unlikeContent.contentId = g5.unlikeItems[0].contentId;
         unlikeContent.onComplete = function() {
             //g5.writeLog("setUnlike,id="+unlikeContent.contentId);
+            g5.unlikeBusy = false;
         }
         unlikeContent();
         g5.unlikeItems.splice(0,1);
