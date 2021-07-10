@@ -449,7 +449,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -638,7 +637,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -1477,7 +1475,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -1493,6 +1490,7 @@ sender.c_private = ee.getControl("panel527");
 sender.c_buttonMore = ee.getControl("panel256");
 sender.c_button1 = ee.getControl("panel115");
 sender.v_userInfo = new g5.UserInfo();
+sender.c_photo = ee.getControl("panel23");
 sender.v_forceDisplay = false;
 
 sender.show = function(v_userInfo, userId, userName) {
@@ -1937,17 +1935,26 @@ sender.showByUserInfo = function(v_userInfo) {
     g5.refreshMain(true);
     
     var rootH = eb.getDivRect(ee.getControl("panel16")).h;
+    
     //photo
+    if (g5.isMobile) {
+        ee.setRect(sender.c_photo,null,220,80,80);
+    }
     if ((v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del") || ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow))) {
-        ee.getControl("panel23").init("");
+        sender.c_photo.init("");
     } else {
-        ee.getControl("panel23").init(v_userInfo.photo);
+        sender.c_photo.init(v_userInfo.photo);
     }
     //titleBg
     if ((v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del") || ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow))) {
         ee.getControl("panel20").init("");
     } else {
         ee.getControl("panel20").init(v_userInfo.titleBg);
+    }
+    
+    if (g5.isMobile) {
+        ee.setRect(ee.getControl("panel18"),110,null,null,null);
+        ee.setRect(ee.getControl("panel21"),110,null,null,null);
     }
     ee.setText(ee.getControl("panel18"), v_userInfo.nickName);
     ee.setText(ee.getControl("panel21"), "@" + v_userInfo.userName);
@@ -2176,8 +2183,8 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
 
 ]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
-      <top>-1</top>
-      <topRatio>-0.00128205128205128</topRatio>
+      <top>-2</top>
+      <topRatio>-0.00256410256410256</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2249,6 +2256,7 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <widthRatio>0.415</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel69">
+      <dockX>fill</dockX>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
@@ -2257,13 +2265,15 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <layerVisible>false</layerVisible>
       <left>21</left>
       <leftRatio>0.035</leftRatio>
-      <sizeRatio>0.0536672629695885</sizeRatio>
+      <outerLeft>21</outerLeft>
+      <outerRight>21</outerRight>
+      <sizeRatio>0.0518134715025907</sizeRatio>
       <text>自我介绍</text>
       <top>327</top>
       <topRatio>0.419230769230769</topRatio>
       <vAlign>top</vAlign>
-      <width>559</width>
-      <widthRatio>0.931666666666667</widthRatio>
+      <width>558</width>
+      <widthRatio>0.965</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel72">
       <fontColor>808080</fontColor>
@@ -2538,7 +2548,6 @@ sender.init(0);
       <dockX>fill</dockX>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p2PersonSub,p2sub</note>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -2994,7 +3003,6 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[  p1->综合]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_titleChat = ee.getControl("panel263");
@@ -3109,6 +3117,7 @@ sender.resize = function() {
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel263">
+      <dockX>fill</dockX>
       <fontBold>true</fontBold>
       <fontColor>657786</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -3117,21 +3126,24 @@ sender.resize = function() {
       <height>12</height>
       <heightRatio>0.0394736842105263</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>17</left>
-      <leftRatio>0.0283333333333333</leftRatio>
+      <left>20</left>
+      <leftRatio>0.0333333333333333</leftRatio>
       <note><![CDATA[c_titleChat->聊天室题头]]></note>
-      <sizeRatio>0.0213523131672598</sizeRatio>
+      <outerLeft>20</outerLeft>
+      <outerRight>20</outerRight>
+      <sizeRatio>0.0206896551724138</sizeRatio>
       <top>4</top>
       <topRatio>0.0131578947368421</topRatio>
-      <width>562</width>
-      <widthRatio>0.936666666666667</widthRatio>
+      <width>560</width>
+      <widthRatio>0.966666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19">
       <backgroundColor>E0E0E0</backgroundColor>
+      <dockX>fill</dockX>
       <height>241</height>
       <heightRatio>0.792763157894737</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>22</left>
+      <left>20</left>
       <leftRatio>0.0366666666666667</leftRatio>
       <note><![CDATA[c_chat->个人页聊天]]></note>
       <onCreate>sender.style.boxSizing="border-box";
@@ -3282,10 +3294,12 @@ sender.blockUser = function(userInfo) {
     );
 }
 </onCreate>
+      <outerLeft>20</outerLeft>
+      <outerRight>20</outerRight>
       <sizeRatio>0.428825622775801</sizeRatio>
       <top>19</top>
       <topRatio>0.0625</topRatio>
-      <width>562</width>
+      <width>560</width>
       <widthRatio>0.936666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel324">
@@ -3316,7 +3330,7 @@ sender.init = function() {
       <sizeRatio>0.0676156583629893</sizeRatio>
       <text>    房主的聊天室</text>
       <top>0</top>
-      <width>562</width>
+      <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel324/panel325">
@@ -3325,7 +3339,7 @@ sender.init = function() {
       <height>38</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>254</left>
+      <left>252</left>
       <leftRatio>0.451957295373665</leftRatio>
       <note><![CDATA[c_buttons->按钮区域]]></note>
       <onCreate><![CDATA[sender.button1 = ee.getControl("panel326");
@@ -3723,7 +3737,7 @@ sender.init = function(videoUrl, isOwner) {
       <sizeRatio>0.104982206405694</sizeRatio>
       <top>35</top>
       <topRatio>0.145228215767635</topRatio>
-      <width>562</width>
+      <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel264/panel287">
@@ -3734,7 +3748,7 @@ sender.init = function(videoUrl, isOwner) {
       <left>0</left>
       <sizeRatio>0.0640569395017794</sizeRatio>
       <top>0</top>
-      <width>562</width>
+      <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel264/panel286">
@@ -4031,7 +4045,7 @@ sender.renderItem = function(root) {
       <sizeRatio>0.0836298932384342</sizeRatio>
       <top>70</top>
       <topRatio>0.29045643153527</topRatio>
-      <width>562</width>
+      <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem10">
@@ -4047,7 +4061,7 @@ sender.renderItem = function(root) {
       <sizeRatio>0.0852994555353902</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>551</width>
+      <width>549</width>
       <widthRatio>0.980427046263345</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17">
@@ -4056,7 +4070,7 @@ sender.renderItem = function(root) {
       <height>47</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>551</left>
+      <left>549</left>
       <leftRatio>0.980427046263345</leftRatio>
       <sizeRatio>4.27272727272727</sizeRatio>
       <top>0</top>
@@ -4565,7 +4579,7 @@ sender.renderItem = function(root) {
       <sizeRatio>0.0747330960854092</sizeRatio>
       <top>110</top>
       <topRatio>0.45643153526971</topRatio>
-      <width>562</width>
+      <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem18">
@@ -4581,7 +4595,7 @@ sender.renderItem = function(root) {
       <sizeRatio>0.0762250453720508</sizeRatio>
       <text>.</text>
       <top>0</top>
-      <width>551</width>
+      <width>549</width>
       <widthRatio>0.980427046263345</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19">
@@ -4590,7 +4604,7 @@ sender.renderItem = function(root) {
       <height>42</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>551</left>
+      <left>549</left>
       <leftRatio>0.980427046263345</leftRatio>
       <sizeRatio>3.81818181818182</sizeRatio>
       <top>0</top>
@@ -4947,7 +4961,7 @@ sender.init(0);
       <sizeRatio>0.142857142857143</sizeRatio>
       <top>157</top>
       <topRatio>0.651452282157676</topRatio>
-      <width>560</width>
+      <width>558</width>
       <widthRatio>0.99644128113879</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem3">
@@ -5704,7 +5718,7 @@ sender.onpointerup = function(event) {
 ]]></onCreate>
       <sizeRatio>0.0517857142857143</sizeRatio>
       <top>0</top>
-      <width>560</width>
+      <width>558</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem4">
@@ -5719,7 +5733,7 @@ sender.onpointerup = function(event) {
       <sizeRatio>0.0910714285714286</sizeRatio>
       <top>29</top>
       <topRatio>0.3625</topRatio>
-      <width>560</width>
+      <width>558</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem4/panel265">
@@ -5738,7 +5752,7 @@ sender.onpointerup = function(event) {
       <left>0</left>
       <sizeRatio>0.00178571428571429</sizeRatio>
       <top>0</top>
-      <width>560</width>
+      <width>558</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem4/edit11">
@@ -5876,6 +5890,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <widthRatio>0.0660714285714286</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel73">
+      <dockX>fill</dockX>
       <fontBold>true</fontBold>
       <fontColor>657786</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -5884,14 +5899,16 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <height>38</height>
       <heightRatio>0.125</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>18</left>
+      <left>20</left>
       <leftRatio>0.03</leftRatio>
       <note><![CDATA[c_titleBlog->发言题头]]></note>
+      <outerLeft>20</outerLeft>
+      <outerRight>20</outerRight>
       <sizeRatio>0.0676156583629893</sizeRatio>
       <text> 发言</text>
       <top>257</top>
       <topRatio>0.845394736842105</topRatio>
-      <width>562</width>
+      <width>560</width>
       <widthRatio>0.936666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel73/panel74">
@@ -5911,7 +5928,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <sizeRatio>0.00177935943060498</sizeRatio>
       <top>37</top>
       <topRatio>0.973684210526316</topRatio>
-      <width>562</width>
+      <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283">
@@ -23833,14 +23850,14 @@ sender.style.borderRadius = "50%";
       <backgroundSkin>button1003</backgroundSkin>
       <fontColor>FFFFFF</fontColor>
       <hAlign>left</hAlign>
-      <height>582</height>
-      <heightRatio>0.731155778894472</heightRatio>
+      <height>388</height>
+      <heightRatio>0.487437185929648</heightRatio>
       <layerName>LOG</layerName>
       <layerVisible>false</layerVisible>
       <left>705</left>
       <leftRatio>0.620052770448549</leftRatio>
       <onCreate>sender.style.position="fixed";</onCreate>
-      <sizeRatio>3.04712041884817</sizeRatio>
+      <sizeRatio>2.03141361256545</sizeRatio>
       <top>12</top>
       <topRatio>0.0150753768844221</topRatio>
       <vAlign>bottom</vAlign>
@@ -23871,7 +23888,7 @@ sender.style.borderRadius = "50%";
       <outerRight>5</outerRight>
       <sizeRatio>0.613259668508287</sizeRatio>
       <text>======Log======</text>
-      <top>466</top>
+      <top>272</top>
       <topRatio>0.800687285223368</topRatio>
       <vAlign>top</vAlign>
       <width>181</width>
@@ -24773,6 +24790,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -27923,6 +27941,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a9->手机弹出菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.c_titleBg = ee.getControl("panel562");
@@ -27932,7 +27951,7 @@ sender.c_userName = ee.getControl("panel575");
 sender.c_followInfo = ee.getControl("panel576");
 
 sender.show = function() {
-    eb.processDock();
+    g5.refreshScreen();
     this.refresh();
     ee.setVisible(this, false);
     ee.setVisible(this.parentNode, true);
@@ -35758,7 +35777,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="105">
+  <g5Items count="106">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -36333,7 +36352,11 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if (root.v_userInfo.status == "DISABLED") {
-    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    if (g5.isMobile) {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 60); cy+=60;
+    } else {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    }
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
@@ -36342,7 +36365,11 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if (root.v_userInfo.status == "Del") {
-    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    if (g5.isMobile) {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 60); cy+=60;
+    } else {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    }
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
@@ -36351,7 +36378,11 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if (root.v_userInfo.status == "FREEZE") {
-    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    if (g5.isMobile) {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 60); cy+=60;
+    } else {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    }
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
@@ -36360,7 +36391,11 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if ((root.v_userInfo.status == "Private") &amp;&amp; (!root.v_userInfo.isFollow)) {
-    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    if (g5.isMobile) {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 60); cy+=60;
+    } else {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    }
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
@@ -36369,7 +36404,11 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if ((root.v_userInfo.isHide) &amp;&amp; (!root.v_forceDisplay)) {
-    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    if (g5.isMobile) {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 60); cy+=60;
+    } else {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    }
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
@@ -36391,7 +36430,11 @@ if (root.v_content.status=="DEL") {
     });
     return root;
 } else if (root.v_userInfo.isBlock2) {
-    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    if (g5.isMobile) {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 60); cy+=60;
+    } else {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    }
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
@@ -36400,7 +36443,11 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if ((root.v_userInfo.isBlock1) &amp;&amp; (root.v_mode.charAt(2) != "x") &amp;&amp; (!root.v_forceDisplay)) {
-    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    if (g5.isMobile) {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 60); cy+=60;
+    } else {
+        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
+    }
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
@@ -36745,11 +36792,7 @@ if (root.v_notDisplayRe) showRe = false;
 
 if (!showRe) {
 } else if ((root.v_content.uplinkType == "F") &amp;&amp; (root.v_reContent.status == "DEL")) {
-    if (g5.isMobile) {
-        c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 60); cy+=60;
-    } else {
-        c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
-    }
+    c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
@@ -38481,6 +38524,21 @@ ee.setRect(g5.pLine1, left+p1w,null,null,null);
 ee.setRect(g5.pLine2, left+p1w+p2w,null,null,null);
 
 eb.processDock();]]></functionCode>
+    </item>
+    <item name="refreshScreen" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode>if (!g5.isMobile) return;
+var r = eb.getClientSize();
+if (r.h == eb.getDivRect($g("divRoot")).h) return;
+eb.setDivRect($g("divRoot"),null,null,r.w,r.h);
+eb.processDock();
+g5.writeLog("================");
+g5.writeLog(eb.getClientSize().h + "");
+g5.writeLog($g("divRoot").style.height + "");
+g5.writeLog(eb.getDivRect($g("divRoot")).h + "");
+g5.writeLog(eb.getDivRectSetting(ee.getControl("divRoot")).h + "");
+g5.writeLog(eb.getDivRectSetting(g5.popBlack).h+ "");</functionCode>
     </item>
     <item name="refreshContent" type="20">
       <varValue />
