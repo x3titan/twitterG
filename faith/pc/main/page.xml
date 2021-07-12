@@ -449,7 +449,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -638,7 +637,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -1477,7 +1475,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -1954,7 +1951,12 @@ sender.showByUserInfo = function(v_userInfo) {
     } else {
         ee.getControl("panel20").init(v_userInfo.titleBg);
     }
-    
+   
+    var cy = eb.getDivRect(ee.getControl("panel21")).y + eb.getDivRect(ee.getControl("panel21")).h;
+    var vspace = 2;
+    cy += vspace;
+
+    //userName
     if (g5.isMobile) {
         ee.setRect(ee.getControl("panel18"),110,null,null,null);
         ee.setRect(ee.getControl("panel21"),110,null,null,null);
@@ -1962,9 +1964,6 @@ sender.showByUserInfo = function(v_userInfo) {
     ee.setText(ee.getControl("panel18"), v_userInfo.nickName);
     ee.setText(ee.getControl("panel21"), "@" + v_userInfo.userName);
     
-    var cy = eb.getDivRect(ee.getControl("panel21")).y + eb.getDivRect(ee.getControl("panel21")).h;
-    var vspace = 2;
-    cy += vspace;
     //note
     if ((v_userInfo.note == "") || (v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del") || ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow))) {
         ee.setVisible(ee.getControl("panel69"), false);
@@ -24808,6 +24807,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -27958,6 +27958,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a9->手机弹出菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.c_titleBg = ee.getControl("panel562");
@@ -38158,8 +38159,16 @@ ee.setOnClick(c,function(sender,event) {
 });
 
 //user nick name
-c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
-addText(c, root.v_userInfo.nickName, "left", "middle", "微软雅黑", 12, "14171a", "bold");
+c = createPanel(root, root.id+"p16n", "", 77, cy+4, w-190, 22); cy+=22;
+c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+c.style.fontSize = "12pt";
+c.style.color = "#14171a";
+c.style.fontWeight = "bold";
+c.style.textOverflow = "ellipsis";
+c.style.inlineBlock = "max-width";
+c.style.whiteSpace = "nowrap";
+c.style.cursor="pointer";
+c.innerHTML = root.v_userInfo.nickName;
 if (root.v_userInfo.status == "DISABLED") {
 } else if (root.v_userInfo.status == "Del") {
 } else {
@@ -38173,8 +38182,15 @@ if (root.v_userInfo.status == "DISABLED") {
 }
 
 //username
-c = createPanel(root, root.id+"panel16", "", 77, cy, 415, 22); cy+=22;
-addText(c, "@"+root.v_userInfo.userName, "left", "middle", "微软雅黑", 12, "6e7f8d", "normal");
+c = createPanel(root, root.id+"p16u", "", 77, cy+4, w-190, 22); cy+=22;
+c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+c.style.fontSize = "12pt";
+c.style.color = "#6e7f8d";
+c.style.textOverflow = "ellipsis";
+c.style.inlineBlock = "max-width";
+c.style.whiteSpace = "nowrap";
+c.style.cursor="pointer";
+c.innerHTML = "@"+root.v_userInfo.userName;
 
 //note
 if (root.v_userInfo.note!="") {
@@ -38550,12 +38566,7 @@ var r = eb.getClientSize();
 if (r.h == eb.getDivRect($g("divRoot")).h) return;
 eb.setDivRect($g("divRoot"),null,null,r.w,r.h);
 eb.processDock();
-g5.writeLog("================");
-g5.writeLog(eb.getClientSize().h + "");
-g5.writeLog($g("divRoot").style.height + "");
-g5.writeLog(eb.getDivRect($g("divRoot")).h + "");
-g5.writeLog(eb.getDivRectSetting(ee.getControl("divRoot")).h + "");
-g5.writeLog(eb.getDivRectSetting(g5.popBlack).h+ "");</functionCode>
+</functionCode>
     </item>
     <item name="refreshContent" type="20">
       <varValue />
