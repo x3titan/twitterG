@@ -1935,6 +1935,7 @@ sender.showByUserInfo = function(v_userInfo) {
     g5.refreshMain(true);
     
     var rootH = eb.getDivRect(ee.getControl("panel16")).h;
+    var w = eb.getDivRectSetting(sender).w;
     
     //photo
     if (g5.isMobile) {
@@ -1958,18 +1959,40 @@ sender.showByUserInfo = function(v_userInfo) {
 
     //userName
     if (g5.isMobile) {
-        ee.setRect(ee.getControl("panel18"),110,null,null,null);
-        ee.setRect(ee.getControl("panel21"),110,null,null,null);
+        cy = eb.getDivRectSetting(sender.c_photo);
+        cy = cy.y+cy.h+5;
+        var c = ee.getControl("panel18");
+        eb.setDivRect(c,21,cy+3,w-42,35); cy+=30;
+        c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+        c.style.fontSize = "14pt";
+        c.style.color = "#000000";
+        c.style.fontWeight = "bold";
+        c.style.textOverflow = "ellipsis";
+        c.style.inlineBlock = "max-width";
+        c.style.whiteSpace = "nowrap";
+        c.style.cursor="pointer";
+        c.innerHTML = v_userInfo.nickName;
+        var c = ee.getControl("panel21");
+        eb.setDivRect(c,21,cy,w-42,30); cy+=25;
+        c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+        c.style.fontSize = "12pt";
+        c.style.color = "#808080";
+        c.style.fontWeight = "";
+        c.style.textOverflow = "ellipsis";
+        c.style.inlineBlock = "max-width";
+        c.style.whiteSpace = "nowrap";
+        c.style.cursor="pointer";
+        c.innerHTML = "@" + v_userInfo.userName;
+    } else {
+        ee.setText(ee.getControl("panel18"), v_userInfo.nickName);
+        ee.setText(ee.getControl("panel21"), "@" + v_userInfo.userName);
     }
-    ee.setText(ee.getControl("panel18"), v_userInfo.nickName);
-    ee.setText(ee.getControl("panel21"), "@" + v_userInfo.userName);
     
     //note
     if ((v_userInfo.note == "") || (v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del") || ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow))) {
         ee.setVisible(ee.getControl("panel69"), false);
     } else {
-        ee.setRect(ee.getControl("panel69"), null, null, null, 5);
-        eb.getDivRect(ee.getControl("panel69")).y = cy;
+        ee.setRect(ee.getControl("panel69"), null, cy, null, 5);
         ee.setText(ee.getControl("panel69"), v_userInfo.note);
         ee.setVisible(ee.getControl("panel69"), true);
         ee.setRect(ee.getControl("panel69"),null,null,null, eb.getDivRect(ee.getControl("panel69").label).h);
@@ -2295,17 +2318,20 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <widthRatio>0.91</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel16/layoutx6">
+      <dockX>fill</dockX>
       <fieldCount>2</fieldCount>
       <height>35</height>
       <heightRatio>0.0448717948717949</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>20</left>
-      <leftRatio>0.0333333333333333</leftRatio>
-      <sizeRatio>0.0635208711433757</sizeRatio>
+      <left>21</left>
+      <leftRatio>0.035</leftRatio>
+      <outerLeft>21</outerLeft>
+      <outerRight>21</outerRight>
+      <sizeRatio>0.0604490500863558</sizeRatio>
       <top>357</top>
       <topRatio>0.457692307692308</topRatio>
-      <width>551</width>
-      <widthRatio>0.918333333333333</widthRatio>
+      <width>558</width>
+      <widthRatio>0.965</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/layoutx6/layoutxitem11">
       <backgroundColor>f0f0f0</backgroundColor>
@@ -2318,7 +2344,7 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <left>0</left>
       <sizeRatio>0.7</sizeRatio>
       <top>0</top>
-      <width>50</width>
+      <width>51</width>
       <widthRatio>0.0907441016333938</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/layoutx6/layoutxitem12">
@@ -2331,7 +2357,7 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <height>35</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>50</left>
+      <left>51</left>
       <leftRatio>0.0907441016333938</leftRatio>
       <onClick>window.open(sender.homePage);</onClick>
       <onCreate>sender.label.style.tableLayout = "fixed";
@@ -2343,21 +2369,24 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <sizeRatio>0.0698602794411178</sizeRatio>
       <text>主页http://www.baidu.com</text>
       <top>0</top>
-      <width>501</width>
+      <width>507</width>
       <widthRatio>0.909255898366606</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel16/layoutx7">
+      <dockX>fill</dockX>
       <fieldCount>2</fieldCount>
       <height>35</height>
       <heightRatio>0.0448717948717949</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>20</left>
-      <leftRatio>0.0333333333333333</leftRatio>
-      <sizeRatio>0.0635208711433757</sizeRatio>
+      <left>21</left>
+      <leftRatio>0.035</leftRatio>
+      <outerLeft>21</outerLeft>
+      <outerRight>21</outerRight>
+      <sizeRatio>0.0604490500863558</sizeRatio>
       <top>391</top>
       <topRatio>0.501282051282051</topRatio>
-      <width>551</width>
-      <widthRatio>0.918333333333333</widthRatio>
+      <width>558</width>
+      <widthRatio>0.965</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/layoutx7/layoutxitem13">
       <backgroundColor>f0f0f0</backgroundColor>
@@ -2370,7 +2399,7 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <left>0</left>
       <sizeRatio>0.7</sizeRatio>
       <top>0</top>
-      <width>50</width>
+      <width>51</width>
       <widthRatio>0.0907441016333938</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/layoutx7/layoutxitem14">
@@ -2382,12 +2411,12 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <height>35</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>50</left>
+      <left>51</left>
       <leftRatio>0.0907441016333938</leftRatio>
       <sizeRatio>0.0698602794411178</sizeRatio>
       <text>2019年12月加入</text>
       <top>0</top>
-      <width>501</width>
+      <width>507</width>
       <widthRatio>0.909255898366606</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel23">
