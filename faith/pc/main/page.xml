@@ -449,6 +449,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -637,6 +638,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -1475,6 +1477,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -24836,7 +24839,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -25055,7 +25057,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -25065,8 +25066,24 @@ sender.onpointermove = function(event) {
 sender.parentNode.close();</onClick>
       <onCreate><![CDATA[sender.c_photo = ee.getControl("panel75");
 sender.c_video = ee.getControl("panel76");
+sender.c_button1 = ee.getControl("panel8");
+sender.c_button2 = ee.getControl("panel52");
 
 sender.show = function(photos, photo) {
+    if (g5.isMobile) {
+        eb.setOuter(ee.getControl("panel145"),0,0,0,0);
+        sender.c_button1.dockX = "disabled";
+        sender.c_button1.dockY = "bottom";
+        sender.c_button2.dockX = "disabled";
+        sender.c_button2.dockY = "bottom";
+        var w = eb.getClientSize().w;
+        w = parseInt(w - 100*2)/3;
+        ee.setRect(sender.c_button1, w,null,100,50);
+        ee.setRect(sender.c_button2, w+100+w,null,100,50);
+        sender.c_button1.style.borderRadius = "25px 0px 0px 25px";
+        sender.c_button2.style.borderRadius = "0px 25px 25px 0px";
+        eb.processDock();
+    }
     sender.v_photos = photos;
     sender.v_index = -1;
     for (var i = 0; i < photos.length; i++) {
@@ -25222,7 +25239,6 @@ sender.close = function() {
       <fontBold>true</fontBold>
       <fontColor>1E90FF</fontColor>
       <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
       <height>176</height>
       <heightRatio>0.221105527638191</heightRatio>
       <layerVisible>false</layerVisible>
@@ -25274,7 +25290,6 @@ eb.initMouseEvent(sender);
       <fontBold>true</fontBold>
       <fontColor>1E90FF</fontColor>
       <fontSize>14</fontSize>
-      <hAlign>left</hAlign>
       <height>176</height>
       <heightRatio>0.221105527638191</heightRatio>
       <layerVisible>false</layerVisible>
