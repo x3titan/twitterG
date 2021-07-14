@@ -682,6 +682,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -1386,12 +1387,14 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 var c = document.createElement("input");
 c.setAttribute("type", "file");
 c.setAttribute("accept", "image/*");
-c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
+c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;top:-10px");
+c.value = null;
 sender.insertBefore(c, sender.childNodes[0]);
 sender.c_file = c;
 
-c.onchange = function() {
-    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
+c.addEventListener("change", function() {
+    alert("firing");
+    if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) {
         var file = sender.c_file.files[0];
         var pos = file.name.lastIndexOf(".");
         var fileExt = pos<0 ? "" : file.name.substring(pos);
@@ -1447,7 +1450,7 @@ c.onchange = function() {
     } else {
         g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
     }
-}
+});
 
 sender.resize = function (img) {
     var canvas = document.createElement("canvas");
@@ -17133,7 +17136,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>756</height>
       <heightRatio>0.969230769230769</heightRatio>
       <layerName><![CDATA[p2.p31->发短文手机版]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel587");
@@ -17708,7 +17710,11 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <layerVisible>false</layerVisible>
       <left>45</left>
       <leftRatio>0.075</leftRatio>
-      <onClick>sender.c_file.click();</onClick>
+      <onClick>if (event.target.tagName.toUpperCase() != "INPUT") {
+    sender.c_file.blur();
+    sender.c_file.click();
+}
+</onClick>
       <onCreate><![CDATA[sender.maxSqr = 700*700;
 sender.compressRatio = 0.85;
 
@@ -17727,11 +17733,11 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 var c = document.createElement("input");
 c.setAttribute("type", "file");
 c.setAttribute("accept", "image/*");
-c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-10px;height:-10px");
+c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-200px;top:-200px;");
 sender.insertBefore(c, sender.childNodes[0]);
 sender.c_file = c;
 
-c.onchange = function() {
+c.addEventListener("change", function() {
     if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) { 
         var file = sender.c_file.files[0];
         var pos = file.name.lastIndexOf(".");
@@ -17779,7 +17785,7 @@ c.onchange = function() {
     } else {
         g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
     }
-}
+});
 
 sender.resize = function (img) {
     var canvas = document.createElement("canvas");
