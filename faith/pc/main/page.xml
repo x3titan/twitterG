@@ -449,7 +449,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -638,7 +637,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -10432,12 +10430,12 @@ sender.loadDataset = function(dataset) {
       <backgroundImgMode>stretch</backgroundImgMode>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
+      <dockY>fill</dockY>
       <height>780</height>
-      <heightRatio>1</heightRatio>
+      <heightRatio>0.430769230769231</heightRatio>
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate><![CDATA[sender.v_fitInner = true;
+      <onCreate>sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
 sender.v_items = new Array();
 sender.v_needRefresh = true;
@@ -10471,27 +10469,17 @@ sender.showByUserName = function(userName) {
 }
 
 sender.show = function(v_userInfo) {
-    ee.setRect(this,null,null,null,eb.getClientSize().h);
-    this.v_needRefresh = v_userInfo.id != this.v_userInfo.id;
-    /*
-    if (!this.v_needRefresh) {
-        g5.changeP2(13);
-        this.c_chat.scrollTop = this.v_lastScrollTop;
-        var rect = eb.getDivRectSetting(g5.p4);
-        ee.setRect(ee.getControl("layoutyitem11"),null,null,null,rect.h);
-        ee.setRect(ee.getControl("layouty6"),0,null,null,null,null);
-        ee.tiledResizeV(this, 2);
-        return;
+    var r = eb.getClientSize();
+    ee.setRect(g5.p2,null,null,null,r.h);
+    eb.processDock();
+    if (g5.isMobile) {
+        ee.setRect(ee.getControl("layoutyitem13"),null,null,null,113);
     }
-    */
+    this.v_needRefresh = v_userInfo.id != this.v_userInfo.id;
     this.v_userInfo = v_userInfo;
     this.c_chat.start(this.v_userInfo.id);
     g5.p4.a8.setText1(this.v_userInfo.nickName);
     g5.p4.a8.setText2("@" + this.v_userInfo.userName);
-    //ee.setText(ee.getControl("panel32"), 
-    //    "<b>" + this.v_userInfo.nickName + "</b><br>" +
-    //    "<font color='#808080' style='font-size:9pt'>@" + this.v_userInfo.userName + "</font>"
-    //    );
     g5.changeP2(13);
     var rect = eb.getDivRectSetting(g5.p4);
     ee.setRect(ee.getControl("layoutyitem11"),null,null,null,rect.h);
@@ -10520,8 +10508,8 @@ sender.sendChat = function(msgContent, onComplete) {
 
 
 
-]]></onCreate>
-      <sizeRatio>1.3</sizeRatio>
+</onCreate>
+      <sizeRatio>0.56</sizeRatio>
       <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
@@ -24921,6 +24909,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -28085,6 +28074,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a9->手机弹出菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.c_titleBg = ee.getControl("panel562");
@@ -38715,7 +38705,7 @@ setTimeout(function() {
     g5.refreshScreen();
 }, 200);
 
-g5.writeLog("refresh");
+//g5.writeLog("h=" + r.h);
 </functionCode>
     </item>
     <item name="refreshContent" type="20">
