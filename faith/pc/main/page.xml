@@ -25599,7 +25599,17 @@ sender.show = function(photos, photo) {
                 if (ev.eventType == 4) {
                     sender.v_touchEnd = true;
                 }
-                ee.setRect(sender.c_photo, sender.v_r.x + ev.deltaX, sender.v_r.y + ev.deltaY, null, null);
+                var r0 = eb.getDivRectSetting(ee.getControl("panel145"));
+                var r = new Rect();
+                r.x = sender.v_r.x + ev.deltaX;
+                r.y = sender.v_r.y + ev.deltaY;
+                r.w = sender.v_r.w;
+                r.h = sender.v_r.h;
+                r.x = Math.min(0, r.x);
+                r.y = Math.min(0, r.y);
+                if (r.x+r.w<r0.w) r.x = r0.w-r.w;
+                if (r.y+r.h<r0.h) r.x = r0.h-r.h;
+                ee.setRect(sender.c_photo, r.x,r.y, null, null);
                 //g5.writeLog(ev.type + "," + ev.scale);
             });
             
@@ -25616,6 +25626,10 @@ sender.show = function(photos, photo) {
                 r.h = Math.max(r.h, r0.h);
                 r.x = parseInt((sender.v_r.x + sender.v_r.w/2) - r.w/2);
                 r.y = parseInt((sender.v_r.y + sender.v_r.h/2) - r.h/2);
+                r.x = Math.min(0, r.x);
+                r.y = Math.min(0, r.y);
+                if (r.x+r.w<r0.w) r.x = r0.w-r.w;
+                if (r.y+r.h<r0.h) r.x = r0.h-r.h;
                 ee.setRect(sender.c_photo, r.x,r.y,r.w,r.h);
                 g5.writeLog(ev.type + "," + r.w);
             });
