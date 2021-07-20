@@ -25604,16 +25604,20 @@ sender.show = function(photos, photo) {
             });
             
             sender.hammer.on("pinchstart", function(ev) {
-                sender.v_r = eb.getDivRectSetting(sender);
+                sender.v_r = eb.getDivRectSetting(sender.c_photo);
+                //g5.writeLog(ev.type + "," + sender.v_r.w);
             });
             sender.hammer.on("pinchmove",  function(ev) {
+                var r0 = eb.getDivRectSetting(ee.getControl("panel145"));
                 var r = new Rect();
                 r.w = parseInt(sender.v_r.w * ev.scale);
                 r.h = parseInt(sender.v_r.h * ev.scale);
+                r.w = Math.max(r.w, r0.w);
+                r.h = Math.max(r.h, r0.h);
                 r.x = parseInt((sender.v_r.x + sender.v_r.w/2) - r.w/2);
                 r.y = parseInt((sender.v_r.y + sender.v_r.h/2) - r.h/2);
                 ee.setRect(sender.c_photo, r.x,r.y,r.w,r.h);
-                //g5.writeLog(ev.type + "," + ev.scale);
+                g5.writeLog(ev.type + "," + r.w);
             });
             sender.hammer.on("pinchend",  function(ev) {
                 sender.v_touchEnd = true;
