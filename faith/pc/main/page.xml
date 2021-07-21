@@ -24591,13 +24591,7 @@ eb.initMouseEvent(sender);
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
       <left>0</left>
-      <onClick><![CDATA[for (var i=0; i<sender.eeChildren.length; i++) {
-    if (sender.eeChildren[i].style.visibility != "hidden") {
-        ee.setVisible(sender.eeChildren[i], false);
-        //ee.showAni(sender.eeChildren[i], 1);
-    }
-}
-ee.setVisible(sender, false);]]></onClick>
+      <onClick>sender.close();</onClick>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
 sender.p1 = ee.getControl("panel149");
@@ -24616,6 +24610,18 @@ sender.addEventListener("mousewheel",function(event){
     event.returnValue = false;
     return false;
 },false);
+
+sender.close = function() {
+    for (var i=0; i<sender.eeChildren.length; i++) {
+        if (sender.eeChildren[i].style.visibility != "hidden") {
+            ee.setVisible(sender.eeChildren[i], false);
+            //ee.showAni(sender.eeChildren[i], 1);
+        }
+    }
+    ee.setVisible(sender, false);
+    g5.popupPos = null;
+}
+
 ]]></onCreate>
       <onMouseMove><![CDATA[return;
 var getDist = function(x,y,div) {
@@ -24688,8 +24694,10 @@ sender.style.borderRadius = "6px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
 
 sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo) {
-    //    g5.writeLog(g5.mainDiv.scrollTop);
-
+    g5.popupPos = document.documentElement.scrollTop+1;
+    g5.popupFunc = function() {
+        g5.popup1.close();
+    }
     this.v_content = v_content.clone();
     this.v_reContent = v_reContent.clone();
     this.v_userInfo = v_userInfo;
@@ -39374,6 +39382,12 @@ if ((p2h-viewPortH-document.documentElement.scrollTop) < 3000) {
     }
 }
 
+if (g5.popupPos) {
+    if (Math.abs(document.documentElement.scrollTop - g5.popupPos)>100) {
+        g5.popupFunc();
+        g5.popupPos = null;
+    }
+}
 ]]></functionCode>
     </item>
     <item name="changeP1" type="20">
