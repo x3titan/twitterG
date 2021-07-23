@@ -5719,7 +5719,18 @@ sender.renderMsg = function(root) {
     ee.setOnMouseLeave(root, function(sender,event) { 
         ee.setVisible(sender.c_button, false);
     });
-
+    if (g5.isMobile) {
+        var visible = true;
+        if ((showUserPage.v_userInfo.id != g5.myUserInfo.id) &amp;&amp; (!showUserPage.isChatRoomPubAdmin) &amp;&amp; (root.v_userInfo.id != g5.myUserInfo.id)) {
+            visible = false;
+        };
+        if (root.v_chatStatus == "SYS") {
+            visible = false;
+        }
+        if (visible) {
+            ee.setVisible(root.c_button, true);
+        }
+    }
 }
 
 sender.displayTime = function(time) {
@@ -24682,6 +24693,7 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName>p1.A自己选项</layerName>
+      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.33509234828496</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -24986,7 +24998,6 @@ sender.close = function() {
       <height>281</height>
       <heightRatio>0.353015075376884</heightRatio>
       <layerName>p3.C其他人选项</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.266490765171504</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -25006,6 +25017,10 @@ sender.setMode=function(mode) {
     }
 }
 sender.show = function(refDiv, content, userInfo) {
+    g5.popupPos = document.documentElement.scrollTop+1;
+    g5.popupFunc = function() {
+        g5.popup1.close();
+    }
     this.v_content = content
     this.v_userInfo = userInfo;
     var rect = g5.getRectAbs(refDiv);
@@ -28719,13 +28734,13 @@ ee.setVisible(sender, false);
       <backgroundImgMode>fill</backgroundImgMode>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>566</height>
+      <height>556</height>
       <heightRatio>0.71105527638191</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <outerTop>230</outerTop>
+      <outerTop>240</outerTop>
       <sizeRatio>1.94501718213058</sizeRatio>
-      <top>230</top>
+      <top>240</top>
       <topRatio>0.28894472361809</topRatio>
       <width>291</width>
       <widthRatio>1</widthRatio>
@@ -28735,17 +28750,17 @@ ee.setVisible(sender, false);
       <dockY>fill</dockY>
       <fieldCount>7</fieldCount>
       <height>476</height>
-      <heightRatio>0.840989399293286</heightRatio>
+      <heightRatio>0.858657243816254</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>45</left>
-      <leftRatio>0.154639175257732</leftRatio>
-      <outerBottom>90</outerBottom>
-      <outerLeft>45</outerLeft>
+      <left>25</left>
+      <leftRatio>0.0859106529209622</leftRatio>
+      <outerBottom>80</outerBottom>
+      <outerLeft>25</outerLeft>
       <outerRight>20</outerRight>
-      <sizeRatio>2.10619469026549</sizeRatio>
+      <sizeRatio>1.97560975609756</sizeRatio>
       <top>0</top>
-      <width>226</width>
-      <widthRatio>0.776632302405498</widthRatio>
+      <width>246</width>
+      <widthRatio>0.845360824742268</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem5">
       <backgroundColor>f0f0f0</backgroundColor>
@@ -28755,7 +28770,7 @@ ee.setVisible(sender, false);
       <left>0</left>
       <sizeRatio>0.300884955752212</sizeRatio>
       <top>0</top>
-      <width>226</width>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem5/panel565">
@@ -28783,10 +28798,11 @@ sender.style.borderRadius = "24px";
 
 
 ]]></onCreate>
-      <sizeRatio>0.300884955752212</sizeRatio>
+      <sizeRatio>0.276422764227642</sizeRatio>
       <text>新鲜事</text>
       <top>0</top>
-      <width>226</width>
+      <vAlign>top</vAlign>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem6">
@@ -28798,7 +28814,7 @@ sender.style.borderRadius = "24px";
       <sizeRatio>0.300884955752212</sizeRatio>
       <top>68</top>
       <topRatio>0.142857142857143</topRatio>
-      <width>226</width>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem6/panel571">
@@ -28826,10 +28842,11 @@ sender.style.borderRadius = "24px";
 
 
 ]]></onCreate>
-      <sizeRatio>0.300884955752212</sizeRatio>
+      <sizeRatio>0.276422764227642</sizeRatio>
       <text>通知</text>
       <top>0</top>
-      <width>226</width>
+      <vAlign>top</vAlign>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem9">
@@ -28841,7 +28858,7 @@ sender.style.borderRadius = "24px";
       <sizeRatio>0.300884955752212</sizeRatio>
       <top>136</top>
       <topRatio>0.285714285714286</topRatio>
-      <width>226</width>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem9/panel566">
@@ -28869,10 +28886,11 @@ sender.style.borderRadius = "24px";
 
 
 ]]></onCreate>
-      <sizeRatio>0.300884955752212</sizeRatio>
+      <sizeRatio>0.276422764227642</sizeRatio>
       <text>私信</text>
       <top>0</top>
-      <width>226</width>
+      <vAlign>top</vAlign>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem10">
@@ -28884,7 +28902,7 @@ sender.style.borderRadius = "24px";
       <sizeRatio>0.300884955752212</sizeRatio>
       <top>204</top>
       <topRatio>0.428571428571429</topRatio>
-      <width>226</width>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem10/panel567">
@@ -28927,10 +28945,11 @@ sender.style.borderRadius = "24px";
 
 
 ]]></onCreate>
-      <sizeRatio>0.300884955752212</sizeRatio>
+      <sizeRatio>0.276422764227642</sizeRatio>
       <text>书签</text>
       <top>0</top>
-      <width>226</width>
+      <vAlign>top</vAlign>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem14">
@@ -28942,7 +28961,7 @@ sender.style.borderRadius = "24px";
       <sizeRatio>0.300884955752212</sizeRatio>
       <top>272</top>
       <topRatio>0.571428571428571</topRatio>
-      <width>226</width>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem14/panel568">
@@ -28972,10 +28991,11 @@ sender.style.borderRadius = "24px";
 
 
 ]]></onCreate>
-      <sizeRatio>0.300884955752212</sizeRatio>
+      <sizeRatio>0.276422764227642</sizeRatio>
       <text>个人主页</text>
       <top>0</top>
-      <width>226</width>
+      <vAlign>top</vAlign>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem15">
@@ -28987,7 +29007,7 @@ sender.style.borderRadius = "24px";
       <sizeRatio>0.300884955752212</sizeRatio>
       <top>340</top>
       <topRatio>0.714285714285714</topRatio>
-      <width>226</width>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem15/panel569">
@@ -29032,10 +29052,11 @@ sender.style.borderRadius = "24px";
 
 
 ]]></onCreate>
-      <sizeRatio>0.300884955752212</sizeRatio>
+      <sizeRatio>0.276422764227642</sizeRatio>
       <text>设置和隐私</text>
       <top>0</top>
-      <width>226</width>
+      <vAlign>top</vAlign>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem16">
@@ -29047,7 +29068,7 @@ sender.style.borderRadius = "24px";
       <sizeRatio>0.300884955752212</sizeRatio>
       <top>408</top>
       <topRatio>0.857142857142857</topRatio>
-      <width>226</width>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel561/layouty3/layoutyitem16/panel570">
@@ -29091,10 +29112,11 @@ sender.style.borderRadius = "24px";
 
 
 ]]></onCreate>
-      <sizeRatio>0.300884955752212</sizeRatio>
+      <sizeRatio>0.276422764227642</sizeRatio>
       <text>退出登录</text>
       <top>0</top>
-      <width>226</width>
+      <vAlign>top</vAlign>
+      <width>246</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel561/panel577">
@@ -29176,7 +29198,7 @@ sender.init(0);
 </onCreate>
       <sizeRatio>0.240549828178694</sizeRatio>
       <text>发言</text>
-      <top>496</top>
+      <top>486</top>
       <topRatio>0.876325088339223</topRatio>
       <width>291</width>
       <widthRatio>1</widthRatio>
@@ -37060,16 +37082,12 @@ if (root.v_content.status=="DEL") {
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if ((root.v_userInfo.isHide) &amp;&amp; (!root.v_forceDisplay)) {
-    if (g5.isMobile) {
-        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 60); cy+=60;
-    } else {
-        c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
-    }
+    c = createPanel(root, root.id+"_delRoot", "f5f8fa", 16, cy, w-16*2, 40); cy+=40;
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "　该用户已被您隐藏，可以查看原文。　<font id='"+root.id+"_blockF02' color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "　该用户已被您隐藏<font id='"+root.id+"_blockF02' color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     cy+=20;
     c.c_button1 = c.label.rows[0].cells[0].childNodes[1];
@@ -37522,16 +37540,12 @@ if (!showRe) {
     eb.setDivRect(root, null, null, null, cy+9);
     cy+=20;
 } else if (root.v_reUserInfo.isHide &amp;&amp; root.v_content.uplinkType!="R" &amp;&amp; (!root.v_forceDisplay)) {
-    if (g5.isMobile) {
-        c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 60); cy+=60;
-    } else {
-        c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
-    }
+    c = createPanel(root, root.id+"_panel2", "f5f8fa", 75, cy, mainWidth-2, 40); cy+=40;
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "　该用户已被您隐藏，可以查看原文。　<font color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "　该用户已被您隐藏<font color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     cy+=20;
     c.c_button1 = c.label.rows[0].cells[0].childNodes[1];
