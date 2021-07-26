@@ -37274,7 +37274,7 @@ ee.setOnMouseLeave(root.c_titleText,function(sender,e){
     sender.childNodes[0].style.textDecoration="";
 });
 */
-c = createPanel(root, root.id+"_panel16", "", 78, cy-1, mainWidth-80, null);
+c = createPanel(root, root.id+"_panel16", "", 78, cy-1, mainWidth-80, null); cy+=17;
 c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
 c.style.fontSize = "12pt";
 c.style.whiteSpace = "nowrap";
@@ -37282,22 +37282,32 @@ c.style.cursor="pointer";
 root.v_titleText = c;
 var temp = "";
 if (root.v_mode.charAt(2) == "x") {
-    temp = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-175)+"px'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
+    temp = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-175)+"px'><b>" + root.v_userInfo.nickName + "</b></div>";
     temp += "<font color='#808080'></font>";
     c.innerHTML = temp;
+    root.c_titleText = c.childNodes[0];
     root.c_forceTopLabel = c.childNodes[1]; 
     c.v_username = root.v_userInfo.userName;
+    
+    cy += 5;
+    c = createPanel(root, root.id+"_panel16x", "", 78, cy-1, mainWidth-80, null);
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.whiteSpace = "nowrap";
+    c.style.cursor="pointer";
+    c.innerHTML = "<font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font>";
+    cy = 59 + 5;
 } else {
     temp = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-240)+"px'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
     temp+="<font> · </font><font>" + g5.getMins(root.v_content.seconds) + "</font>";
     temp += "<font color='#808080'></font>";
     c.innerHTML = temp;
+    root.c_username = c.childNodes[0]; 
+    root.c_titleText = c.childNodes[0];
     root.v_timeLabel = c.childNodes[2]; 
     root.c_forceTopLabel = c.childNodes[3]; 
-    root.c_username = c.childNodes[0]; 
     c.v_username = root.v_userInfo.userName;
 }
-root.c_titleText = c.childNodes[0];
 root.c_titleText.id = root.id + "_titleText";
 root.c_titleText.v_userName = root.v_userInfo.userName;
 ee.setOnClick(root.c_titleText,function(sender,event) {
@@ -37313,7 +37323,7 @@ ee.setOnMouseLeave(root.c_titleText,function(sender,e){
 
 
 //right corner button
-c = createPanel(root, root.id+"_optionBtn1", "", w-45, cy-3, 27, 27);
+c = createPanel(root, root.id+"_optionBtn1", "", w-45, 6, 27, 27);
 c.style.cursor="pointer";
 c.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 0px 0px 5px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M20.207 8.147c-.39-.39-1.023-.39-1.414 0L12 14.94 5.207 8.147c-.39-.39-1.023-.39-1.414 0-.39.39-.39 1.023 0 1.414l7.5 7.5c.195.196.45.294.707.294s.512-.098.707-.293l7.5-7.5c.39-.39.39-1.022 0-1.413z\"></path></g></svg>";
 c.style.borderRadius = "50%";
@@ -37363,9 +37373,12 @@ if ((root.v_content.uplinkType == "R") || (root.v_content.uplinkType == "F")){
     });
 }
 */
-cy+=17;
 if ((root.v_content.uplinkType == "R") || (root.v_content.uplinkType == "F")){
-    c = createPanel(root, root.id+"_pareUsername01nel17", "", 78, cy+2, mainWidth-80, null);
+    if (root.v_mode.charAt(2) == "x") {
+        c = createPanel(root, root.id+"_pareUsername01nel17", "", 20, cy+2, mainWidth-80, null);
+    } else {
+        c = createPanel(root, root.id+"_pareUsername01nel17", "", 78, cy+2, mainWidth-80, null);
+    }
     cy += 22;
     c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     c.style.fontSize = "12pt";
