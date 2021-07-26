@@ -37222,7 +37222,7 @@ ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.filter="brightness(100%)";
 });
 
-var mainWidth = parseInt((w-75)*0.97);
+var mainWidth = parseInt(w-95);
     
 //v_titleText
 /*
@@ -37283,20 +37283,20 @@ root.v_titleText = c;
 var temp = "";
 if (root.v_mode.charAt(2) == "x") {
     temp = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-175)+"px'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
+    temp += "<font color='#808080'></font>";
+    c.innerHTML = temp;
+    root.c_forceTopLabel = c.childNodes[1]; 
+    c.v_username = root.v_userInfo.userName;
 } else {
     temp = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-240)+"px'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
     temp+="<font> · </font><font>" + g5.getMins(root.v_content.seconds) + "</font>";
-}
-temp += "<font color='#808080'></font>";
-c.innerHTML = temp;
-if (root.v_mode.charAt(2) != "x") {
+    temp += "<font color='#808080'></font>";
+    c.innerHTML = temp;
     root.v_timeLabel = c.childNodes[2]; 
     root.c_forceTopLabel = c.childNodes[3]; 
     root.c_username = c.childNodes[0]; 
-} else {
-    root.c_forceTopLabel = c.childNodes[1]; 
+    c.v_username = root.v_userInfo.userName;
 }
-c.v_username = root.v_userInfo.userName;
 root.c_titleText = c.childNodes[0];
 root.c_titleText.id = root.id + "_titleText";
 root.c_titleText.v_userName = root.v_userInfo.userName;
@@ -37422,7 +37422,11 @@ cy = rect.y + rect.h + 1;
 ee.changeParent(c,root);
 */
 cy += 5;
-c = createPanel(root, root.id+"_panel17", "", 78, cy-2, mainWidth, null);
+if (root.v_mode.charAt(2) == "x") {
+    c = createPanel(root, root.id+"_panel17", "", 20, cy-2, w-40, null);
+} else {
+    c = createPanel(root, root.id+"_panel17", "", 78, cy-2, mainWidth, null);
+}
 root.c_content = c;
 c.style.overflow = "";
 c.style.wordWrap = "break-word";
@@ -37451,8 +37455,12 @@ if (root.v_content.content.length>0) {
 
 //photos
 if (root.v_content.photos.length>0) {
-    c = createPanel(root, root.id+"_panel18", "", 75, cy, mainWidth, parseInt(mainWidth*0.565));
-    cy += mainWidth*0.565 + w*0.03;
+    if (root.v_mode.charAt(2) == "x") {
+        c = createPanel(root, root.id+"_panel18", "", 20, cy, w - 40, parseInt((w-40)*0.565));
+    } else {
+        c = createPanel(root, root.id+"_panel18", "", 75, cy, mainWidth, parseInt(mainWidth*0.565));
+    }
+    cy += eb.getDivRectSetting(c).h + 18;
     c.style.borderRadius = "15px";
     c.style.borderWidth = "1px";
     c.style.borderColor = "rgb(230,236,240)";
