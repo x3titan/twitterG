@@ -7725,10 +7725,6 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         
         for (i=0; i<sender.c_tabRoot.p1.v_items.length; i++) ee.removeControl(sender.c_tabRoot.p1.v_items[i]);
         sender.c_tabRoot.p1.v_items = new Array();
-        for (i=0; i<sender.c_tabRoot.p3.v_items.length; i++) ee.removeControl(sender.c_tabRoot.p3.v_items[i]);
-        sender.c_tabRoot.p3.v_items = new Array();
-        for (i=0; i<sender.c_tabRoot.p4.v_items.length; i++) ee.removeControl(sender.c_tabRoot.p4.v_items[i]);
-        sender.c_tabRoot.p4.v_items = new Array();
         var item = null;
         var scrollTop = 0;
         var reCount = 0;
@@ -7783,6 +7779,8 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         showTopic.needRefresh = false;
         sender.loadComplete = true;
         //sender.c_tabRoot.p2.show(sender.v_content.id, true);
+        sender.c_tabRoot.p3.loadFromDb(sender.v_content.id, false);  
+        sender.c_tabRoot.p4.loadFromDb(sender.v_content.id, false);  
     }
     showTopic.disabled = false;
     this.loadComplete = false;
@@ -8611,11 +8609,18 @@ sender.show = function(v_contentId) {
         this.parentNode.changePage(3);
         return;
     }
+    this.loadFromDb(v_contentId, true);          
+}
+
+sender.loadFromDb = function(v_contentId, changePage) {
     if (showLikeList.busy) return;
     this.v_contentId = v_contentId;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
-    this.parentNode.changePage(3);
+    if (changePage) {
+        this.parentNode.changePage(3);
+    }
+    var itemLen = sender.v_items.length;
     showLikeList.contentId = v_contentId;
     showLikeList.onComplete = function(dataset) {
         g5.loading.close();
@@ -8624,6 +8629,8 @@ sender.show = function(v_contentId) {
         var itemWidth = eb.getDivRect(root).w;
         //g5.p2.p9.v_content.isLike
         for (var i=0; i<dataset.rowCount; i++) {
+            //大于零 不显示自己
+            //等于零
             var item = createPanel(root, "twlk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
             item.v_mode = "";
@@ -8631,14 +8638,16 @@ sender.show = function(v_contentId) {
             cy += eb.getDivRect(item).h;
             sender.v_items.push(item);
         }
-        eb.processDock();
-        //sender.setCount(dataset.rowCount);
-        var rect = eb.getDivRectSetting(g5.p4);
-        sender.parentNode.changePage(-1);
-        sender.parentNode.changePage(3);
+        if (changePage) {
+            eb.processDock();
+            //sender.setCount(dataset.rowCount);
+            var rect = eb.getDivRectSetting(g5.p4);
+            sender.parentNode.changePage(-1);
+            sender.parentNode.changePage(3);
+        }
     }
     g5.loading.show();
-    showLikeList();               
+    showLikeList(); 
 }
 
 sender.loadRecord = function(panel, dataset, index) {
@@ -8692,11 +8701,16 @@ sender.show = function(v_contentId) {
         this.parentNode.changePage(4);
         return;
     }
+}
+
+sender.loadFromDb = function(v_contentId, changePage) {
     if (showUnlikeList.busy) return;
     this.v_contentId = v_contentId;
     for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
     sender.v_items = new Array();
-    this.parentNode.changePage(4);
+    if (changePage) {
+        this.parentNode.changePage(4);
+    }
     showUnlikeList.contentId = v_contentId;
     showUnlikeList.onComplete = function(dataset) {
         g5.loading.close();
@@ -8711,11 +8725,13 @@ sender.show = function(v_contentId) {
             cy += eb.getDivRect(item).h;
             sender.v_items.push(item);
         }
-        eb.processDock();
-        //sender.setCount(dataset.rowCount);
-        var rect = eb.getDivRectSetting(g5.p4);
-        sender.parentNode.changePage(-1);
-        sender.parentNode.changePage(4);
+        if (changePage) {
+            eb.processDock();
+            //sender.setCount(dataset.rowCount);
+            var rect = eb.getDivRectSetting(g5.p4);
+            sender.parentNode.changePage(-1);
+            sender.parentNode.changePage(4);
+        }
     }
     g5.loading.show();
     showUnlikeList();               
