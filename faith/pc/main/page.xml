@@ -40322,11 +40322,14 @@ g5.p2.p5.refresh();
     <item name="setLike" type="20">
       <varValue />
       <functionParam>root</functionParam>
-      <functionCode><![CDATA[var stopTimer = function() {
+      <functionCode><![CDATA[if (likeContent.busy) return;
+if (updateContents.busy) return;
+var stopTimer = function() {
     if (g5.likeItemsTimer) {
         clearTimeout(g5.likeItemsTimer);
         g5.likeItemsTimer = null;
     }
+    g5.likeBusy = false;
 }
 
 var startTimer = function() {
@@ -40390,6 +40393,8 @@ if (i>=g5.likeItems.length) {
 
 if (g5.likeItems.length>0) {
     startTimer();
+} else {
+    stopTimer();
 }
 ]]></functionCode>
     </item>
