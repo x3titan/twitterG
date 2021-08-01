@@ -450,6 +450,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -638,6 +639,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -7437,6 +7439,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -10339,7 +10342,8 @@ sender.render = function(root) {
         sender.style.filter="brightness(100%)";
     });
     
-    c = createPanel(root, root.id + "panel3", "", 75, 6, dw-110, 29);
+    //title
+    c = createPanel(root, root.id + "panel3", "", 75, 6, dw-140, 29);
     s = root.v_regDatetime;
     s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
     addText(c, "<div style='display:inline'><b>" + root.v_userInfo.nickName + "</b>" +
@@ -10360,17 +10364,51 @@ sender.render = function(root) {
         root.c_username.style.textOverflow = "ellipsis";
         c.label.rows[0].cells[0].childNodes[1].innerHTML = "· ";
     }
-    c = createPanel(root, root.id + "panel5", "", 75, 35, dw-180, 29);
+    
+    //button
+    c = createPanel(root, root.id + "panel20", "", dw-45, 4, 36, 36);
+    ee.setText(c,
+        "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.iconClose + "</svg>"
+    );
+    c.style.borderRadius = "50%";
+    ee.setOnMouseEnter(c, function(senderBtn,event) {
+        senderBtn.style.backgroundColor = "#dfeffa";
+    });    
+    ee.setOnMouseLeave(c, function(senderBtn,event) {
+        senderBtn.style.backgroundColor = "";
+    });
+    ee.setOnClick(c,function(senderBtn,event) {
+        senderBtn.style.backgroundColor = "";
+        g5.popBlack.a6.show(
+            "删除确认",
+            "本操作将删除您与该用户的所有私信记录，您是否继续？",
+            [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+            [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","确认删除","#ffffff","#ffffff","#ffffff","")],
+            function() {
+                if (delChatAll1v1.busy) return;
+                delChatAll1v1.targetUserId = root.v_userInfo.id;
+                delChatAll1v1.onComplete = function() {
+                }
+                delChatAll1v1();
+            }
+        );
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });
+    
+    //content
+    c = createPanel(root, root.id + "panel5", "", 78, 38, dw-100, 29);
     s = root.v_content;
     if (root.v_userInfo.status == "DISABLED") {
         s = "账户被禁封";
     } else if (root.v_userInfo.status == "Del") {
         s = "账户已销号";
     }
-    if (s.length > 30) {
-        s = s.substr(0,30) + "...";
-    } 
-    addText(c, s, "left", "middle", "微软雅黑", 12, "000000", "normal");
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.color = "#000000";
+    c.style.whiteSpace = "nowrap";
+    c.style.cursor="pointer";
+    c.innerHTML = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(dw-100)+"px'>" + s + "</div>";
 }
 
 sender.loadDataset = function(dataset) {
@@ -25392,7 +25430,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -25981,7 +26018,6 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>302</left>
       <leftRatio>0.26561125769569</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
@@ -30473,7 +30509,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="72">
+  <taskSet count="73">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -33461,12 +33497,14 @@ sql =
     "                THEN 0 ELSE 1 END AS uIsBlock2, " +
     "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide " +
     "FROM      (SELECT   chatUserId, MAX(id) AS maxId " +
-    "                 FROM      (SELECT   CASE WHEN sendUserId = " + myUserId + " THEN recvUserId WHEN recvUserId = " + myUserId + " THEN sendUserId ELSE - 1 END " +
-    "                                                   AS chatUserId, id " +
-    "                                  FROM      dbo.chat AS t1 " +
-    "                                  WHERE   (sendUserId = " + myUserId + ") OR " +
-    "                                                  (recvUserId = " + myUserId + ")) AS derivedtbl_1 " +
-    "                 GROUP BY chatUserId) AS derivedtbl_2 INNER JOIN " +
+    "                FROM (" +
+    "                   SELECT  CASE WHEN sendUserId = " + myUserId + " THEN recvUserId WHEN recvUserId = " + myUserId + " THEN sendUserId ELSE - 1 END " +
+    "                           AS chatUserId, id " +
+    "                   FROM    dbo.chat AS t1 " +
+    "                   WHERE   (sendUserId = " + myUserId + " and sendStatus='new') OR " +
+    "                           (recvUserId = " + myUserId + " and recvStatus='new') " +
+    "                ) AS derivedtbl_1 " +
+    "                GROUP BY chatUserId) AS derivedtbl_2 INNER JOIN " +
     "                dbo.chat ON derivedtbl_2.maxId = dbo.chat.id INNER JOIN " +
     "                dbo.userInfo ON derivedtbl_2.chatUserId = dbo.userInfo.id LEFT OUTER JOIN " +
     "                dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND  " +
@@ -33504,6 +33542,68 @@ if (!eb.isEmpty(showChatList.onComplete)) {
     showChatList.onComplete = null;
 }
 showChatList.busy = false;
+</script3>
+    </taskSetItem>
+    <taskSetItem name="delChatAll1v1">
+      <script1>//targetUserId, onComplete
+if (delChatAll1v1.busy) return;
+delChatAll1v1.busy = true;
+eio.appendString16(g5.token);
+eio.appendString16(delChatAll1v1.targetUserId);
+
+
+
+
+
+
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var targetUserId = parseInt(eio.readString16());
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+}
+ 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能删除发言内容，您如果需要使用这个功能请注册正式用户。");
+    return;
+}
+
+sql = "exec chat1v1DelAll " +
+    myUserId + 
+    "," + targetUserId;
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}                      
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    delChatAll1v1.busy = false;
+    return;
+}
+
+if (delChatAll1v1.onComplete) delChatAll1v1.onComplete();
+delChatAll1v1.busy = false;
+
 </script3>
     </taskSetItem>
     <taskSetItem name="delTwitter">
