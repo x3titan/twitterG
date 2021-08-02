@@ -10388,6 +10388,19 @@ sender.render = function(root) {
                 if (delChatAll1v1.busy) return;
                 delChatAll1v1.targetUserId = root.v_userInfo.id;
                 delChatAll1v1.onComplete = function() {
+                    var item = root;
+                    eb.setAni2(item,1,"disappear", "rightFlyOut", "null", 0, true);
+                    var items = root.parentNode.v_items;
+                    eb.setAniEvent(item,1,function(){}, function(sender) {
+                        var i = 0;
+                        for (i=0; i<items.length; i++) if (items[i]==item) break;
+                        if (i>=items.length) return;
+                        var h = eb.getDivRectSetting(item).h;
+                        ee.removeControl(item);
+                        items.splice(i,1);
+                        g5.batchMoveY(items, i, -h);
+                    });
+                    ee.showAni(item, 1);
                 }
                 delChatAll1v1();
             }
@@ -24657,7 +24670,6 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>sender.close();</onClick>
       <onCreate><![CDATA[sender.style.position = "fixed";
@@ -24750,7 +24762,6 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName>p1.A自己选项</layerName>
-      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.33509234828496</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -25430,6 +25441,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -26018,6 +26030,7 @@ eb.initMouseEvent(sender);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>302</left>
       <leftRatio>0.26561125769569</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
