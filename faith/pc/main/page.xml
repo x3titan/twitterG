@@ -450,7 +450,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -639,7 +638,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -10422,6 +10420,12 @@ sender.render = function(root) {
     c.style.whiteSpace = "nowrap";
     c.style.cursor="pointer";
     c.innerHTML = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(dw-100)+"px'>" + s + "</div>";
+    root.c_content = c;
+    root.setContent = function(content) {
+        this.c_content.childNodes[0].innerHTML = content;
+        var now = new Date();
+        this.v_timeLabel.innerHTML =  (now.getMonth()+1) + "月" + now.getDate() + "日";
+    }
 }
 
 sender.loadDataset = function(dataset) {
@@ -10555,9 +10559,8 @@ sender.loadDataset = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.v_fitInner = true;
+      <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
 sender.v_items = new Array();
 sender.v_needRefresh = true;
@@ -10609,18 +10612,30 @@ sender.show = function(v_userInfo) {
     ee.tiledResizeV(this, 2);
 }
 
-sender.sendChat = function(msgContent, onComplete) {
+sender.sendChat = function(msgContent) {
     if (this.v_userInfo.isBlock2) {
         g5.alert1("提示", "您已被@" + this.v_userInfo.userName + "屏蔽，您的私信被拒收。");
         return;
     }
     if (sendChat1v1.busy) return;
+    if (msgContent.length>200) msgContent = msgContent.substr(0,200);
     sendChat1v1.chatUserId = this.v_userInfo.id;
     sendChat1v1.content = msgContent;
     sendChat1v1.onComplete = function() {
-        if (onComplete) onComplete();
+        ee.getControl("edit6").setText("");
+        g5.p3.p3.c_chat.refresh(true);
+        sender.refreshContent(sendChat1v1.chatUserId, sendChat1v1.content);
     }
     sendChat1v1();
+}
+
+sender.refreshContent = function(userId, msgContent) {
+    var items = g5.p2.p13.v_items;
+    for (var i=0; i<items.length; i++) {
+        if (!items[i].v_userInfo) continue;
+        if (items[i].v_userInfo.id != userId) continue;
+        items[i].setContent(msgContent);
+    }
 }
 
 
@@ -10630,7 +10645,8 @@ sender.sendChat = function(msgContent, onComplete) {
 
 
 
-</onCreate>
+
+]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -10641,7 +10657,6 @@ sender.sendChat = function(msgContent, onComplete) {
       <dockY>fill</dockY>
       <height>780</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -10763,10 +10778,6 @@ sender.refresh = function(force) {
                 }
             }
             
-            //for (var i=dataset.rowCount-1; i>=0; i--) {
-            //    dataset.setData(3,i,dataset.getData(fi,i) + " >" + dataset.getData(3,i));    
-            //}
-            
             var cy = 0;
             var root = chatGet1v1.my;
             if (root.v_items.length>0) {
@@ -10784,6 +10795,9 @@ sender.refresh = function(force) {
                 cy += 0 + eb.getDivRect(item).h;
                 root.v_items.push(item);
                 root.v_lastChatId = dataset.getData(0,i);
+                if (!root.firstRun) {
+                    g5.p2.p14.refreshContent(item.v_userInfo.id, item.v_msgContent);
+                }
             }
         
             if (dataset.rowCount>0) {
@@ -11071,7 +11085,6 @@ sender.onpointerup = function(event) {
       <heavyEnabled>false</heavyEnabled>
       <height>62</height>
       <heightRatio>0.0794871794871795</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>功能按钮区</note>
       <sizeRatio>0.103333333333333</sizeRatio>
@@ -11160,11 +11173,7 @@ sender._input.addEventListener("keydown", function(event) {
             event.preventDefault();
             return false;
         }
-        if (msgContent.length>200) msgContent = msgContent.substr(0,200);
-        ee.getControl("edit6").setText("");
-        g5.p2.p14.sendChat(msgContent, function(){
-            g5.p3.p3.c_chat.refresh(true);
-        });
+        g5.p2.p14.sendChat(msgContent);
         event.preventDefault();
         return false;
     }
@@ -11191,10 +11200,7 @@ if (msgContent.length<=0) {
     event.preventDefault();
     return false;
 }
-ee.getControl("edit6").setText("");
-g5.p2.p14.sendChat(msgContent, function(){
-    g5.p3.p3.c_chat.refresh(true);
-});
+g5.p2.p14.sendChat(msgContent);
 
 window.event? window.event.cancelBubble = true : event.stopPropagation();
 ]]></onClick>
@@ -24670,6 +24676,7 @@ eb.initMouseEvent(sender);
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>sender.close();</onClick>
       <onCreate><![CDATA[sender.style.position = "fixed";
@@ -24762,6 +24769,7 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194723618090452</heightRatio>
       <layerName>p1.A自己选项</layerName>
+      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.33509234828496</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
