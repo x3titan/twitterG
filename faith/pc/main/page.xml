@@ -450,6 +450,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -638,6 +639,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -10559,6 +10561,7 @@ sender.loadDataset = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -10657,6 +10660,7 @@ sender.refreshContent = function(userId, msgContent) {
       <dockY>fill</dockY>
       <height>780</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -11085,6 +11089,7 @@ sender.onpointerup = function(event) {
       <heavyEnabled>false</heavyEnabled>
       <height>62</height>
       <heightRatio>0.0794871794871795</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>功能按钮区</note>
       <sizeRatio>0.103333333333333</sizeRatio>
@@ -25449,7 +25454,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -25686,7 +25690,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -25738,8 +25741,12 @@ sender.show = function(photos, photo) {
             sender.hammer.on("pinchmove",  function(ev) {
                 var r0 = eb.getDivRectSetting(ee.getControl("panel145"));
                 var r = new Rect();
-                r.w = parseInt(sender.v_r.w * ev.scale);
-                r.h = parseInt(sender.v_r.h * ev.scale);
+                var ri = new Rect();
+                ri.w = ee.getControl("panel75").img.width;
+                ri.h = ee.getControl("panel75").img.height;
+                var sc = Math.min(ev.scale, Math.max(r0.w*2/ri.w, r0.h*2/ri.h));
+                r.w = parseInt(sender.v_r.w * sc);
+                r.h = parseInt(sender.v_r.h * sc);
                 r.w = Math.max(r.w, r0.w);
                 r.h = Math.max(r.h, r0.h);
                 r.x = parseInt((sender.v_r.x + sender.v_r.w/2) - r.w/2);
