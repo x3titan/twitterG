@@ -25709,12 +25709,15 @@ sender.show = function(photos, photo) {
             sender.c_photo.dockY = "disabled";
             sender.v_touchEnd = true;
             sender.v_r = eb.getDivRectSetting(sender);
+            sender.v_startP = new Point(0,0);
             sender.hammer = new Hammer(sender.c_photo);
             sender.hammer.get("pinch").set({ enable: true });
             sender.hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL });
             sender.hammer.on("pan", function(ev) {
                 if (sender.v_touchEnd) {
                     sender.v_r = eb.getDivRectSetting(sender.c_photo);
+                    sender.v_startP.x = ev.deltaX;
+                    sender.v_startP.y = ev.deltaY;
                     sender.v_touchEnd = false;
                 }
                 if (ev.eventType == 4) {
@@ -25722,8 +25725,8 @@ sender.show = function(photos, photo) {
                 }
                 var r0 = eb.getDivRectSetting(ee.getControl("panel145"));
                 var r = new Rect();
-                r.x = sender.v_r.x + ev.deltaX;
-                r.y = sender.v_r.y + ev.deltaY;
+                r.x = sender.v_r.x + ev.deltaX - sender.v_startP.x;
+                r.y = sender.v_r.y + ev.deltaY - sender.v_startP.y;
                 r.w = sender.v_r.w;
                 r.h = sender.v_r.h;
                 r.x = Math.min(0, r.x);
@@ -25731,34 +25734,35 @@ sender.show = function(photos, photo) {
                 if (r.x+r.w<r0.w) r.x = r0.w-r.w;
                 if (r.y+r.h<r0.h) r.y = r0.h-r.h;
                 ee.setRect(sender.c_photo, r.x,r.y, null, null);
-                //g5.writeLog(ev.type + "," + ev.scale);
+                //g5.writeLog(ev.type + "," + ev.deltaX);
             });
             
             sender.hammer.on("pinchstart", function(ev) {
                 sender.v_r = eb.getDivRectSetting(sender.c_photo);
-                //g5.writeLog(ev.type + "," + sender.v_r.w);
+                sender.v_scale = ev.scale;
+                sender.v_ri = new Rect();
+                sender.v_ri.w = sender.c_photo.img.width;
+                sender.v_ri.h = sender.c_photo.img.height;
             });
             sender.hammer.on("pinchmove",  function(ev) {
+                //g5.writeLog(ev.scale);
                 var r0 = eb.getDivRectSetting(ee.getControl("panel145"));
                 var r = new Rect();
-                var ri = new Rect();
-                ri.w = ee.getControl("panel75").img.width;
-                ri.h = ee.getControl("panel75").img.height;
-                var sc = Math.min(ev.scale, Math.max(r0.w*2/ri.w, r0.h*2/ri.h));
+                var sc = Math.min(ev.scale/sender.v_scale, Math.max(r0.w*2/sender.v_ri.w, r0.h*2/sender.v_ri.h));
                 r.w = parseInt(sender.v_r.w * sc);
                 r.h = parseInt(sender.v_r.h * sc);
                 r.w = Math.max(r.w, r0.w);
                 r.h = Math.max(r.h, r0.h);
-                r.x = parseInt((sender.v_r.x + sender.v_r.w/2) - r.w/2);
-                r.y = parseInt((sender.v_r.y + sender.v_r.h/2) - r.h/2);
+                r.x = parseInt((sender.v_r.x + sender.v_r.w/2) - r.w/2 + ev.deltaX);
+                r.y = parseInt((sender.v_r.y + sender.v_r.h/2) - r.h/2 + ev.deltaY);
                 r.x = Math.min(0, r.x);
                 r.y = Math.min(0, r.y);
                 if (r.x+r.w<r0.w) r.x = r0.w-r.w;
                 if (r.y+r.h<r0.h) r.y = r0.h-r.h;
                 ee.setRect(sender.c_photo, r.x,r.y,r.w,r.h);
-                //g5.writeLog(ev.type + "," + r.w);
             });
             sender.hammer.on("pinchend",  function(ev) {
+                g5.writeLog(ev.type + "," + ev.scale);
                 sender.v_touchEnd = true;
             });
         }
