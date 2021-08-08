@@ -25767,10 +25767,11 @@ sender.show = function(photos, photo) {
                 sender.v_touchEnd = true;
             });
             sender.hammer.on("swipeleft",  function(ev) {
-                
+                sender.clickRight();
                 g5.writeLog(ev.type + "," + ev.scale);
             });
             sender.hammer.on("swiperight",  function(ev) {
+                sender.clickLeft();
                 g5.writeLog(ev.type + "," + ev.scale);
             });
         }
@@ -25853,6 +25854,32 @@ sender.close = function() {
 }
 
 sender.clickLeft = function() {
+    if (sender.v_photos.length<=1) return;
+    this.c_photoRoot.className = "aniAll3";
+    this.c_photoRoot.id = "";
+    this.c_photo.id = "";
+    this.c_video.id= "";
+    var r = eb.getDivRectSetting(this);
+    var delCon = this.c_photoRoot;
+    ee.setRect(delCon,r.w,null,null,null);
+    setTimeout(function() {
+        ee.removeControl(delCon);
+    }, 500);
+    
+    this.c_photoRoot = createPanel(this, "panel145", "",-r.w,0,r.w,r.h);
+    ee.changeParent(this.c_photoRoot,this,0);
+    this.c_photoRoot.className = "aniAll3";
+    this.c_photo = createPanel(this.c_photoRoot, "panel75", "",0,0,r.w,r.h);    
+    this.c_video = createPanel(this.c_photoRoot, "panel76", "",0,0,r.w,r.h);    
+    if (this.v_index==0) {
+        this.v_index = this.v_photos.length-1;
+    } else {
+        this.v_index--;
+    }
+    this.refresh();
+    eb.setDivRect(this.c_photoRoot,0,null,null,null);
+    return;
+
     eb.setAni2(this.c_photoRoot,0,"disappear", "leftFlyOut", "null", 0, false);
     eb.setAniEvent(this.c_photoRoot, 0,
         function(senderAni) {
@@ -25875,6 +25902,32 @@ sender.clickLeft = function() {
 }
 
 sender.clickRight = function() {
+    if (sender.v_photos.length<=1) return;
+    this.c_photoRoot.className = "aniAll3";
+    this.c_photoRoot.id = "";
+    this.c_photo.id = "";
+    this.c_video.id= "";
+    var r = eb.getDivRectSetting(this);
+    var delCon = this.c_photoRoot;
+    ee.setRect(delCon,-r.w,null,null,null);
+    setTimeout(function() {
+        ee.removeControl(delCon);
+    }, 500);
+
+    this.c_photoRoot = createPanel(this, "panel145", "",r.w,0,r.w,r.h);
+    ee.changeParent(this.c_photoRoot,this,0);
+    this.c_photoRoot.className = "aniAll3";
+    this.c_photo = createPanel(this.c_photoRoot, "panel75", "",0,0,r.w,r.h);    
+    this.c_video = createPanel(this.c_photoRoot, "panel76", "",0,0,r.w,r.h);    
+    if (this.v_index >= this.v_photos.length-1) {
+        this.v_index = 0;
+    } else {
+        this.v_index++;
+    }
+    this.refresh();
+    eb.setDivRect(this.c_photoRoot,0,null,null,null);
+    return;
+
     if (this.v_photos.length<=1) return;
     var r = eb.getDivRectSetting(this.c_photoRoot);
     ee.setRect(this.c_photo,0,0,r.w, r.h);
