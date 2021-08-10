@@ -34,29 +34,39 @@ var pns = url.pathname.toLowerCase().split("/")
 pns.splice(0,1);;
 if (pns[0]=="twitterg") g5.pushHistory2("/home");
 
-getUserInfo();
-getPromptCount();
 
-g5.changeP3(-1);
+var init = function() {
+    if (!g5.YTReady) {
+        g5.writeLog("YT not ready");
+        setTimeout(function() {
+            init();
+        }, 100);
+        return;
+    }
+    g5.writeLog("YT ready");
+    getUserInfo();
+    getPromptCount();
+    
+    g5.changeP3(-1);
+    
+    setInterval(function() {
+        g5.refreshMain();
+    }, 100);
+    setInterval(function() {
+        g5.processVideo();
+    }, 1000);
+    setInterval(function() {
+        g5.refreshScroll();
+    }, 500);
+    setInterval(function() {
+        g5.refreshContent();
+    }, 100);
+    
+    if (!g5.isMobile) eb.processDock();
+    g5.refreshScreen();
+}
 
-setInterval(function() {
-    g5.refreshMain();
-}, 100);
-setInterval(function() {
-    g5.processVideo();
-}, 1000);
-setInterval(function() {
-    g5.refreshScroll();
-}, 500);
-setInterval(function() {
-    g5.refreshContent();
-}, 100);
-
-if (!g5.isMobile) eb.processDock();
-g5.refreshScreen();
-
-
-
+init();
 
 
 
@@ -92,7 +102,7 @@ tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName("script")[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 function onYouTubeIframeAPIReady() {
-
+    g5.YTReady = true;
 }
 
 initLButton = function(button,text,dy,icon,size,dx) {
@@ -435,6 +445,9 @@ a.css_button1:hover{
 }
 .aniAll3 {
     transition: all 0.3s;
+}
+.aniAll2 {
+    transition: all 0.2s;
 }
 </style>]]></pageHead>
       <pageTitle>拳头聊天室</pageTitle>
@@ -25744,7 +25757,7 @@ sender.setHammer = function() {
     sender.v_touchEnd = true;
     sender.v_r = eb.getDivRectSetting(sender);
     sender.v_startP = new Point(0,0);
-    sender.hammer = new Hammer(sender.c_photo);
+    sender.hammer = new Hammer(sender.c_photoRoot);
     sender.hammer.get("pinch").set({ enable: true });
     sender.hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL });
     sender.hammer.on("pan", function(ev) {
@@ -25801,11 +25814,11 @@ sender.setHammer = function() {
     });
     sender.hammer.on("swipeleft",  function(ev) {
         sender.clickRight();
-        g5.writeLog(ev.type + "," + ev.scale);
+        //g5.writeLog(ev.type + "," + ev.scale);
     });
     sender.hammer.on("swiperight",  function(ev) {
         sender.clickLeft();
-        g5.writeLog(ev.type + "," + ev.scale);
+        //g5.writeLog(ev.type + "," + ev.scale);
     });
 }
 
@@ -40830,8 +40843,10 @@ if (root.v_photo.substr(0,4) == "?YTB") {
     root.innerHTML = "<div id='" + root.id + "_ytb'></div>";
     var domYT = root.childNodes[0];
     var root0 = root.parentNode;
+    
     ee.changeParent(root,g5.pLine1);
     //eb.setDivRect(root.childNodes[0],0,0,rect.w,rect.h);
+    g5.writeLog("step1");
     root0.c_player = new YT.Player(domYT.id, {
         height: rect.h,
         width: rect.w,
@@ -40853,6 +40868,7 @@ if (root.v_photo.substr(0,4) == "?YTB") {
             }
         }
     });
+    g5.writeLog("step2");
     ee.changeParent(root, root0);
     root.parentNode.c_video = root;
     root.parentNode.c_player.v_mode = root.parentNode.v_mode;
