@@ -37,13 +37,11 @@ if (pns[0]=="twitterg") g5.pushHistory2("/home");
 
 var init = function() {
     if (!g5.YTReady) {
-        g5.writeLog("YT not ready");
         setTimeout(function() {
             init();
         }, 100);
         return;
     }
-    g5.writeLog("YT ready");
     getUserInfo();
     getPromptCount();
     
@@ -25757,6 +25755,7 @@ sender.setHammer = function() {
     sender.v_touchEnd = true;
     sender.v_r = eb.getDivRectSetting(sender);
     sender.v_startP = new Point(0,0);
+    if (sender.hammer) sender.hammer.destroy();
     sender.hammer = new Hammer(sender.c_photoRoot);
     sender.hammer.get("pinch").set({ enable: true });
     sender.hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL });
@@ -25781,7 +25780,6 @@ sender.setHammer = function() {
         if (r.x+r.w<r0.w) r.x = r0.w-r.w;
         if (r.y+r.h<r0.h) r.y = r0.h-r.h;
         ee.setRect(sender.c_photo, r.x,r.y, null, null);
-        //g5.writeLog(ev.type + "," + ev.deltaX);
     });
     
     sender.hammer.on("pinchstart", function(ev) {
@@ -25792,7 +25790,6 @@ sender.setHammer = function() {
         sender.v_ri.h = sender.c_photo.img.height;
     });
     sender.hammer.on("pinchmove",  function(ev) {
-        //g5.writeLog(ev.scale);
         var r0 = eb.getDivRectSetting(sender.c_photoRoot);
         var r = new Rect();
         var sc = Math.min(ev.scale/sender.v_scale, Math.max(r0.w*2/sender.v_ri.w, r0.h*2/sender.v_ri.h));
@@ -25809,16 +25806,20 @@ sender.setHammer = function() {
         ee.setRect(sender.c_photo, r.x,r.y,r.w,r.h);
     });
     sender.hammer.on("pinchend",  function(ev) {
-        //g5.writeLog(ev.type + "," + ev.scale);
         sender.v_touchEnd = true;
     });
     sender.hammer.on("swipeleft",  function(ev) {
+        var r0 = eb.getDivRectSetting(sender.c_photoRoot);
+        var r1 = eb.getDivRectSetting(sender.c_photo);
+        if (r0.w!=r1.w) return;
         sender.clickRight();
-        //g5.writeLog(ev.type + "," + ev.scale);
     });
     sender.hammer.on("swiperight",  function(ev) {
+        var r0 = eb.getDivRectSetting(sender.c_photoRoot);
+        var r1 = eb.getDivRectSetting(sender.c_photo);
+        if (r0.w!=r1.w) return;
+        g5.writeLog(ev.type);
         sender.clickLeft();
-        //g5.writeLog(ev.type + "," + ev.scale);
     });
 }
 
@@ -40846,7 +40847,6 @@ if (root.v_photo.substr(0,4) == "?YTB") {
     
     ee.changeParent(root,g5.pLine1);
     //eb.setDivRect(root.childNodes[0],0,0,rect.w,rect.h);
-    g5.writeLog("step1");
     root0.c_player = new YT.Player(domYT.id, {
         height: rect.h,
         width: rect.w,
@@ -40868,7 +40868,6 @@ if (root.v_photo.substr(0,4) == "?YTB") {
             }
         }
     });
-    g5.writeLog("step2");
     ee.changeParent(root, root0);
     root.parentNode.c_video = root;
     root.parentNode.c_player.v_mode = root.parentNode.v_mode;
