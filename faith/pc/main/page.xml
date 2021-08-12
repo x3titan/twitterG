@@ -461,7 +461,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -650,7 +649,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -10206,7 +10204,6 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -10645,10 +10642,19 @@ sender.sendChat = function(msgContent) {
 
 sender.refreshContent = function(userId, msgContent) {
     var items = g5.p2.p13.v_items;
-    for (var i=0; i<items.length; i++) {
+    var i = 0;
+    for (i=0; i<items.length; i++) {
         if (!items[i].v_userInfo) continue;
         if (items[i].v_userInfo.id != userId) continue;
         items[i].setContent(msgContent);
+        break;
+    }
+    if (i<items.length &amp;&amp; i!=0) {
+        var t = items[i];
+        items[i] = items[0];
+        items[0] = t;
+        ee.changeParent(items[0], items[0].parentNode, 0);
+        ee.tiledResizeV(items[0].parentNode, 1);
     }
 }
 
@@ -25465,6 +25471,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -25701,6 +25708,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
