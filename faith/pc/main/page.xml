@@ -790,7 +790,7 @@ sender.loadNew = function() {
     if (updateHomepage.busy) return;
     updateHomepage.contentId = 0
     if (this.v_items.length>0) {
-        updateHomepage.contentId = this.v_items[0].v_content.id;
+        updateHomepage.contentId = (parseInt(this.v_items[0].v_content.id)-2) + "";
     }
     updateHomepage.isForward = false;
     this.loadFromServer();
@@ -839,6 +839,7 @@ sender.loadFromServer = function() {
             }
         }
         var item = null;
+        var itemCount = 0;
         for (i=0; i< dataset.rowCount; i++) {
             item = document.createElement("div");
             //document.createDocumentFragment().appendChild(item);
@@ -858,15 +859,19 @@ sender.loadFromServer = function() {
             g5.renderTwitter(item);
             if (updateHomepage.isForward) {
                 root.v_items.push(item);
+                root.appendChild(item);
             } else {
-                root.v_items.splice(i, 0, item);
+                root.v_items.splice(itemCount, 0, item);
+                root.insertBefore(item, root.v_items[itemCount+1]);
             }
             cy += 0 + eb.getDivRectSetting(item).h;
             
-            root.appendChild(item);
+            itemCount++;
         }
         if (!updateHomepage.isForward) {
-            if (dataset.rowCount>0) g5.writeLog("read:" + dataset.rowCount);
+            //if (dataset.rowCount>0) g5.writeLog("read:" + dataset.rowCount);
+            g5.batchMoveY(root.v_items, itemCount, cy);
+            document.documentElement.scrollTop+=cy;
         }
         if (!updateHomepage.isForward) {
             if (dataset.rowCount>0) {
