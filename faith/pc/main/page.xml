@@ -695,7 +695,6 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -867,6 +866,9 @@ sender.loadFromServer = function() {
             root.appendChild(item);
         }
         if (!updateHomepage.isForward) {
+            if (dataset.rowCount>0) g5.writeLog("read:" + dataset.rowCount);
+        }
+        if (!updateHomepage.isForward) {
             if (dataset.rowCount>0) {
                 if (dataset.rowCount<root.v_items.length) {
                     var dy = cy - eb.getDivRectSetting(root.v_items[dataset.rowCount]).y; 
@@ -965,8 +967,11 @@ sender.init();]]></onCreate>
       <left>16</left>
       <leftRatio>0.0266666666666667</leftRatio>
       <note>c_userPhoto</note>
-      <onClick>showUserPage.userName = g5.myUserInfo.userName;
-showUserPage();</onClick>
+      <onClick>g5.p2.p1.loadNew(); 
+return;
+g5.p2.p2.show(g5.myUserInfo);
+
+</onClick>
       <onCreate>sender.style.borderRadius = "50%";
 ee.setOnMouseEnter(c, function(sender,e) {
     sender.style.webkitFilter="brightness(80%)";
@@ -10204,6 +10209,7 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
