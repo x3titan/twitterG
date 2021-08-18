@@ -904,6 +904,38 @@ sender.loadFromServer = function() {
     updateHomepage();    
 }
 
+sender.parentNode.eeMouseDown = function(senderM, event) {
+    if (!g5.isMobile) return;
+    if (g5.currentPageIndex!=0) return;    
+    sender.v_move = true;
+    sender.v_downY = event.touches[0].screenY;
+    sender.className = "";
+}
+sender.parentNode.eeMouseUp = function(senderM, event) {
+    sender.v_move = false;
+    sender.className = "aniAll2";
+    eb.setDivRect(sender,null,0,null,null);
+}
+sender.parentNode.eeMouseMove = function(senderM, event) {
+    if (!sender.v_move) return;
+    if (!g5.isMobile) return;
+    g5.writeLog(sender.v_downY - event.touches[0].screenY);
+    var dy = sender.v_downY - event.touches[0].screenY;
+    if ((document.documentElement.scrollTop == 0) &amp;&amp; (dy<0)) {
+        var maxH = 100;
+        var maxMouseY = 300;
+        var y = Math.min(-dy, maxMouseY);
+        y = maxH*Math.sin((y*Math.PI)/(2*maxMouseY));
+        eb.setDivRect(sender,null,y,null,null);
+        g5.writeLog("fire");
+    }
+    //event.y;
+    //document.documentElement.scrollTop
+}
+
+eb.initMouseEvent(sender.parentNode);
+
+
 
 ]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
