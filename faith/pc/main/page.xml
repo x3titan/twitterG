@@ -1,5 +1,5 @@
 <page>
-  <controls count="717">
+  <controls count="718">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -679,6 +679,7 @@ sender.p29 = ee.getControl("panel531");
 sender.p30 = ee.getControl("panel538");
 sender.p31 = ee.getControl("panel579");
 sender.p32 = ee.getControl("panel583");
+sender.p33 = ee.getControl("panel596");
 ee.setVisible(sender, true);
 
 </onCreate>
@@ -695,6 +696,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -915,19 +917,22 @@ sender.parentNode.eeMouseUp = function(senderM, event) {
     sender.v_move = false;
     sender.className = "aniAll2";
     eb.setDivRect(sender,null,0,null,null);
+    ee.setVisible(g5.p2.p33, false);
 }
 sender.parentNode.eeMouseMove = function(senderM, event) {
     if (!sender.v_move) return;
     if (!g5.isMobile) return;
-    g5.writeLog(sender.v_downY - event.touches[0].screenY);
+    //g5.writeLog(sender.v_downY - event.touches[0].screenY);
     var dy = sender.v_downY - event.touches[0].screenY;
     if ((document.documentElement.scrollTop == 0) &amp;&amp; (dy<0)) {
-        var maxH = 100;
+        var maxH = eb.getDivRectSetting(g5.p2.p33).h;
         var maxMouseY = 300;
         var y = Math.min(-dy, maxMouseY);
         y = maxH*Math.sin((y*Math.PI)/(2*maxMouseY));
         eb.setDivRect(sender,null,y,null,null);
-        g5.writeLog("fire");
+        eb.setDivRect(g5.p2.p33,null,y-maxH+eb.getDivRectSetting(ee.getControl("panel1")).y,null,null);
+        ee.setVisible(g5.p2.p33, true);
+        //g5.writeLog("fire");
     }
     //event.y;
     //document.documentElement.scrollTop
@@ -18407,6 +18412,23 @@ eb.initMouseEvent(sender);]]></onCreate>
       <topRatio>0.0196078431372549</topRatio>
       <width>357</width>
       <widthRatio>0.595</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel596">
+      <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>FF8080</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>50</height>
+      <heightRatio>0.0641025641025641</heightRatio>
+      <layerName><![CDATA[p2.p33 -> 向上加载提示]]></layerName>
+      <left>0</left>
+      <onCreate>sender.style.borderRadius = "10px";</onCreate>
+      <sizeRatio>0.0833333333333333</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137">
       <backgroundColor>FFFFFF</backgroundColor>
