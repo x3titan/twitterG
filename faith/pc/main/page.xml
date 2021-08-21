@@ -1,5 +1,5 @@
 <page>
-  <controls count="718">
+  <controls count="719">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -792,7 +792,7 @@ sender.loadNew = function() {
     if (updateHomepage.busy) return;
     updateHomepage.contentId = 0
     if (this.v_items.length>0) {
-        updateHomepage.contentId = (parseInt(this.v_items[0].v_content.id)-2) + "";
+        updateHomepage.contentId = (parseInt(this.v_items[0].v_content.id)-0) + "";
     }
     updateHomepage.isForward = false;
     this.loadFromServer();
@@ -822,13 +822,14 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
 }
 
 sender.loadFromServer = function() {
-    if (sender.v_status=="noResult") return;
+    if ((sender.v_status=="noResult") &amp;&amp; (updateHomepage.isForward)) return;
     updateHomepage.onComplete = function(dataset) {
         var i, item;
         var root = sender;
         var itemWidth = eb.getDivRectSetting(root).w;
         var cy = eb.getDivRectSetting(g5.p4.a1).h;
         g5.loading.close();
+        g5.p2.p33.close();
         eb.setDivRect(g5.p2.p1.a1, null, cy, null,null);
         cy+=eb.getDivRectSetting(g5.p2.p1.a1).h;
         if (updateHomepage.contentId == 0) {
@@ -887,7 +888,7 @@ sender.loadFromServer = function() {
             var rect = eb.getDivRectSetting(root.v_items[root.v_items.length-1]);
             cy = rect.y + rect.h;
         }
-        if (dataset.rowCount<=0) {
+        if ((dataset.rowCount<=0) &amp;&amp; (updateHomepage.isForward)) {
             sender.v_status = "noResult";
             var item = createPanel(sender, "newThingsEnd", "", 0, cy, itemWidth, 60); cy += 60;
             addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
@@ -912,12 +913,22 @@ sender.parentNode.eeMouseDown = function(senderM, event) {
     sender.v_move = true;
     sender.v_downY = event.touches[0].screenY;
     sender.className = "";
+    sender.v_loadNew = false;
 }
 sender.parentNode.eeMouseUp = function(senderM, event) {
     sender.v_move = false;
-    sender.className = "aniAll2";
+    sender.className = "aniAll3";
     eb.setDivRect(sender,null,0,null,null);
-    ee.setVisible(g5.p2.p33, false);
+    //g5.p2.p33.close();
+    //g5.writeLog("process over");
+    
+    if (sender.v_loadNew) {
+        sender.v_loadNew = false;
+        ee.setRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y,null,null);
+        sender.loadNew();
+    } else {
+        g5.p2.p33.close();
+    }
 }
 sender.parentNode.eeMouseMove = function(senderM, event) {
     if (!sender.v_move) return;
@@ -930,8 +941,9 @@ sender.parentNode.eeMouseMove = function(senderM, event) {
         var y = Math.min(-dy, maxMouseY);
         y = maxH*Math.sin((y*Math.PI)/(2*maxMouseY));
         eb.setDivRect(sender,null,y,null,null);
-        eb.setDivRect(g5.p2.p33,null,y-maxH+eb.getDivRectSetting(ee.getControl("panel1")).y,null,null);
-        ee.setVisible(g5.p2.p33, true);
+        ee.setRect(g5.p2.p33,null,y-maxH+eb.getDivRectSetting(ee.getControl("panel1")).y,null,null);
+        sender.v_loadNew = (y>=maxH/2);
+        g5.p2.p33.show();
         //g5.writeLog("fire");
     }
     //event.y;
@@ -18416,19 +18428,53 @@ eb.initMouseEvent(sender);]]></onCreate>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel596">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
       <aniPos>leftFlyIn:左侧飞入</aniPos>
-      <backgroundColor>FF8080</backgroundColor>
-      <backgroundImgMode>stretch</backgroundImgMode>
+      <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <height>50</height>
       <heightRatio>0.0641025641025641</heightRatio>
       <layerName><![CDATA[p2.p33 -> 向上加载提示]]></layerName>
       <left>0</left>
-      <onCreate>sender.style.borderRadius = "10px";</onCreate>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderTop = "";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+sender.c_ani = ee.getControl("panel602");
+
+sender.show = function() {
+    ee.setVisible(this, true);
+    this.c_ani.className = "aniLoading";
+}
+
+sender.close = function() {
+    this.c_ani.className = "";
+    ee.setVisible(this, false);
+}
+</onCreate>
       <sizeRatio>0.0833333333333333</sizeRatio>
       <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel596/panel602">
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>22</height>
+      <heightRatio>0.44</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>289</left>
+      <leftRatio>0.481666666666667</leftRatio>
+      <onCreate>sender.style.backgroundColor = "";</onCreate>
+      <sizeRatio>1</sizeRatio>
+      <top>14</top>
+      <topRatio>0.48</topRatio>
+      <width>22</width>
+      <widthRatio>0.0366666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137">
       <backgroundColor>FFFFFF</backgroundColor>
