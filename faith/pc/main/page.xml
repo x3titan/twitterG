@@ -342,20 +342,27 @@ ee.setOnMouseLeave = function (div, func) {
     }, false);
 }
 
-ee.setAnimationEnd = function() {
-    var pfx = ["webkit", "moz", "MS", "o", ""];
-    function prefixedEventListener(element, type, callback) {
-        for (var p = 0; p < pfx.length; p++) {
-            if (!pfx[p]) type = type.toLowerCase();
-            element.addEventListener(pfx[p]+type, callback, false);
+ee.setAnimationEnd = function(div,func) {
+    var getAniEvent = function() {
+        var t, el = document.createElement("fakeelement");
+        var ani = {
+            "transition": "transitionend",
+            "OTransition": "oTransitionEnd",
+            "MozTransition": "transitionend",
+            "WebkitTransition": "webkitTransitionEnd"
         }
+        for (t in ani) {
+            if (el.style[t] !== undefined){
+                return ani[t];
+            }
+        }
+        return "";
     }
-    
-    // new event listener function
-    var monkey = document.querySelector("#monkey");
-    prefixedEventListener(monkey,"AnimationStart",function(e){
-        console.log("log at beginning of monkey animation");
-    });
+    var aniEvent = getAniEvent();
+    if (aniEvent == "") return;
+    if (div.f_onTransitionEnd) div.removeEventListener(aniEvent, div.f_onTransitionEnd);
+    div.addEventListener(aniEvent, func, false);
+    div.f_onTransitionEnd = func;
 }
 
 
@@ -892,16 +899,23 @@ sender.loadFromServer = function() {
             itemCount++;
         }
         if (!updateHomepage.isForward) {
-            //if (dataset.rowCount>0) g5.writeLog("read:" + dataset.rowCount);
-            //g5.batchMoveY(root.v_items, itemCount, cy);
             document.documentElement.scrollTop+=dy;
-        }
-        if (!updateHomepage.isForward) {
-            if (dataset.rowCount>0) {
+            if (itemCount>0) {
                 if (dataset.rowCount<root.v_items.length) {
                     var dy = cy - eb.getDivRectSetting(root.v_items[dataset.rowCount]).y; 
                     g5.batchMoveY(root.v_items,dataset.rowCount,dy);
                 }
+                sender.className = "";
+                g5.p2.p33.close();
+            } else {
+                eb.setDivRect(sender,null,0,null,null);
+                ee.setAnimationEnd(sender, function() {
+                    sender.className = "";
+                });
+                eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h,null,null);
+                ee.setAnimationEnd(g5.p2.p33, function() {
+                    g5.p2.p33.close();
+                });
             }
             var rect = eb.getDivRectSetting(root.v_items[root.v_items.length-1]);
             cy = rect.y + rect.h;
@@ -934,25 +948,32 @@ sender.parentNode.eeMouseDown = function(senderM, event) {
     sender.v_loadNew = false;
     g5.p2.p33.className = "";
 }
+
 sender.parentNode.eeMouseUp = function(senderM, event) {
     sender.v_move = false;
-    sender.className = "aniAll3";
-    eb.setDivRect(sender,null,0,null,null);
-    //g5.p2.p33.close();
-    //g5.writeLog("process over");
-    
     if (sender.v_loadNew) {
         sender.v_loadNew = false;
-        ee.setRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y,null,null);
-        sender.loadNew();
+        sender.className = "aniAll3";
+        eb.setDivRect(sender,null,37,null,null);
+        ee.setAnimationEnd(sender, function() {
+            sender.loadNew();
+        });
+        g5.p2.p33.className = "aniAll3";
+        eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h+37,null,null);
     } else {
+        sender.className = "aniAll3";
+        eb.setDivRect(sender,null,0,null,null);
+        ee.setAnimationEnd(sender, function() {
+            sender.className = "";
+        });
+        g5.p2.p33.className = "aniAll3";
+        eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h,null,null);
+        ee.setAnimationEnd(g5.p2.p33, function() {
+            g5.p2.p33.close();
+        });
     }
-    g5.p2.p33.className = "aniAll3";
-    eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h,null,null);
-    setTimeout(function() {
-        g5.p2.p33.close();
-    }, 500);
 }
+
 sender.parentNode.eeMouseMove = function(senderM, event) {
     if (!sender.v_move) return;
     if (!g5.isMobile) return;
@@ -965,7 +986,7 @@ sender.parentNode.eeMouseMove = function(senderM, event) {
         y = maxH*Math.sin((y*Math.PI)/(2*maxMouseY));
         eb.setDivRect(sender,null,y,null,null);
         ee.setRect(g5.p2.p33,null,y-maxH+eb.getDivRectSetting(ee.getControl("panel1")).y,null,null);
-        sender.v_loadNew = (y>=maxH/2);
+        sender.v_loadNew = (y>=30);
         g5.p2.p33.show();
         event.preventDefault();
         //g5.writeLog("fire");
