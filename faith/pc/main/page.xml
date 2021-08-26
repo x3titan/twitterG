@@ -36787,7 +36787,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="106">
+  <g5Items count="107">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -37596,7 +37596,6 @@ if (root.v_mode.charAt(2) == "x") {
     root.c_titleText = c.childNodes[0];
     root.c_forceTopLabel = c.childNodes[1]; 
     c.v_username = root.v_userInfo.userName;
-    
     cy += 5;
     c = createPanel(root, root.id+"_panel16x", "", 78, cy-1, mainWidth-80, null);
     c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -38394,6 +38393,19 @@ if (!eb.isEmpty(root.c_rePhotos)) {
 root.refresh();
 
 return root;]]></functionCode>
+    </item>
+    <item name="renderTwitterSetTitle" type="20">
+      <varValue />
+      <functionParam>root,sTime,sTop</functionParam>
+      <functionCode>var mw = eb.getDivRectSetting(root.v_titleText).w;
+if (sTime) {
+    sTime = " · " + sTime;
+    if (sTime!=root.v_timeLabel.innerHTML) root.v_timeLabel.innerHTML = sTime;
+}
+if (sTop &amp;&amp; sTop!=root.c_forceTopLabel.innerHTML) root.c_forceTopLabel.innerHTML = sTop;
+var tl2 = 0; if (root.v_timeLabel) tl2 = root.v_timeLabel.offsetWidth;
+var tl3 = 0; if (root.c_forceTopLabel) tl3 = root.c_forceTopLabel.offsetWidth;
+root.c_titleText.style.maxWidth = (mw-2-tl2-tl3)+"px";</functionCode>
     </item>
     <item name="renderTwitterL" type="20">
       <varValue />
@@ -39454,11 +39466,7 @@ for (var j=0; j<currentItemsArr.length; j++) {
         var time = now-item.v_content.startTime;
         if (time>=24*60*60) continue;
         time=g5.getMins(time);
-        if (item.v_timeLabel) {
-            if (item.v_timeLabel.innerHTML!=time) {
-                item.v_timeLabel.innerHTML = time;
-            }
-        }
+        g5.renderTwitterSetTitle(item,time,null);
         if (item.v_reTimeLabel) {
             var time = now-item.v_reContent.startTime;
             if (time>=24*60*60) continue;
