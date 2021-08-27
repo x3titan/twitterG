@@ -37994,26 +37994,25 @@ if (!showRe) {
         //}
     });
     //reUserName,reNickName,reTime
-    c = createPanel(cRe, root.id+"_panel11", "", 35, 7, p1w*0.883734939759036, 25);
-    addText(c, "<div style='display:inline'><b>" + root.v_reUserInfo.nickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserInfo.userName + "</font></div><font> · </font><font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reContent.seconds) + "</font>", "left", "middle", "微软雅黑", 12, "000000", "normal");
-    root.c_reTitleText = c.label.rows[0].cells[0].childNodes[0];
+    c = createPanel(cRe, root.id+"_panel11s", "", 39, 10, p1w-60, null);
+    root.c_reTitle = c;
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.whiteSpace = "nowrap";
+    c.style.cursor="pointer";
+    c.innerHTML = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-270)+"px'><b>" + root.v_reUserInfo.nickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserInfo.userName + "</font></div><font color='#808080' style='font-size:15px'> · " + g5.getMins(root.v_reContent.seconds) + "</font>";
+    root.v_reTimeLabel = c.childNodes[1]; 
+    root.c_reTitleText = c.childNodes[0];
     root.c_reTitleText.id = root.id + "_reTitleText";
     root.c_reTitleText.v_userName = root.v_reUserInfo.userName;
-    root.v_reTimeLabel = c.label.rows[0].cells[0].childNodes[2]; 
-    c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
-    root.c_reUsername = c.label.rows[0].cells[0].childNodes[0]; 
-    var r1 = eb.getDivRect(c.label.rows[0].cells[0]);
-    var r2 = eb.getDivRectSetting(c);
-    var r3 = eb.getDivRect(root.v_reTimeLabel);
-    if (r1.w>r2.w) {
-        root.c_reUsername.style.width = (r2.w - r3.w - 20) + "px";
-        root.c_reUsername.style.display = "inline-block";
-        root.c_reUsername.style.overflow = "hidden";
-        root.c_reUsername.style.verticalAlign = "text-top";
-        root.c_reUsername.style.textOverflow = "ellipsis";
-        c.label.rows[0].cells[0].childNodes[1].innerHTML = "· ";
-    }
-    c.style.cursor="pointer";
+    root.c_reUsername = c.childNodes[0];
+    root.v_reTimeLabel.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    root.v_reTimeLabel.style.fontSize = "12pt";
+    root.v_reTimeLabel.style.whiteSpace = "nowrap";
+    ee.changeParent(root.v_reTimeLabel,g5.pLine1,-1);
+    var tl2 = root.v_reTimeLabel.offsetWidth;
+    ee.changeParent(root.v_reTimeLabel,c,-1);
+    root.c_reTitleText.style.maxWidth = (p1w-60-4-tl2)+"px";
     ee.setOnClick(root.c_reTitleText,function(sender,event) {
         g5.p2.p2.show(root.v_reUserInfo);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -38104,14 +38103,13 @@ if (!showRe) {
     root.c_reTitleText.id = root.id + "_reTitleText";
     root.c_reTitleText.v_userName = root.v_reUserInfo.userName;
     root.c_reUsername = c.childNodes[0];
-    
     root.v_reTimeLabel.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     root.v_reTimeLabel.style.fontSize = "12pt";
     root.v_reTimeLabel.style.whiteSpace = "nowrap";
     ee.changeParent(root.v_reTimeLabel,g5.pLine1,-1);
     var tl2 = root.v_reTimeLabel.offsetWidth;
     ee.changeParent(root.v_reTimeLabel,c,-1);
-    root.c_reTitleText.style.maxWidth = (p1w-60-2-tl2)+"px";
+    root.c_reTitleText.style.maxWidth = (p1w-60-4-tl2)+"px";
     ee.setOnClick(root.c_reTitleText,function(sender,event) {
         g5.p2.p2.show(root.v_reUserInfo);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -38405,16 +38403,28 @@ return root;]]></functionCode>
     </item>
     <item name="renderTwitterSetTitle" type="20">
       <varValue />
-      <functionParam>root,sTime,sTop</functionParam>
-      <functionCode>var mw = eb.getDivRectSetting(root.v_titleText).w;
-if (sTime) {
-    sTime = " · " + sTime;
-    if (sTime!=root.v_timeLabel.innerHTML) root.v_timeLabel.innerHTML = sTime;
+      <functionParam>root,sTime,sTop,sReTime</functionParam>
+      <functionCode>if (sTime || sTop) {
+    var mw = eb.getDivRectSetting(root.v_titleText).w;
+    if (sTime) {
+        sTime = " · " + sTime;
+        if (sTime!=root.v_timeLabel.innerHTML) root.v_timeLabel.innerHTML = sTime;
+    }
+    if (sTop &amp;&amp; sTop!=root.c_forceTopLabel.innerHTML) root.c_forceTopLabel.innerHTML = sTop;
+    var tl2 = 0; if (root.v_timeLabel) tl2 = root.v_timeLabel.offsetWidth;
+    var tl3 = 0; if (root.c_forceTopLabel) tl3 = root.c_forceTopLabel.offsetWidth;
+    root.c_titleText.style.maxWidth = (mw-2-tl2-tl3)+"px";
 }
-if (sTop &amp;&amp; sTop!=root.c_forceTopLabel.innerHTML) root.c_forceTopLabel.innerHTML = sTop;
-var tl2 = 0; if (root.v_timeLabel) tl2 = root.v_timeLabel.offsetWidth;
-var tl3 = 0; if (root.c_forceTopLabel) tl3 = root.c_forceTopLabel.offsetWidth;
-root.c_titleText.style.maxWidth = (mw-2-tl2-tl3)+"px";</functionCode>
+
+if (sReTime &amp;&amp; root.v_reTimeLabel) {
+    sReTime = " · " + sReTime;
+    if (sReTime!=root.v_reTimeLabel.innerHTML) root.v_reTimeLabel.innerHTML = sReTime;
+    var tl2 = root.v_reTimeLabel.offsetWidth;
+    var mw = eb.getDivRectSetting(root.c_reTitle).w;
+    root.c_reTitleText.style.maxWidth = (mw-2-tl2)+"px";
+}
+
+</functionCode>
     </item>
     <item name="renderTwitterL" type="20">
       <varValue />
@@ -39480,9 +39490,7 @@ for (var j=0; j<currentItemsArr.length; j++) {
             var time = now-item.v_reContent.startTime;
             if (time>=24*60*60) continue;
             time=g5.getMins(time);
-            if (item.v_reTimeLabel.innerHTML!=time) {
-                item.v_reTimeLabel.innerHTML = time;
-            }
+            g5.renderTwitterSetTitle(item,null,null,time);
         }
     }
 }
