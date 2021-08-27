@@ -38092,17 +38092,26 @@ if (!showRe) {
         sender.style.filter="brightness(100%)";
     });
     //reUserName,reNickName,reTime
-    c = createPanel(cRe, root.id+"_panel11", "", 48, 11, p1w*0.863734939759036, null);
+    c = createPanel(cRe, root.id+"_panel11k", "", 48, 11, p1w-60, null);
+    root.c_reTitle = c;
     c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     c.style.fontSize = "12pt";
     c.style.whiteSpace = "nowrap";
     c.style.cursor="pointer";
-    c.innerHTML = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-270)+"px'><b>" + root.v_reUserInfo.nickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserInfo.userName + "</font></div><font> · </font><font color='#808080' style='font-size:15px'>" + g5.getMins(root.v_reContent.seconds) + "</font>";
-    root.v_reTimeLabel = c.childNodes[2]; 
+    c.innerHTML = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-270)+"px'><b>" + root.v_reUserInfo.nickName + "</b> <font color='#808080' style='font-size:15px'>@" + root.v_reUserInfo.userName + "</font></div><font color='#808080' style='font-size:15px'> · " + g5.getMins(root.v_reContent.seconds) + "</font>";
+    root.v_reTimeLabel = c.childNodes[1]; 
     root.c_reTitleText = c.childNodes[0];
     root.c_reTitleText.id = root.id + "_reTitleText";
     root.c_reTitleText.v_userName = root.v_reUserInfo.userName;
-    root.c_reUsername = c.childNodes[0]; 
+    root.c_reUsername = c.childNodes[0];
+    
+    root.v_reTimeLabel.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    root.v_reTimeLabel.style.fontSize = "12pt";
+    root.v_reTimeLabel.style.whiteSpace = "nowrap";
+    ee.changeParent(root.v_reTimeLabel,g5.pLine1,-1);
+    var tl2 = root.v_reTimeLabel.offsetWidth;
+    ee.changeParent(root.v_reTimeLabel,c,-1);
+    root.c_reTitleText.style.maxWidth = (p1w-60-2-tl2)+"px";
     ee.setOnClick(root.c_reTitleText,function(sender,event) {
         g5.p2.p2.show(root.v_reUserInfo);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
