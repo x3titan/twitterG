@@ -82,6 +82,7 @@ sender.onblur = function() {
       <__U_editFontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
       <__U_editFontSize>12pt</__U_editFontSize>
       <__U_editMaxY>300px</__U_editMaxY>
+      <__U_onFocusChange-sender-isFocus />
       <__U_onHeightChange-sender-oldH-newH />
       <__U_onInputChange-sender-oldText-newText />
       <backgroundSkin>edit1</backgroundSkin>
@@ -132,22 +133,11 @@ sender.refreshH = function() {
     }
 }
 
-sender.refreshFocus = function() {
-    if (document.activeElement == this.c_edit) {
-        ee.setVisible(this.c_label, false);
-    } else {
-        if (!this.c_edit.innerText) {
-            ee.setVisible(this.c_label, true); 
-        } else {
-            ee.setVisible(this.c_label, false); 
-        }
-    }
-}
-
 sender.f_onChange = function() {
     this.refreshH();
     var oldText = this.currentText;
     this.currentText = this.c_edit.innerText;
+    ee.setVisible(this.c_label, !this.c_edit.innerText); 
     this.onInputChange(this, oldText, this.currentText);
 }
 
@@ -160,11 +150,11 @@ e.onpaste = function() {
 }
 
 e.onfocus = function() {
-    sender.refreshFocus();
+    onFocusChange(sender, true);
 }
 
 e.onblur = function() {
-    sender.refreshFocus();
+    onFocusChange(sender, false);
 }
 </onCreate>
       <sizeRatio>0.344086021505376</sizeRatio>
@@ -176,6 +166,7 @@ e.onblur = function() {
 //#P:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
 //#P:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
 //#P:onInputChange(sender,oldText,newText)|多行文字录入V2||jsMix||由于用户的输入导致内容改变。sender:触发事件的控件，oldText:旧的内容，newText:新的内容
+//#P:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
 
 
 
