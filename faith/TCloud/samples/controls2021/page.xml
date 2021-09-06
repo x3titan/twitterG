@@ -86,6 +86,62 @@ sender.onblur = function() {
       <heightRatio>0.120603015075377</heightRatio>
       <left>309</left>
       <leftRatio>0.271767810026385</leftRatio>
+      <onCreate>sender.c_label = sender.eeChildren[0];
+sender.c_edit = sender.eeChildren[1];
+
+var e = sender.c_edit;
+e.contentEditable = true;
+e.style.border = "none";
+e.style.outline = "none";
+e.style.height = "";
+e.style.minHeight = (eb.getDivRectSetting(sender).h - e.outerTop - e.outerBottom) + "px";
+e.style.maxHeight = sender.editMaxY;
+e.style.overflowY = "auto";
+e.style.fontFamily = sender.editFontFamily;
+e.style.fontSize = sender.editFontSize;
+e.style.color = "#" + sender.editFontColor;
+e.style.wordBreak = "break-all";
+e.style.wordWrap = "break-word";
+e.style.whiteSpace = "normal";
+e.innerHTML = "";
+eb.setDivRect(e, e.outerLeft, e.outerTop, eb.getDivRectSetting(sender).w - e.outerLeft - e.outerRight, null);
+sender.v_lastH = eb.getDivRectSetting(sender).h;
+
+sender.refreshH = function() {
+    if (this.v_lastH!=eb.getDivRect(sender.c_edit).h+e.outerTop+e.outerBottom) {
+        this.v_lastH = eb.getDivRect(sender.c_edit).h+e.outerTop+e.outerBottom;
+        ee.setRect(this,null,null,null,this.v_lastH);
+    }
+}
+
+sender.refreshFocus = function(isFocus) {
+    if (isFocus) {
+        ee.setVisible(this.c_label, false);
+    } else {
+        if (!this.c_edit.innerText) {
+            ee.setVisible(this.c_label, true); 
+        } else {
+            ee.setVisible(this.c_label, false); 
+        }
+    }
+}
+
+e.oninput = function() {
+    sender.refreshH();
+}
+
+e.onpaste = function() {
+    sender.refreshH();
+}
+
+e.onfocus = function() {
+    sender.refreshFocus(true);
+}
+
+e.onblur = function() {
+    sender.refreshFocus(false);
+}
+</onCreate>
       <sizeRatio>0.344086021505376</sizeRatio>
       <top>86</top>
       <topRatio>0.108040201005025</topRatio>
@@ -116,11 +172,6 @@ sender.onblur = function() {
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel2/panel3">
-      <__U_editFontColor>404040</__U_editFontColor>
-      <__U_editFontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
-      <__U_editFontSize>12pt</__U_editFontSize>
-      <__U_editMaxY>300px</__U_editMaxY>
-      <__U_editMinY>100px</__U_editMinY>
       <backgroundColor>FFFFFF</backgroundColor>
       <fontColor>404040</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
@@ -130,33 +181,8 @@ sender.onblur = function() {
       <heightRatio>0.645833333333333</heightRatio>
       <left>16</left>
       <leftRatio>0.0573476702508961</leftRatio>
-      <onCreate>sender.contentEditable = true;
-sender.style.border = "none";
-sender.style.outline = "none";
-sender.style.height = "";
-sender.style.minHeight = sender.editMinY;
-sender.style.maxHeight = sender.editMaxY;
-sender.style.overflowY = "auto";
-sender.style.fontFamily = sender.editFontFamily;
-sender.style.fontSize = sender.editFontSize;
-sender.style.color = "#" + sender.editFontColor;
-sender.style.wordBreak = "break-all";
-sender.style.wordWrap = "break-word";
-sender.style.whiteSpace = "normal";
-sender.innerHTML = "";
-sender.onkeyup = function() {
-    console.log("change");
-}
-
-sender.onfocus = function() {
-}
-
-sender.onblur = function() {
-}
-
-
-        
-</onCreate>
+      <onCreate>
+      </onCreate>
       <outerBottom>2</outerBottom>
       <outerLeft>5</outerLeft>
       <outerRight>2</outerRight>
@@ -164,14 +190,6 @@ sender.onblur = function() {
       <sizeRatio>0.553571428571429</sizeRatio>
       <top>15</top>
       <topRatio>0.15625</topRatio>
-      <userProperty>//#P:editFontFamily|多行文字录入V2|'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif|string||用户输入文字的字体样式
-//#P:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
-//#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
-//#P:editMinY|多行文字录入V2|100px|string||编辑框最小高度
-//#P:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
-
-
-</userProperty>
       <v_color1>FFC0C0</v_color1>
       <v_Str>as223</v_Str>
       <vAlign>top</vAlign>
