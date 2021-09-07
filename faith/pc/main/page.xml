@@ -114,7 +114,137 @@ initLButton = function(button,text,dy,icon,size,dx) {
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
 
-]]></onPageCreate>
+ee.setRect = function (panel, x, y, w, h, refresh) {
+        var i, j, lastp, currentp, pos, rect = eb.getDivRectSetting(panel);
+        if (eb.isEmpty(refresh)) refresh = false;
+        if (!refresh) {
+            if ((w == rect.w) &amp;&amp; (h == rect.h)) {
+                eb.setDivRect(panel, x, y, w, h);
+                return;
+            }
+        }
+        if (eb.isEmpty(w)) w = rect.w;
+        if (eb.isEmpty(h)) h = rect.h;
+        eb.setDivRect(panel, x, y, w, h);
+        if (panel.onSizeChange) panel.onSizeChange(panel, rect, new Rect(x,y,w,h));
+        if (panel.skin != undefined) {
+            var imgW = panel.skinImgW;
+            var imgH = panel.skinImgH;
+            var rx = panel.skinX;
+            var ry = panel.skinY;
+            var rw = panel.skinW;
+            var rh = panel.skinH;
+            if (panel.skinClipMode == "9x") {
+                var dw = w - (imgW - rw);
+                var dh = h - (imgH - rh);
+                var cw = imgW - rx - rw;
+                var ch = imgH - ry - rh;
+                eb.restretchImg(panel.skin[0], 0, 0, 0, 0, 0, 0, 0, 0, rx, ry);
+                eb.restretchImg(panel.skin[1], 0, 0, rx + rw, 0, 0, 0, rx + dw, 0, cw, ry);
+                eb.restretchImg(panel.skin[2], 0, 0, 0, ry + rh, 0, 0, 0, ry + dh, rx, ch);
+                eb.restretchImg(panel.skin[3], 0, 0, rx + rw, ry + rh, 0, 0, rx + dw, ry + dh, cw, ch);
+                eb.restretchImg(panel.skin[4], imgW, imgH, rx, 0, rw, ry, rx, 0, dw, ry);
+                eb.restretchImg(panel.skin[5], imgW, imgH, rx, ry + rh, rw, ch, rx, ry + dh, dw, ch);
+                eb.restretchImg(panel.skin[6], imgW, imgH, 0, ry, rx, rh, 0, ry, rx, dh);
+                eb.restretchImg(panel.skin[7], imgW, imgH, rx + rw, ry, cw, rh, rx + dw, ry, cw, dh);
+                eb.restretchImg(panel.skin[8], imgW, imgH, rx, ry, rw, rh, rx, ry, dw, dh);
+            } else if (panel.skinClipMode == "LR3x") {
+                var w1 = parseInt(h * rx / rh);
+                var w3 = parseInt(h * (imgW - rx - rw) / rh);
+                var w2 = w - w1 - w3;
+                if (w2 <= 0) {
+                    w2 = 1;
+                    w1 = parseInt(w * w1 / (w3 + w1));
+                    w3 = w - w1 - w2;
+                }
+                eb.restretchImg(panel.skin[0], imgW, imgH, 0, 0, rx, rh, 0, 0, w1, h); //left
+                eb.restretchImg(panel.skin[1], imgW, imgH, rx, ry, rw, rh, w1, 0, w2, h); //middle
+                eb.restretchImg(panel.skin[2], imgW, imgH, rx + rw, ry, imgW - rx - rw, rh, w1 + w2, 0, w3, h); //right
+            }
+            if (!eb.isEmpty(panel.label)) {
+                eb.setDivRect(panel.label.parentNode, panel.skinCX, panel.skinCY, w - panel.skinImgW + panel.skinCW, h - panel.skinImgH + panel.skinCH);
+                var cy = parseInt((h - panel.skinImgH + panel.skinCH) / 2);
+                if (panel.label.vAlign == "top") {
+                    eb.setDivRect(panel.label, 0, 0, w - panel.skinImgW + panel.skinCW, h * 2);
+                } else if (panel.label.vAlign == "bottom") {
+                    eb.setDivRect(panel.label, 0, h - panel.skinImgH + panel.skinCH - h * 2, w - panel.skinImgW + panel.skinCW, h * 2);
+                } else {
+                    eb.setDivRect(panel.label, 0, parseInt(cy - h / 2), w - panel.skinImgW + panel.skinCW, h);
+                }
+            }
+            if (!eb.isEmpty(panel._input)) {
+                eb.setDivRect(panel._input, panel.skinCX, panel.skinCY,
+                    eb.getDivRect(panel).w - panel.skinImgW + panel.skinCW,
+                    eb.getDivRect(panel).h - panel.skinImgH + panel.skinCH);
+                if (!panel._input.multiLine) panel._input.style.lineHeight = eb.getDivRect(panel._input).h + "px";
+            }
+        } else {
+            if (!eb.isEmpty(panel.label)) {
+                eb.setDivRect(panel.label.parentNode, 0, 0, w, h);
+                eb.setDivRect(panel.label, 0, 0, w, h);
+            }
+        }
+        if (panel.img != undefined) {
+            addImageOnLoad(null, panel.img);
+        }
+        if (panel.layout != undefined) {
+            var totalSize;
+            if (panel.layout == "LayoutX") {
+                totalSize = eb.getDivRect(panel).w;
+            } else {
+                totalSize = eb.getDivRect(panel).h;
+            }
+            var totalHeavy = 0;
+            for (i = 0; i < panel.eeChildren.length; i++) {
+                if (!panel.eeChildren[i].heavyEnabled) {
+                    if (panel.layout == "LayoutX") {
+                        totalSize -= eb.getDivRect(panel.eeChildren[i]).w;
+                    } else {
+                        totalSize -= eb.getDivRect(panel.eeChildren[i]).h;
+                    }
+                } else {
+                    totalHeavy += panel.eeChildren[i].heavy;
+                }
+            }
+            lastp = 0; pos = 0;
+            for (i = 0; i < panel.eeChildren.length; i++) {
+                if (panel.eeChildren[i].heavyEnabled) {
+                    currentp = panel.eeChildren[i].heavy / totalHeavy * totalSize + lastp;
+                    lastp = currentp - parseInt(currentp);
+                    if (panel.layout == "LayoutX") {
+                        ee.setRect(panel.eeChildren[i], pos, 0, parseInt(currentp), h);
+                    } else {
+                        eb.setDivRect(panel.eeChildren[i], null, null, null, parseInt(currentp));
+                    }
+                    pos += parseInt(currentp);
+                }
+            }
+            //最终调整位置和大小
+            var leftPos = 0;
+            for (i = 0; i < panel.eeChildren.length; i++) {
+                if (panel.layout == "LayoutX") {
+                    ee.setRect(panel.eeChildren[i], leftPos, 0, eb.getDivRect(panel.eeChildren[i]).w, h);
+                    leftPos += eb.getDivRect(panel.eeChildren[i]).w;
+                } else {
+                    ee.setRect(panel.eeChildren[i], 0, leftPos, w, eb.getDivRect(panel.eeChildren[i]).h);
+                    leftPos += eb.getDivRect(panel.eeChildren[i]).h;
+                }
+            }
+        }
+        if (!eb.isEmpty(panel.tableTitle)) {
+            var t = panel.tableTitle;
+            lastp = 0;
+            pos = 0;
+            for (j = 0; j < panel.rowCount; j++) {
+                currentp = lastp + eb.getDivRect(panel).h / panel.visibleRowCount;
+                lastp = currentp - parseInt(currentp);
+                for (i = 0; i < panel.colCount; i++) {
+                    ee.setRect(this.getTableCell(panel, i, j), eb.getDivRect(t.eeChildren[i]).x, pos, eb.getDivRect(t.eeChildren[i]).w, parseInt(currentp));
+                }
+                pos += parseInt(currentp);
+            }
+        }
+}]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammer.min.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
@@ -748,8 +878,7 @@ eb.initMouseEvent(sender.parentNode);
 
 ]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
-      <top>-1</top>
-      <topRatio>-0.00128205128205128</topRatio>
+      <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -1376,9 +1505,9 @@ sender.resize = function (img) {
       <widthRatio>0.06</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel577">
-      <__U_editFontColor>404040</__U_editFontColor>
+      <__U_editFontColor>000000</__U_editFontColor>
       <__U_editFontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
-      <__U_editFontSize>12pt</__U_editFontSize>
+      <__U_editFontSize>16pt</__U_editFontSize>
       <__U_editMaxY>300px</__U_editMaxY>
       <__U_onFocusChange-sender-isFocus />
       <__U_onHeightChange-sender-oldH-newH>var dy = newH - oldH;
@@ -1418,11 +1547,12 @@ if (newText.length<180) {
     ee.setText(ee.getControl("panel122"), 200-newText.length);
     ee.setTextColor(ee.getControl("panel122"), "#e0245e");
 }]]></__U_onInputChange-sender-oldText-newText>
-      <backgroundSkin>edit1</backgroundSkin>
-      <height>96</height>
-      <heightRatio>0.223776223776224</heightRatio>
-      <left>35</left>
-      <leftRatio>0.0583333333333333</leftRatio>
+      <backgroundColor>D3D3D3</backgroundColor>
+      <dockX>fill</dockX>
+      <height>53</height>
+      <heightRatio>0.123543123543124</heightRatio>
+      <left>77</left>
+      <leftRatio>0.128333333333333</leftRatio>
       <onCreate><![CDATA[//public
 sender.currentText = "";
 sender.getEditText = function() {
@@ -1465,13 +1595,55 @@ sender.refreshH = function() {
     }
 }
 
+sender.onSizeChange = function(sender, rectOld, rectNew) {
+    eb.setDivRect(sender.c_edit, sender.c_edit.outerLeft, sender.c_edit.outerTop,
+        rectNew.w - sender.c_edit.outerLeft - sender.c_edit.outerRight, null);
+}
+
 sender.f_onChange = function() {
     this.refreshH();
     var oldText = this.currentText;
     this.currentText = this.c_edit.innerText;
     ee.setVisible(this.c_label, (!this.c_edit.innerText) || (this.c_edit.innerText.trim().length<=0)); 
     this.onInputChange(this, oldText, this.currentText);
+    console.log(this.getCurPos());
 }
+ 
+sender.getCurPos = function() {
+    var editableDiv = this.c_edit;
+  var caretPos = 0,
+    sel, range;
+  if (window.getSelection) {
+    sel = window.getSelection();
+    if (sel.rangeCount) {
+      range = sel.getRangeAt(0);
+      if (range.commonAncestorContainer.parentNode == editableDiv) {
+        caretPos = range.endOffset;
+      }
+    }
+  } else if (document.selection &amp;&amp; document.selection.createRange) {
+    range = document.selection.createRange();
+    if (range.parentElement() == editableDiv) {
+      var tempEl = document.createElement("span");
+      editableDiv.insertBefore(tempEl, editableDiv.firstChild);
+      var tempRange = range.duplicate();
+      tempRange.moveToElementText(tempEl);
+      tempRange.setEndPoint("EndToEnd", range);
+      caretPos = tempRange.text.length;
+    }
+  }
+  return caretPos;
+}
+
+sender.setCurPos = function() {
+    var range = document.createRange()
+    var sel = window.getSelection()
+    range.setStart(this.c_edit.childNodes[2], 5)
+    range.collapse(true)
+    sel.removeAllRanges()
+    sel.addRange(range)
+}
+
 
 e.oninput = function() {
     sender.f_onChange();
@@ -1487,9 +1659,11 @@ e.onfocus = function() {
 e.onblur = function() {
 }
 ]]></onCreate>
-      <sizeRatio>0.344086021505376</sizeRatio>
-      <top>21</top>
-      <topRatio>0.048951048951049</topRatio>
+      <outerLeft>77</outerLeft>
+      <outerRight>20</outerRight>
+      <sizeRatio>0.105367793240557</sizeRatio>
+      <top>7</top>
+      <topRatio>0.0163170163170163</topRatio>
       <userProperty>//#P:editFontFamily|多行文字录入V2|'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif|string||用户输入文字的字体样式
 //#P:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
 //#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
@@ -1501,22 +1675,24 @@ e.onblur = function() {
 
 
 </userProperty>
-      <width>279</width>
-      <widthRatio>0.465</widthRatio>
+      <width>503</width>
+      <widthRatio>0.838333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel577/panel603">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <fontColor>C0C0C0</fontColor>
+      <fontColor>9197A3</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
-      <fontSize>14</fontSize>
-      <height>96</height>
+      <fontSize>16</fontSize>
+      <hAlign>left</hAlign>
+      <height>53</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>0.344086021505376</sizeRatio>
+      <sizeRatio>0.105367793240557</sizeRatio>
       <text>有什么新鲜事？</text>
       <top>0</top>
-      <width>279</width>
+      <vAlign>top</vAlign>
+      <width>503</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel577/panel604">
@@ -1525,24 +1701,24 @@ e.onblur = function() {
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
-      <height>62</height>
-      <heightRatio>0.645833333333333</heightRatio>
+      <height>26</height>
+      <heightRatio>0.490566037735849</heightRatio>
       <left>16</left>
-      <leftRatio>0.0573476702508961</leftRatio>
+      <leftRatio>0.0318091451292246</leftRatio>
       <onCreate>
       </onCreate>
       <outerBottom>2</outerBottom>
       <outerLeft>5</outerLeft>
       <outerRight>2</outerRight>
       <outerTop>2</outerTop>
-      <sizeRatio>0.553571428571429</sizeRatio>
+      <sizeRatio>0.257425742574257</sizeRatio>
       <top>15</top>
-      <topRatio>0.15625</topRatio>
+      <topRatio>0.283018867924528</topRatio>
       <v_color1>FFC0C0</v_color1>
       <v_Str>as223</v_Str>
       <vAlign>top</vAlign>
-      <width>112</width>
-      <widthRatio>0.401433691756272</widthRatio>
+      <width>101</width>
+      <widthRatio>0.200795228628231</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -25418,8 +25594,8 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";</onCreate>
       <heightRatio>0.257537688442211</heightRatio>
       <layerName>p4.通用弹出菜单</layerName>
       <layerVisible>false</layerVisible>
-      <left>374</left>
-      <leftRatio>0.328935795954266</leftRatio>
+      <left>375</left>
+      <leftRatio>0.329815303430079</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.style.borderRadius = "10px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
