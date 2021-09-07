@@ -1,5 +1,5 @@
 <page>
-  <controls count="718">
+  <controls count="721">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -469,7 +469,6 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -1375,6 +1374,175 @@ sender.resize = function (img) {
       <topRatio>0.881118881118881</topRatio>
       <width>36</width>
       <widthRatio>0.06</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel577">
+      <__U_editFontColor>404040</__U_editFontColor>
+      <__U_editFontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
+      <__U_editFontSize>12pt</__U_editFontSize>
+      <__U_editMaxY>300px</__U_editMaxY>
+      <__U_onFocusChange-sender-isFocus />
+      <__U_onHeightChange-sender-oldH-newH>var dy = newH - oldH;
+if (dy == 0) return;
+ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
+g5.batchMoveY(g5.p2.p1.v_items,0,dy);
+eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
+eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
+eb.processDock();
+</__U_onHeightChange-sender-oldH-newH>
+      <__U_onInputChange-sender-oldText-newText><![CDATA[if (newText.split("\n").length-1>20) {
+    var s1 = sender.selectionStart;
+    var s2 = sender.selectionEnd;
+    newText = oldText;
+    sender.setEditText(newText);
+    //sender.setSelectionRange(s1-1,s2-1);
+}
+
+ee.getControl("panel1").check();
+var newText = newText.trim();
+var c = ee.getControl("panel53");
+if (newText.length<180) {
+    c.v_color = "#29a5f2";
+    c.v_r = "9";
+    c.refresh(newText.length/200);
+    ee.setText(ee.getControl("panel122"), "");    
+} else if (newText.length<=200) {
+    c.v_color = "#ffad1f";
+    c.v_r = "12";
+    c.refresh(newText.length/200);    
+    ee.setText(ee.getControl("panel122"), 200-newText.length);    
+    ee.setTextColor(ee.getControl("panel122"), "#ffad1f");
+} else {
+    c.v_color = "#e0245e";
+    c.v_r = "14";
+    c.refresh((newText.length-200)/100);    
+    ee.setText(ee.getControl("panel122"), 200-newText.length);
+    ee.setTextColor(ee.getControl("panel122"), "#e0245e");
+}]]></__U_onInputChange-sender-oldText-newText>
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>96</height>
+      <heightRatio>0.223776223776224</heightRatio>
+      <left>35</left>
+      <leftRatio>0.0583333333333333</leftRatio>
+      <onCreate><![CDATA[//public
+sender.currentText = "";
+sender.getEditText = function() {
+    return this.currentText;
+}
+sender.setEditText = function(text) {
+    this.c_edit.innerText = text;
+    this.f_onChange();
+}
+
+//protected
+sender.c_label = sender.eeChildren[0];
+sender.c_edit = sender.eeChildren[1];
+
+//private
+var e = sender.c_edit;
+e.contentEditable = true;
+e.style.border = "none";
+e.style.outline = "none";
+e.style.height = "";
+e.style.minHeight = (eb.getDivRectSetting(sender).h - e.outerTop - e.outerBottom) + "px";
+e.style.maxHeight = sender.editMaxY;
+e.style.overflowY = "auto";
+e.style.fontFamily = sender.editFontFamily;
+e.style.fontSize = sender.editFontSize;
+e.style.color = "#" + sender.editFontColor;
+e.style.wordBreak = "break-all";
+e.style.wordWrap = "break-word";
+e.style.whiteSpace = "normal";
+e.innerHTML = "";
+eb.setDivRect(e, e.outerLeft, e.outerTop, eb.getDivRectSetting(sender).w - e.outerLeft - e.outerRight, null);
+sender.v_lastH = eb.getDivRectSetting(sender).h;
+
+sender.refreshH = function() {
+    if (this.v_lastH!=eb.getDivRect(sender.c_edit).h+e.outerTop+e.outerBottom) {
+        var lastH = this.v_lastH;
+        this.v_lastH = eb.getDivRect(sender.c_edit).h+e.outerTop+e.outerBottom;
+        ee.setRect(this,null,null,null,this.v_lastH);
+        sender.onHeightChange(this, lastH, this.v_lastH);
+    }
+}
+
+sender.f_onChange = function() {
+    this.refreshH();
+    var oldText = this.currentText;
+    this.currentText = this.c_edit.innerText;
+    ee.setVisible(this.c_label, (!this.c_edit.innerText) || (this.c_edit.innerText.trim().length<=0)); 
+    this.onInputChange(this, oldText, this.currentText);
+}
+
+e.oninput = function() {
+    sender.f_onChange();
+}
+
+e.onpaste = function() {
+    sender.f_onChange();
+}
+
+e.onfocus = function() {
+}
+
+e.onblur = function() {
+}
+]]></onCreate>
+      <sizeRatio>0.344086021505376</sizeRatio>
+      <top>21</top>
+      <topRatio>0.048951048951049</topRatio>
+      <userProperty>//#P:editFontFamily|多行文字录入V2|'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif|string||用户输入文字的字体样式
+//#P:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
+//#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
+//#P:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
+//#P:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
+//#P:onInputChange(sender,oldText,newText)|多行文字录入V2||jsMix||由于用户的输入导致内容改变。sender:触发事件的控件，oldText:旧的内容，newText:新的内容
+//#P:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
+
+
+
+</userProperty>
+      <width>279</width>
+      <widthRatio>0.465</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel577/panel603">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>C0C0C0</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>14</fontSize>
+      <height>96</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.344086021505376</sizeRatio>
+      <text>有什么新鲜事？</text>
+      <top>0</top>
+      <width>279</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel577/panel604">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <fontColor>404040</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>62</height>
+      <heightRatio>0.645833333333333</heightRatio>
+      <left>16</left>
+      <leftRatio>0.0573476702508961</leftRatio>
+      <onCreate>
+      </onCreate>
+      <outerBottom>2</outerBottom>
+      <outerLeft>5</outerLeft>
+      <outerRight>2</outerRight>
+      <outerTop>2</outerTop>
+      <sizeRatio>0.553571428571429</sizeRatio>
+      <top>15</top>
+      <topRatio>0.15625</topRatio>
+      <v_color1>FFC0C0</v_color1>
+      <v_Str>as223</v_Str>
+      <vAlign>top</vAlign>
+      <width>112</width>
+      <widthRatio>0.401433691756272</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -10424,6 +10592,7 @@ sender.loadDataset = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
