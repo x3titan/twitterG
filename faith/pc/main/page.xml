@@ -1608,31 +1608,46 @@ sender.f_onChange = function() {
     this.onInputChange(this, oldText, this.currentText);
     console.log(this.getCurPos());
 }
- 
+
+sender.CurPos = function() {
+    this.elmIndex = new Array();
+    this.curPos = 0;
+}
+   
 sender.getCurPos = function() {
-    var editableDiv = this.c_edit;
-  var caretPos = 0,
-    sel, range;
-  if (window.getSelection) {
-    sel = window.getSelection();
-    if (sel.rangeCount) {
-      range = sel.getRangeAt(0);
-      if (range.commonAncestorContainer.parentNode == editableDiv) {
-        caretPos = range.endOffset;
-      }
+    var curPos = new this.CurPos();
+    var sel, range;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        if (sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            var node = range.commonAncestorContainer;
+            while (node.parentNode) {
+                var i;
+                for (i=0; i<node.parentNode.childNodes.length; i++) {
+                    if (node.parentNode.childNodes[i] == node) {
+                        curPos.elmIndex.push(i);
+                        break;
+                    }
+                }
+                node = node.parentNode;
+                if (node == this.c_edit) break;
+            }
+            curPos.curPos = range.endOffset;
+        }
+    } else if (document.selection &amp;&amp; document.selection.createRange) {
+        console.log("not perform");
+        range = document.selection.createRange();
+        if (range.parentElement() == this.c_edit) {
+            var tempEl = document.createElement("span");
+            this.c_edit.insertBefore(tempEl, this.c_edit.firstChild);
+            var tempRange = range.duplicate();
+            tempRange.moveToElementText(tempEl);
+            tempRange.setEndPoint("EndToEnd", range);
+            caretPos = tempRange.text.length;
+        }
     }
-  } else if (document.selection &amp;&amp; document.selection.createRange) {
-    range = document.selection.createRange();
-    if (range.parentElement() == editableDiv) {
-      var tempEl = document.createElement("span");
-      editableDiv.insertBefore(tempEl, editableDiv.firstChild);
-      var tempRange = range.duplicate();
-      tempRange.moveToElementText(tempEl);
-      tempRange.setEndPoint("EndToEnd", range);
-      caretPos = tempRange.text.length;
-    }
-  }
-  return caretPos;
+    return curPos;
 }
 
 sender.setCurPos = function() {
@@ -1644,8 +1659,11 @@ sender.setCurPos = function() {
     sel.addRange(range)
 }
 
+e.onkeyup = function(event) {
+    event.preventDefault(); 
+}
 
-e.oninput = function() {
+e.oninput = function(event) {
     sender.f_onChange();
 }
 
