@@ -1521,12 +1521,7 @@ eb.processDock();
       <__U_onInputChange-sender-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
 
 if (newText.split("\n").length-1>20) {
-    var s1 = sender.selectionStart;
-    var s2 = sender.selectionEnd;
-    newText = sender.c_edit.v_lastText;
-    sender.setEditText(oldHtml, true);
-    newText = oldText;
-    sender.setCurPos(sender.lastCurPos);
+    return false;
 }
 
 ee.getControl("panel1").check();
@@ -1617,7 +1612,12 @@ sender.f_onChange = function() {
     this.currentText = this.getPlanText();
     this.currentHtml = this.c_edit.innerHTML;
     ee.setVisible(this.c_label, (!this.c_edit.innerText) || (this.c_edit.innerText.trim().length<=0)); 
-    this.onInputChange(this, oldText, this.currentText, oldHtml, this.currentHtml);
+    if (this.onInputChange(this, oldText, this.currentText, oldHtml, this.currentHtml)==false) {
+        this.setEditText(oldHtml, true);
+        this.currentHtml = oldHtml;
+        this.currentText = oldText;
+        this.setCurPos(this.lastCurPos);
+    }
 }
 
 sender.CurPos = function() {
@@ -1741,7 +1741,7 @@ e.onblur = function() {
 //#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
 //#P:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
 //#P:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
-//#P:onInputChange(sender,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变。sender:触发事件的控件，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
+//#P:onInputChange(sender,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变，返回false表示取消本次修改。sender:触发事件的控件，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
 //#P:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
 
 
