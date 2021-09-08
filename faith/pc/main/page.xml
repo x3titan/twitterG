@@ -1518,12 +1518,17 @@ eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
 eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
 eb.processDock();
 </__U_onHeightChange-sender-oldH-newH>
-      <__U_onInputChange-sender-oldText-newText><![CDATA[if (newText.split("\n").length-1>20) {
+      <__U_onInputChange-sender-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
+
+console.log(sender.getPlanText());
+
+if (newText.split("\n").length-1>20) {
     var s1 = sender.selectionStart;
     var s2 = sender.selectionEnd;
+    newText = sender.c_edit.v_lastText;
+    sender.setEditText(oldHtml, true);
     newText = oldText;
-    sender.setEditText(newText);
-    //sender.setSelectionRange(s1-1,s2-1);
+    sender.setCurPos(sender.lastCurPos);
 }
 
 ee.getControl("panel1").check();
@@ -1546,7 +1551,9 @@ if (newText.length<180) {
     c.refresh((newText.length-200)/100);    
     ee.setText(ee.getControl("panel122"), 200-newText.length);
     ee.setTextColor(ee.getControl("panel122"), "#e0245e");
-}]]></__U_onInputChange-sender-oldText-newText>
+}
+
+]]></__U_onInputChange-sender-oldText-newText-oldHtml-newHtml>
       <backgroundColor>D3D3D3</backgroundColor>
       <dockX>fill</dockX>
       <height>53</height>
@@ -1555,11 +1562,16 @@ if (newText.length<180) {
       <leftRatio>0.128333333333333</leftRatio>
       <onCreate><![CDATA[//public
 sender.currentText = "";
+sender.currentHtml = "";
 sender.getEditText = function() {
     return this.currentText;
 }
-sender.setEditText = function(text) {
-    this.c_edit.innerText = text;
+sender.setEditText = function(text, asHtml) {
+    if (asHtml) {
+        this.c_edit.innerHTML = text;
+    } else {
+        this.c_edit.innerText = text;
+    }
     this.f_onChange();
 }
 
@@ -1603,10 +1615,11 @@ sender.onSizeChange = function(sender, rectOld, rectNew) {
 sender.f_onChange = function() {
     this.refreshH();
     var oldText = this.currentText;
-    this.currentText = this.c_edit.innerText;
+    var oldHtml = this.currentHtml;
+    this.currentText = this.getPlanText();
+    this.currentHtml = this.c_edit.innerHTML;
     ee.setVisible(this.c_label, (!this.c_edit.innerText) || (this.c_edit.innerText.trim().length<=0)); 
-    this.onInputChange(this, oldText, this.currentText);
-    console.log(this.getCurPos());
+    this.onInputChange(this, oldText, this.currentText, oldHtml, this.currentHtml);
 }
 
 sender.CurPos = function() {
@@ -1650,17 +1663,60 @@ sender.getCurPos = function() {
     return curPos;
 }
 
-sender.setCurPos = function() {
+sender.setCurPos = function(curPos) {
     var range = document.createRange()
     var sel = window.getSelection()
-    range.setStart(this.c_edit.childNodes[2], 5)
+    var node = this.c_edit;
+    for (var i=curPos.elmIndex.length-1; i>=0; i--) {
+        if (!node.childNodes[curPos.elmIndex[i]]) break;
+        node = node.childNodes[curPos.elmIndex[i]];
+    }
+    range.setStart(node, curPos.curPos);
     range.collapse(true)
     sel.removeAllRanges()
     sel.addRange(range)
 }
 
-e.onkeyup = function(event) {
-    event.preventDefault(); 
+sender.getPlanText = function() {
+    var newValue = "";
+    var isOnFreshLine = true;
+    
+    // Recursive function to navigate childNodes and build linebreaks with text
+    var parseChildNodesForValueAndLines = function(childNodes) {
+        for (var i = 0; i < childNodes.length; i++) {
+            var childNode = childNodes[i];
+            
+            if (childNode.nodeName === 'BR') {
+              // BRs are always line breaks which means the next loop is on a fresh line
+              newValue += '\n';
+              isOnFreshLine = true;
+              continue;
+            }
+            
+            // We may or may not need to create a new line
+            if (childNode.nodeName === 'DIV' &amp;&amp; isOnFreshLine === false) {
+              // Divs create new lines for themselves if they aren't already on one
+              newValue += '\n';
+            }
+            
+            // Whether we created a new line or not, we'll use it for this content so the next loop will not be on a fresh line:
+            isOnFreshLine = false;
+            
+            // Add the text content if this is a text node:
+            if (childNode.nodeType === 3 &amp;&amp; childNode.textContent) {
+              newValue += childNode.textContent;
+            }
+            
+            // If this node has children, get into them as well:
+            parseChildNodesForValueAndLines(childNode.childNodes);
+        }
+    }
+    parseChildNodesForValueAndLines(sender.c_edit.childNodes);
+    return newValue;
+}
+
+e.onkeydown = function(event) {
+    sender.lastCurPos = sender.getCurPos();
 }
 
 e.oninput = function(event) {
@@ -1687,7 +1743,7 @@ e.onblur = function() {
 //#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
 //#P:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
 //#P:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
-//#P:onInputChange(sender,oldText,newText)|多行文字录入V2||jsMix||由于用户的输入导致内容改变。sender:触发事件的控件，oldText:旧的内容，newText:新的内容
+//#P:onInputChange(sender,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变。sender:触发事件的控件，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
 //#P:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
 
 
