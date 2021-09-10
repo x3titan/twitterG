@@ -1518,11 +1518,40 @@ eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
 eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
 eb.processDock();
 </__U_onHeightChange-sender-oldH-newH>
-      <__U_onInputChange-sender-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
+      <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
 
 if (newText.split("\n").length-1>20) {
     return false;
 }
+
+//if (key.key == "@") alert("@");
+var removeLink = function(node) {
+    if (node.childNodes.length>0) {
+        for (var i=0; i<node.childNodes.length; i++) {
+            if (node.childNodes[i].style &amp;&amp; node.childNodes[i].style.display=="inline") {
+                node.innerHTML = node.innerText;
+                break;
+            }
+        }
+        for (var i=0; i<node.childNodes.length; i++) {
+            removeLink(node.childNodes[i]);
+        }
+        return;
+    }
+}
+if (!g5.dis) removeLink(sender.c_edit);
+var addLink = function(node) {
+    if (node.childNodes.length>0) {
+        for (var i=node.childNodes.length-1; i>=0; i--) {
+            addLink(node.childNodes[i]);
+        }
+        return;
+    }
+    var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
+    node.parentNode.innerHTML = node.parentNode.innerHTML.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>");
+}
+if (!g5.dis) addLink(sender.c_edit);
+
 
 ee.getControl("panel1").check();
 var newText = newText.trim();
@@ -1546,7 +1575,7 @@ if (newText.length<180) {
     ee.setTextColor(ee.getControl("panel122"), "#e0245e");
 }
 
-]]></__U_onInputChange-sender-oldText-newText-oldHtml-newHtml>
+]]></__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml>
       <backgroundColor>D3D3D3</backgroundColor>
       <dockX>fill</dockX>
       <height>53</height>
@@ -1612,7 +1641,7 @@ sender.f_onChange = function() {
     this.currentText = this.getPlanText();
     this.currentHtml = this.c_edit.innerHTML;
     ee.setVisible(this.c_label, (!this.c_edit.innerText) || (this.c_edit.innerText.trim().length<=0)); 
-    if (this.onInputChange(this, oldText, this.currentText, oldHtml, this.currentHtml)==false) {
+    if (this.onInputChange(this, this.lastKey, oldText, this.currentText, oldHtml, this.currentHtml)==false) {
         this.setEditText(oldHtml, true);
         this.currentHtml = oldHtml;
         this.currentText = oldText;
@@ -1715,6 +1744,12 @@ sender.getPlanText = function() {
 
 e.onkeydown = function(event) {
     sender.lastCurPos = sender.getCurPos();
+    sender.lastKey = {};
+    sender.lastKey.key = event.key;
+    sender.lastKey.keyCode = event.keyCode;
+    sender.lastKey.shiftKey = event.shiftKey;
+    sender.lastKey.ctrlKey = event.ctrlKey;
+    sender.lastKey.altKey = event.altKey;
 }
 
 e.oninput = function(event) {
@@ -1741,7 +1776,7 @@ e.onblur = function() {
 //#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
 //#P:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
 //#P:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
-//#P:onInputChange(sender,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变，返回false表示取消本次修改。sender:触发事件的控件，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
+//#P:onInputChange(sender,key,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变，返回false表示取消本次修改。sender:触发事件的控件，key:用户按键，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
 //#P:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
 
 
