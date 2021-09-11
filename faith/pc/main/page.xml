@@ -1539,7 +1539,7 @@ var removeLink = function(node) {
         return;
     }
 }
-if (!g5.dis) removeLink(sender.c_edit);
+if (key.key == "1") removeLink(sender.c_edit);
 var addLink = function(node) {
     if (node.childNodes.length>0) {
         for (var i=node.childNodes.length-1; i>=0; i--) {
@@ -1548,9 +1548,13 @@ var addLink = function(node) {
         return;
     }
     var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
-    node.parentNode.innerHTML = node.parentNode.innerHTML.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>");
+    var sTemp = node.textContent;
+    var newNode = document.createElement("DIV");
+    node.replaceWith(newNode);
+    newNode.innerHTML =  sTemp.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>")
+    //node.parentNode.innerHTML = node.parentNode.innerHTML.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>");
 }
-if (!g5.dis) addLink(sender.c_edit);
+if (key.key == "2") addLink(sender.c_edit);
 
 
 ee.getControl("panel1").check();
