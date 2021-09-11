@@ -1551,10 +1551,22 @@ var addLink = function(node) {
     var sTemp = node.textContent;
     var newNode = document.createElement("DIV");
     node.replaceWith(newNode);
-    newNode.innerHTML =  sTemp.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>")
+    newNode.innerHTML =  sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
     //node.parentNode.innerHTML = node.parentNode.innerHTML.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>");
 }
 if (key.key == "2") addLink(sender.c_edit);
+
+var addLinkV2 = function() {
+    var htm = "";
+    var newTextS = newText.split("\n");
+    for (var i=0; i<newTextS.length; i++) {
+        htm += "<div>" + newTextS[i] + "</div>";
+    }
+    var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
+    htm = htm.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
+    sender.c_edit.innerHTML = htm;
+}
+if (key.key == "3") addLinkV2();
 
 
 ee.getControl("panel1").check();
