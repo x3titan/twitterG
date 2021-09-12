@@ -1555,8 +1555,8 @@ var addLink = function(node) {
     //node.parentNode.innerHTML = node.parentNode.innerHTML.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>");
 }
 if (key.key == "2") addLink(sender.c_edit);
-sender.getCurPosAbs();
-
+var cp = sender.getCurPosAbs();
+sender.setCurPosAbs(cp);
 
 var addLinkV2 = function() {
     var htm = "";
@@ -1723,14 +1723,12 @@ sender.setCurPos = function(curPos) {
 }
 
 sender.getCurPosAbs = function() {
-    //找出当前节点
     var curPos = this.getCurPos();
     var nodeSel = this.c_edit;
     for (var i=curPos.elmIndex.length-1; i>=0; i--) {
         if (!nodeSel.childNodes[curPos.elmIndex[i]]) break;
         nodeSel = nodeSel.childNodes[curPos.elmIndex[i]];
     }
-    //遍历树
     var pos = 0;
     var addPos = function(node) {
         for (var i=0; i<node.childNodes.length; i++) {
@@ -1753,8 +1751,49 @@ sender.getCurPosAbs = function() {
     }
     addPos(this.c_edit);
     console.log(pos);
+    return pos;
 }
 
+sender.setCurPosAbs = function(absPos) {
+    var pos = 0;
+    var setNode, setPos;
+    var addPos = function(node) {
+        for (var i=0; i<node.childNodes.length; i++) {
+            if (node.childNodes[i].nodeName == "DIV") {
+                pos++;
+                if (pos>=absPos) {
+                    setNode = node.childNodes[i].childNodes[0];
+                    setPos = 0;
+                    return true;
+                }
+                if (addPos(node.childNodes[i])) return true;
+            } else if (node.childNodes[i].nodeName == "BR") {
+            } else if (node.childNodes[i].nodeName == "SPAN") {
+                if (pos+node.childNodes[i].textContent.length>=absPos) {
+                    setNode = node.childNodes[i];
+                    setPos = absPos - pos;
+                    return true;
+                }
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName == "#text") {
+                if (pos+node.childNodes[i].textContent.length>=absPos) {
+                    setNode = node.childNodes[i];
+                    setPos = absPos - pos;
+                    return true;
+                }
+                pos += node.childNodes[i].textContent.length;
+            }
+        }
+        return false;
+    }
+    addPos(this.c_edit);
+    var range = document.createRange()
+    var sel = window.getSelection()
+    range.setStart(setNode, setPos);
+    range.collapse(true)
+    sel.removeAllRanges()
+    sel.addRange(range)
+}
 
 sender.getPlanText = function() {
     var newValue = "";
