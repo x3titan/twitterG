@@ -1555,6 +1555,8 @@ var addLink = function(node) {
     //node.parentNode.innerHTML = node.parentNode.innerHTML.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>");
 }
 if (key.key == "2") addLink(sender.c_edit);
+sender.getCurPosAbs();
+
 
 var addLinkV2 = function() {
     var htm = "";
@@ -1720,37 +1722,58 @@ sender.setCurPos = function(curPos) {
     sel.addRange(range)
 }
 
+sender.getCurPosAbs = function() {
+    //找出当前节点
+    var curPos = this.getCurPos();
+    var nodeSel = this.c_edit;
+    for (var i=curPos.elmIndex.length-1; i>=0; i--) {
+        if (!nodeSel.childNodes[curPos.elmIndex[i]]) break;
+        nodeSel = nodeSel.childNodes[curPos.elmIndex[i]];
+    }
+    //遍历树
+    var pos = 0;
+    var addPos = function(node) {
+        for (var i=0; i<node.childNodes.length; i++) {
+            if (node.childNodes[i] == nodeSel) {
+                if (nodeSel.nodeName =="DIV") pos++;
+                pos += curPos.curPos;
+                return true;
+            }
+            if (node.childNodes[i].nodeName == "DIV") {
+                pos++;
+                if (addPos(node.childNodes[i])) return true;
+            } else if (node.childNodes[i].nodeName == "BR") {
+            } else if (node.childNodes[i].nodeName == "SPAN") {
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName == "#text") {
+                pos += node.childNodes[i].textContent.length;
+            }
+        }
+        return false;
+    }
+    addPos(this.c_edit);
+    console.log(pos);
+}
+
+
 sender.getPlanText = function() {
     var newValue = "";
     var isOnFreshLine = true;
-    
-    // Recursive function to navigate childNodes and build linebreaks with text
     var parseChildNodesForValueAndLines = function(childNodes) {
         for (var i = 0; i < childNodes.length; i++) {
             var childNode = childNodes[i];
-            
             if (childNode.nodeName === 'BR') {
-              // BRs are always line breaks which means the next loop is on a fresh line
-              newValue += '\n';
-              isOnFreshLine = true;
-              continue;
+                newValue += '\n';
+                isOnFreshLine = true;
+                continue;
             }
-            
-            // We may or may not need to create a new line
             if (childNode.nodeName === 'DIV' &amp;&amp; isOnFreshLine === false) {
-              // Divs create new lines for themselves if they aren't already on one
-              newValue += '\n';
+                newValue += '\n';
             }
-            
-            // Whether we created a new line or not, we'll use it for this content so the next loop will not be on a fresh line:
             isOnFreshLine = false;
-            
-            // Add the text content if this is a text node:
             if (childNode.nodeType === 3 &amp;&amp; childNode.textContent) {
-              newValue += childNode.textContent;
+                newValue += childNode.textContent;
             }
-            
-            // If this node has children, get into them as well:
             parseChildNodesForValueAndLines(childNode.childNodes);
         }
     }
@@ -1828,8 +1851,6 @@ e.onblur = function() {
       <heightRatio>0.490566037735849</heightRatio>
       <left>16</left>
       <leftRatio>0.0318091451292246</leftRatio>
-      <onCreate>
-      </onCreate>
       <outerBottom>2</outerBottom>
       <outerLeft>5</outerLeft>
       <outerRight>2</outerRight>
