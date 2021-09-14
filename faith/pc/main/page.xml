@@ -1554,15 +1554,16 @@ var addLink = function(node) {
     newNode.innerHTML =  sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
     //node.parentNode.innerHTML = node.parentNode.innerHTML.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>");
 }
-if (key.key == "2") addLink(sender.c_edit);
-var cp = sender.getCurPosAbs();
-sender.setCurPosAbs(cp);
 
 var addLinkV2 = function() {
     var htm = "";
     var newTextS = newText.split("\n");
     for (var i=0; i<newTextS.length; i++) {
-        htm += "<div>" + newTextS[i] + "</div>";
+        if (newTextS[i].length<=0) {
+            htm += "<div><br\></div>";
+        } else {
+            htm += "<div>" + newTextS[i] + "</div>";
+        }
     }
     var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
     htm = htm.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
@@ -1570,6 +1571,10 @@ var addLinkV2 = function() {
 }
 if (key.key == "3") addLinkV2();
 
+var cp = sender.getCurPosAbs();
+addLinkV2(sender.c_edit);
+sender.setCurPosAbs(cp);
+console.log(cp);
 
 ee.getControl("panel1").check();
 var newText = newText.trim();
@@ -1738,7 +1743,7 @@ sender.getCurPosAbs = function() {
                 return true;
             }
             if (node.childNodes[i].nodeName == "DIV") {
-                pos++;
+                if (i>0) pos++;
                 if (addPos(node.childNodes[i])) return true;
             } else if (node.childNodes[i].nodeName == "BR") {
             } else if (node.childNodes[i].nodeName == "SPAN") {
@@ -1750,7 +1755,6 @@ sender.getCurPosAbs = function() {
         return false;
     }
     addPos(this.c_edit);
-    console.log(pos);
     return pos;
 }
 
@@ -1760,9 +1764,13 @@ sender.setCurPosAbs = function(absPos) {
     var addPos = function(node) {
         for (var i=0; i<node.childNodes.length; i++) {
             if (node.childNodes[i].nodeName == "DIV") {
-                pos++;
+                if (i>0) pos++;
                 if (pos>=absPos) {
-                    setNode = node.childNodes[i].childNodes[0];
+                    if (node.childNodes[i].childNodes.length>0) {
+                        setNode = node.childNodes[i].childNodes[0];
+                    } else {
+                        setNode = node.childNodes[i];
+                    }
                     setPos = 0;
                     return true;
                 }
