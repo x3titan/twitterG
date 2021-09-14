@@ -1804,28 +1804,23 @@ sender.setCurPosAbs = function(absPos) {
 }
 
 sender.getPlanText = function() {
-    var newValue = "";
-    var isOnFreshLine = true;
-    var parseChildNodesForValueAndLines = function(childNodes) {
-        for (var i = 0; i < childNodes.length; i++) {
-            var childNode = childNodes[i];
-            if (childNode.nodeName === 'BR') {
-                newValue += '\n';
-                isOnFreshLine = true;
-                continue;
+    var text = "";
+    var addPos = function(node) {
+        for (var i=0; i<node.childNodes.length; i++) {
+            if (node.childNodes[i].nodeName == "DIV") {
+                if (i>0) text += "\n";
+                addPos(node.childNodes[i]);
+            } else if (node.childNodes[i].nodeName == "BR") {
+            } else if (node.childNodes[i].nodeName == "SPAN") {
+                text += node.childNodes[i].textContent;
+            } else if (node.childNodes[i].nodeName == "#text") {
+                text += node.childNodes[i].textContent;
             }
-            if (childNode.nodeName === 'DIV' &amp;&amp; isOnFreshLine === false) {
-                newValue += '\n';
-            }
-            isOnFreshLine = false;
-            if (childNode.nodeType === 3 &amp;&amp; childNode.textContent) {
-                newValue += childNode.textContent;
-            }
-            parseChildNodesForValueAndLines(childNode.childNodes);
         }
+        return false;
     }
-    parseChildNodesForValueAndLines(sender.c_edit.childNodes);
-    return newValue;
+    addPos(this.c_edit);
+    return text;
 }
 
 e.onkeydown = function(event) {
