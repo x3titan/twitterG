@@ -1747,7 +1747,7 @@ sender.getCurPosAbs = function() {
                 if (addPos(node.childNodes[i])) return true;
             } else if (node.childNodes[i].nodeName == "BR") {
             } else if (node.childNodes[i].nodeName == "SPAN") {
-                pos += node.childNodes[i].textContent.length;
+                if (addPos(node.childNodes[i])) return true;
             } else if (node.childNodes[i].nodeName == "#text") {
                 pos += node.childNodes[i].textContent.length;
             }
@@ -1777,12 +1777,7 @@ sender.setCurPosAbs = function(absPos) {
                 if (addPos(node.childNodes[i])) return true;
             } else if (node.childNodes[i].nodeName == "BR") {
             } else if (node.childNodes[i].nodeName == "SPAN") {
-                if (pos+node.childNodes[i].textContent.length>=absPos) {
-                    setNode = node.childNodes[i];
-                    setPos = absPos - pos;
-                    return true;
-                }
-                pos += node.childNodes[i].textContent.length;
+                if (addPos(node.childNodes[i])) return true;
             } else if (node.childNodes[i].nodeName == "#text") {
                 if (pos+node.childNodes[i].textContent.length>=absPos) {
                     setNode = node.childNodes[i];
