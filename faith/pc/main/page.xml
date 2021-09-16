@@ -1688,7 +1688,6 @@ sender.setCurPosAbs = function(absPos) {
     sel.addRange(range)
 }
 
-
 sender.getPlanText = function() {
     var text = "";
     var addPos = function(node) {
@@ -1720,6 +1719,7 @@ e.onkeydown = function(event) {
 }
 
 e.oninput = function(event) {
+    if (sender.v_isIme) return;
     sender.f_onChange();
 }
 
@@ -1732,6 +1732,19 @@ e.onfocus = function() {
 
 e.onblur = function() {
 }
+
+sender.c_edit.addEventListener("compositionstart", function(event) {
+    sender.v_isIme = true;
+});
+
+sender.c_edit.addEventListener("compositionupdate", function(event) {
+    //console.log("ime update");
+});
+
+sender.c_edit.addEventListener("compositionend", function(event) {
+    sender.v_isIme = false;
+    sender.f_onChange();
+});
 ]]></onCreate>
       <outerLeft>77</outerLeft>
       <outerRight>20</outerRight>
@@ -36955,7 +36968,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="107">
+  <g5Items count="108">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -39046,6 +39059,11 @@ g5.contentDel(v_content.id, function() {
 
 ]]></functionCode>
     </item>
+    <item name="altClick" type="20">
+      <varValue />
+      <functionParam>sender</functionParam>
+      <functionCode>alert(sender.innerHTML);</functionCode>
+    </item>
     <item name="contentDel" type="20">
       <varValue />
       <functionParam>contentId, onComplete</functionParam>
@@ -40255,10 +40273,13 @@ var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&amp;@#\/%?=~_|!:,.;]*[a-z0-9-+&
 var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
 // Email addresses *** here I've changed the expression ***
 var emailAddressPattern = /(([a-zA-Z0-9_\-\.]+)@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6}))+/gim;
+var altPattern = /@([a-zA-Z0-9_\-]{2,20})/gim;
+
 return text //&amp;#x1f310;
     .replace(urlPattern, "<a class='css_button1' target='_blank' href='$&amp;' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$&amp;</a>")
     .replace(pseudoUrlPattern, "$1<a class='css_button1' target='_blank' href='http://$2' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$2</a>")
-    .replace(emailAddressPattern, "<a class='css_button1' target='_blank' href='mailto:$1' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x2709; $1</a>");
+    .replace(emailAddressPattern, "<a class='css_button1' target='_blank' href='mailto:$1' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x2709; $1</a>")
+    .replace(altPattern, "<span style='color:#1da1f2' onclick='g5.altClick(this)'>@$1</span>");
 ]]></functionCode>
     </item>
     <item name="refreshUserInfo" type="20">
