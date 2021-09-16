@@ -32134,6 +32134,8 @@ if (userId == myUserId) {
 }]]></script2>
       <script3>if (eio.readString8() != "T") {
     ee.setVisible(ee.getControl("panel16"), false);
+    g5.loading.close();
+    g5.alert1("提示信息",eio.readString8());
     showUserPage.busy = false;
     return;
 }
@@ -37954,6 +37956,14 @@ if (root.v_content.content.length>0) {
     } else {
         c.innerHTML = "<font style='font-size:12pt; line-height:1.2;'>" + g5.showCommonText(root.v_content.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
     }
+    for (var i=0; i<c.childNodes[0].childNodes.length; i++) {
+        if (c.childNodes[0].childNodes[i].nodeName=="SPAN") {
+            ee.setOnClick(c.childNodes[0].childNodes[i], function(sender, event) {
+                g5.p2.p2.show(null,null,sender.innerText.substr(1));
+                window.event? window.event.cancelBubble = true : event.stopPropagation();
+            });
+        }
+    }
     ee.changeParent(c,g5.pLine1);
     var rect = eb.getDivRect(c);
     ee.changeParent(c,root);
@@ -40279,7 +40289,7 @@ return text //&amp;#x1f310;
     .replace(urlPattern, "<a class='css_button1' target='_blank' href='$&amp;' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$&amp;</a>")
     .replace(pseudoUrlPattern, "$1<a class='css_button1' target='_blank' href='http://$2' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$2</a>")
     .replace(emailAddressPattern, "<a class='css_button1' target='_blank' href='mailto:$1' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x2709; $1</a>")
-    .replace(altPattern, "<span style='color:#1da1f2' onclick='g5.altClick(this)'>@$1</span>");
+    .replace(altPattern, "<span style='color:#1da1f2'>@$1</span>");
 ]]></functionCode>
     </item>
     <item name="refreshUserInfo" type="20">
