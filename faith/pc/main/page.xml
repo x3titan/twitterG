@@ -905,9 +905,9 @@ sender.style.borderLeft = "";
 sender.style.borderRight = "";
 
 sender.check = function() {
-    var enabled = this.c_edit.getPlanText().trim().length > 0;
+    var enabled = this.c_edit.getEditText().trim().length > 0;
     if (ee.getControl("panel7").v_photos.length>0) enabled = true;
-    if (this.c_edit.getPlanText().trim().length>200) enabled = false;
+    if (this.c_edit.getEditText().trim().length>200) enabled = false;
     ee.getControl("panel251").setEnabled(enabled);
 }
 
@@ -1197,7 +1197,7 @@ sender.refresh = function(progress) {
 if (newTwitter.busy) return;
 newTwitter.uplinkType = "N";
 newTwitter.uplinkId = 0;
-newTwitter.content = g5.p2.p1.a1.c_edit.getPlanText();
+newTwitter.content = g5.p2.p1.a1.c_edit.getEditText();
 newTwitter.photos = ee.getControl("panel7").v_photos;
 newTwitter.onComplete = function(contentId) {
     var newContent = new g5.ContentInfo();
@@ -1414,57 +1414,11 @@ if (newText.split("\n").length-1>20) {
     return false;
 }
 
-//if (key.key == "@") alert("@");
-var removeLink = function(node) {
-    if (node.childNodes.length>0) {
-        for (var i=0; i<node.childNodes.length; i++) {
-            if (node.childNodes[i].style &amp;&amp; node.childNodes[i].style.display=="inline") {
-                node.innerHTML = node.innerText;
-                break;
-            }
-        }
-        for (var i=0; i<node.childNodes.length; i++) {
-            removeLink(node.childNodes[i]);
-        }
-        return;
-    }
-}
-if (key.key == "1") removeLink(sender.c_edit);
-var addLink = function(node) {
-    if (node.childNodes.length>0) {
-        for (var i=node.childNodes.length-1; i>=0; i--) {
-            addLink(node.childNodes[i]);
-        }
-        return;
-    }
-    var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
-    var sTemp = node.textContent;
-    var newNode = document.createElement("DIV");
-    node.replaceWith(newNode);
-    newNode.innerHTML =  sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
-    //node.parentNode.innerHTML = node.parentNode.innerHTML.replace(ptn, "<div style='display:inline;color:#1da1f2'>@$1</div>");
-}
-
-console.log(newText);
-
-var addLinkV2 = function() {
-    var htm = "";
-    var newTextS = newText.split("\n");
-    for (var i=0; i<newTextS.length; i++) {
-        if (newTextS[i].length<=0) {
-            htm += "<div><br\></div>";
-        } else {
-            htm += "<div>" + newTextS[i] + "</div>";
-        }
-    }
-    var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
-    htm = htm.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
-    sender.c_edit.innerHTML = htm;
-}
-if (key.key == "3") addLinkV2();
-
 var cp = sender.getCurPosAbs();
-addLinkV2(sender.c_edit);
+var sTemp = sender.convertHtml(newText);
+var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
+sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
+sender.c_edit.innerHTML = sTemp;
 sender.setCurPosAbs(cp);
 
 g5.p2.p1.a1.check();
@@ -1502,14 +1456,29 @@ sender.currentHtml = "";
 sender.getEditText = function() {
     return this.currentText;
 }
-sender.setEditText = function(text, asHtml) {
-    if (asHtml) {
-        this.c_edit.innerHTML = text;
-    } else {
-        this.c_edit.innerText = text;
-    }
-    this.f_onChange();
+sender.setEditText = function(text, inOnChange) {
+    this.c_edit.innerHTML = this.convertHtml(text);
+    if (!inOnChange) this.f_onChange();
 }
+
+sender.setEditHtm = function(htmlText, inOnChange) {
+    this.c_edit.innerHTML = text;
+    if (!inOnChange) this.f_onChange();
+}
+
+sender.convertHtml = function(text) {
+    var textS = text.replace(/ /g, "\xA0").split("\n");
+    text = "";
+    for (var i=0; i<textS.length; i++) {
+        if (textS[i].length<=0) {
+            text += "<div><br\></div>";
+        } else {
+            text += "<div>" + textS[i] + "</div>";
+        }
+    }
+    return text;
+}
+
 
 //protected
 sender.c_label = sender.eeChildren[0];
@@ -1552,7 +1521,7 @@ sender.f_onChange = function() {
     this.refreshH();
     var oldText = this.currentText;
     var oldHtml = this.currentHtml;
-    this.currentText = this.getPlanText();
+    this.currentText = this.getPlanText().replace(/\xA0/g, " ");;
     this.currentHtml = this.c_edit.innerHTML;
     ee.setVisible(this.c_label, (!this.c_edit.innerText) || (this.c_edit.innerText.trim().length<=0)); 
     if (this.onInputChange(this, this.lastKey, oldText, this.currentText, oldHtml, this.currentHtml)==false) {
@@ -1706,7 +1675,7 @@ sender.getPlanText = function() {
         return false;
     }
     addPos(this.c_edit);
-    return text.replace(/\xA0/g, " ");
+    return text;
 }
 
 e.onkeydown = function(event) {
