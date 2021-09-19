@@ -1421,6 +1421,31 @@ sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
 sender.c_edit.innerHTML = sTemp;
 sender.setCurPosAbs(cp);
 
+var getUsername = function() {
+    var i;
+    for (i=cp-1; i>=0; i--) {
+        if (newText.charAt(i)=="@") break;
+    }
+    if (i<0) return "";
+    var pos = i;
+    var userName = "";
+    for (i=pos+1; i<=newText.length; i++) {
+        var ch = newText.charAt(i);
+        if ((ch>="a" &amp;&amp; ch<="z") ||
+            (ch>="A" &amp;&amp; ch<="Z") ||
+            (ch>="0" &amp;&amp; ch<="9") ||
+            (ch=="_") || (ch=="-")) {
+            userName += ch;
+        } else break;
+    }
+    if (userName.length<2) return "";
+    if (i<=cp-1) return "";
+    userName = userName.substr(0,20);
+    return userName;
+}
+console.log(getUsername());
+
+
 g5.p2.p1.a1.check();
 var newText = newText.trim();
 var c = ee.getControl("panel53");
