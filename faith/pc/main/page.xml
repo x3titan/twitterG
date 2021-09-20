@@ -1,5 +1,5 @@
 <page>
-  <controls count="720">
+  <controls count="721">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -583,6 +583,7 @@ sender.p30 = ee.getControl("panel538");
 sender.p31 = ee.getControl("panel579");
 sender.p32 = ee.getControl("panel583");
 sender.p33 = ee.getControl("panel596");
+sender.p34 = ee.getControl("panel605");
 ee.setVisible(sender, true);
 
 </onCreate>
@@ -883,6 +884,7 @@ eb.initMouseEvent(sender.parentNode);
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1">
+      <backgroundColor>FFFFFF</backgroundColor>
       <dockX>fill</dockX>
       <fontColor>FFFFFF</fontColor>
       <fontSize>20</fontSize>
@@ -1443,7 +1445,10 @@ var getUsername = function() {
     userName = userName.substr(0,20);
     return userName;
 }
-console.log(getUsername());
+var userName = getUsername();
+if (userName.length>0) {
+    g5.p2.p34.show(sender, userName);
+}
 
 
 g5.p2.p1.a1.check();
@@ -18687,6 +18692,110 @@ sender.close = function() {
       <topRatio>0.877862595419847</topRatio>
       <width>22</width>
       <widthRatio>0.0366666666666667</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel605">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>441</height>
+      <heightRatio>0.565384615384615</heightRatio>
+      <layerName><![CDATA[p2.p34 -> 搜索用户]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate><![CDATA[sender.v_headerName = "page34_";
+sender.v_searchOptions = "user";
+sender.v_items = new Array();
+sender.v_status = "init";
+sender.v_searchString = "";
+sender.v_pageIndex = 0;
+
+sender.show = function(refDiv, searchText) {
+    if (refDiv) {
+        var rect;
+        var result = eb.getDivRect(refDiv);
+        while (true) {
+            refDiv = refDiv.parentNode;
+            if (eb.isEmpty(refDiv)) break;
+            if (refDiv.id == "divRoot") break;
+            if (refDiv == g5.p2) break;
+            rect = eb.getDivRect(refDiv);
+            result.x+=rect.x-refDiv.scrollLeft;
+            result.y+=rect.y-refDiv.scrollTop;
+        }
+        ee.setRect(this, null, result.y + result.h, null, eb.getClientSize().h - result.y - result.h);
+    }
+    ee.setVisible(this, true);
+    this.search(searchText);
+}
+
+
+sender.clear = function() {
+    for (var i=0; i<this.v_items.length; i++) {
+        ee.removeControl(this.v_items[i]);
+    }
+    this.v_items = new Array();
+}
+
+sender.search = function(searchString) {
+    if (this.v_items.length>0) return;
+    this.v_searchString = searchString;
+    this.v_pageIndex = 0;
+    this.fSearch();
+}
+
+sender.loadMore = function() {
+    if (this.v_status != "normal") return;
+    this.v_pageIndex++;
+    this.fSearch();
+}
+
+sender.fSearch = function() {
+    if (searchV2.busy) return;
+    searchV2.searchString = this.v_searchString;
+    if (searchV2.searchString == "") return;
+    searchV2.options = this.v_searchOptions;
+    searchV2.pageIndex = this.v_pageIndex;
+    searchV2.onComplete = function() {
+        g5.p2.p11.c_buttons.setEnabled(true);
+        var cy = 0;
+        var itemWidth = eb.getDivRectSetting(sender).w;
+        for (var i=0; i<searchV2.dataset.rowCount; i++) {
+            var item = createPanel(sender, sender.v_headerName + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadUserRecord(item, searchV2.dataset, i);
+            item.v_mode = "";
+            g5.renderUserBar(item);
+            cy += eb.getDivRect(item).h;
+            sender.v_items.push(item);
+        }
+        if (searchV2.dataset.rowCount<=0) {
+            sender.v_status = "noResult";
+            var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
+            addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+            sender.v_items.push(item);
+        } else {
+            sender.v_status = "normal";
+        }
+        g5.tiledV(sender,0,0,0);
+        g5.tiledResizeV(sender,4);   
+    }
+    g5.p2.p11.c_buttons.setEnabled(false);
+    searchV2();
+}
+
+
+
+
+
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.735</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel137">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -40141,6 +40250,8 @@ if (pageIndex == 0) {
     g5.p2.p32.activePage();
 }
 g5.currentPageIndex = pageIndex;
+
+if (g5.p2.p34.style.visibility!="hidden") ee.setVisible(g5.p2.p34.style.visibility, false);
 return true;]]></functionCode>
     </item>
     <item name="changeP3" type="20">
