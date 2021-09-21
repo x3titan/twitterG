@@ -1423,6 +1423,29 @@ sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
 sender.c_edit.innerHTML = sTemp;
 sender.setCurPosAbs(cp);
 
+var setUsername = function(username) {
+    var i;
+    for (i=cp-1; i>=0; i--) {
+        if (newText.charAt(i)=="@") break;
+    }
+    if (i<0) return -1;
+    var pos = i+1;
+    for (i=pos; i<=newText.length; i++) {
+        var ch = newText.charAt(i);
+        if ((ch>="a" &amp;&amp; ch<="z") ||
+            (ch>="A" &amp;&amp; ch<="Z") ||
+            (ch>="0" &amp;&amp; ch<="9") ||
+            (ch=="_") || (ch=="-")) {
+        } else break;
+    }
+    if (i-pos<2) return -1;
+    if (i<=cp-1) return -1;
+    if (i-pos>20) i=20-pos;
+    var s = newText.substr(0, pos);
+    
+    return userName;
+}
+
 var getUsername = function() {
     var i;
     for (i=cp-1; i>=0; i--) {
