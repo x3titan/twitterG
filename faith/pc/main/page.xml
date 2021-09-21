@@ -18715,7 +18715,7 @@ sender.style.borderStyle = "solid";
 sender.style.borderLeft = "";
 sender.style.borderRight = "";
 
-sender.show = function(refDiv, searchText) {
+sender.show = function(refDiv, searchText, onSelect) {
     if (refDiv) {
         var rect;
         var result = eb.getDivRect(refDiv);
@@ -18731,9 +18731,13 @@ sender.show = function(refDiv, searchText) {
         ee.setRect(this, null, result.y + result.h, null, eb.getClientSize().h - result.y - result.h);
     }
     ee.setVisible(this, true);
+    this.f_onSelect = onSelect;
     this.search(searchText);
 }
 
+sender.close = function() {
+    ee.setVisible(this, false);
+}
 
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
@@ -18770,6 +18774,13 @@ sender.fSearch = function() {
             g5.loadUserRecord(item, searchV2.dataset, i);
             item.v_mode = "";
             g5.renderUserBar(item);
+            if (item.button1) ee.setVisible(item.button1, false);
+            ee.setOnClick(item, function(senderBtn, event) {
+                if (sender.f_onSelect) {
+                    sender.f_onSelect(senderBtn.v_userInfo.userName);
+                }
+                sender.close();
+            });
             cy += eb.getDivRect(item).h;
             sender.v_items.push(item);
         }
