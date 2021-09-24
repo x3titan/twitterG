@@ -1401,6 +1401,7 @@ sender.resize = function (img) {
       <__U_editFontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
       <__U_editFontSize>16pt</__U_editFontSize>
       <__U_editMaxY>300px</__U_editMaxY>
+      <__U_onCurPosChange-sender-oldPos-newPos>sender.processUserName();</__U_onCurPosChange-sender-oldPos-newPos>
       <__U_onFocusChange-sender-isFocus />
       <__U_onHeightChange-sender-oldH-newH>var dy = newH - oldH;
 if (dy == 0) return;
@@ -1423,73 +1424,7 @@ sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
 sender.c_edit.innerHTML = sTemp;
 sender.setCurPosAbs(cp);
 
-var setUsername = function(username) {
-    var cp = sender.getCurPosAbs();
-    var newText = sender.getEditText();
-    var i;
-    for (i=cp-1; i>=0; i--) {
-        if (newText.charAt(i)=="@") break;
-    }
-    if (i<0) return;
-    var pos = i+1;
-    for (i=pos; i<=newText.length; i++) {
-        var ch = newText.charAt(i);
-        if ((ch>="a" &amp;&amp; ch<="z") ||
-            (ch>="A" &amp;&amp; ch<="Z") ||
-            (ch>="0" &amp;&amp; ch<="9") ||
-            (ch=="_") || (ch=="-")) {
-        } else break;
-    }
-    if (i-pos<2) return;
-    if (i<=cp-1) return;
-    if (i-pos>20) i=20-pos;
-    var s = newText.substr(0, pos);
-    s += username;
-    if (i>=newText.length) {
-        s += " ";
-    } else if (newText.charAt(i)=="\n") {
-        s += " " + newText.substr(i);
-    } else {
-        s += newText.substr(i);
-    }
-    
-    var sTemp = sender.convertHtml(s);
-    var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
-    sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
-    sender.c_edit.innerHTML = sTemp;
-    sender.setCurPosAbs(i+1);
-}
-
-var getUsername = function() {
-    var i;
-    for (i=cp-1; i>=0; i--) {
-        if (newText.charAt(i)=="@") break;
-    }
-    if (i<0) return "";
-    var pos = i;
-    var userName = "";
-    for (i=pos+1; i<=newText.length; i++) {
-        var ch = newText.charAt(i);
-        if ((ch>="a" &amp;&amp; ch<="z") ||
-            (ch>="A" &amp;&amp; ch<="Z") ||
-            (ch>="0" &amp;&amp; ch<="9") ||
-            (ch=="_") || (ch=="-")) {
-            userName += ch;
-        } else break;
-    }
-    if (userName.length<2) return "";
-    if (i<=cp-1) return "";
-    userName = userName.substr(0,20);
-    return userName;
-}
-var userName = getUsername();
-if (userName.length>0) {
-    g5.p2.p34.show(sender, userName, function(username) {
-        setUsername(username);
-        sender.c_edit.blur();
-    });
-}
-
+sender.processUserName();
 
 g5.p2.p1.a1.check();
 var newText = newText.trim();
@@ -1523,8 +1458,9 @@ if (newText.length<180) {
       <onCreate><![CDATA[//public
 sender.currentText = "";
 sender.currentHtml = "";
+sender.currentCurPos = 0;
 sender.getEditText = function() {
-    return this.currentText;
+    return this.getPlanText().replace(/\xA0/g, " ");
 }
 sender.setEditText = function(text, inOnChange) {
     this.c_edit.innerHTML = this.convertHtml(text);
@@ -1591,7 +1527,7 @@ sender.f_onChange = function() {
     this.refreshH();
     var oldText = this.currentText;
     var oldHtml = this.currentHtml;
-    this.currentText = this.getPlanText().replace(/\xA0/g, " ");;
+    this.currentText = this.getPlanText().replace(/\xA0/g, " ");
     this.currentHtml = this.c_edit.innerHTML;
     ee.setVisible(this.c_label, (!this.c_edit.innerText) || (this.c_edit.innerText.trim().length<=0)); 
     if (this.onInputChange(this, this.lastKey, oldText, this.currentText, oldHtml, this.currentHtml)==false) {
@@ -1768,10 +1704,23 @@ e.onpaste = function() {
 }
 
 e.onfocus = function() {
+    document.addEventListener("selectionchange", sender.f_onSelectionChange, false);
 }
 
 e.onblur = function() {
+    document.removeEventListener("selectionchange", sender.f_onSelectionChange, false);
 }
+
+sender.f_onSelectionChange = function(event) {
+    var oldPos = sender.currentCurPos;
+    sender.currentCurPos = sender.getCurPosAbs();
+    if (oldPos!=sender.currentCurPos) {
+        if (sender.onCurPosChange) {
+            sender.onCurPosChange(sender,oldPos,sender.currentCurPos);
+        }
+    }
+}
+
 
 sender.c_edit.addEventListener("compositionstart", function(event) {
     sender.v_isIme = true;
@@ -1785,6 +1734,79 @@ sender.c_edit.addEventListener("compositionend", function(event) {
     sender.v_isIme = false;
     sender.f_onChange();
 });
+
+//user
+sender.getUsername = function() {
+    var newText = this.getEditText();
+    var cp = this.getCurPosAbs();
+    var i;
+    for (i=cp-1; i>=0; i--) {
+        if (newText.charAt(i)=="@") break;
+    }
+    if (i<0) return "";
+    var pos = i;
+    var userName = "";
+    for (i=pos+1; i<=newText.length; i++) {
+        var ch = newText.charAt(i);
+        if ((ch>="a" &amp;&amp; ch<="z") ||
+            (ch>="A" &amp;&amp; ch<="Z") ||
+            (ch>="0" &amp;&amp; ch<="9") ||
+            (ch=="_") || (ch=="-")) {
+            userName += ch;
+        } else break;
+    }
+    if (userName.length<2) return "";
+    if (i<=cp-1) return "";
+    userName = userName.substr(0,20);
+    return userName;
+}
+
+sender.setUsername = function(username) {
+    var cp = sender.getCurPosAbs();
+    var newText = sender.getEditText();
+    var i;
+    for (i=cp-1; i>=0; i--) {
+        if (newText.charAt(i)=="@") break;
+    }
+    if (i<0) return;
+    var pos = i+1;
+    for (i=pos; i<=newText.length; i++) {
+        var ch = newText.charAt(i);
+        if ((ch>="a" &amp;&amp; ch<="z") ||
+            (ch>="A" &amp;&amp; ch<="Z") ||
+            (ch>="0" &amp;&amp; ch<="9") ||
+            (ch=="_") || (ch=="-")) {
+        } else break;
+    }
+    if (i-pos<2) return;
+    if (i<=cp-1) return;
+    if (i-pos>20) i=20-pos;
+    var s = newText.substr(0, pos);
+    s += username;
+    if (i>=newText.length) {
+        s += " ";
+    } else if (newText.charAt(i)=="\n") {
+        s += " " + newText.substr(i);
+    } else {
+        s += newText.substr(i);
+    }
+    
+    var sTemp = sender.convertHtml(s);
+    var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
+    sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
+    sender.c_edit.innerHTML = sTemp;
+    sender.setCurPosAbs(i+1);
+}
+
+sender.processUserName = function() {
+    var userName = this.getUsername();
+    if (userName.length>0) {
+        g5.p2.p34.show(sender, userName, function(username) {
+            sender.setUsername(username);
+            sender.c_edit.blur();
+        });
+    } else g5.p2.p34.close();
+}
 ]]></onCreate>
       <outerLeft>77</outerLeft>
       <outerRight>20</outerRight>
@@ -1798,6 +1820,7 @@ sender.c_edit.addEventListener("compositionend", function(event) {
 //#P:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
 //#P:onInputChange(sender,key,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变，返回false表示取消本次修改。sender:触发事件的控件，key:用户按键，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
 //#P:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
+//#P:onCurPosChange(sender,oldPos,newPos)|多行文字录入V2||jsMix||光标位置发生变化。sender:触发事件的控件，oldPos:原来的光标位置；newPos:新的光标位置；
 
 
 
