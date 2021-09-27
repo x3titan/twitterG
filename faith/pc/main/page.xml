@@ -1524,6 +1524,10 @@ sender.onSizeChange = function(sender, rectOld, rectNew) {
 }
 
 sender.f_onChange = function() {
+    if (sender.v_isIme) {
+        ee.setVisible(this.c_label, this.getPlanText().length<=0); 
+        return;
+    }
     this.refreshH();
     var oldText = this.currentText;
     var oldHtml = this.currentHtml;
@@ -1695,7 +1699,6 @@ e.onkeydown = function(event) {
 }
 
 e.oninput = function(event) {
-    if (sender.v_isIme) return;
     sender.f_onChange();
 }
 
