@@ -1,5 +1,5 @@
 <page>
-  <controls count="722">
+  <controls count="723">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -364,6 +364,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -552,6 +553,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -1894,6 +1896,7 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -2998,6 +3001,7 @@ sender.init(0);
       <dockX>fill</dockX>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p2PersonSub,p2sub</note>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -3453,6 +3457,7 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[  p1->综合]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_titleChat = ee.getControl("panel263");
@@ -26042,7 +26047,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -26279,7 +26283,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -26292,8 +26295,10 @@ sender.c_photo = ee.getControl("panel75");
 sender.c_video = ee.getControl("panel76");
 sender.c_button1 = ee.getControl("panel8");
 sender.c_button2 = ee.getControl("panel52");
+sender.c_mobileBg = ee.getControl("panel607");
 
 sender.show = function(photos, photo) {
+    ee.setVisible(this.c_mobileBg, g5.isMobile);
     if (g5.isMobile) {
         this.setHammer();
         
@@ -26308,6 +26313,8 @@ sender.show = function(photos, photo) {
         ee.setRect(sender.c_button2, w+100+w,null,100,50);
         sender.c_button1.style.borderRadius = "25px 0px 0px 25px";
         sender.c_button2.style.borderRadius = "0px 25px 25px 0px";
+        sender.c_button1.style.backgroundColor = "";
+        sender.c_button2.style.backgroundColor = "";
         eb.processDock();
         var r = eb.getDivRectSetting(sender.c_photoRoot);
         ee.setRect(sender.c_photo, 0,0,r.w, r.h);
@@ -26463,7 +26470,7 @@ sender.clickLeft = function() {
     }, 500);
     
     this.c_photoRoot = createPanel(this, "panel145", "",-r.w,0,r.w,r.h);
-    ee.changeParent(this.c_photoRoot,this,0);
+    ee.changeParent(this.c_photoRoot,this,1);
     this.c_photoRoot.className = "aniAll3";
     this.c_photo = createPanel(this.c_photoRoot, "panel75", "",0,0,r.w,r.h);    
     this.c_video = createPanel(this.c_photoRoot, "panel76", "",0,0,r.w,r.h);
@@ -26512,7 +26519,7 @@ sender.clickRight = function() {
     }, 500);
 
     this.c_photoRoot = createPanel(this, "panel145", "",r.w,0,r.w,r.h);
-    ee.changeParent(this.c_photoRoot,this,0);
+    ee.changeParent(this.c_photoRoot,this,1);
     this.c_photoRoot.className = "aniAll3";
     this.c_photo = createPanel(this.c_photoRoot, "panel75", "",0,0,r.w,r.h);    
     this.c_video = createPanel(this.c_photoRoot, "panel76", "",0,0,r.w,r.h);    
@@ -26537,6 +26544,20 @@ sender.clickRight = function() {
     this.refresh();    
 }
 ]]></onCreate>
+      <sizeRatio>0.700087950747581</sizeRatio>
+      <top>0</top>
+      <width>1137</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel142/panel607">
+      <backgroundColor>403534</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>796</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <note>c_mobileBg</note>
       <sizeRatio>0.700087950747581</sizeRatio>
       <top>0</top>
       <width>1137</width>
@@ -26640,16 +26661,16 @@ sender.baseColor = "rgba(0,0,0,0.2)";
 sender.style.backgroundColor = sender.baseColor;
 ee.setText(sender,"<svg viewBox=\"0 0 800 800\" style=\"display:inline;height:1.9em;width:1.9em;margin:0px 0px 0px 0px;fill:#ffffff;vertical-align:middle;\">"+g5.iconLeft+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "rgba(0,0,0,0.5)";
+    if (sender.style.backgroundColor.length>0) sender.style.backgroundColor = "rgba(0,0,0,0.5)";
 });
 ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = sender.baseColor;
+    if (sender.style.backgroundColor.length>0) sender.style.backgroundColor = sender.baseColor;
 });
 sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "rgba(0,0,0,0.8)";
+    if (sender.style.backgroundColor.length>0) sender.style.backgroundColor = "rgba(0,0,0,0.8)";
 }
 sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "rgba(0,0,0,0.5)";
+    if (sender.style.backgroundColor.length>0) sender.style.backgroundColor = "rgba(0,0,0,0.5)";
 }
 ee.setOnClick(sender, function(sender, event) {
     sender.parentNode.clickLeft();
@@ -26683,17 +26704,17 @@ sender.baseColor = "rgba(0,0,0,0.2)";
 sender.style.backgroundColor = sender.baseColor;
 ee.setText(sender,"<svg viewBox=\"0 0 800 800\" style=\"display:inline;height:1.9em;width:1.9em;margin:0px 0px 0px 0px;fill:#ffffff;vertical-align:middle;\">"+g5.iconRight+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "rgba(0,0,0,0.5)";
+    if (sender.style.backgroundColor.length>0) sender.style.backgroundColor = "rgba(0,0,0,0.5)";
 });
 ee.setOnMouseLeave(sender, function(sender,event) { 
-    sender.style.backgroundColor = sender.baseColor;
+    if (sender.style.backgroundColor.length>0) sender.style.backgroundColor = sender.baseColor;
 });
 sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "rgba(0,0,0,0.8)";
+    if (sender.style.backgroundColor.length>0) sender.style.backgroundColor = "rgba(0,0,0,0.8)";
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 }
 sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "rgba(0,0,0,0.5)";
+    if (sender.style.backgroundColor.length>0) sender.style.backgroundColor = "rgba(0,0,0,0.5)";
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 }
 ee.setOnClick(sender, function(sender, event) {
