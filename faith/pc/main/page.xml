@@ -17691,12 +17691,12 @@ sender.loadRecord = function(panel, dataset, index) {
       <left>0</left>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel587");
-sender.c_input = ee.getControl("edit16");
 sender.c_title = ee.getControl("panel589");
 sender.c_button = ee.getControl("panel592");
 sender.c_cirText = ee.getControl("panel581");
 sender.c_cir = ee.getControl("panel580");
 sender.c_p1 = ee.getControl("panel611");
+sender.c_edit = ee.getControl("panel608");
 
 sender.show = function(title) {
     this.init(title);
@@ -17710,7 +17710,7 @@ sender.show = function(title) {
 sender.init = function(titleText, keepLast) {
     if (eb.isEmpty(titleText)) titleText = "";
     ee.setText(this.c_title, titleText);
-    if (!keepLast) ee.setEditText(this.c_input, "");
+    if (!keepLast) this.c_edit.setEditText("");
     this.c_photos.v_photos = new Array();
     g5.refreshPhoto(this.c_photos);
     this.check();
@@ -17734,7 +17734,7 @@ sender.close = function() {
 
 sender.check = function() {
     this.c_button.setEnabled(
-        ((ee.getEditText(this.c_input).trim().length>0) &amp;&amp;(ee.getEditText(this.c_input).trim().length<=200)) ||
+        ((this.c_edit.getEditText().trim().length>0) &amp;&amp;(this.c_edit.getEditText().trim().length<=200)) ||
         this.c_photos.v_photos.length>0
     );    
 }
@@ -17747,7 +17747,7 @@ sender.showNew = function() {
         if (newTwitter.busy) return;
         newTwitter.uplinkType = "N";
         newTwitter.uplinkId = 0;
-        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.content = sender.c_edit.getEditText();
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
             sender.v_lastOp = "";
@@ -17796,7 +17796,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         }
         newTwitter.uplinkType = "R";
         newTwitter.uplinkId = contentIdB;
-        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.content = sender.c_edit.getEditText();
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
             sender.v_lastOp = "";
@@ -17846,7 +17846,7 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         }
         newTwitter.uplinkType = "F";
         newTwitter.uplinkId = contentIdB;
-        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.content = sender.c_edit.getEditText();
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
             sender.v_lastOp = "";
@@ -17971,7 +17971,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <left>487</left>
       <leftRatio>0.811666666666667</leftRatio>
       <onClick><![CDATA[if (!sender.v_enabled) return;
-var content = ee.getEditText(sender.parentNode.parentNode.c_input);
+var content = g5.p2.p31.c_edit.getEditText();
 var photos = sender.parentNode.parentNode.c_photos.v_photos;
 if ((content.length<=0) &amp;&amp; (photos.length<=0)) {
     g5.alert1("提示", "发言内容不能为空，您至少要留有文字或者至少一张图片或者视频。");
@@ -18094,11 +18094,9 @@ sender.parentNode.parentNode.check();
       <__U_onFocusChange-sender-isFocus />
       <__U_onHeightChange-sender-oldH-newH>var dy = newH - oldH;
 if (dy == 0) return;
-ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
-g5.batchMoveY(g5.p2.p1.v_items,0,dy);
-eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
-eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
-eb.processDock();
+
+var r = eb.getDivRectSetting(g5.p2.p31.c_p1);
+ee.setRect(g5.p2.p31.c_p1, null, r.y + dy, null,null);
 </__U_onHeightChange-sender-oldH-newH>
       <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
 
@@ -18510,7 +18508,7 @@ sender.processUserName = function() {
 ]]></onCreate>
       <outerLeft>30</outerLeft>
       <outerRight>30</outerRight>
-      <sizeRatio>0.2</sizeRatio>
+      <sizeRatio>0.203703703703704</sizeRatio>
       <top>64</top>
       <topRatio>0.0846560846560847</topRatio>
       <userProperty>//#P:editFontFamily|多行文字录入V2|'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif|string||用户输入文字的字体样式
@@ -18526,7 +18524,7 @@ sender.processUserName = function() {
 
 </userProperty>
       <width>540</width>
-      <widthRatio>0.916666666666667</widthRatio>
+      <widthRatio>0.9</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel608/panel609">
       <dockX>fill</dockX>
@@ -18554,10 +18552,10 @@ sender.processUserName = function() {
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>26</height>
-      <heightRatio>0.490566037735849</heightRatio>
+      <heightRatio>0.236363636363636</heightRatio>
       <layerVisible>false</layerVisible>
       <left>16</left>
-      <leftRatio>0.0318091451292246</leftRatio>
+      <leftRatio>0.0296296296296296</leftRatio>
       <note>c_edit</note>
       <outerBottom>2</outerBottom>
       <outerLeft>5</outerLeft>
@@ -18565,32 +18563,35 @@ sender.processUserName = function() {
       <outerTop>2</outerTop>
       <sizeRatio>0.257425742574257</sizeRatio>
       <top>15</top>
-      <topRatio>0.283018867924528</topRatio>
+      <topRatio>0.136363636363636</topRatio>
       <v_color1>FFC0C0</v_color1>
       <v_Str>as223</v_Str>
       <vAlign>top</vAlign>
       <width>101</width>
-      <widthRatio>0.200795228628231</widthRatio>
+      <widthRatio>0.187037037037037</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel611">
       <dockX>fill</dockX>
       <height>401</height>
       <heightRatio>0.53042328042328</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>30</left>
       <leftRatio>0.05</leftRatio>
+      <note>c_p1</note>
       <onCreate>sender.resize = function() {
+    eb.processDock();
     var ratio = 0.6185;
     var r = eb.getDivRectSetting(ee.getControl("panel585"));
     var h = parseInt(r.w *ratio);
     ee.setRect(ee.getControl("panel585"), null,null,null,h);
-    ee.setRect(this, null, r.y + r.h + 100,null,null);
+    ee.setRect(this, null, null, null, r.y + r.h + 100);
 }
 </onCreate>
       <outerLeft>30</outerLeft>
       <outerRight>30</outerRight>
       <sizeRatio>0.742592592592593</sizeRatio>
-      <top>122</top>
-      <topRatio>0.161375661375661</topRatio>
+      <top>184</top>
+      <topRatio>0.243386243386243</topRatio>
       <width>540</width>
       <widthRatio>0.9</widthRatio>
     </control>
@@ -18598,7 +18599,7 @@ sender.processUserName = function() {
       <backgroundColor>008080</backgroundColor>
       <cursor>pointer</cursor>
       <height>36</height>
-      <heightRatio>0.0851063829787234</heightRatio>
+      <heightRatio>0.0897755610972569</heightRatio>
       <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.037037037037037</leftRatio>
@@ -18709,7 +18710,7 @@ sender.resize = function (img) {
       <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
       <height>36</height>
-      <heightRatio>0.0851063829787234</heightRatio>
+      <heightRatio>0.0897755610972569</heightRatio>
       <layerVisible>false</layerVisible>
       <left>75</left>
       <leftRatio>0.138888888888889</leftRatio>
@@ -18777,7 +18778,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <backgroundColor>EAEAF4</backgroundColor>
       <dockX>right</dockX>
       <height>39</height>
-      <heightRatio>0.0921985815602837</heightRatio>
+      <heightRatio>0.0972568578553616</heightRatio>
       <layerVisible>false</layerVisible>
       <left>461</left>
       <leftRatio>0.853703703703704</leftRatio>
@@ -18826,7 +18827,7 @@ sender.refresh = function(progress) {
       <dockX>right</dockX>
       <fontFamily>Helvetica</fontFamily>
       <height>39</height>
-      <heightRatio>0.0921985815602837</heightRatio>
+      <heightRatio>0.0972568578553616</heightRatio>
       <layerVisible>false</layerVisible>
       <left>461</left>
       <leftRatio>0.853703703703704</leftRatio>
@@ -18840,7 +18841,7 @@ sender.refresh = function(progress) {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel611/panel585">
       <dockX>fill</dockX>
       <height>334</height>
-      <heightRatio>0.789598108747045</heightRatio>
+      <heightRatio>0.832917705735661</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
@@ -18852,7 +18853,7 @@ sender.style.borderRadius = "15px";
 </onCreate>
       <sizeRatio>0.618518518518518</sizeRatio>
       <top>49</top>
-      <topRatio>0.115839243498818</topRatio>
+      <topRatio>0.122194513715711</topRatio>
       <width>540</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -18890,7 +18891,6 @@ sender.style.borderRadius = "15px";
 sender.v_photos = new Array();</onCreate>
       <sizeRatio>0.618518518518518</sizeRatio>
       <top>0</top>
-      <topRatio>-0.0029940119760479</topRatio>
       <width>540</width>
       <widthRatio>1</widthRatio>
     </control>
