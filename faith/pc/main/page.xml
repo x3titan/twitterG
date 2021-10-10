@@ -17696,12 +17696,14 @@ sender.c_title = ee.getControl("panel589");
 sender.c_button = ee.getControl("panel592");
 sender.c_cirText = ee.getControl("panel581");
 sender.c_cir = ee.getControl("panel580");
+sender.c_p1 = ee.getControl("panel611");
 
 sender.show = function(title) {
     this.init(title);
     ee.setVisible(ee.getControl("panel112"), true);
     ee.setVisible(this, true);
     ee.getControl("panel51").v_photos = new Array();
+    this.c_p1.resize();
     g5.refreshPhoto(ee.getControl("panel51"));
 }
 
@@ -17738,6 +17740,7 @@ sender.check = function() {
 }
 
 sender.showNew = function() {
+    this.c_p1.resize();
     this.init("发言", this.v_lastOp == "new");
     this.v_lastOp = "new";
     this.onComplete = function() {
@@ -17779,6 +17782,7 @@ sender.showNew = function() {
 }
 
 sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
+    this.c_p1.resize();
     this.init("回复发言", this.v_lastOp == "re" &amp;&amp; this.v_lastId == v_content.id);
     this.v_lastOp = "re";
     this.v_lastId = v_content.id;
@@ -17828,6 +17832,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
 }
 
 sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
+    this.c_p1.resize();
     this.init("带评论转发", this.v_lastOp == "fw" &amp;&amp; this.v_lastId == v_content.id);
     this.v_lastOp = "fw";
     this.v_lastId = v_content.id;
@@ -18569,13 +18574,21 @@ sender.processUserName = function() {
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel611">
       <dockX>fill</dockX>
-      <height>423</height>
-      <heightRatio>0.55952380952381</heightRatio>
+      <height>401</height>
+      <heightRatio>0.53042328042328</heightRatio>
       <left>30</left>
       <leftRatio>0.05</leftRatio>
+      <onCreate>sender.resize = function() {
+    var ratio = 0.6185;
+    var r = eb.getDivRectSetting(ee.getControl("panel585"));
+    var h = parseInt(r.w *ratio);
+    ee.setRect(ee.getControl("panel585"), null,null,null,h);
+    ee.setRect(this, null, r.y + r.h + 100,null,null);
+}
+</onCreate>
       <outerLeft>30</outerLeft>
       <outerRight>30</outerRight>
-      <sizeRatio>0.783333333333333</sizeRatio>
+      <sizeRatio>0.742592592592593</sizeRatio>
       <top>122</top>
       <topRatio>0.161375661375661</topRatio>
       <width>540</width>
@@ -18585,7 +18598,7 @@ sender.processUserName = function() {
       <backgroundColor>008080</backgroundColor>
       <cursor>pointer</cursor>
       <height>36</height>
-      <heightRatio>0.36</heightRatio>
+      <heightRatio>0.0851063829787234</heightRatio>
       <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.037037037037037</leftRatio>
@@ -18687,8 +18700,7 @@ sender.resize = function (img) {
 ]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text>图片</text>
-      <top>12</top>
-      <topRatio>0.12</topRatio>
+      <top>0</top>
       <width>36</width>
       <widthRatio>0.0666666666666667</widthRatio>
     </control>
@@ -18697,7 +18709,7 @@ sender.resize = function (img) {
       <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
       <height>36</height>
-      <heightRatio>0.36</heightRatio>
+      <heightRatio>0.0851063829787234</heightRatio>
       <layerVisible>false</layerVisible>
       <left>75</left>
       <leftRatio>0.138888888888889</leftRatio>
@@ -18757,8 +18769,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 });
 ]]></onCreate>
       <sizeRatio>1</sizeRatio>
-      <top>16</top>
-      <topRatio>0.16</topRatio>
+      <top>0</top>
       <width>36</width>
       <widthRatio>0.0666666666666667</widthRatio>
     </control>
@@ -18766,10 +18777,10 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <backgroundColor>EAEAF4</backgroundColor>
       <dockX>right</dockX>
       <height>39</height>
-      <heightRatio>0.39</heightRatio>
+      <heightRatio>0.0921985815602837</heightRatio>
       <layerVisible>false</layerVisible>
       <left>461</left>
-      <leftRatio>0.798148148148148</leftRatio>
+      <leftRatio>0.853703703703704</leftRatio>
       <onCreate><![CDATA[sender.innerHTML = "<svg><path fill=\"none\"></path><path fill=\"none\"></path></svg>";
 sender.v_x = parseInt(eb.getDivRect(sender).w/2);
 sender.v_y = parseInt(eb.getDivRect(sender).h/2);
@@ -18806,8 +18817,7 @@ sender.refresh = function(progress) {
       <outerRight>40</outerRight>
       <sizeRatio>1</sizeRatio>
       <text>圆形进度条</text>
-      <top>26</top>
-      <topRatio>0.26</topRatio>
+      <top>0</top>
       <width>39</width>
       <widthRatio>0.0722222222222222</widthRatio>
     </control>
@@ -18816,22 +18826,21 @@ sender.refresh = function(progress) {
       <dockX>right</dockX>
       <fontFamily>Helvetica</fontFamily>
       <height>39</height>
-      <heightRatio>0.39</heightRatio>
+      <heightRatio>0.0921985815602837</heightRatio>
       <layerVisible>false</layerVisible>
       <left>461</left>
-      <leftRatio>0.798148148148148</leftRatio>
+      <leftRatio>0.853703703703704</leftRatio>
       <outerRight>40</outerRight>
       <sizeRatio>1</sizeRatio>
       <text>.</text>
-      <top>26</top>
-      <topRatio>0.26</topRatio>
+      <top>0</top>
       <width>39</width>
       <widthRatio>0.0722222222222222</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel611/panel585">
       <dockX>fill</dockX>
       <height>334</height>
-      <heightRatio>0.793349168646081</heightRatio>
+      <heightRatio>0.789598108747045</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
@@ -18842,8 +18851,8 @@ sender.style.borderRadius = "15px";
 
 </onCreate>
       <sizeRatio>0.618518518518518</sizeRatio>
-      <top>77</top>
-      <topRatio>0.182897862232779</topRatio>
+      <top>49</top>
+      <topRatio>0.115839243498818</topRatio>
       <width>540</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -18881,6 +18890,7 @@ sender.style.borderRadius = "15px";
 sender.v_photos = new Array();</onCreate>
       <sizeRatio>0.618518518518518</sizeRatio>
       <top>0</top>
+      <topRatio>-0.0029940119760479</topRatio>
       <width>540</width>
       <widthRatio>1</widthRatio>
     </control>
