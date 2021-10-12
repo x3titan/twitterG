@@ -364,6 +364,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -22100,6 +22101,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.123115577889447</heightRatio>
       <layerName>===P4===</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.266490765171504</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -23858,6 +23860,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a10 -> 关注列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -26513,7 +26516,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -26750,7 +26752,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -26938,6 +26939,9 @@ sender.clickLeft = function() {
     }, 500);
     
     this.c_photoRoot = createPanel(this, "panel145", "",-r.w,0,r.w,r.h);
+    ee.setOnClick(this.c_photoRoot, function(senderP, event) {
+        senderP.parentNode.parentNode.close();
+    }); 
     ee.changeParent(this.c_photoRoot,this,1);
     this.c_photoRoot.className = "aniAll3";
     this.c_photo = createPanel(this.c_photoRoot, "panel75", "",0,0,r.w,r.h);    
@@ -26950,27 +26954,6 @@ sender.clickLeft = function() {
     }
     this.refresh();
     eb.setDivRect(this.c_photoRoot,0,null,null,null);
-    return;
-
-    eb.setAni2(this.c_photoRoot,0,"disappear", "leftFlyOut", "null", 0, false);
-    eb.setAniEvent(this.c_photoRoot, 0,
-        function(senderAni) {
-        },
-        function(senderAni) {
-            if (sender.v_photos.length<=1) return;
-            var r = eb.getDivRectSetting(sender.c_photoRoot);
-            ee.setRect(sender.c_photoRoot,0,0,null,null);
-            ee.setRect(sender.c_photo,0,0,r.w, r.h);
-            if (sender.v_index==0) {
-                sender.v_index = sender.v_photos.length-1;
-            } else {
-                sender.v_index--;
-            }
-            sender.refresh();
-            eb.setAlpha(sender.c_photoRoot, 100);
-        }
-    );
-    ee.showAni(this.c_photoRoot, 0);
 }
 
 sender.clickRight = function() {
@@ -26987,6 +26970,9 @@ sender.clickRight = function() {
     }, 500);
 
     this.c_photoRoot = createPanel(this, "panel145", "",r.w,0,r.w,r.h);
+    ee.setOnClick(this.c_photoRoot, function(senderP, event) {
+        senderP.parentNode.parentNode.close();
+    }); 
     ee.changeParent(this.c_photoRoot,this,1);
     this.c_photoRoot.className = "aniAll3";
     this.c_photo = createPanel(this.c_photoRoot, "panel75", "",0,0,r.w,r.h);    
@@ -26999,17 +26985,6 @@ sender.clickRight = function() {
     }
     this.refresh();
     eb.setDivRect(this.c_photoRoot,0,null,null,null);
-    return;
-
-    if (this.v_photos.length<=1) return;
-    var r = eb.getDivRectSetting(this.c_photoRoot);
-    ee.setRect(this.c_photo,0,0,r.w, r.h);
-    if (this.v_index >= this.v_photos.length-1) {
-        this.v_index = 0;
-    } else {
-        this.v_index++;
-    }
-    this.refresh();    
 }
 ]]></onCreate>
       <sizeRatio>0.700087950747581</sizeRatio>
