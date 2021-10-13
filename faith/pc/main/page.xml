@@ -364,7 +364,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -553,7 +552,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -18659,7 +18657,8 @@ sender.resize = function (img) {
       <layerVisible>false</layerVisible>
       <left>75</left>
       <leftRatio>0.138888888888889</leftRatio>
-      <onClick><![CDATA[if (sender.parentNode.c_photos.v_photos.length>=4) {
+      <onClick><![CDATA[var photoRoot = sender.parentNode.parentNode;
+if (photoRoot.c_photos.v_photos.length>=4) {
     g5.alert1("提示", "对不起，您最多上传4张照片或者视频");
     return;
 }
@@ -18667,40 +18666,39 @@ sender.resize = function (img) {
 if (g5.isMobile) {
     g5.p2.p32.show(function(ytbVideo) {
         var i = 0;
-        for (i=0; i<sender.parentNode.c_photos.v_photos.length; i++) {
-            var s = sender.parentNode.c_photos.v_photos[i];
+        for (i=0; i<photoRoot.c_photos.v_photos.length; i++) {
+            var s = photoRoot.c_photos.v_photos[i];
             if (s.length<4) continue;
             if (s.substr(0,4)=="?YTB") {
                 break;
             }
         }
-        if (i>=sender.parentNode.c_photos.v_photos.length) {
-            sender.parentNode.c_photos.v_photos.push(ytbVideo);
+        if (i>=photoRoot.c_photos.v_photos.length) {
+            photoRoot.c_photos.v_photos.push(ytbVideo);
         } else {
-            sender.parentNode.c_photos.v_photos.splice(i,1,ytbVideo);
+            photoRoot.c_photos.v_photos.splice(i,1,ytbVideo);
         }
-        
-        g5.refreshPhoto(sender.parentNode.c_photos);
-        sender.parentNode.check();
+        g5.refreshPhoto(photoRoot.c_photos);
+        photoRoot.check();
     });
 } else {
     g5.popBlack2.a1.show(function(ytbVideo) {
         var i = 0;
-        for (i=0; i<sender.parentNode.c_photos.v_photos.length; i++) {
-            var s = sender.parentNode.c_photos.v_photos[i];
+        for (i=0; i<photoRoot.c_photos.v_photos.length; i++) {
+            var s = photoRoot.c_photos.v_photos[i];
             if (s.length<4) continue;
             if (s.substr(0,4)=="?YTB") {
                 break;
             }
         }
-        if (i>=sender.parentNode.c_photos.v_photos.length) {
-            sender.parentNode.c_photos.v_photos.push(ytbVideo);
+        if (i>=photoRoot.c_photos.v_photos.length) {
+            photoRoot.c_photos.v_photos.push(ytbVideo);
         } else {
-            sender.parentNode.c_photos.v_photos.splice(i,1,ytbVideo);
+            photoRoot.c_photos.v_photos.splice(i,1,ytbVideo);
         }
         
-        g5.refreshPhoto(sender.parentNode.c_photos);
-        sender.parentNode.check();
+        g5.refreshPhoto(photoRoot.c_photos);
+        photoRoot.check();
     });
 }
 ]]></onClick>
@@ -18848,7 +18846,6 @@ sender.v_photos = new Array();</onCreate>
       <height>578</height>
       <heightRatio>0.741025641025641</heightRatio>
       <layerName><![CDATA[p2.p32->youtube视频链接]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 sender.c_video.innerHTML = "";
@@ -19011,9 +19008,11 @@ edit.parentNode.parentNode.parentNode.v_ytbVideo = ytbVideo;
       <left>454</left>
       <leftRatio>0.756666666666667</leftRatio>
       <onClick><![CDATA[history.go(-1);
-if (sender.parentNode.v_ytbVideo.length>0) {
-    sender.parentNode.onComplete(sender.parentNode.v_ytbVideo);             
-}
+setTimeout(function() {
+    if (sender.parentNode.v_ytbVideo.length>0) {
+        sender.parentNode.onComplete(sender.parentNode.v_ytbVideo);             
+    }
+}, 300);
 ]]></onClick>
       <onCreate>sender.v_style = [
     new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff",""),
@@ -26516,6 +26515,7 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -26752,6 +26752,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
