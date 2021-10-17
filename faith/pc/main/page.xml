@@ -837,6 +837,10 @@ sender.parentNode.eeMouseDown = function(senderM, event) {
 
 sender.parentNode.eeMouseUp = function(senderM, event) {
     if (!g5.isMobile) return;
+    if (sender.v_click) {
+        sender.v_click = false;
+        return;
+    }
     sender.v_move = false;
     if (sender.v_loadNew) {
         sender.v_loadNew = false;
@@ -1070,6 +1074,8 @@ if (g5.isMobile) {
             eb.processDock();
         }
     });
+    g5.p2.p1.className = "";
+    g5.p2.p1.v_click = true;
 } else {
     g5.popBlack2.a1.show(function(ytbVideo) {
         var i = 0;
@@ -1902,7 +1908,6 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -2916,77 +2921,8 @@ sender.eeMouseUp = function(sender, event, x, y) {
 }
 eb.initMouseEvent(sender); 
 
-
-
-
 sender.init = function(index) {
 }
-
-return;
-
-sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
-    this.color1 = color1;
-    this.color2 = color2
-    this.color3 = color3;
-    this.text1 = text1;
-    this.text2 = text2;
-    this.text3 = text3;
-    this.tColor1 = tColor1;
-    this.tColor2 = tColor2;
-    this.tColor3 = tColor3;
-    this.bdColor = bdColor;
-}
-sender.v_style = [
-    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff",""),
-    new sender.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
-    new sender.BStyle("#1da1f2","#ca2055","#b31d4b","正在关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff",""),
-    new sender.BStyle("","#e8f5fe","#d2ecfc","编辑个人资料","编辑个人资料","编辑个人资料","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
-    new sender.BStyle("#e0245e","#ca2055","#b31d4b","被屏蔽","屏蔽对方","屏蔽对方","#ffffff","#ffffff","#ffffff",""),
-];
-
-sender.init = function(index) {
-    this.v_index = index;
-    this.style.backgroundColor = this.v_style[index].color1;
-    ee.setText(this, this.v_style[index].text1);
-    ee.setTextColor(this, this.v_style[index].tColor1);
-    if (this.v_style[index].bdColor=="") {
-        this.style.borderWidth = "0px";
-    } else {
-        this.style.boxSizing="border-box";
-        this.style.borderWidth = "1px";
-        this.style.borderColor = this.v_style[index].bdColor;
-        this.style.borderStyle = "solid";
-    }
-    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-}
-
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color1;
-    ee.setText(sender, s.text1);
-    ee.setTextColor(sender, s.tColor1);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color3;
-    ee.setText(sender, s.text3);
-    ee.setTextColor(sender, s.tColor3);
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-}
-eb.initMouseEvent(sender);
-
-sender.init(0);
 
 
 
@@ -16384,6 +16320,7 @@ sender.resize = function (img, maxSize) {
       <height>774</height>
       <heightRatio>0.992307692307692</heightRatio>
       <layerName><![CDATA[p2.p27->设置-账号-注销]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.a1 = ee.getControl("panel493");
 sender.a2 = ee.getControl("panel498");
@@ -16707,6 +16644,7 @@ eb.initMouseEvent(sender);
       <height>676</height>
       <heightRatio>0.873385012919897</heightRatio>
       <layerName><![CDATA[a2->删除冷却期]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
