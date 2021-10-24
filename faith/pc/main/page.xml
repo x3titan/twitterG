@@ -11227,7 +11227,7 @@ sender.renderMsg = function(root) {
             default:
         }
         c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 0, 350-15*2, 40);
-        addText(c, "a", "left", "center", "微软雅黑", 12, "000000", "normal");
+        addText(c, " ", "left", "center", "微软雅黑", 12, "000000", "normal");
     } else {
         c = createPanel(root, root.id+"_panel2", "", 65, cy, w-150, 40);
         switch (mode) {
@@ -11239,36 +11239,49 @@ sender.renderMsg = function(root) {
         }
         c.style.backgroundColor = "#1da1f2";
         c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 0, 390-15*2, 40);
-        addText(c, "a", "left", "center", "微软雅黑", 12, "FFFFFF", "normal");
+        addText(c, " ", "left", "center", "微软雅黑", 12, "FFFFFF", "normal");
     }
-    c.label.style.wordBreak = "break-all";
-    c.label.style.whiteSpace = "nowrap";
-    ee.setText(c, root.v_msgContent);
-    eb.processDock();
-    eb.setDivRect(c.label, null, null, 10,10);
-    rect = eb.getDivRect(c.label);
-    if (left) {
-        if (rect.w > w-150) {
-            c.label.style.whiteSpace = "pre-wrap";
-            eb.setDivRect(c.label, null, null, w-150,10);
-            rect = eb.getDivRect(c.label);
+    var ph = "/photo ";
+    if (root.v_msgContent.substr(0, ph.length) == ph) {
+        rect = eb.getDivRectSetting(c.parentNode);
+        var pHeight = parseInt(rect.w*0.8);
+        ee.setRect(c.parentNode,null,null,null,pHeight);
+        ee.setRect(c,0,0,rect.w,pHeight);
+        ee.setImage(c,"url:" + g5.imgUrl + root.v_msgContent.substr(ph.length), "trim", "", "");
+        if (!left) {
+            ee.setRect(c.parentNode, w-25-rect.w, null, null, null)
         }
+        cy += pHeight+4;
     } else {
-        if (rect.w > parseInt(w-150)) {
-            c.label.style.whiteSpace = "pre-wrap";
-            eb.setDivRect(c.label, null, null, w-150,10);
-            rect = eb.getDivRect(c.label);
+        c.label.style.wordBreak = "break-all";
+        c.label.style.whiteSpace = "nowrap";
+        ee.setText(c, root.v_msgContent);
+        eb.processDock();
+        eb.setDivRect(c.label, null, null, 10,10);
+        rect = eb.getDivRect(c.label);
+        if (left) {
+            if (rect.w > w-150) {
+                c.label.style.whiteSpace = "pre-wrap";
+                eb.setDivRect(c.label, null, null, w-150,10);
+                rect = eb.getDivRect(c.label);
+            }
+        } else {
+            if (rect.w > parseInt(w-150)) {
+                c.label.style.whiteSpace = "pre-wrap";
+                eb.setDivRect(c.label, null, null, w-150,10);
+                rect = eb.getDivRect(c.label);
+            }
         }
+        ee.setRect(c, null, null, rect.w, rect.h + 10);
+        rect = eb.getDivRect(c);
+        c = c.parentNode;
+        ee.setRect(c,null,null,rect.w+15*2,rect.h);
+        rect = eb.getDivRect(c);
+        if (!left) {
+            ee.setRect(c, w-25-rect.w, null, null, null)
+        }
+        cy += rect.h + 4;
     }
-    ee.setRect(c, null, null, rect.w, rect.h + 10);
-    rect = eb.getDivRect(c);
-    c = c.parentNode;
-    ee.setRect(c,null,null,rect.w+15*2,rect.h);
-    rect = eb.getDivRect(c);
-    if (!left) {
-        ee.setRect(c, w-25-rect.w, null, null, null)
-    }
-    cy += rect.h + 4;
     
     //time
     if ((mode==1)||(mode==4)) {
@@ -42153,7 +42166,7 @@ if (root.v_photo.substr(0,4) == "?YTB") {
     //    root.v_photo.substr(4, root.v_photo.length) + 
     //    "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
 } else {
-    root.imgUrl = "url:" + g5.imgUrl + root.v_photo
+    root.imgUrl = "url:" + g5.imgUrl + root.v_photo;
     //g5.setImage(root,root.imgUrl,"trim","","",400);
     ee.setImage(root,root.imgUrl,"trim","","");
     ee.setOnClick(root, function(sender, event) {
