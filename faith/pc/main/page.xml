@@ -10534,7 +10534,6 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -10750,10 +10749,13 @@ sender.render = function(root) {
     //content
     c = createPanel(root, root.id + "panel5", "", 78, 38, dw-100, 29);
     s = root.v_content;
+    var ph = "/photo ";
     if (root.v_userInfo.status == "DISABLED") {
         s = "账户被禁封";
     } else if (root.v_userInfo.status == "Del") {
         s = "账户已销号";
+    } else if (s.substr(0, ph.length) == ph) {
+        s = "图片";
     }
     c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     c.style.fontSize = "12pt";
@@ -10763,6 +10765,9 @@ sender.render = function(root) {
     c.innerHTML = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(dw-100)+"px'>" + s + "</div>";
     root.c_content = c;
     root.setContent = function(content) {
+        if (content.substr(0, ph.length) == ph) {
+            content = "图片";
+        }
         this.c_content.childNodes[0].innerHTML = content;
         var now = new Date();
         this.v_timeLabel.innerHTML =  (now.getMonth()+1) + "月" + now.getDate() + "日";
@@ -10900,6 +10905,7 @@ sender.loadDataset = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -11248,9 +11254,18 @@ sender.renderMsg = function(root) {
         ee.setRect(c.parentNode,null,null,null,pHeight);
         ee.setRect(c,0,0,rect.w,pHeight);
         ee.setImage(c,"url:" + g5.imgUrl + root.v_msgContent.substr(ph.length), "trim", "", "");
+        c.v_photo = root.v_msgContent.substr(ph.length);
+        c.style.cursor = "pointer";
         if (!left) {
             ee.setRect(c.parentNode, w-25-rect.w, null, null, null)
         }
+        ee.setOnClick(c, function(sender, event) {
+            var pa = new Array();
+            pa.push(sender.v_photo);
+            g5.popBlack.a2.show(pa, sender.v_photo);
+            g5.player.stop();
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+        }); 
         cy += pHeight+4;
     } else {
         c.label.style.wordBreak = "break-all";
