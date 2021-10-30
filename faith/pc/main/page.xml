@@ -8239,6 +8239,13 @@ sender.setLike = function(contentId, isLike) {
     var item = null;
     var items = this.c_tabRoot.p3.v_items;
     if (isLike) {
+        for (i=0; i<items.length; i++) {
+            if (!items[i].v_userInfo) continue;
+            if (items[i].aniStart) continue;
+            if (items[i].v_userInfo.id == g5.myUserInfo.id) {
+                return;
+            }
+        }
         item = createPanel(root, "twlku_" + g5.myUserInfo.id, "", 0, 0, eb.getDivRectSetting(root).w, 5);
         item.v_userInfo = g5.myUserInfo;
         item.v_mode = "";
@@ -37941,7 +37948,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="109">
+  <g5Items count="108">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -41982,24 +41989,6 @@ if (i>=g5.unlikeItems.length) {
 if (g5.unlikeItems.length>0) {
     startTimer();
 }
-]]></functionCode>
-    </item>
-    <item name="setLikeApply" type="20">
-      <varValue />
-      <functionParam />
-      <functionCode><![CDATA[if (g5.likeItems.length<=0) return;
-if (likeContent.busy) {
-    startTimer();
-    return;
-}
-likeContent.contentId = g5.likeItems[0].contentId;
-likeContent.onComplete = function() {
-    g5.likeBusy = false;
-    //g5.writeLog("setLikeComplete:"+likeContent.contentId);
-}
-likeContent();
-g5.likeItems.splice(0,1);
-startTimer();
 ]]></functionCode>
     </item>
     <item name="showCommonText" type="20">
