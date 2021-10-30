@@ -37941,7 +37941,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="108">
+  <g5Items count="109">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -41982,6 +41982,24 @@ if (i>=g5.unlikeItems.length) {
 if (g5.unlikeItems.length>0) {
     startTimer();
 }
+]]></functionCode>
+    </item>
+    <item name="setLikeApply" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode><![CDATA[if (g5.likeItems.length<=0) return;
+if (likeContent.busy) {
+    startTimer();
+    return;
+}
+likeContent.contentId = g5.likeItems[0].contentId;
+likeContent.onComplete = function() {
+    g5.likeBusy = false;
+    //g5.writeLog("setLikeComplete:"+likeContent.contentId);
+}
+likeContent();
+g5.likeItems.splice(0,1);
+startTimer();
 ]]></functionCode>
     </item>
     <item name="showCommonText" type="20">
