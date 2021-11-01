@@ -8300,6 +8300,13 @@ sender.setUnlike = function(contentId, isUnlike) {
     var item = null;
     var items = this.c_tabRoot.p4.v_items;
     if (isUnlike) {
+        for (i=0; i<items.length; i++) {
+            if (!items[i].v_userInfo) continue;
+            if (items[i].aniStart) continue;
+            if (items[i].v_userInfo.id == g5.myUserInfo.id) {
+                return;
+            }
+        }
         item = createPanel(root, "twulku_" + g5.myUserInfo.id, "", 0, 0, eb.getDivRectSetting(root).w, 5);
         item.v_userInfo = g5.myUserInfo;
         item.v_mode = "";
