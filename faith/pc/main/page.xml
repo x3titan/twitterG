@@ -8966,15 +8966,21 @@ sender.loadFromDb = function(v_contentId, changePage) {
     showLikeList.onComplete = function(dataset) {
         g5.loading.close();
         var root = sender;
-        var cy = 0;
+        var cy = 0, item;
         var itemWidth = eb.getDivRect(root).w;
-        
+        if (g5.p2.p9.v_content.isLike) {
+            item = createPanel(root, "twlk_" + g5.myUserInfo.id, "", 0, 0, itemWidth, 5);
+            item.v_userInfo = g5.myUserInfo.clone();
+            item.v_mode = "";
+            g5.renderUserBar(item);
+            sender.v_items.push(item);
+        }
         for (var i=0; i<dataset.rowCount; i++) {
             //大于零 不显示自己
             //等于零
-            var item = createPanel(root, "twlk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            item = createPanel(root, "twlk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
-            if (!g5.p2.p9.v_content.isLike &amp;&amp; item.v_userInfo.id == g5.myUserInfo.id) {
+            if (item.v_userInfo.id == g5.myUserInfo.id) {
                 console.log("delete");
                 ee.removeControl(item);
                 continue;
