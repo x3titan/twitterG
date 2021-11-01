@@ -7766,7 +7766,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -8355,7 +8354,6 @@ sender.setUnlike = function(contentId, isUnlike) {
       <dockX>fill</dockX>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_tabRoot</note>
       <onCreate><![CDATA[sender.currentPageIndex = -1;
@@ -8467,7 +8465,6 @@ sender.init = function() {
       <fieldCount>4</fieldCount>
       <height>41</height>
       <heightRatio>0.109625668449198</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note><![CDATA[c_title->题头按钮组]]></note>
       <onCreate>sender.style.boxSizing = "border-box";
@@ -8971,12 +8968,17 @@ sender.loadFromDb = function(v_contentId, changePage) {
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
-        //g5.p2.p9.v_content.isLike
+        
         for (var i=0; i<dataset.rowCount; i++) {
             //大于零 不显示自己
             //等于零
             var item = createPanel(root, "twlk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
+            if (!g5.p2.p9.v_content.isLike &amp;&amp; item.v_userInfo.id == g5.myUserInfo.id) {
+                console.log("delete");
+                ee.removeControl(item);
+                continue;
+            }
             item.v_mode = "";
             g5.renderUserBar(item);
             cy += eb.getDivRect(item).h;
@@ -10548,6 +10550,7 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
