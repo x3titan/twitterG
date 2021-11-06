@@ -8936,6 +8936,7 @@ sender.setCount = function(value) {
       <bindControl>layoutx1</bindControl>
       <bindTop>bottom</bindTop>
       <dockX>fill</dockX>
+      <fontSize>10</fontSize>
       <height>132</height>
       <heightRatio>0.352941176470588</heightRatio>
       <layerName><![CDATA[  p3->点赞]]></layerName>
@@ -8978,12 +8979,9 @@ sender.loadFromDb = function(v_contentId, changePage) {
             sender.v_items.push(item);
         }
         for (var i=0; i<dataset.rowCount; i++) {
-            //大于零 不显示自己
-            //等于零
             item = createPanel(root, "twlk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
             if (item.v_userInfo.id == g5.myUserInfo.id) {
-                console.log("delete");
                 ee.removeControl(item);
                 continue;
             }
@@ -9071,9 +9069,22 @@ sender.loadFromDb = function(v_contentId, changePage) {
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
+        for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+        sender.v_items = new Array();
+        if (g5.p2.p9.v_content.isUnlike) {
+            item = createPanel(root, "twulk_" + g5.myUserInfo.id, "", 0, 0, itemWidth, 5);
+            item.v_userInfo = g5.myUserInfo.clone();
+            item.v_mode = "";
+            g5.renderUserBar(item);
+            sender.v_items.push(item);
+        }
         for (var i=0; i<dataset.rowCount; i++) {
             var item = createPanel(root, "twulk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
+            if (item.v_userInfo.id == g5.myUserInfo.id) {
+                ee.removeControl(item);
+                continue;
+            }
             item.v_mode = "";
             g5.renderUserBar(item);
             cy += eb.getDivRect(item).h;
