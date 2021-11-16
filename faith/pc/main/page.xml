@@ -26167,6 +26167,9 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
             g5.alert1("不能转发", "对不起，您的账户目前处于冻结状态，不能对短文进行直接转发操作。");
             return;
         }
+        if (updateContents.busy) {
+            updateContents.cancel = true;
+        }
         newTwitter.content="";
         newTwitter.uplinkType="L";
         var contentIdB;
@@ -40870,6 +40873,10 @@ g5.RC_LastTime = new Date();
 if (updateContents.busy) return;
 updateContents.cIds = cId;
 updateContents.onComplete = function(dataset) {
+    if (updateContents.cancel) {
+        updateContents.cancel = false;
+        return;
+    }
     if (g5.likeBusy|| g5.unlikeBusy) return;
     var changed = false;
     for (var i=0; i<dataset.rowCount; i++) {
