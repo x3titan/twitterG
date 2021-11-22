@@ -251,7 +251,71 @@ ee.getLabel = function(panel) {
     if (!panel.label) return null;
     return panel.label.rows[0].cells[0];
 }
-]]></onPageCreate>
+
+eb.addEdit = function (div, font, fontSize, fontColor, fontBold, password, multiLine, inputHint) {
+        var input;
+        if (multiLine) {
+            input = document.createElement("textarea");
+        } else {
+            input = document.createElement("input");
+        }
+        if (password) {
+            input.type = "password";
+        }
+        div.appendChild(input);
+        div.style.cursor = "text";
+        input.multiLine = multiLine;
+        input.style.overflow = "hidden";
+        input.style.position = "absolute";
+        input.style.border = "0px";
+        input.style.outline = "0px";
+        input.style.backgroundColor = "transparent";
+        if (!multiLine) input.style.whiteSpace = "nowrap";
+        input.style.fontFamily = "宋体";
+        input.style.fontSize = "9pt";
+        input.style.textAlign = "left";
+        if (!eb.isEmpty(div.skin)) {
+            eb.setDivRect(input, div.skinCX, div.skinCY,
+                eb.getDivRect(div).w - div.skinImgW + div.skinCW,
+                eb.getDivRect(div).h - div.skinImgH + div.skinCH);
+        } else {
+            input.style.width = "100%";
+            input.style.height = "100%";
+            input.style.left = "0px";
+            input.style.top = "0px";
+        }
+        if (!multiLine) {
+            //input.style.lineHeight = eb.getDivRect(input).h + "px";
+        }
+        input.style.fontFamily = font;
+        input.style.fontSize = fontSize;
+        input.style.color = fontColor;
+        input.style.fontWeight = fontBold;
+        if (ee.pureServer) {
+            input.style.backgroundImage = "url(/Res/empty.png)";
+        } else {
+            input.style.backgroundImage = "url(Res/empty.png)";
+        }
+        div._input = input;
+        if (this.isEmpty(inputHint)) inputHint = false;
+        if (inputHint) {
+            div._inputHint = ee.getText(div);
+            this.addEvent(input, "focus", function (event) {
+                var sender = event.target ? event.target : (event.srcElement ? event.srcElement : null);
+                if (sender == null) return;
+                var c = sender.parentNode;
+                ee.setText(c, "");
+            }, false);
+            this.addEvent(input, "blur", function (event) {
+                var sender = event.target ? event.target : (event.srcElement ? event.srcElement : null);
+                if (sender == null) return;
+                var c = sender.parentNode;
+                if (ee.getEditText(c).length <= 0) {
+                    ee.setText(c, c._inputHint);
+                }
+            }, false);
+        }
+    }]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammer.min.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
