@@ -27530,7 +27530,7 @@ sender.init(0);
       <leftRatio>0.26561125769569</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel412");
-sender.c_input = ee.getControl("edit1");
+sender.c_edit = ee.getControl("panel614");
 sender.c_title = ee.getControl("panel47");
 sender.c_button = ee.getControl("panel220");
 
@@ -27545,7 +27545,7 @@ sender.show = function(title) {
 sender.init = function(titleText, keepLast) {
     if (eb.isEmpty(titleText)) titleText = "";
     ee.setText(this.c_title, titleText);
-    if (!keepLast) ee.setEditText(this.c_input, "");
+    if (!keepLast) this.c_edit.setEditText("");
     this.c_photos.v_photos = new Array();
     g5.refreshPhoto(this.c_photos);
     this.check();
@@ -27564,7 +27564,7 @@ sender.close = function() {
 
 sender.check = function() {
     this.c_button.setEnabled(
-        ((ee.getEditText(this.c_input).trim().length>0) &amp;&amp;(ee.getEditText(this.c_input).trim().length<=200)) ||
+        ((this.c_edit.getEditText().trim().length>0) &amp;&amp; (this.c_edit.getEditText().trim().length<=200)) ||
         this.c_photos.v_photos.length>0
     );    
 }
@@ -27576,7 +27576,7 @@ sender.showNew = function() {
         if (newTwitter.busy) return;
         newTwitter.uplinkType = "N";
         newTwitter.uplinkId = 0;
-        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.content = sender.c_edit.getEditText();
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
             sender.v_lastOp = "";
@@ -27625,7 +27625,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         }
         newTwitter.uplinkType = "R";
         newTwitter.uplinkId = contentIdB;
-        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.content = sender.c_edit.getEditText();
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
             sender.v_lastOp = "";
@@ -27675,7 +27675,7 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
         }
         newTwitter.uplinkType = "F";
         newTwitter.uplinkId = contentIdB;
-        newTwitter.content = ee.getEditText(sender.c_input);
+        newTwitter.content = sender.c_edit.getEditText();
         newTwitter.photos = sender.c_photos.v_photos;
         newTwitter.onComplete = function(contentId) {
             sender.v_lastOp = "";
@@ -28187,7 +28187,7 @@ sender.onpointermove = function(event) {
       <left>412</left>
       <leftRatio>0.774436090225564</leftRatio>
       <onClick><![CDATA[if (!sender.v_enabled) return;
-var content = ee.getEditText(sender.parentNode.c_input);
+var content = sender.parentNode.c_edit.getEditText();
 var photos = sender.parentNode.c_photos.v_photos;
 if ((content.length<=0) &amp;&amp; (photos.length<=0)) {
     g5.alert1("提示", "发言内容不能为空，您至少要留有文字或者至少一张图片或者视频。");
@@ -28246,17 +28246,10 @@ eb.initMouseEvent(sender);
       <__U_editFontColor>000000</__U_editFontColor>
       <__U_editFontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
       <__U_editFontSize>16pt</__U_editFontSize>
-      <__U_editMaxY>300px</__U_editMaxY>
+      <__U_editMaxY>154px</__U_editMaxY>
       <__U_onCurPosChange-sender-oldPos-newPos>sender.processUserName();</__U_onCurPosChange-sender-oldPos-newPos>
       <__U_onFocusChange-sender-isFocus />
-      <__U_onHeightChange-sender-oldH-newH>var dy = newH - oldH;
-if (dy == 0) return;
-ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
-g5.batchMoveY(g5.p2.p1.v_items,0,dy);
-eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
-eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
-eb.processDock();
-</__U_onHeightChange-sender-oldH-newH>
+      <__U_onHeightChange-sender-oldH-newH />
       <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
 
 if (newText.split("\n").length-1>20) {
@@ -28272,33 +28265,32 @@ sender.setCurPosAbs(cp);
 
 sender.processUserName();
 
-g5.p2.p1.a1.check();
 var newText = newText.trim();
-var c = ee.getControl("panel53");
+var c = ee.getControl("panel50");
 if (newText.length<180) {
     c.v_color = "#29a5f2";
     c.v_r = "9";
     c.refresh(newText.length/200);
-    ee.setText(ee.getControl("panel122"), "");    
+    ee.setText(ee.getControl("panel45"), "");    
 } else if (newText.length<=200) {
     c.v_color = "#ffad1f";
     c.v_r = "12";
     c.refresh(newText.length/200);    
-    ee.setText(ee.getControl("panel122"), 200-newText.length);    
-    ee.setTextColor(ee.getControl("panel122"), "#ffad1f");
+    ee.setText(ee.getControl("panel45"), 200-newText.length);    
+    ee.setTextColor(ee.getControl("panel45"), "#ffad1f");
 } else {
     c.v_color = "#e0245e";
     c.v_r = "14";
     c.refresh((newText.length-200)/100);    
-    ee.setText(ee.getControl("panel122"), 200-newText.length);
-    ee.setTextColor(ee.getControl("panel122"), "#e0245e");
+    ee.setText(ee.getControl("panel45"), 200-newText.length);
+    ee.setTextColor(ee.getControl("panel45"), "#e0245e");
 }
-
+sender.parentNode.check();
 ]]></__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml>
       <backgroundColor>D3D3D3</backgroundColor>
       <dockX>fill</dockX>
-      <height>94</height>
-      <heightRatio>0.153846153846154</heightRatio>
+      <height>103</height>
+      <heightRatio>0.168576104746318</heightRatio>
       <layerVisible>false</layerVisible>
       <left>30</left>
       <leftRatio>0.056390977443609</leftRatio>
@@ -28667,9 +28659,9 @@ sender.processUserName = function() {
 ]]></onCreate>
       <outerLeft>30</outerLeft>
       <outerRight>30</outerRight>
-      <sizeRatio>0.199152542372881</sizeRatio>
-      <top>129</top>
-      <topRatio>0.211129296235679</topRatio>
+      <sizeRatio>0.218220338983051</sizeRatio>
+      <top>79</top>
+      <topRatio>0.129296235679214</topRatio>
       <userProperty>//#P:editFontFamily|多行文字录入V2|'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif|string||用户输入文字的字体样式
 //#P:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
 //#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
@@ -28694,12 +28686,12 @@ sender.processUserName = function() {
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>16</fontSize>
       <hAlign>left</hAlign>
-      <height>94</height>
+      <height>103</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_label</note>
-      <sizeRatio>0.11228813559322</sizeRatio>
+      <sizeRatio>0.167372881355932</sizeRatio>
       <text>有什么新鲜事？</text>
       <top>0</top>
       <vAlign>top</vAlign>
@@ -28713,10 +28705,10 @@ sender.processUserName = function() {
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>26</height>
-      <heightRatio>0.490566037735849</heightRatio>
+      <heightRatio>0.252427184466019</heightRatio>
       <layerVisible>false</layerVisible>
       <left>16</left>
-      <leftRatio>0.0318091451292246</leftRatio>
+      <leftRatio>0.0338983050847458</leftRatio>
       <note>c_edit</note>
       <outerBottom>2</outerBottom>
       <outerLeft>5</outerLeft>
@@ -28724,12 +28716,12 @@ sender.processUserName = function() {
       <outerTop>2</outerTop>
       <sizeRatio>0.257425742574257</sizeRatio>
       <top>15</top>
-      <topRatio>0.283018867924528</topRatio>
+      <topRatio>0.145631067961165</topRatio>
       <v_color1>FFC0C0</v_color1>
       <v_Str>as223</v_Str>
       <vAlign>top</vAlign>
       <width>101</width>
-      <widthRatio>0.200795228628231</widthRatio>
+      <widthRatio>0.213983050847458</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel10">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
