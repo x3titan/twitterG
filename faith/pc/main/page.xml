@@ -1,5 +1,5 @@
 <page>
-  <controls count="731">
+  <controls count="732">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -27533,6 +27533,7 @@ sender.init(0);
 sender.c_edit = ee.getControl("panel614");
 sender.c_title = ee.getControl("panel47");
 sender.c_button = ee.getControl("panel220");
+sender.c_search = ee.getControl("panel617");
 
 sender.show = function(title) {
     this.init(title);
@@ -28650,18 +28651,18 @@ sender.setUsername = function(username) {
 sender.processUserName = function() {
     var userName = this.getUsername();
     if (userName.length>0) {
-        g5.p2.p34.show(sender, userName, function(username) {
+        this.parentNode.c_search.show(sender, userName, function(username) {
             sender.setUsername(username);
             sender.c_edit.blur();
         });
-    } else g5.p2.p34.close();
+    } else this.parentNode.c_search.close();
 }
 ]]></onCreate>
       <outerLeft>30</outerLeft>
       <outerRight>30</outerRight>
       <sizeRatio>0.281779661016949</sizeRatio>
-      <top>79</top>
-      <topRatio>0.129296235679214</topRatio>
+      <top>77</top>
+      <topRatio>0.126022913256956</topRatio>
       <userProperty>//#P:editFontFamily|多行文字录入V2|'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif|string||用户输入文字的字体样式
 //#P:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
 //#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
@@ -28722,6 +28723,117 @@ sender.processUserName = function() {
       <vAlign>top</vAlign>
       <width>101</width>
       <widthRatio>0.213983050847458</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel617">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>365</height>
+      <heightRatio>0.597381342062193</heightRatio>
+      <layerName>c_search</layerName>
+      <left>8</left>
+      <leftRatio>0.0150375939849624</leftRatio>
+      <onCreate><![CDATA[sender.v_headerName = "pageCSearch_";
+sender.v_searchOptions = "user";
+sender.v_items = new Array();
+sender.v_status = "init";
+sender.v_searchString = "";
+sender.v_pageIndex = 0;
+sender.style.boxSizing="border-box";
+sender.style.borderWidth = "4px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderLeft = "";
+sender.style.borderRight = "";
+
+sender.show = function(refDiv, searchText, onSelect) {
+    ee.setVisible(this, true);
+    this.f_onSelect = onSelect;
+    this.search(searchText);
+}
+
+sender.close = function() {
+    ee.setVisible(this, false);
+}
+
+sender.clear = function() {
+    for (var i=0; i<this.v_items.length; i++) {
+        ee.removeControl(this.v_items[i]);
+    }
+    this.v_items = new Array();
+}
+
+sender.search = function(searchString) {
+    if (this.v_searchString == searchString) return;
+    this.v_searchString = searchString;
+    this.v_pageIndex = 0;
+    this.fSearch();
+}
+
+sender.loadMore = function() {
+    if (this.v_status != "normal") return;
+    this.v_pageIndex++;
+    this.fSearch();
+}
+
+sender.fSearch = function() {
+    if (searchV2.busy) return;
+    searchV2.searchString = this.v_searchString;
+    if (searchV2.searchString == "") return;
+    searchV2.options = this.v_searchOptions;
+    searchV2.pageIndex = this.v_pageIndex;
+    searchV2.onComplete = function() {
+        g5.p2.p11.c_buttons.setEnabled(true);
+        sender.clear();
+        var cy = 0;
+        var itemWidth = eb.getDivRectSetting(sender).w;
+        for (var i=0; i<searchV2.dataset.rowCount; i++) {
+            var item = createPanel(sender, sender.v_headerName + searchV2.dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+            g5.loadUserRecord(item, searchV2.dataset, i);
+            item.v_mode = "";
+            g5.renderUserBar(item);
+            if (item.button1) ee.setVisible(item.button1, false);
+            ee.setOnClick(item, function(senderBtn, event) {
+                if (sender.f_onSelect) {
+                    sender.f_onSelect(senderBtn.v_userInfo.userName);
+                }
+                sender.close();
+            });
+            cy += eb.getDivRect(item).h;
+            sender.v_items.push(item);
+        }
+        if (searchV2.dataset.rowCount<=0) {
+            sender.v_status = "noResult";
+            var item = createPanel(sender, sender.v_headerName + "end", "", 0, cy, itemWidth, 60);
+            addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+            sender.v_items.push(item);
+        } else {
+            sender.v_status = "normal";
+        }
+        //g5.tiledV(sender,0,0,0);
+        //g5.tiledResizeV(sender,4);   
+    }
+    searchV2();
+}
+
+
+
+
+
+
+
+
+
+
+
+]]></onCreate>
+      <outerLeft>8</outerLeft>
+      <outerRight>8</outerRight>
+      <sizeRatio>0.707364341085271</sizeRatio>
+      <top>232</top>
+      <topRatio>0.379705400981997</topRatio>
+      <width>516</width>
+      <widthRatio>0.969924812030075</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel10">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -40949,10 +41061,10 @@ if (root.v_userInfo.status == "DISABLED") {
 } else {
     c.style.cursor="pointer";
     ee.setOnMouseEnter(c,function(sender,e){
-        sender.label.rows[0].cells[0].style.textDecoration="underline";
+        sender.style.textDecoration="underline";
     });
     ee.setOnMouseLeave(c,function(sender,e){
-        sender.label.rows[0].cells[0].style.textDecoration="";
+        sender.style.textDecoration="";
     });
 }
 
