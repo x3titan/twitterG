@@ -27055,9 +27055,23 @@ sender.setHammer = function() {
     sender.v_startP = new Point(0,0);
     if (sender.hammer) sender.hammer.destroy();
     sender.hammer = new Hammer(sender.c_photoRoot);
+    
+    /*
+    ee.getControl("panel75").addEventListener("touchstart", function(ev) {
+        console.log("touchStart Received");
+    });
+    ee.getControl("panel75").addEventListener("touchend", function() {
+        console.log("touchEnd Received");
+    });
+    ee.getControl("panel75").addEventListener("touchmove", function() {
+        console.log("touchmove Received");
+    });
+    */
+    
     sender.hammer.get("pinch").set({ enable: true });
     sender.hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL });
     sender.hammer.on("pan", function(ev) {
+        console.log("pan");
         if (sender.v_touchEnd) {
             sender.v_r = eb.getDivRectSetting(sender.c_photo);
             sender.v_startP.x = ev.deltaX;
@@ -27258,7 +27272,7 @@ sender.clickRight = function() {
       <heightRatio>0.874371859296482</heightRatio>
       <layerVisible>false</layerVisible>
       <left>80</left>
-      <leftRatio>0.0703605980650836</leftRatio>
+      <leftRatio>0.06948109058927</leftRatio>
       <note>c_photoRoot</note>
       <onClick>sender.parentNode.parentNode.close();</onClick>
       <outerBottom>50</outerBottom>
@@ -27522,16 +27536,54 @@ sender.init(0);
       <fontBold>true</fontBold>
       <fontColor>1E90FF</fontColor>
       <fontSize>14</fontSize>
-      <height>367</height>
-      <heightRatio>0.46105527638191</heightRatio>
+      <height>261</height>
+      <heightRatio>0.327889447236181</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>96</left>
-      <leftRatio>0.0844327176781003</leftRatio>
-      <sizeRatio>0.84367816091954</sizeRatio>
-      <top>55</top>
-      <topRatio>0.0690954773869347</topRatio>
-      <width>435</width>
-      <widthRatio>0.382585751978892</widthRatio>
+      <left>128</left>
+      <leftRatio>0.112576956904134</leftRatio>
+      <onCreate>sender.addEventListener("touchstart", function(ev) {
+    var newEv = new TouchEvent(ev.type, ev);
+    var c = ee.getControl("panel75");
+    c.dispatchEvent(newEv);
+    //window.event? window.event.cancelBubble = true : event.stopPropagation();
+});
+
+sender.addEventListener("touchmove", function(ev) {
+    var newEv = new TouchEvent(ev.type, ev);
+    var c = ee.getControl("panel75");
+    c.dispatchEvent(newEv);
+});
+
+sender.addEventListener("touchend", function(ev) {
+    var newEv = new TouchEvent(ev.type, ev);
+    var c = ee.getControl("panel75");
+    c.dispatchEvent(newEv);
+});
+
+sender.addEventListener("touchcanceled", function(ev) {
+    var newEv = new TouchEvent(ev.type, ev);
+    var c = ee.getControl("panel75");
+    c.dispatchEvent(newEv);
+});
+
+sender.addEventListener("touchenter", function(ev) {
+    console.log("touchenter");
+    var newEv = new TouchEvent(ev.type, ev);
+    var c = ee.getControl("panel75");
+    c.dispatchEvent(newEv);
+});
+
+sender.addEventListener("touchleave", function(ev) {
+    console.log("touchleave");
+    var newEv = new TouchEvent(ev.type, ev);
+    var c = ee.getControl("panel75");
+    c.dispatchEvent(newEv);
+});</onCreate>
+      <sizeRatio>0.795731707317073</sizeRatio>
+      <top>46</top>
+      <topRatio>0.0577889447236181</topRatio>
+      <width>328</width>
+      <widthRatio>0.288478452066843</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel42">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
