@@ -671,6 +671,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -7829,7 +7830,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -8418,7 +8418,6 @@ sender.setUnlike = function(contentId, isUnlike) {
       <dockX>fill</dockX>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_tabRoot</note>
       <onCreate><![CDATA[sender.currentPageIndex = -1;
@@ -8931,7 +8930,6 @@ sender.setCount = function(value) {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[  p2->转发]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.c_title = sender.parentNode.button2;
@@ -8956,6 +8954,11 @@ sender.show = function(v_contentId, bgRefresh) {
         for (var i=0; i<dataset.rowCount; i++) {
             var item = createPanel(root, "fwdl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
+            var j;
+            for (j=0; j<sender.v_items.length; j++) {
+                if (sender.v_items[j].v_content.id == item.v_content.id) break;
+            }
+            if (j<sender.v_items.length) continue;
             item.v_notDisplayRe = true;
             item.v_mode = "";
             item.v_forceDisplay = g5.p2.p9.v_forceDisplay;
