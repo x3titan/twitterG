@@ -26975,6 +26975,7 @@ sender.c_button1 = ee.getControl("panel8");
 sender.c_button2 = ee.getControl("panel52");
 sender.c_mobileBg = ee.getControl("panel607");
 sender.c_BtnConfirm = ee.getControl("panel613");
+sender.c_iosCover = ee.getControl("panel619");
 
 sender.show = function(photos, photo) {
     ee.setVisible(this.c_mobileBg, g5.isMobile);
@@ -27061,6 +27062,7 @@ sender.setHammer = function() {
     if (sender.hammer) sender.hammer.destroy();
     sender.hammer = new Hammer(sender.c_photoRoot);
     
+    /*
     ee.getControl("panel75").addEventListener("touchstart", function(ev) {
         console.log("touchStart Received");
     });
@@ -27070,6 +27072,7 @@ sender.setHammer = function() {
     ee.getControl("panel75").addEventListener("touchmove", function() {
         console.log("touchmove Received");
     });
+    */
     
     sender.hammer.get("pinch").set({ enable: true });
     sender.hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL });
@@ -27168,6 +27171,7 @@ sender.refresh = function() {
         this.c_photo.imgUrl = g5.getUserTitleBgUrl(v_photo)[1];
         ee.setImage(this.c_photo, this.c_photo.imgUrl,"fill","","");
         ee.setVisible(this.c_photo, true);
+        ee.setImage(this.c_iosCover, this.c_photo.imgUrl,"fill","","");
     }
 }
 
@@ -27544,6 +27548,7 @@ sender.init(0);
       <layerVisible>false</layerVisible>
       <left>52</left>
       <leftRatio>0.0457343887423043</leftRatio>
+      <note>c_iosCover</note>
       <onCreate>console.log("add");
 sender.addEventListener("touchstart", function(ev) {
     var newEv = new TouchEvent(ev.type, ev);
@@ -27557,17 +27562,18 @@ sender.addEventListener("touchmove", function(ev) {
     c.dispatchEvent(newEv);
 });
 
+eb.setAlpha(sender, 30);
 sender.addEventListener("touchend", function(ev) {
     var newEv = new TouchEvent(ev.type, ev);
     var c = ee.getControl("panel75");
     c.dispatchEvent(newEv);
+    //ev.preventDefault();
 });
 
 sender.addEventListener("touchcanceled", function(ev) {
     var newEv = new TouchEvent(ev.type, ev);
     var c = ee.getControl("panel75");
     c.dispatchEvent(newEv);
-    //ev.preventDefault();
 });
 
 sender.addEventListener("touchenter", function(ev) {
@@ -27575,7 +27581,6 @@ sender.addEventListener("touchenter", function(ev) {
     var newEv = new TouchEvent(ev.type, ev);
     var c = ee.getControl("panel75");
     c.dispatchEvent(newEv);
-    ev.preventDefault();
 });
 
 sender.addEventListener("touchleave", function(ev) {
@@ -27583,28 +27588,24 @@ sender.addEventListener("touchleave", function(ev) {
     var newEv = new TouchEvent(ev.type, ev);
     var c = ee.getControl("panel75");
     c.dispatchEvent(newEv);
-    //ev.preventDefault();
 });
 
 sender.addEventListener("pointerdown", function(ev) {
     var newEv = new PointerEvent(ev.type, ev);
     var c = ee.getControl("panel75");
     c.dispatchEvent(newEv);
-    //ev.preventDefault();
 });
 
 sender.addEventListener("pointerup", function(ev) {
     var newEv = new PointerEvent(ev.type, ev);
     var c = ee.getControl("panel75");
     c.dispatchEvent(newEv);
-    //ev.preventDefault();
 });
 
 sender.addEventListener("pointermove", function(ev) {
     var newEv = new PointerEvent(ev.type, ev);
     var c = ee.getControl("panel75");
     c.dispatchEvent(newEv);
-    //ev.preventDefault();
 });
 
 
