@@ -88,6 +88,11 @@ if (sUserAgent.indexOf('Android') > -1 || sUserAgent.indexOf('iPhone') > -1 /* |
     g5.clientType = "pc";
     g5.isMobile = false;
 }
+if (sUserAgent.indexOf("iPhone") > -1 || sUserAgent.indexOf("iPad") > -1 || sUserAgent.indexOf("iPod") > -1) {
+    g5.isIos = true;
+} else {
+    g5.isIos = false;
+}
 
 var tk = eb.getCookie("twitterGToken");
 if (eb.isEmpty(tk)) tk = "";
@@ -27167,11 +27172,13 @@ sender.refresh = function() {
             v_photo.substr(4, v_photo.length) + 
             "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
         ee.setVisible(this.c_video, true);
+        ee.setVisible(this.c_iosCover, false);
     } else {
         this.c_photo.imgUrl = g5.getUserTitleBgUrl(v_photo)[1];
         ee.setImage(this.c_photo, this.c_photo.imgUrl,"fill","","");
         ee.setVisible(this.c_photo, true);
-        ee.setImage(this.c_iosCover, this.c_photo.imgUrl,"fill","","");
+        ee.setVisible(this.c_iosCover, g5.isIos);
+        if (g5.isIos) ee.setImage(this.c_iosCover, this.c_photo.imgUrl,"fill","","");
     }
 }
 
