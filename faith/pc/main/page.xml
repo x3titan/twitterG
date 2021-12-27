@@ -26768,21 +26768,25 @@ sender.close = function() {
 }
 
 if ("ontouchstart" in window) {
-    eb.addEvent(sender, "touchstart", function (event) {
-        event.preventDefault();
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-        return false;
-    }, false);
-    eb.addEvent(sender, "touchend", function (event) {
-        event.preventDefault();
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-        return false;
-    }, false);
-    eb.addEvent(sender, "touchmove", function (event) {
-        event.preventDefault();
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-        return false;
-    }, false);
+    //eb.addEvent(sender, "touchstart", function (event) {
+    //    event.preventDefault();
+    //    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    //    return false;
+    //}, false);
+    if (g5.isIos) {
+        //1.touch down drag page bug
+        //2.touch down context menu
+        eb.addEvent(sender, "touchend", function (event) {
+            event.preventDefault();
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+            return false;
+        }, false);
+        eb.addEvent(sender, "touchmove", function (event) {
+            event.preventDefault();
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+            return false;
+        }, false);
+    }
 }
 ]]></onCreate>
       <sizeRatio>0.700087950747581</sizeRatio>
@@ -27080,7 +27084,6 @@ sender.setHammer = function() {
     sender.hammer.get("pinch").set({ enable: true });
     sender.hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL });
     sender.hammer.on("pan", function(ev) {
-        console.log("pan");
         if (sender.v_touchEnd) {
             sender.v_r = eb.getDivRectSetting(sender.c_photo);
             sender.v_startP.x = ev.deltaX;
