@@ -440,7 +440,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>798</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -454,7 +453,7 @@ sender.addEventListener("mousewheel",function(event){
 },false);
 */
 
-eb.addEvent(window, "scroll", function() {
+eb.addEvent(window, "scroll", function(event) {
     var viewPortH = eb.getClientSize().h
     g5.player.forceMode = false;
 
@@ -629,7 +628,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -11018,7 +11016,6 @@ sender.loadDataset = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p14->私信聊天]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -26725,6 +26722,7 @@ sender.renderItem = function(root) {
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -26776,6 +26774,16 @@ if ("ontouchstart" in window) {
         //    window.event? window.event.cancelBubble = true : event.stopPropagation();
         //    return false;
         //}, false);
+        eb.addEvent(sender, "mousewheel", function (event) {
+            event.preventDefault();
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+            return false;
+        }, false);
+        eb.addEvent(sender, "scroll", function (event) {
+            event.preventDefault();
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+            return false;
+        }, false);
         eb.addEvent(sender, "touchend", function (event) {
             event.preventDefault();
             window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -26965,6 +26973,7 @@ sender.onpointermove = function(event) {
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -26988,8 +26997,6 @@ sender.show = function(photos, photo) {
     ee.setVisible(this.c_button2, true);
     ee.setVisible(this.c_BtnConfirm, false);
     if (g5.isMobile) {
-        ee.setVisible(g5.p2.p1, false);
-
         this.setHammer();
         
         eb.setOuter(sender.c_photoRoot,0,0,0,0);
