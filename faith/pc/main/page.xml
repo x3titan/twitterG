@@ -19457,7 +19457,10 @@ sender.fSearch = function() {
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p35->设置-账号-打赏]]></layerName>
       <left>0</left>
-      <onCreate><![CDATA[sender.refresh = function() {
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.v_root = ee.getControl("panel629");
+
+sender.refresh = function() {
     ee.getControl("panel248").setEnabled(
         (ee.getEditText(ee.getControl("edit8")).length>0) &amp;&amp;
         (ee.getEditText(ee.getControl("edit9")).length>0) &amp;&amp;
@@ -19486,8 +19489,41 @@ sender.close = function() {
 }
 
 sender.renderItem = function(root) {
+    var w = eb.getDivRect(root).w;
+    var c,cy=10;
+    
+    root.v_userBar = true;
+    root.style.boxSizing="border-box";
+    root.style.borderWidth = "1px";
+    root.style.borderColor = "rgb(230,236,240)";
+    root.style.borderStyle = "solid";
+    root.style.borderTop = "";
+    root.style.borderLeft = "";
+    root.style.borderRight = "";
+    
+    c = createPanel(root, root.id+"p16u", "", 77, cy+4, w-190, 22); cy+=22;
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.color = "#6e7f8d";
+    c.style.textOverflow = "ellipsis";
+    c.style.inlineBlock = "max-width";
+    c.style.whiteSpace = "nowrap";
+    c.style.cursor="pointer";
+    c.innerHTML = "圣诞节飞洒登封市sssfasdf";
+    
+    cy+=10;
+    eb.setDivRect(root,null,null,null,cy);
+    return root; 
+}
 
-
+sender.addNew = function() {
+    var root = this.v_root;
+    var itemWidth = eb.getDivRect(this.v_root).w;
+    var item;
+    item = createPanel(root, "p2p1_" + "sss", "", 0, 0, itemWidth, 5);
+    this.renderItem(item);
+    this.v_items.push(item);
+    ee.tiledV(this.v_root,0,0,0);
 }
 
                                 
@@ -19661,7 +19697,12 @@ sender.style.borderLeft = "";</onCreate>
       <left>502</left>
       <leftRatio>0.836666666666667</leftRatio>
       <onClick>if (!sender.v_enabled) return;
+sender.parentNode.parentNode.addNew();
+
 return;
+
+
+
 var p1 = ee.getEditText(ee.getControl("edit8"));
 var p2 = ee.getEditText(ee.getControl("edit9"));
 var p3 = ee.getEditText(ee.getControl("edit10"));
