@@ -1774,7 +1774,6 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -19456,6 +19455,7 @@ sender.fSearch = function() {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p35->设置-账号-打赏]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_root = ee.getControl("panel629");
@@ -19512,6 +19512,32 @@ sender.renderItem = function(root) {
         c = createPanel(root, root.id+"W1", "", cx, cy, w1, 22); cx+=w1;
         addText(c, "类型", "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
         c.style.cursor="pointer";
+        ee.setOnClick(c, function(senderBtn, event) {
+            var v_style = new Array();
+            var v_onClick = new Array();
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","微信支付","微信支付","微信支付","#808080","#000000","#000000","#1da1f2"));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                }
+            );
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","支付宝","支付宝","支付宝","#808080","#000000","#000000","#1da1f2"));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                }
+            );
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","PayPal","PayPal","PayPal","#808080","#000000","#000000","#1da1f2"));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                }
+            );
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","自定义","自定义","自定义","#808080","#000000","#000000","#1da1f2"));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                }
+            );
+            g5.popup1.p4.show(senderBtn, 120, v_style, v_onClick); 
+            
+        });
     } else {
         c = createPanel(root, root.id+"p16u", "", 10, cy+4, w-10, 22); cy+=22;
         c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -26912,6 +26938,7 @@ sender.show = function(refDiv, width, v_style, v_function) {
         y = rect.y + rect.h + 10;
     }
     x = Math.min(x, eb.getClientSize().w - sr.w);
+    x = Math.max(20, x);
     eb.setDivRect(this,x,y,null,null);
 }
 
