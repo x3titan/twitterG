@@ -1,5 +1,5 @@
 <page>
-  <controls count="745">
+  <controls count="755">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -238,6 +238,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>798</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -426,6 +427,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.977443609022556</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.263852242744063</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -1774,6 +1776,7 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -19458,6 +19461,7 @@ sender.fSearch = function() {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
+sender.v_data = new Array();
 sender.v_root = ee.getControl("panel629");
 sender.type_itemData = function() {
     this.type = "";
@@ -19505,85 +19509,110 @@ sender.renderItem = function(root) {
     root.style.borderLeft = "";
     root.style.borderRight = "";
     var cx = 0;
-    var w1=50, w3=50, w4=50, w5=50, w6=50;
-    var w2 = w-w1-w3-w4-w5-w6;
+    var w1=100, w3=50;
+    var w2 = w-w1-w3;
     
-    if (root.v_data.type == "") {
-        c = createPanel(root, root.id+"W1", "", cx, cy, w1, 22); cx+=w1;
-        addText(c, "类型", "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+    c = createPanel(root, root.id+"W1", "", cx, cy, w1, 26); cx+=w1;
+    addText(c, root.v_data.type==""?"支付类型":root.v_data.type, "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+    c.style.cursor="pointer";
+    ee.setOnClick(c, function(senderBtn, event) {
+        var v_style = new Array();
+        var v_onClick = new Array();
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","微信支付","微信支付","微信支付","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = "微信支付";
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","支付宝","支付宝","支付宝","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = "支付宝";
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","PayPal","PayPal","PayPal","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = "PayPal";
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","自定义","自定义","自定义","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                g5.popBlack.a10.show(
+                    "输入",
+                    "付款链接：",
+                    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                    [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+                    function() {
+                    },
+                    function() {
+                    }
+                );
+            }
+        );
+        g5.popup1.p4.show(senderBtn, 120, v_style, v_onClick); 
+        
+    });
+    
+    if (root.v_data.linkType == "") {
+        c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
+        addText(c, "二维码 / 链接", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
         c.style.cursor="pointer";
         ee.setOnClick(c, function(senderBtn, event) {
             var v_style = new Array();
             var v_onClick = new Array();
-            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","微信支付","微信支付","微信支付","#808080","#000000","#000000","#1da1f2"));
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款二维码","付款二维码","付款二维码","#808080","#000000","#000000","#1da1f2"));
             v_onClick.push(
                 function (senderBtnC, event) {
                 }
             );
-            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","支付宝","支付宝","支付宝","#808080","#000000","#000000","#1da1f2"));
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款链接","付款链接","付款链接","#808080","#000000","#000000","#1da1f2"));
             v_onClick.push(
                 function (senderBtnC, event) {
                 }
             );
-            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","PayPal","PayPal","PayPal","#808080","#000000","#000000","#1da1f2"));
-            v_onClick.push(
-                function (senderBtnC, event) {
-                }
-            );
-            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","自定义","自定义","自定义","#808080","#000000","#000000","#1da1f2"));
-            v_onClick.push(
-                function (senderBtnC, event) {
-                }
-            );
-            g5.popup1.p4.show(senderBtn, 120, v_style, v_onClick); 
-            
+            var rect = g5.getRectAbs(senderBtn);
+            g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
         });
-    } else {
-        c = createPanel(root, root.id+"p16u", "", 10, cy+4, w-10, 22); cy+=22;
-        c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-        c.style.fontSize = "12pt";
-        c.style.color = "#6e7f8d";
-        c.style.textOverflow = "ellipsis";
-        c.style.inlineBlock = "max-width";
-        c.style.whiteSpace = "nowrap";
-        c.style.cursor="pointer";
-        c.innerHTML = "类型1，图片/链接2,修改3，上4，下5，删6";
     }
     
-    if (root.v_data.linkType == "") {
-        c = createPanel(root, root.id+"W2", "", cx, cy, w2+w3, 22); cx+=w2+w3;
-        addText(c, "图片 / 链接", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
-        c.style.cursor="pointer";
-    }
-    
-    c = createPanel(root, root.id+"W4", "", cx, cy, w4, 22); cx+=w4;
-    addText(c, "上移", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+    c = createPanel(root, root.id+"W3", "", cx, cy-13, w3, 26+15); cx+=w3;
+    addText(c, "...", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 18, "1da1f2", "bold");
     c.style.cursor="pointer";
+    ee.setOnClick(c, function(senderBtn, event) {
+        var v_style = new Array();
+        var v_onClick = new Array();
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","上移","上移","上移","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","下移","下移","下移","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除","删除","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+            }
+        );
+        g5.popup1.p4.show(senderBtn, 80, v_style, v_onClick); 
+    });
     
-    c = createPanel(root, root.id+"W5", "", cx, cy, w5, 22); cx+=w5;
-    addText(c, "下移", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
-    c.style.cursor="pointer";
-    
-    c = createPanel(root, root.id+"W6", "", cx, cy, w6, 22); cx+=w6;
-    addText(c, "删除", "right", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
-    c.style.cursor="pointer";
-    
-    
-    cy+=22;
+    cy+=26;
     cy+=10;
     eb.setDivRect(root,null,null,null,cy);
     return root; 
 }
 
 sender.addNew = function() {
-    var root = this.v_root;
-    var itemWidth = eb.getDivRect(this.v_root).w;
-    var item;
-    item = createPanel(root, "p2p35_" + "sss", "", 0, 0, itemWidth, 5);
-    item.v_data = new sender.type_itemData();
-    this.renderItem(item);
-    this.v_items.push(item);
-    ee.tiledV(this.v_root,0,0,0);
+    this.v_data.push(new sender.type_itemData());
+    this.refreshList();
 }
 
 sender.addButton = function() {
@@ -19658,6 +19687,28 @@ sender.removeButton = function() {
     if (!c) return;
     ee.removeControl(c);
 }
+
+sender.refreshList = function() {
+    while (this.v_items.length>0) {
+        ee.removeControl(this.v_items[0]);
+        this.v_items.splice(0,1);
+    }
+    this.removeButton();
+    
+    var i;
+    for (i=0; i<this.v_data.length; i++) {
+        var root = this.v_root;
+        var itemWidth = eb.getDivRect(this.v_root).w;
+        var item;
+        item = createPanel(root, "p2p35_" + i, "", 0, 0, itemWidth, 5);
+        item.v_data = this.v_data[i];
+        this.renderItem(item);
+        this.v_items.push(item);
+    }
+    ee.tiledV(this.v_root,0,0,0);
+    if (this.v_data.length<=0) this.addButton();
+}
+
 
 
                                 
@@ -27046,7 +27097,6 @@ sender.renderItem = function(root) {
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -27065,6 +27115,7 @@ sender.a6  = ee.getControl("panel257");
 sender.a7 = ee.getControl("panel344");
 sender.a8 = ee.getControl("panel54");
 sender.a9 = ee.getControl("panel560");
+sender.a10 = ee.getControl("panel630");
 sender.v_canScroll = false;
 
 sender.addEventListener("mousewheel", function(e) {
@@ -31794,6 +31845,439 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <topRatio>0.0213032581453634</topRatio>
       <width>36</width>
       <widthRatio>0.123711340206186</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <ani2Size>pointDisappear:收缩消失成点</ani2Size>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundSkin>body5</backgroundSkin>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>221</height>
+      <heightRatio>0.276942355889724</heightRatio>
+      <layerName><![CDATA[  a10->通用字符串输入窗口]]></layerName>
+      <left>377</left>
+      <leftRatio>0.331574318381706</leftRatio>
+      <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
+</onAni2End>
+      <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
+</onClick>
+      <onCreate>sender.show = function(title,text,bStyle1,bStyle2,onComplete,onButton1) {
+    ee.setText(ee.getControl("panel632"),title);
+    ee.setText(ee.getControl("panel631"),text);
+    ee.getControl("panel634").v_style = bStyle1;
+    ee.getControl("panel634").init(0);
+    ee.getControl("panel635").v_style = bStyle2;
+    ee.getControl("panel635").init(0);
+    this.onComplete = onComplete;
+    this.onButton1 = onButton1;
+    ee.setVisible(this.parentNode, true);
+    ee.setVisible(this, true);
+    document.addEventListener("keydown", this.onKeyDown);
+}
+
+sender.close = function() {
+    ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
+    document.removeEventListener("keydown", this.onKeyDown);
+}
+
+sender.onKeyDown = function(event) {
+    event = event || window.event;
+    if (event.keyCode == 13) {
+        sender.close();
+        if (sender.onComplete) sender.onComplete();
+    } else if (event.keyCode == 27) {
+        sender.parentNode.close();
+        if (!eb.isEmpty(sender.onButton1)) {
+            sender.onButton1();
+            sender.onButton1 = null;
+        }
+    }
+}
+
+
+</onCreate>
+      <sizeRatio>0.578534031413613</sizeRatio>
+      <top>288</top>
+      <topRatio>0.360902255639098</topRatio>
+      <width>382</width>
+      <widthRatio>0.335971855760774</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630/panel632">
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>202326</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>39</height>
+      <heightRatio>0.150579150579151</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>63</left>
+      <leftRatio>0.164921465968586</leftRatio>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+</onCreate>
+      <sizeRatio>0.152941176470588</sizeRatio>
+      <text>删除发言</text>
+      <top>18</top>
+      <topRatio>0.0694980694980695</topRatio>
+      <width>255</width>
+      <widthRatio>0.667539267015707</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630/panel633">
+      <backgroundColor>00C0C0</backgroundColor>
+      <cursor>move</cursor>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>65</height>
+      <heightRatio>0.250965250965251</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate><![CDATA[sender.v_down = false;
+sender.style.backgroundColor = "rgba(255,255,255,0.01)";
+sender.onpointerdown = function(event) {
+    var sender = event.target;
+    sender.v_down = true;
+    sender.v_x = event.clientX;
+    sender.v_y = event.clientY;
+    sender.setPointerCapture(event.pointerId);
+}
+sender.onpointerup = function(event) {
+    var sender = event.target;
+    sender.v_down = false;
+    sender.releasePointerCapture(event.pointerId);
+}
+sender.onpointermove = function(event) {
+    var sender = event.target;
+    if (sender.v_down) {
+        var dx = event.clientX - sender.v_x;
+        var dy = event.clientY - sender.v_y;
+        var rect = eb.getDivRect(sender.parentNode);
+        var rectP = eb.getDivRect(sender.parentNode.parentNode);
+        if (rect.x+dx<0) dx = null;
+        if (rect.x+dx+rect.w>=rectP.w) dx = null;
+        if (dx!=null) {
+            sender.v_x = event.clientX;
+            dx = rect.x+dx;
+        }
+        if (rect.y+dy<0) dy = null;
+        if (rect.y+dy+rect.h>=rectP.h) dy = null;
+        if (dy!=null) {
+            sender.v_y = event.clientY;
+            dy = rect.y+dy;
+        }
+        ee.setRect(sender.parentNode, dx, dy, null, null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>0.170157068062827</sizeRatio>
+      <top>0</top>
+      <width>382</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630/panel634">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.154440154440154</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>54</left>
+      <leftRatio>0.141361256544503</leftRatio>
+      <onClick>sender.parentNode.parentNode.close();
+if (!eb.isEmpty(sender.parentNode.onButton1)) {
+    sender.parentNode.onButton1();
+    sender.parentNode.onButton1 = null;
+}
+</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    setTimeout(function() {
+        ee.setText(sender, s.text3);
+    }, 1000); 
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    setTimeout(function() {
+        ee.setText(sender, s.text2);
+    }, 1000); 
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.317460317460317</sizeRatio>
+      <text>取消</text>
+      <top>155</top>
+      <topRatio>0.598455598455598</topRatio>
+      <width>126</width>
+      <widthRatio>0.329842931937173</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630/panel635">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.154440154440154</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>203</left>
+      <leftRatio>0.531413612565445</leftRatio>
+      <onClick>sender.parentNode.parentNode.close();
+sender.parentNode.onComplete();</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    setTimeout(function() {
+        ee.setText(sender, s.text3);
+    }, 1000); 
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    setTimeout(function() {
+        ee.setText(sender, s.text2);
+    }, 1000); 
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.317460317460317</sizeRatio>
+      <text>确认</text>
+      <top>155</top>
+      <topRatio>0.598455598455598</topRatio>
+      <width>126</width>
+      <widthRatio>0.329842931937173</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630/panel636">
+      <cursor>pointer</cursor>
+      <dockX>right</dockX>
+      <dockY>top</dockY>
+      <height>36</height>
+      <heightRatio>0.138996138996139</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>328</left>
+      <leftRatio>0.858638743455497</leftRatio>
+      <onClick>sender.parentNode.parentNode.close();</onClick>
+      <onCreate><![CDATA[ee.setText(sender,
+    "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.iconClose + "</svg>"
+);
+sender.style.borderRadius = "50%";
+ee.setOnMouseEnter(sender, function(sender,event) {
+    sender.style.backgroundColor = "#dfeffa";
+});    
+ee.setOnMouseLeave(sender, function(sender,event) {
+    sender.style.backgroundColor = "";
+});
+]]></onCreate>
+      <outerRight>18</outerRight>
+      <outerTop>15</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>15</top>
+      <topRatio>0.0579150579150579</topRatio>
+      <width>36</width>
+      <widthRatio>0.0942408376963351</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630/panel637">
+      <backgroundColor>F5F8FA</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>66</height>
+      <heightRatio>0.298642533936652</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0261780104712042</leftRatio>
+      <onCreate>sender.style.borderRadius = "4px";
+</onCreate>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>0.18232044198895</sizeRatio>
+      <top>75</top>
+      <topRatio>0.339366515837104</topRatio>
+      <width>362</width>
+      <widthRatio>0.947643979057592</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel112/panel630/panel637/edit1">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>41</height>
+      <heightRatio>0.621212121212121</heightRatio>
+      <inputFont>微软雅黑</inputFont>
+      <inputFontSize>14</inputFontSize>
+      <layerVisible>false</layerVisible>
+      <left>15</left>
+      <leftRatio>0.0414364640883978</leftRatio>
+      <onChange>ee.getControl("panel231").refresh();</onChange>
+      <outerLeft>15</outerLeft>
+      <outerRight>15</outerRight>
+      <sizeRatio>0.123493975903614</sizeRatio>
+      <text>输入提示位置</text>
+      <top>25</top>
+      <topRatio>0.378787878787879</topRatio>
+      <width>332</width>
+      <widthRatio>0.917127071823204</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630/panel637/panel641">
+      <backgroundColor>657786</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0303030303030303</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.00344827586206897</sizeRatio>
+      <top>64</top>
+      <topRatio>0.96969696969697</topRatio>
+      <width>362</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel630/panel637/panel631">
+      <fontColor>657786</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>31</height>
+      <heightRatio>0.46969696969697</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>22</left>
+      <leftRatio>0.0607734806629834</leftRatio>
+      <sizeRatio>0.0965732087227414</sizeRatio>
+      <text>输入字符串说明</text>
+      <top>0</top>
+      <width>321</width>
+      <widthRatio>0.886740331491713</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268">
       <backgroundColor>FFFFFF</backgroundColor>
