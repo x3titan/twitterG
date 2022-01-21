@@ -1,5 +1,5 @@
 <page>
-  <controls count="756">
+  <controls count="757">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -19580,8 +19580,9 @@ sender.renderItem = function(root) {
             v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款二维码","付款二维码","付款二维码","#808080","#000000","#000000","#1da1f2"));
             v_onClick.push(
                 function (senderBtnC, event) {
+                    sender.c_file.v_myData = root.v_data;                
                     sender.c_file.c_file.blur();
-                    sender.c_file.c_file.click();                
+                    sender.c_file.c_file.click();
                 }
             );
             v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款链接","付款链接","付款链接","#808080","#000000","#000000","#1da1f2"));
@@ -19606,6 +19607,15 @@ sender.renderItem = function(root) {
             g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
         });
     } else if (root.v_data.linkType == "g") {
+        c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
+        c.imgUrl = "url:" + g5.imgUrl + root.v_data.linkValue;
+        g5.setImage(c,c.imgUrl,"trim","","",400);
+        c.style.cursor="pointer";
+        ee.setOnClick(c, function(senderBtn, event) {
+            g5.popBlack.a2.show([root.v_data.linkValue], root.v_data.linkValue);
+            g5.player.stop();
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+        });
     } else if (root.v_data.linkType == "l") {
         c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
         addText(c, root.v_data.linkValue, "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
@@ -19996,6 +20006,20 @@ eb.initMouseEvent(sender);
       <width>83</width>
       <widthRatio>0.138333333333333</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel623/panel627/panel642">
+      <backgroundColor>FF0000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>31</height>
+      <heightRatio>0.0776942355889724</heightRatio>
+      <left>7</left>
+      <leftRatio>0.0116666666666667</leftRatio>
+      <onClick>alert("checked");</onClick>
+      <sizeRatio>0.306930693069307</sizeRatio>
+      <top>329</top>
+      <topRatio>0.824561403508772</topRatio>
+      <width>101</width>
+      <widthRatio>0.168333333333333</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel623/panel640">
       <backgroundColor>008080</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -20047,10 +20071,6 @@ c.addEventListener("change", function() {
             (fileExt != ".png") &amp;&amp;
             (fileExt != ".tif") &amp;&amp;
             (fileExt != ".tiff")) return;
-        if (ee.getControl("panel7").v_photos.length>=4) {
-            g5.alert1("提示", "对不起，您最多只能上传4张图片。");
-            return;
-        }         
         
         var reader = new FileReader();
         reader.onload = function (event) {
@@ -20066,7 +20086,19 @@ c.addEventListener("change", function() {
                     uploadImage.data = sender.v_data;
                     uploadImage.controlName = sender.id;
                     uploadImage.onComplete = function() {
-                        alert("uploaded");
+                        sender.v_myData.linkType = "g";
+                        sender.v_myData.linkValue = uploadImage.newFileName;
+                        sender.parentNode.refreshList();
+                        //alert(uploadImage.newFileName);
+                        return;
+                        root.imgUrl = "url:" + g5.imgUrl + root.v_photo;
+                        //g5.setImage(root,root.imgUrl,"trim","","",400);
+                        ee.setImage(root,root.imgUrl,"trim","","");
+                        ee.setOnClick(root, function(sender, event) {
+                            g5.popBlack.a2.show(sender.parentNode.v_photos, sender.v_photo);
+                            g5.player.stop();
+                            window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        }); 
                         return;
                         if (ee.getControl("panel7").v_photos.length>=4) return;
                         ee.getControl("panel7").v_photos.push(uploadImage.newFileName);
