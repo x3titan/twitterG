@@ -19546,13 +19546,27 @@ sender.renderItem = function(root) {
                 sender.refreshList();
             }
         );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","ApplePay","ApplePay","ApplePay","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = "ApplePay";
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","Venmo","Venmo","Venmo","#808080","#000000","#000000","#1da1f2"));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = "Venmo";
+                sender.refreshList();
+            }
+        );
         v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","自定义","自定义","自定义","#808080","#000000","#000000","#1da1f2"));
         v_onClick.push(
             function (senderBtnC, event) {
                 g5.popBlack.a10.show(
                     "输入", "付款类型：", "请在这里输入付款类型，长度2-6", "",
                     [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+                    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
                     function(text) {
                         if ((text.length>6) || (text.length<2)) {
                             g5.alert1("输入错误", "付款类型的长度应该在2-6个汉字或英文字符之间");
@@ -19591,7 +19605,7 @@ sender.renderItem = function(root) {
                     g5.popBlack.a10.show(
                         "输入", "付款链接地址：", "请在这里输入您的付款链接地址", "",
                         [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+                        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
                         function(text) {
                             if (text == "") return;
                             senderBtn.parentNode.v_data.linkType = "l";
@@ -19607,9 +19621,13 @@ sender.renderItem = function(root) {
             g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
         });
     } else if (root.v_data.linkType == "g") {
-        c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
+        c = createPanel(root, root.id+"W2", "", cx, cy-6, w2, 26+12); cx+=w2;
+        c.style.borderRadius = "0px 10px 0px 10px";
+        c.style.borderWidth = "1px";
+        c.style.borderColor = "rgb(230,236,240)";
+        c.style.borderStyle = "solid";
         c.imgUrl = "url:" + g5.imgUrl + root.v_data.linkValue;
-        g5.setImage(c,c.imgUrl,"trim","","",400);
+        g5.setImage(c,c.imgUrl,"trim","","",10);
         c.style.cursor="pointer";
         ee.setOnClick(c, function(senderBtn, event) {
             g5.popBlack.a2.show([root.v_data.linkValue], root.v_data.linkValue);
@@ -19624,7 +19642,7 @@ sender.renderItem = function(root) {
             g5.popBlack.a10.show(
                 "输入", "付款链接地址：", "请在这里输入您的付款链接地址", senderBtn.parentNode.v_data.linkValue,
                 [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定删除","确定删除","#ffffff","#ffffff","#ffffff","")],
+                [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
                 function(text) {
                     if (text == "") return;
                     senderBtn.parentNode.v_data.linkType = "l";
@@ -19656,6 +19674,21 @@ sender.renderItem = function(root) {
         v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除","删除","#808080","#000000","#000000","#1da1f2"));
         v_onClick.push(
             function (senderBtnC, event) {
+                g5.popBlack.a6.show(
+                    "删除确认",
+                    "在没有保存之前，本操作将不会生效，确认删除本记录" + (root.v_data.type==""?"":("(" + root.v_data.type + ")")) + "吗？",
+                    [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+                    [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","删除","#ffffff","#ffffff","#ffffff","")],
+                    function() {
+                        for (var i=0; i<sender.v_items.length; i++) {
+                            if (sender.v_items[i] == root) {
+                                sender.v_data.splice(i,1);
+                                sender.refreshList();
+                                break;
+                            }
+                        }
+                    }
+                );            
             }
         );
         g5.popup1.p4.show(senderBtn, 80, v_style, v_onClick); 
@@ -19762,9 +19795,19 @@ sender.refreshList = function() {
         this.renderItem(item);
         this.v_items.push(item);
     }
+    if (this.checkValid()) this.addButton();
     ee.tiledV(this.v_root,0,0,0);
-    if (this.v_data.length<=0) this.addButton();
 }
+
+sender.checkValid = function() {
+    for (var i=0; i<this.v_data.length; i++) {
+        if (this.v_data[i].type == "") return false;
+        if (this.v_data[i].linkType == "") return false;
+        if (this.v_data[i].linkValue == "") return false;
+    }
+    return true;
+}
+
 
 
 
@@ -20011,9 +20054,10 @@ eb.initMouseEvent(sender);
       <bgColorEnabled>true</bgColorEnabled>
       <height>31</height>
       <heightRatio>0.0776942355889724</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>7</left>
       <leftRatio>0.0116666666666667</leftRatio>
-      <onClick>alert("checked");</onClick>
+      <onClick>alert("checkValid=" + sender.parentNode.parentNode.checkValid());</onClick>
       <sizeRatio>0.306930693069307</sizeRatio>
       <top>329</top>
       <topRatio>0.824561403508772</topRatio>
