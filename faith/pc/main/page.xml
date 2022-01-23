@@ -19630,8 +19630,25 @@ sender.renderItem = function(root) {
         g5.setImage(c,c.imgUrl,"trim","","",10);
         c.style.cursor="pointer";
         ee.setOnClick(c, function(senderBtn, event) {
-            g5.popBlack.a2.show([root.v_data.linkValue], root.v_data.linkValue);
-            g5.player.stop();
+            var v_style = new Array();
+            var v_onClick = new Array();
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","查看","查看","查看","#808080","#000000","#000000","#1da1f2"));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                    g5.popBlack.a2.show([root.v_data.linkValue], root.v_data.linkValue);
+                    g5.player.stop();
+                }
+            );
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","重新上传","重新上传","重新上传","#808080","#000000","#000000","#1da1f2"));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                    sender.c_file.v_myData = root.v_data;                
+                    sender.c_file.c_file.blur();
+                    sender.c_file.c_file.click();
+                }
+            );
+            var rect = g5.getRectAbs(senderBtn);
+            g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
             window.event? window.event.cancelBubble = true : event.stopPropagation();
         });
     } else if (root.v_data.linkType == "l") {
@@ -19664,11 +19681,25 @@ sender.renderItem = function(root) {
         v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","上移","上移","上移","#808080","#000000","#000000","#1da1f2"));
         v_onClick.push(
             function (senderBtnC, event) {
+                var i = sender.getIndexByRoot(root);
+                if (i>0) {
+                    var t = sender.v_data[i];
+                    sender.v_data[i] = sender.v_data[i-1];
+                    sender.v_data[i-1] = t;
+                    sender.refreshList();
+                }
             }
         );
         v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","下移","下移","下移","#808080","#000000","#000000","#1da1f2"));
         v_onClick.push(
             function (senderBtnC, event) {
+                var i = sender.getIndexByRoot(root);
+                if ((i>=0) &amp;&amp; (i<sender.v_data.length-1)) {
+                    var t = sender.v_data[i];
+                    sender.v_data[i] = sender.v_data[i+1];
+                    sender.v_data[i+1] = t;
+                    sender.refreshList();
+                }
             }
         );
         v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除","删除","#808080","#000000","#000000","#1da1f2"));
@@ -19680,12 +19711,10 @@ sender.renderItem = function(root) {
                     [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
                     [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","删除","#ffffff","#ffffff","#ffffff","")],
                     function() {
-                        for (var i=0; i<sender.v_items.length; i++) {
-                            if (sender.v_items[i] == root) {
-                                sender.v_data.splice(i,1);
-                                sender.refreshList();
-                                break;
-                            }
+                        var i = sender.getIndexByRoot(root);
+                        if (i>=0) {
+                            sender.v_data.splice(i,1);
+                            sender.refreshList();
                         }
                     }
                 );            
@@ -19699,6 +19728,14 @@ sender.renderItem = function(root) {
     eb.setDivRect(root,null,null,null,cy);
     return root; 
 }
+
+sender.getIndexByRoot = function(root) {
+    for (var i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i] == root) return i;
+    }
+    return -1;
+}
+
 
 sender.addNew = function() {
     this.v_data.push(new sender.type_itemData());
