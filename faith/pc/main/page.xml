@@ -12767,7 +12767,7 @@ eb.initMouseEvent(sender);
       <sizeRatio>0.177777777777778</sizeRatio>
       <text>进入我的个人主页</text>
       <top>28</top>
-      <topRatio>0.302083333333333</topRatio>
+      <topRatio>0.291666666666667</topRatio>
       <width>225</width>
       <widthRatio>0.375</widthRatio>
     </control>
@@ -19477,14 +19477,6 @@ sender.type_itemData = function() {
     this.linkValue = "";
 }    
         
-sender.refresh = function() {
-    ee.getControl("panel248").setEnabled(
-        (ee.getEditText(ee.getControl("edit8")).length>0) &amp;&amp;
-        (ee.getEditText(ee.getControl("edit9")).length>0) &amp;&amp;
-        (ee.getEditText(ee.getControl("edit10")).length>0)
-    );
-}
-
 sender.show = function() {
     g5.changeP2(34);
     eb.processDock();
@@ -19498,6 +19490,21 @@ sender.activePage = function() {
     g5.refreshMain(true);
     ee.setVisible(this, true);
     ee.tiledResizeV(this, 2);
+    this.v_data = new Array();
+    this.refreshList();
+    if (getDonateList.busy) return;
+    getDonateList.onComplete = function(dataset) {
+        sender.v_data = new Array();
+        for (var i=0; i<dataset.rowCount; i++) {
+            var item = new sender.type_itemData();
+            item.type = dataset.getData(1,i);
+            item.linkType = dataset.getData(2,i);
+            item.linkValue = dataset.getData(3,i);
+            sender.v_data.push(item);
+        }
+        sender.refreshList();
+    }
+    getDonateList();
 }
 
 sender.close = function() {
@@ -19974,7 +19981,7 @@ sender.style.borderLeft = "";</onCreate>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>219</height>
-      <heightRatio>0.9581589958159</heightRatio>
+      <heightRatio>0.916317991631799</heightRatio>
       <layerVisible>false</layerVisible>
       <left>10</left>
       <leftRatio>0.0172413793103448</leftRatio>
@@ -19984,7 +19991,7 @@ sender.style.borderLeft = "";</onCreate>
       <outerLeft>10</outerLeft>
       <outerRight>10</outerRight>
       <outerTop>10</outerTop>
-      <sizeRatio>0.408928571428571</sizeRatio>
+      <sizeRatio>0.391071428571429</sizeRatio>
       <top>10</top>
       <topRatio>0.0418410041841004</topRatio>
       <width>560</width>
@@ -32188,7 +32195,7 @@ sender.onKeyDown = function(event) {
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <height>39</height>
-      <heightRatio>0.150579150579151</heightRatio>
+      <heightRatio>0.176470588235294</heightRatio>
       <layerVisible>false</layerVisible>
       <left>63</left>
       <leftRatio>0.164921465968586</leftRatio>
@@ -32200,7 +32207,7 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <sizeRatio>0.152941176470588</sizeRatio>
       <text>删除发言</text>
       <top>18</top>
-      <topRatio>0.0694980694980695</topRatio>
+      <topRatio>0.081447963800905</topRatio>
       <width>255</width>
       <widthRatio>0.667539267015707</widthRatio>
     </control>
@@ -32210,7 +32217,7 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <dockX>fill</dockX>
       <dockY>top</dockY>
       <height>65</height>
-      <heightRatio>0.250965250965251</heightRatio>
+      <heightRatio>0.294117647058824</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_down = false;
@@ -32265,7 +32272,7 @@ sender.onpointermove = function(event) {
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>40</height>
-      <heightRatio>0.154440154440154</heightRatio>
+      <heightRatio>0.180995475113122</heightRatio>
       <layerVisible>false</layerVisible>
       <left>54</left>
       <leftRatio>0.141361256544503</leftRatio>
@@ -32349,7 +32356,7 @@ sender.init(0);
       <sizeRatio>0.317460317460317</sizeRatio>
       <text>取消</text>
       <top>155</top>
-      <topRatio>0.598455598455598</topRatio>
+      <topRatio>0.701357466063348</topRatio>
       <width>126</width>
       <widthRatio>0.329842931937173</widthRatio>
     </control>
@@ -32361,7 +32368,7 @@ sender.init(0);
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>40</height>
-      <heightRatio>0.154440154440154</heightRatio>
+      <heightRatio>0.180995475113122</heightRatio>
       <layerVisible>false</layerVisible>
       <left>203</left>
       <leftRatio>0.531413612565445</leftRatio>
@@ -32441,7 +32448,7 @@ sender.init(0);
       <sizeRatio>0.317460317460317</sizeRatio>
       <text>确认</text>
       <top>155</top>
-      <topRatio>0.598455598455598</topRatio>
+      <topRatio>0.701357466063348</topRatio>
       <width>126</width>
       <widthRatio>0.329842931937173</widthRatio>
     </control>
@@ -32450,7 +32457,7 @@ sender.init(0);
       <dockX>right</dockX>
       <dockY>top</dockY>
       <height>36</height>
-      <heightRatio>0.138996138996139</heightRatio>
+      <heightRatio>0.16289592760181</heightRatio>
       <layerVisible>false</layerVisible>
       <left>328</left>
       <leftRatio>0.858638743455497</leftRatio>
@@ -32470,7 +32477,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <outerTop>15</outerTop>
       <sizeRatio>1</sizeRatio>
       <top>15</top>
-      <topRatio>0.0579150579150579</topRatio>
+      <topRatio>0.0678733031674208</topRatio>
       <width>36</width>
       <widthRatio>0.0942408376963351</widthRatio>
     </control>
@@ -32532,7 +32539,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <heightRatio>0.0303030303030303</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <sizeRatio>0.00344827586206897</sizeRatio>
+      <sizeRatio>0.00552486187845304</sizeRatio>
       <top>64</top>
       <topRatio>0.96969696969697</topRatio>
       <width>362</width>
@@ -32549,14 +32556,14 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <heightRatio>0.46969696969697</heightRatio>
       <layerVisible>false</layerVisible>
       <left>18</left>
-      <leftRatio>0.0414364640883978</leftRatio>
+      <leftRatio>0.0497237569060773</leftRatio>
       <outerLeft>18</outerLeft>
       <outerRight>15</outerRight>
-      <sizeRatio>0.0933734939759036</sizeRatio>
+      <sizeRatio>0.0942249240121581</sizeRatio>
       <text>输入字符串说明</text>
       <top>0</top>
       <width>329</width>
-      <widthRatio>0.917127071823204</widthRatio>
+      <widthRatio>0.908839779005525</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268">
       <backgroundColor>FFFFFF</backgroundColor>
@@ -33683,7 +33690,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="74">
+  <taskSet count="75">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -38006,6 +38013,65 @@ if (!db.executeNoneQuery("DB", sql)) {
 }
 setDonateList.onComplete();
 setDonateList.busy = false;
+</script3>
+    </taskSetItem>
+    <taskSetItem name="getDonateList">
+      <script1>//onComplete
+if (getDonateList.busy) return;
+getDonateList.busy = true;
+eio.appendString16(g5.token);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql =
+    "select * from donateList where " +
+    " userId = " + myUserId +
+    " order by id";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "id,donateName,linkType,linkValue",
+    0, 99999);
+
+
+
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    getDonateList.busy = false;
+    g5.alert1("提示", eio.readString8());
+    return;
+}
+getDonateList.dataset = eio.readDataSet();
+
+if (getDonateList.onComplete) {
+    getDonateList.onComplete(getDonateList.dataset);
+}
+getDonateList.busy = false;
+
 </script3>
     </taskSetItem>
     <taskSetItem name="getDelInTime">
