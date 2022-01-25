@@ -20018,29 +20018,16 @@ sender.style.borderLeft = "";</onCreate>
       <layerVisible>false</layerVisible>
       <left>502</left>
       <leftRatio>0.836666666666667</leftRatio>
-      <onClick>if (!sender.v_enabled) return;
-sender.parentNode.parentNode.addNew();
-
-return;
-
-
-
-var p1 = ee.getEditText(ee.getControl("edit8"));
-var p2 = ee.getEditText(ee.getControl("edit9"));
-var p3 = ee.getEditText(ee.getControl("edit10"));
-if (p2!=p3) {
-    g5.alert1("提示", "新密码两次输入的不一致，请重新输入");
+      <onClick>if (setDonateList.busy) return;
+if (!sender.parentNode.parentNode.checkValid()) {
+    g5.alert1("提示", "您的配置项有未完成的部分，所以无法保存。");
     return;
 }
-
-changePassword.old = p1;
-changePassword.new = p2;
-changePassword.onComplete = function(参数) {
-    g5.alert1("提示", "密码修改完成，请牢记您的新密码");
-    history.go(-1); 
+setDonateList.v_data = sender.parentNode.parentNode.v_data;
+setDonateList.onComplete = function() {
+    g5.alert1("提示", "保存完成");
 }
-changePassword();
-</onClick>
+setDonateList();</onClick>
       <onCreate>sender.bgColorDisabled = "#8ed0f9";
 sender.bgColorEnabled = "#1da1f2";
 sender.bgColorHot = "#1a91da";
@@ -37942,9 +37929,16 @@ setAccountPrivate.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="setDonateList">
-      <script1>//v_data,onComplete
+      <script1><![CDATA[//v_data,onComplete
 setDonateList.busy = true;
 eio.appendString16(g5.token);
+var len = Math.min(setDonateList.v_data.length,10);
+eio.appendByte(len);
+for (var i=0; i<len; i++) {
+    eio.appendString8(setDonateList.v_data[i].type);
+    eio.appendString8(setDonateList.v_data[i].linkType);
+    eio.appendString8(setDonateList.v_data[i].linkValue);
+}
 
 
 
@@ -37952,9 +37946,9 @@ eio.appendString16(g5.token);
 
 
 
-</script1>
+
+]]></script1>
       <script2><![CDATA[var token = eio.readString16();
-var contentId = parseInt(eio.readString16());
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
@@ -37974,35 +37968,38 @@ var userName = db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
 var myStatus = db.getString(sqlResult, "status");
 
-var op;
-if (myStatus == "Private") {
-    op = "0";
-} else if (myStatus == "IDL") {
-    op = "1";
-} else {
-    eio.appendString8("F");
-    eio.appendString8("您的账户状态不允许进行账户模式的设置");
-    return;
+var IType = function() {
+    this.type = "";
+    this.linkType = "";
+    this.linkValue = "";
+}
+var len = eio.readByte();
+if (len>=10) return;
+var v_data = new Array();
+for (var i=0; i<len; i++) {
+    var item = new IType();
+    item.type = eio.readString8();
+    item.linkType = eio.readString8();
+    item.linkValue = eio.readString8();
+    v_data.push(item);
 }
 
-sql = "exec userPrivate " +
-    userId + 
-    "," + op;
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
+sql = "delete donateList where userId = " + userId + ";\n";
+for (var i=0; i<v_data.length; i++) {
+    sql += "insert into donateList (userId,donateName,linkType,linkValue) values (" +
+        userId + "," +
+        "'" + db.encode(v_data[i].type) + "'," +
+        "'" + db.encode(v_data[i].linkType) + "'," +
+        "'" + db.encode(v_data[i].linkValue) + "');\n";
+}
+if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-db.read(sqlResult);
-if (db.getString(sqlResult, "errorCode")!="0") {
-    eio.appendString8("F");
-    eio.appendString8(db.getString(sqlResult, "errorString"));
-    return;
-}
-eio.appendString8("T");
+} else {
+    eio.appendString8("T");
+}                      
 ]]></script2>
-      <script3>if (eio.readString8() == "F") {
+      <script3>if (eio.readString8() != "T") {
     g5.alert1("提示", eio.readString8());
     setDonateList.busy = false;
     return;
