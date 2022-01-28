@@ -1,5 +1,5 @@
 <page>
-  <controls count="757">
+  <controls count="759">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -236,7 +236,7 @@ a.css_button1:hover{
 </style>]]></pageHead>
       <pageTitle>拳头聊天室· 一个能自由说话的聊天网站</pageTitle>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
     </control>
     <control type="Panel" pathname="/divRoot/panel134">
       <autoScroll>true</autoScroll>
@@ -421,9 +421,10 @@ sender.scrollAniProcess = function() {
 }]]></onCreate>
       <scrollPosX>5</scrollPosX>
       <scrollPosY>-1</scrollPosY>
-      <sizeRatio>0.701846965699208</sizeRatio>
+      <sizeRatio>0.720216606498195</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <topRatio>-0.0012531328320802</topRatio>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135">
@@ -1783,6 +1784,7 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -1930,6 +1932,7 @@ sender.show = function(v_userInfo, userId, userName) {
             item.linkValue = showUserPage.datasetDonate.getData(3,i);
             sender.v_donateList.push(item);
         }
+        sender.p2sub.p1.c_chat.c_chat.c_chatButton.setDonateEnable(sender.v_donateList.length>0);
 
         g5.p2.p2.p2sub.p1.c_chat.c_chat.c_chatRoot.start(showUserPage.defaultChatRoomId);
         if (showUserPage.privateChatRoomRights) {
@@ -2835,6 +2838,7 @@ sender.init = function(index) {
       <dockX>fill</dockX>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p2PersonSub,p2sub</note>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -3289,6 +3293,7 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[  p1->综合]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_titleChat = ee.getControl("panel263");
@@ -5262,6 +5267,7 @@ sender.init(0);
       <left>0</left>
       <note><![CDATA[c_chat->聊天区域]]></note>
       <onCreate>sender.c_chatRoot = ee.getControl("layoutyitem3");
+sender.c_chatButton = ee.getControl("layoutyitem4");
 </onCreate>
       <outerRight>2</outerRight>
       <sizeRatio>0.14336917562724</sizeRatio>
@@ -6046,7 +6052,20 @@ sender.onpointerup = function(event) {
       <heightRatio>0.6375</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>功能区root</note>
+      <note><![CDATA[c_chatButton->功能区root]]></note>
+      <onCreate>sender.c_input = ee.getControl("edit11");
+sender.c_donate = ee.getControl("panel642");
+
+sender.setDonateEnable = function(enabled) {
+    if (enabled) {
+        this.c_input.outerLeft = 40;
+        ee.setVisible(this.c_donate, true);
+    } else {
+        this.c_input.outerLeft = 10;
+        ee.setVisible(this.c_donate, false);
+    }
+}
+</onCreate>
       <sizeRatio>0.0913978494623656</sizeRatio>
       <top>29</top>
       <topRatio>0.3625</topRatio>
@@ -6085,6 +6104,7 @@ sender.onpointerup = function(event) {
       <left>40</left>
       <leftRatio>0.0716845878136201</leftRatio>
       <multiLine>true</multiLine>
+      <note>c_input</note>
       <onChange><![CDATA[var edit = sender.parentNode;
 var text = ee.getEditText(edit);
 if (text.length>200) text = text.substr(0,200);
@@ -6219,6 +6239,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <layerVisible>false</layerVisible>
       <left>10</left>
       <leftRatio>0.017921146953405</leftRatio>
+      <note>c_donate</note>
       <onClick><![CDATA[var list = g5.p2.p2.v_donateList;
 var v_style = new Array();
 var v_onClick = new Array();
@@ -19528,7 +19549,6 @@ sender.fSearch = function() {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p35->设置-账号-打赏]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_data = new Array();
@@ -19903,7 +19923,7 @@ sender.refreshList = function() {
         this.renderItem(item);
         this.v_items.push(item);
     }
-    if (this.checkValid()) this.addButton();
+    if (this.checkValid() &amp;&amp; (this.v_data.length<5)) this.addButton();
     ee.tiledV(this.v_root,0,0,0);
 }
 
@@ -20023,8 +20043,8 @@ sender.style.borderLeft = "";</onCreate>
       <backgroundColor>F5F8FA</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
-      <height>239</height>
-      <heightRatio>0.598997493734336</heightRatio>
+      <height>250</height>
+      <heightRatio>0.6265664160401</heightRatio>
       <layerVisible>false</layerVisible>
       <left>10</left>
       <leftRatio>0.0166666666666667</leftRatio>
@@ -20033,7 +20053,7 @@ sender.style.borderLeft = "";</onCreate>
       <outerLeft>10</outerLeft>
       <outerRight>10</outerRight>
       <outerTop>10</outerTop>
-      <sizeRatio>0.412068965517241</sizeRatio>
+      <sizeRatio>0.431034482758621</sizeRatio>
       <top>10</top>
       <topRatio>0.025062656641604</topRatio>
       <width>580</width>
@@ -20044,7 +20064,7 @@ sender.style.borderLeft = "";</onCreate>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>219</height>
+      <height>230</height>
       <heightRatio>0.916317991631799</heightRatio>
       <layerVisible>false</layerVisible>
       <left>10</left>
@@ -20060,6 +20080,38 @@ sender.style.borderLeft = "";</onCreate>
       <topRatio>0.0418410041841004</topRatio>
       <width>560</width>
       <widthRatio>0.96551724137931</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel623/panel627/panel628/panel643">
+      <backgroundColor>EBEEF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>10</height>
+      <heightRatio>0.04</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>
+      </onCreate>
+      <sizeRatio>0.0172413793103448</sizeRatio>
+      <top>0</top>
+      <width>580</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel623/panel627/panel628/panel644">
+      <backgroundColor>EBEEF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>10</height>
+      <heightRatio>0.04</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>
+      </onCreate>
+      <sizeRatio>0.0172413793103448</sizeRatio>
+      <top>240</top>
+      <width>580</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel623/panel627/panel638">
       <backgroundColor>E6ECF0</backgroundColor>
@@ -26726,7 +26778,7 @@ if (sender.v_closeCount>=4) {
       <onMouseUp>sender.close();</onMouseUp>
       <sizeRatio>0.701846965699208</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel40/panel149">
@@ -27494,7 +27546,7 @@ if ("ontouchstart" in window) {
 ]]></onCreate>
       <sizeRatio>0.701846965699208</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel117">
@@ -27510,7 +27562,7 @@ if ("ontouchstart" in window) {
       <heightRatio>0.285714285714286</heightRatio>
       <layerName><![CDATA[  a1->删除发言确认]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>395</left>
+      <left>381</left>
       <leftRatio>0.34740545294635</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 if (sender.formResult) {
@@ -27979,7 +28031,7 @@ sender.clickRight = function() {
 ]]></onCreate>
       <sizeRatio>0.701846965699208</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel607">
@@ -27994,7 +28046,7 @@ sender.clickRight = function() {
       <note>c_mobileBg</note>
       <sizeRatio>0.701846965699208</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel145">
@@ -28015,7 +28067,7 @@ sender.clickRight = function() {
       <sizeRatio>0.714431934493347</sizeRatio>
       <top>50</top>
       <topRatio>0.06265664160401</topRatio>
-      <width>977</width>
+      <width>948</width>
       <widthRatio>0.859278803869833</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel145/panel75">
@@ -28028,7 +28080,7 @@ sender.clickRight = function() {
       <note>c_photo</note>
       <sizeRatio>0.714431934493347</sizeRatio>
       <top>0</top>
-      <width>977</width>
+      <width>948</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel145/panel76">
@@ -28041,7 +28093,7 @@ sender.clickRight = function() {
       <note>c_video</note>
       <sizeRatio>0.714431934493347</sizeRatio>
       <top>0</top>
-      <width>977</width>
+      <width>948</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel147">
@@ -28090,7 +28142,7 @@ sender.clickRight = function() {
       <height>40</height>
       <heightRatio>0.050125313283208</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>488</left>
+      <left>474</left>
       <leftRatio>0.42919964819701</leftRatio>
       <note>c_BtnConfirm</note>
       <onClick>sender.parentNode.f_onConfirm();
@@ -28242,7 +28294,7 @@ sender.addEventListener("pointermove", function(ev) {
 </onCreate>
       <sizeRatio>0.701846965699208</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel8">
@@ -28298,7 +28350,7 @@ eb.initMouseEvent(sender);
       <height>176</height>
       <heightRatio>0.220551378446115</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>1082</left>
+      <left>1053</left>
       <leftRatio>0.951627088830255</leftRatio>
       <onCreate><![CDATA[sender.style.borderRadius = "25px 0px 0px 25px";
 sender.baseColor = "rgba(0,0,0,0.2)";
@@ -28344,7 +28396,7 @@ eb.initMouseEvent(sender);
       <heightRatio>0.765664160401002</heightRatio>
       <layerName><![CDATA[  a3->发短文]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>302</left>
+      <left>288</left>
       <leftRatio>0.26561125769569</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel412");
@@ -29622,7 +29674,7 @@ sender.fSearch = function() {
       <heightRatio>0.81453634085213</heightRatio>
       <layerName><![CDATA[  a4->转发用户列表]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>268</left>
+      <left>254</left>
       <leftRatio>0.23570800351803</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);</onAni2End>
       <onAniStart>ee.setVisible(ee.getControl("panel112"), true);</onAniStart>
@@ -29837,7 +29889,7 @@ sender.onpointermove = function(event) {
       <heightRatio>0.285714285714286</heightRatio>
       <layerName><![CDATA[  a5->屏蔽确认]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>395</left>
+      <left>381</left>
       <leftRatio>0.34740545294635</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -30003,7 +30055,7 @@ sender.onpointermove = function(event) {
       <heightRatio>0.324561403508772</heightRatio>
       <layerName><![CDATA[  a6->通用确认窗口]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>377</left>
+      <left>363</left>
       <leftRatio>0.331574318381706</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
@@ -30373,7 +30425,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <heightRatio>0.264411027568922</heightRatio>
       <layerName><![CDATA[  a7->通用提示窗口]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>377</left>
+      <left>363</left>
       <leftRatio>0.331574318381706</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 </onAni2End>
@@ -30635,7 +30687,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <heightRatio>0.808270676691729</heightRatio>
       <layerName><![CDATA[  a8->编辑个人信息]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>268</left>
+      <left>254</left>
       <leftRatio>0.23570800351803</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onClick>return;
@@ -32189,7 +32241,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <heightRatio>0.276942355889724</heightRatio>
       <layerName><![CDATA[  a10->通用字符串输入窗口]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>377</left>
+      <left>363</left>
       <leftRatio>0.331574318381706</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
@@ -32692,7 +32744,7 @@ if (currentDist>100) {
 ]]></onMouseMove>
       <sizeRatio>0.701846965699208</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268/panel280">
@@ -33150,7 +33202,7 @@ sender.addEventListener("mousewheel", function(e) {
 });</onCreate>
       <sizeRatio>0.701846965699208</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel48/panel402">
@@ -33165,7 +33217,7 @@ sender.addEventListener("mousewheel", function(e) {
       <heightRatio>0.713032581453634</heightRatio>
       <layerName><![CDATA[  a1->youtube视频链接]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>247</left>
+      <left>233</left>
       <leftRatio>0.217238346525945</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 sender.c_video.innerHTML = "";
@@ -33737,7 +33789,7 @@ if (currentDist>100) {
 ]]></onMouseMove>
       <sizeRatio>0.701846965699208</sizeRatio>
       <top>0</top>
-      <width>1137</width>
+      <width>1108</width>
       <widthRatio>1</widthRatio>
     </control>
   </controls>
