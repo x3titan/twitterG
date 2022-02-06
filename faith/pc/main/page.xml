@@ -127,6 +127,192 @@ ee.setText = function (panel, text) {
         }
         if (panel._input) panel._inputHint = text;
     }
+
+
+
+    eb.processDock = function () {
+        var dock, r, r1, ro, i, d, item;
+        var modified = true;
+        var a = new Array();
+        while (modified) {
+            modified = false;
+            for (i = 0; i < eb.dockItem.length; i++) {
+                item = this.dockItem[i];
+                dock = item.dockX;
+                r = eb.getDivRectSetting(item);
+                if (eb.isEmpty(item.outerLeft)) {
+                    ro = new Rect(0, 0, 0, 0);
+                } else {
+                    ro = new Rect(item.outerLeft, item.outerTop, item.outerRight, item.outerBottom);
+                }
+                if (!eb.isEmpty(item.tableBody)) {
+                    r1 = eb.getDivRectSetting(item.tableBody);
+                    r1.x = r.x;
+                    r1.w = r.w;
+                    r1.y = r.y + r.h;
+                }
+                if (dock == "left") {
+                    r.x = ro.x;
+                } else if (dock == "right") {
+                    r.x = eb.getDivRectSetting(item.parentNode).w - r.w - ro.w;
+                } else if (dock == "center") {
+                    r.x = parseInt((eb.getDivRectSetting(item.parentNode).w - r.w) / 2 + ro.x / 2 - ro.w / 2);
+                } else if (dock == "fill") {
+                    r.x = ro.x;
+                    r.w = eb.getDivRectSetting(item.parentNode).w - ro.x - ro.w;
+                    if (!eb.isEmpty(item.lockRatio)) {
+                        r.h = parseInt(item.sizeRatio * r.w);
+                    }
+                } else if (dock == "ratio") {
+                    d = item.widthRatio * eb.getDivRectSetting(item.parentNode).w;
+                    if (!eb.isEmpty(item.lockRatio)) {
+                        r.w = parseInt(Math.min(d, item.heightRatio * eb.getDivRectSetting(item.parentNode).h / item.sizeRatio));
+                        r.x = parseInt((item.leftRatio + item.widthRatio / 2) * eb.getDivRectSetting(item.parentNode).w - r.w / 2);
+                    } else {
+                        r.x = parseInt(item.leftRatio * eb.getDivRectSetting(item.parentNode).w);
+                        r.w = parseInt(d);
+                    }
+                }
+                dock = item.dockY;
+                if (dock == "top") {
+                    if (!eb.isEmpty(item.tableBody)) {
+                        r.y = ro.y;
+                        r1.y = r.h + ro.y;
+                    } else {
+                        r.y = ro.y;
+                    }
+                } else if (dock == "bottom") {
+                    if (!eb.isEmpty(item.tableBody)) {
+                        r.y = eb.getDivRectSetting(item.parentNode).h - r.h - r1.h - ro.h;
+                        r1.y = r.y + r.h;
+                    } else {
+                        r.y = eb.getDivRectSetting(item.parentNode).h - r.h - ro.h;
+                    }
+                } else if (dock == "center") {
+                    if (!eb.isEmpty(item.tableBody)) {
+                        r.y = parseInt((eb.getDivRectSetting(item.parentNode).h - r.h - r1.h) / 2);
+                        r1.y = r.y + r.h;
+                    } else {
+                        r.y = parseInt((eb.getDivRectSetting(item.parentNode).h - r.h) / 2);
+                    }
+                    r.y += ro.y / 2 - ro.h / 2;
+                } else if (dock == "fill") {
+                    if (!eb.isEmpty(item.tableBody)) {
+                        r.y = ro.y;
+                        r1.y = r.y + r.h;
+                        r1.h = eb.getDivRectSetting(item.parentNode).h - r.h - ro.y - ro.h;
+                    } else {
+                        r.y = ro.y;
+                        r.h = eb.getDivRectSetting(item.parentNode).h - ro.y - ro.h;
+                    }
+                } else if (dock == "ratio") {
+                    d = item.heightRatio * eb.getDivRectSetting(item.parentNode).h;
+                    if (!eb.isEmpty(item.lockRatio)) {
+                        r.h = parseInt(Math.min(d, item.widthRatio * eb.getDivRectSetting(item.parentNode).w * item.sizeRatio));
+                        r.y = parseInt((item.topRatio + item.heightRatio / 2) * eb.getDivRectSetting(item.parentNode).h - r.h / 2);
+                    } else {
+                        r.y = parseInt(item.topRatio * eb.getDivRectSetting(item.parentNode).h);
+                        r.h = parseInt(d);
+                    }
+                }
+                if (this.isEmpty(item.bindControl)) {
+                    item.bindControl = ee.getControl(item.bindControlName);
+                }
+                var bindItem = item.bindControl;
+                if (!this.isEmpty(bindItem)) {
+                    r1 = this.getDivRectSetting(bindItem);
+                    var pTemp = ee.getGlobalDiff(item.parentNode, bindItem.parentNode);
+                    r1.x += pTemp.x;
+                    r1.y += pTemp.y;
+                    if (item.bindLeft == "left") {
+                        r.x = r1.x + ro.x;
+                    } else if (item.bindLeft == "center") {
+                        r.x = r1.x + parseInt(r1.w / 2) + ro.x;
+                    } else if (item.bindLeft == "right") {
+                        r.x = r1.getRight() + ro.x;
+                    }
+                    if (item.bindRight == "left") {
+                        if (item.bindLeft == "disabled") {
+                            r.x = r1.x - ro.w - r.w;
+                        } else {
+                            r.w = r1.x - ro.w - r.x;
+                        }
+                    } else if (item.bindRight == "center") {
+                        if (item.bindLeft == "disabled") {
+                            r.x = r1.x + parseInt(r1.w / 2) - ro.w - r.w;
+                        } else {
+                            r.w = r1.x + parseInt(r1.w / 2) - ro.w - r.x;
+                        }
+                    } else if (item.bindRight == "right") {
+                        if (item.bindLeft == "disabled") {
+                            r.x = r1.getRight() - ro.w - r.w;
+                        } else {
+                            r.w = r1.getRight() - ro.w - r.x;
+                        }
+                    }
+                    if (item.bindTop == "top") {
+                        r.y = r1.y + ro.y;
+                    } else if (item.bindTop == "center") {
+                        r.y = r1.y + parseInt(r1.h / 2) + ro.y;
+                    } else if (item.bindTop == "bottom") {
+                        r.y = r1.getBottom() + ro.y;
+                    }
+                    if (item.bindBottom == "top") {
+                        if (item.bindTop == "disabled") {
+                            r.y = r1.y - ro.h - r.h;
+                        } else {
+                            r.h = r1.y - ro.h - r.y;
+                        }
+                    } else if (item.bindBottom == "center") {
+                        if (item.bindTop == "disabled") {
+                            r.y = r1.y + parseInt(r1.h / 2) - ro.h - r.h;
+                        } else {
+                            r.h = r1.y + parseInt(r1.h / 2) - ro.h - r.y;
+                        }
+                    } else if (item.bindBottom == "bottom") {
+                        if (item.bindTop == "disabled") {
+                            r.y = r1.getBottom() - ro.h - r.h;
+                        } else {
+                            r.h = r1.getBottom() - ro.h - r.y;
+                        }
+                    }
+                }
+                if (!eb.isEmpty(item.tableBody)) {
+                    if (!eb.isEmpty(item.minWidth)) {
+                        r1.w = Math.max(r1.w, item.minWidth);
+                        r.w = Math.max(r.w, item.minWidth);
+                    }
+                    if (!eb.isEmpty(item.minHeight)) r1.h = Math.max(r1.h, item.minHeight);
+                } else {
+                    if (!eb.isEmpty(item.minWidth)) r.w = Math.max(r.w, item.minWidth);
+                    if (!eb.isEmpty(item.minHeight)) r.h = Math.max(r.h, item.minHeight);
+                }
+                if (r.w < 0) r.w = 0;
+                if (r.h < 0) r.h = 0;
+                if (!r.equals(eb.getDivRectSetting(item))) {
+                    modified = true;
+                    ee.setRect(item, r.x, r.y, r.w, r.h);
+                }
+                if (!eb.isEmpty(item.tableBody)) {
+                    if (r1.w < 0) r1.w = 0;
+                    if (r1.h < 0) r1.h = 0;
+                    if (!r1.equals(eb.getDivRectSetting(item.tableBody))) {
+                        ee.setRect(item.tableBody, r1.x, r1.y, r1.w, r1.h);
+                        modified = true;
+                    }
+                }
+            }
+        }
+        var sw = Math.min($g("divRoot").offsetWidth, $g("divRoot").offsetHeight);
+        for (i = 0; i < eb.fontSizeAutoItem.length; i++) {
+            if (!eb.isEmpty(eb.fontSizeAutoItem[i].fontSizeAuto)) {
+                eb.fontSizeAutoItem[i].label.rows[0].cells[0].style.fontSize = parseInt(sw * 3 / eb.fontSizeAutoItem[i].fontSizeAuto / 4) + "pt";
+            }
+            if (!eb.isEmpty(eb.fontSizeAutoItem[i].inputFontSizeAuto)) {
+                eb.fontSizeAutoItem[i]._input.style.fontSize = parseInt(sw * 3 / eb.fontSizeAutoItem[i].inputFontSizeAuto / 4) + "pt";
+            }
+        }
+    }
 ]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammerDecode.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -246,7 +432,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>798</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -435,7 +620,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.977443609022556</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.270758122743682</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -485,7 +669,6 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -1299,10 +1482,14 @@ sender.resize = function (img) {
       <__U_onHeightChange-sender-oldH-newH>var dy = newH - oldH;
 if (dy == 0) return;
 ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
+eb.processDock();
 g5.batchMoveY(g5.p2.p1.v_items,0,dy);
-eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
+ee.setRect(g5.p2.p1, null,null,null,eb.getDivRectSetting(g5.p2.p1).h + dy);
+console.log(eb.getDivRectSetting(g5.p2.p1).h);
 eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
 eb.processDock();
+
+console.log(eb.getDivRectSetting(g5.p2.p1).h);
 </__U_onHeightChange-sender-oldH-newH>
       <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
 
@@ -27467,6 +27654,7 @@ sender.renderItem = function(root) {
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -30413,6 +30601,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>211</height>
       <heightRatio>0.264411027568922</heightRatio>
       <layerName><![CDATA[  a7->通用提示窗口]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>363</left>
       <leftRatio>0.327617328519856</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
