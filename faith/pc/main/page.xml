@@ -669,6 +669,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -1482,14 +1483,11 @@ sender.resize = function (img) {
       <__U_onHeightChange-sender-oldH-newH>var dy = newH - oldH;
 if (dy == 0) return;
 ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
-eb.processDock();
 g5.batchMoveY(g5.p2.p1.v_items,0,dy);
 ee.setRect(g5.p2.p1, null,null,null,eb.getDivRectSetting(g5.p2.p1).h + dy);
-console.log(eb.getDivRectSetting(g5.p2.p1).h);
 eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
 eb.processDock();
 
-console.log(eb.getDivRectSetting(g5.p2.p1).h);
 </__U_onHeightChange-sender-oldH-newH>
       <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
 
@@ -1971,7 +1969,6 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -2267,7 +2264,7 @@ sender.refreshFansFollowCount = function() {
             "  <div id='userPageLink01' style='display:inline;'>" + this.v_userInfo.followCount + "个关注</div>" +
             "     <div id='userPageLink02' style='display:inline;'>" + this.v_userInfo.fansCount +"个粉丝</div>";
         if (g5.myUserInfo.fansReqCount &amp;&amp; (g5.myUserInfo.fansReqCount>0) &amp;&amp; (this.v_userInfo.id == g5.myUserInfo.id)) {
-            s += "     <div id='userPageLink03' style='display:inline;'>" + g5.myUserInfo.fansReqCount +"个加粉请求</div>";
+            s += "     <div id='userPageLink03' style='display:inline;color:#e0245e'>" + g5.myUserInfo.fansReqCount +"个加粉请求</div>";
         }
         ee.setText(ee.getControl("panel72"), s);
         var c = ee.getControl("panel72"); 
@@ -2530,6 +2527,7 @@ sender.showByUserInfo = function(v_userInfo) {
     if ((v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del") || ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow))) {
     } else {
         eb.setDivRect(ee.getControl("layoutx7"),null,cy,null,null);
+        alert(v_userInfo.regDatetime);
         ee.setText(ee.getControl("layoutxitem14"), 
             v_userInfo.regDatetime.substr(0,4) + "年" + parseInt(v_userInfo.regDatetime.substr(5,2)) + "月" + parseInt(v_userInfo.regDatetime.substr(8,2)) + "日" + "加入");
         ee.setVisible(ee.getControl("layoutx7"), true);
@@ -17631,17 +17629,14 @@ sender.refresh = function(userId) {
 
 sender.refreshTitle = function() {
     var s = "";
-    if (g5.myUserInfo.fansReqCount) {
-        s ="加粉请求者(" + g5.myUserInfo.fansReqCount + "人)";
-    } else {
-        s ="加粉请求者";
-    }
-    ee.setText(this.c_title, s);
-    if (g5.myUserInfo.fansReqCount &amp;&amp; g5.myUserInfo.fansReqCount>0) {
+    if (this.v_items.length>0) {
+        s ="加粉请求者(" + this.v_items.length + "人)";
         ee.setVisible(this.c_noResult, false);
     } else {
+        s ="加粉请求者";
         ee.setVisible(this.c_noResult, true);
     }
+    ee.setText(this.c_title, s);
     ee.tiledResizeV(this, 2);
 }
 
@@ -17665,30 +17660,31 @@ sender.show = function() {
             sender.loadRecord(item, dataset, i);
             item.v_mode = "";
             g5.renderUserBar(item);
+            if (item.c_button) ee.removeControl(item.c_button);
             cy += eb.getDivRect(item).h;
             sender.v_items.push(item);
             ee.setOnClick(item,function(senderButton, event) {
                 var v_style = new Array();
                 var v_onClick = new Array();
                 v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","允许","允许","允许","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
-                v_onClick.push(function (senderMB, event) {
-                    followAcceptReject.userId = item.v_userInfo.id;
+                v_onClick.push(function (senderBtn, event) {
+                    followAcceptReject.userId = senderButton.v_userInfo.id;
                     followAcceptReject.operation = 1;
                     followAcceptReject.onComplete = function() {
-                        sender.remove(item);
+                        sender.remove(senderButton);
                     } 
                     followAcceptReject();
                 });
                 v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","拒绝","拒绝","拒绝","#1da1f2","#1da1f2","#1da1f2","#1da1f2"));
-                v_onClick.push(function (senderMB, event) {
-                    followAcceptReject.userId = item.v_userInfo.id;
+                v_onClick.push(function (senderBtn, event) {
+                    followAcceptReject.userId = senderButton.v_userInfo.id;
                     followAcceptReject.operation = 0;
                     followAcceptReject.onComplete = function() {
-                        sender.remove(item);
+                        sender.remove(senderButton);
                     }
                     followAcceptReject();
                 });
-                g5.popup1.p4.showPos(event.clientX - 50, event.clientY + 20, 200, v_style, v_onClick);
+                g5.popup1.p4.show(senderButton, 200, v_style, v_onClick);
             });
         }
         eb.processDock();
@@ -17698,7 +17694,8 @@ sender.show = function() {
             var rect1 = eb.getDivRect(sender.v_items[sender.v_items.length-1]);
             ee.tiledV(sender, 0, rect.h, eb.getClientSize().h - eb.getDivRect(sender.v_items[sender.v_items.length-1]).h - rect.h + 2); 
         }
-        ee.tiledResizeV(sender, 2);
+        sender.refreshTitle();
+        //ee.tiledResizeV(sender, 2);
     }
     g5.loading.show();
     showFansRequest();               
@@ -34752,21 +34749,21 @@ sql =
     "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, CASE WHEN forwardLink_1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike, tContent_1.forceTopSn as reForceTopSn,  " +
     "                CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike, dbo.tContent.userId AS uId,  " +
-    "                dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.status AS uStatus, CONVERT(VARCHAR(50), dbo.userInfo.regDatetime, 120) AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
     "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
     "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN uBlockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
     "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
-    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
+    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, CONVERT(VARCHAR(50), userInfo_1.regDatetime, 120) AS rRegDatetime,  " +
     "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
     "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
     "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow, " +
     "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail, dbo.tContent.exUserId, exUserInfo.status AS exStatus,  " +
-    "                exUserInfo.regDatetime AS exRegDatetime, exUserInfo.lastAccessTime AS exLastAccessTime,  " +
+    "                CONVERT(VARCHAR(50), exUserInfo.regDatetime, 120) AS exRegDatetime, exUserInfo.lastAccessTime AS exLastAccessTime,  " +
     "                exUserInfo.userName AS exUserName, exUserInfo.mobile AS exMobile, exUserInfo.email AS exEmail,  " +
     "                exUserInfo.nickName AS exNickName, exUserInfo.note AS exNote, exUserInfo.photo AS exPhoto,  " +
     "                exUserInfo.titleBg AS exTitleBg, exUserInfo.homePage AS exHomePage, exUserInfo.followCount AS exFollowCount,  " +
@@ -42684,6 +42681,7 @@ if (root.v_userInfo.note!="") {
 }
 
 //button
+c = null;
 if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
 } else if (root.v_userInfo.status == "DISABLED") {
     c = createPanel(root, root.id+"buttonR1", "", 505, 2, 75, 40);
@@ -42843,6 +42841,7 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         window.event? window.event.cancelBubble = true : event.stopPropagation();    
     });
 }
+if (c) root.c_button = c;
 
 cy+=10;
 eb.setDivRect(root,null,null,null,cy);
