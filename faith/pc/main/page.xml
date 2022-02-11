@@ -35748,7 +35748,7 @@ sql =
     "exec clearPromptCount " + myUserId + "; " +
     "SELECT   TOP(" + top + ") dbo.userPrompt.id AS promptId, DATEDIFF(second, dbo.userPrompt.regDatetime, getutcdate()) AS promptRegDatetime,  " +
     "                dbo.userPrompt.status AS promptStatus, dbo.userPrompt.type, dbo.userPrompt.[content], dbo.userPrompt.url,  " +
-    "                dbo.userPrompt.refUserId AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userPrompt.refUserId AS uId, dbo.userInfo.status AS uStatus, CONVERT(VARCHAR(50),dbo.userInfo.regDatetime,120) AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
     "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
@@ -36438,7 +36438,7 @@ if (options == "hot") {
 }
 if (options == "user") {
     sql =
-    "SELECT  TOP (" + top + ") dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "SELECT  TOP (" + top + ") dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, CONVERT(VARCHAR(50),dbo.userInfo.regDatetime,120) AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
     "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
@@ -36470,14 +36470,14 @@ if (options == "user") {
     "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, tContent_1.forceTopSn as reForceTopSn, CASE WHEN forwardLink_1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike,  " +
     "                CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike, dbo.tContent.userId AS uId,  " +
-    "                dbo.userInfo.status AS uStatus, dbo.userInfo.regDatetime AS uRegDatetime,  " +
+    "                dbo.userInfo.status AS uStatus, CONVERT(VARCHAR(50),dbo.userInfo.regDatetime,120) AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
     "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
     "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
     "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
-    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, userInfo_1.regDatetime AS rRegDatetime,  " +
+    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, CONVERT(VARCHAR(50),userInfo_1.regDatetime,120) AS rRegDatetime,  " +
     "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
     "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
     "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
