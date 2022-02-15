@@ -895,6 +895,7 @@ sender.parentNode.eeMouseDown = function(senderM, event) {
     sender.className = "";
     sender.v_loadNew = false;
     g5.p2.p33.className = "";
+    sender.v_moved = false;
 }
 
 sender.parentNode.eeMouseUp = function(senderM, event) {
@@ -904,32 +905,44 @@ sender.parentNode.eeMouseUp = function(senderM, event) {
         return;
     }
     sender.v_move = false;
-    if (sender.v_loadNew) {
-        sender.v_loadNew = false;
-        sender.className = "aniAll3";
-        eb.setDivRect(sender,null,37,null,null);
-        ee.setAnimationEnd(sender, function() {
-            sender.loadNew();
-        });
-        g5.p2.p33.className = "aniAll3";
-        eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h+37,null,null);
+    if (sender.v_moved) {
+        if (sender.v_loadNew) {
+            g5.writeLog("loadnew");
+            
+            sender.v_loadNew = false;
+            sender.className = "aniAll3";
+            eb.setDivRect(sender,null,37,null,null);
+            ee.setAnimationEnd(sender, function() {
+                sender.loadNew();
+            });
+            g5.p2.p33.className = "aniAll3";
+            eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h+37,null,null);
+        } else {
+            //return;
+            g5.writeLog("loadnew2");
+            
+            sender.className = "aniAll3";
+            eb.setDivRect(sender,null,0,null,null);
+            ee.setAnimationEnd(sender, function() {
+                sender.className = "";
+                g5.writeLog("loadnew2 comp");
+            });
+            g5.p2.p33.className = "aniAll3";
+            eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h,null,null);
+            ee.setAnimationEnd(g5.p2.p33, function() {
+                g5.p2.p33.close();
+            });
+        }
     } else {
-        sender.className = "aniAll3";
-        eb.setDivRect(sender,null,0,null,null);
-        ee.setAnimationEnd(sender, function() {
-            sender.className = "";
-        });
-        g5.p2.p33.className = "aniAll3";
-        eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h,null,null);
-        ee.setAnimationEnd(g5.p2.p33, function() {
-            g5.p2.p33.close();
-        });
+        sender.className = "";
     }
+    sender.v_moved = false;
 }
 
 sender.parentNode.eeMouseMove = function(senderM, event) {
     if (!sender.v_move) return;
     if (!g5.isMobile) return;
+    sender.v_moved = true;
     //g5.writeLog(sender.v_downY - event.touches[0].screenY);
     var dy = sender.v_downY - event.touches[0].screenY;
     if ((document.documentElement.scrollTop == 0) &amp;&amp; (dy<0)) {
