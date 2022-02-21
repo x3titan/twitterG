@@ -11193,7 +11193,6 @@ sender.refreshContent = function(userId, msgContent) {
       <dockY>fill</dockY>
       <height>780</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -11644,7 +11643,6 @@ sender.onpointerup = function(event) {
       <heavyEnabled>false</heavyEnabled>
       <height>62</height>
       <heightRatio>0.0794871794871795</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>功能按钮区</note>
       <sizeRatio>0.103333333333333</sizeRatio>
@@ -34624,6 +34622,8 @@ for (var i=0; i<count; i++) {
 }
 while (photos.length<4) photos.push("");
 
+es.logWarning(text);
+
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
@@ -34682,7 +34682,7 @@ while (i<s.length) {
 
 sql = "exec twitterNew " +
     userId + 
-    ",'" + db.encode(text) + "'" +
+    ",N'" + text + "'" +
     ",1" +
     ",'" + db.encode(photos[0]) + "'" +
     ",'" + db.encode(photos[1]) + "'" +
@@ -36945,7 +36945,7 @@ var myUserId = parseInt(db.getString(sqlResult,"id"));
 sql = "insert into chat (sendUserId, recvUserId, [content], photo1) values (" +
     myUserId +
     "," + chatUserId + 
-    ",'" + db.encode(content) + "'" +
+    ",N'" + db.encode(content) + "'" +
     ",'')";
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
@@ -39187,7 +39187,7 @@ sql =
     "exec [chatRoomPostMessage] " +
     roomId + "," +
     myUserId + "," +
-    "'" + db.encode(msgContent) + "';";
+    "N'" + db.encode(msgContent) + "';";
     
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
