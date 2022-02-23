@@ -669,6 +669,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -15309,7 +15310,6 @@ eb.initMouseEvent(sender);
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName><![CDATA[p2.p24->设置-账号-修改简介]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_edit = ee.getControl("edit5"); 
 sender.c_button = ee.getControl("panel443");
@@ -36430,21 +36430,21 @@ if (options == "user") {
 var top = (pageIndex+1)*pageSize;
 var cond = "";
 if (options == "hot") {
-    cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%'";
+    cond += " and dbo.tContent.[content] like N'%" + db.encode(searchString) + "%'";
 } else if (options == "new") {
-    cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%'";
+    cond += " and dbo.tContent.[content] like N'%" + db.encode(searchString) + "%'";
 } else if (options == "user") {
-    cond += " (dbo.userInfo.userName like '%" + db.encode(searchString) + "%' " +
-        " OR dbo.userInfo.nickName like '%" + db.encode(searchString) + "%' " +
-        " OR dbo.userInfo.note like '%" + db.encode(searchString) + "%') ";
+    cond += " (dbo.userInfo.userName like N'%" + db.encode(searchString) + "%' " +
+        " OR dbo.userInfo.nickName like N'%" + db.encode(searchString) + "%' " +
+        " OR dbo.userInfo.note like N'%" + db.encode(searchString) + "%') ";
 } else if (options == "photo") {
-    cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%' and (" +
+    cond += " and dbo.tContent.[content] like N'%" + db.encode(searchString) + "%' and (" +
         "dbo.getPhotoType(dbo.tContent.photo1)='img' OR " +
         "dbo.getPhotoType(dbo.tContent.photo2)='img' OR " +
         "dbo.getPhotoType(dbo.tContent.photo3)='img' OR " +
         "dbo.getPhotoType(dbo.tContent.photo4)='img') ";
 } else if (options == "video") {
-    cond += " and dbo.tContent.[content] like '%" + db.encode(searchString) + "%' and (" +
+    cond += " and dbo.tContent.[content] like N'%" + db.encode(searchString) + "%' and (" +
         "dbo.getPhotoType(dbo.tContent.photo1)='video' OR " +
         "dbo.getPhotoType(dbo.tContent.photo2)='video' OR " +
         "dbo.getPhotoType(dbo.tContent.photo3)='video' OR " +
@@ -38309,7 +38309,7 @@ sql = "delete donateList where userId = " + userId + ";\n";
 for (var i=0; i<v_data.length; i++) {
     sql += "insert into donateList (userId,donateName,linkType,linkValue) values (" +
         userId + "," +
-        "'" + db.encode(v_data[i].type) + "'," +
+        "N'" + db.encode(v_data[i].type) + "'," +
         "'" + db.encode(v_data[i].linkType) + "'," +
         "'" + db.encode(v_data[i].linkValue) + "');\n";
 }
@@ -38560,7 +38560,7 @@ if (userName=="guest") {
     return;
 }
 
-sql = "update userInfo set nickName = '" + db.encode(nickName) + "'" +
+sql = "update userInfo set nickName = N'" + db.encode(nickName) + "'" +
     " where userName = '" + db.encode(userName) + "'";
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
@@ -38800,7 +38800,7 @@ if (userName=="guest") {
     return;
 }
 
-sql = "update userInfo set note = '" + db.encode(note) + "'" +
+sql = "update userInfo set note = N'" + db.encode(note) + "'" +
     " where userName = '" + db.encode(userName) + "'";
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
