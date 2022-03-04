@@ -437,7 +437,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>798</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -740,9 +739,10 @@ sender.activePage = function() {
     ee.setRect(g5.p4.a1,0,0,eb.getDivRect(g5.p4).w,null);
     ee.setRect(g5.p4, null,null,null,eb.getDivRect(g5.p4.a1).h);
     ee.setRect(g5.p2,null,null,null,eb.getDivRect(this).h+1);
-    document.documentElement.scrollTop = sender.v_lastScrollTop;
-    //g5.writeLog("restore main:" + document.documentElement.scrollTop);
     ee.setVisible(this, true);
+    setTimeout(function() {
+        document.documentElement.scrollTop = sender.v_lastScrollTop;
+    }, 20);
 }
 
 sender.close = function() {
@@ -25322,7 +25322,6 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>571</height>
       <heightRatio>0.715538847117794</heightRatio>
       <layerName>===P1===</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel26");
 sender.p2 = ee.getControl("panel199");
@@ -26360,8 +26359,45 @@ sender.style.borderRadius = "50%";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1.p3->手机菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate><![CDATA[sender.c_buttons = new Array();
+sender.c_buttons.push(ee.getControl("panel557"));
+sender.c_buttons.push(ee.getControl("panel558"));
+sender.c_buttons.push(ee.getControl("panel563"));
+sender.c_buttons.push(ee.getControl("panel556"));
+
+sender.f_click = function(btn) {
+    var items = this.c_buttons;
+    for (var i=0; i<items.length; i++) {
+        if (eb.isEmpty(items[i].baseColor)) continue;
+        if (items[i]==btn) {
+            items[i].baseColor="#1fa2f2";
+            items[i].baseBgColor = "#e8f5fe";
+        } else {
+            items[i].baseColor="#14171a";
+            items[i].baseBgColor = "";
+        }
+        ee.setTextColor(items[i], items[i].baseColor);
+        items[i].style.backgroundColor = items[i].baseBgColor;
+    }
+}
+
+sender.refresh = function() {
+    if (g5.currentPageIndex == 0) {
+        this.f_click(this.c_buttons[0]);
+    } else if (g5.currentPageIndex == 12) {
+        this.f_click(this.c_buttons[1]);
+    } else if (g5.currentPageIndex == 11) {
+        this.f_click(this.c_buttons[2]);
+    } else if (g5.currentPageIndex == 1) {
+        this.f_click(this.c_buttons[3]);
+    } else {
+        this.f_click(null);
+    }
+}
+
+
+]]></onCreate>
       <sizeRatio>1.03442028985507</sizeRatio>
       <top>0</top>
       <width>552</width>
@@ -26422,21 +26458,13 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>43</left>
       <leftRatio>0.311594202898551</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p1.show();]]></onClick>
+      <onClick>g5.p1.p3.f_click(sender);
+g5.p2.p1.show();</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
-ee.setText(sender,"<svg viewBox=\"1 1 24 24\" style=\"display:inline;font-size:13px;height:2.5em;width:2.5em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.icon.homePage+"</svg>");
+sender.baseBgColor = "";
+ee.setText(sender,"<svg viewBox=\"1 1 24 24\" style=\"display:inline;font-size:13px;height:2.5em;width:2.5em;fill: currentcolor;margin:8px 8px 12px 8px;vertical-align:middle;\">"+g5.icon.homePage+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = "#e8f5fe";
+    sender.style.backgroundColor = sender.baseBgColor;
     ee.setTextColor(sender, "#1fa2f2");
 });
 ee.setOnMouseLeave(sender, function(sender,event) { 
@@ -26444,10 +26472,10 @@ ee.setOnMouseLeave(sender, function(sender,event) {
     ee.setTextColor(sender, sender.baseColor);
 });
 sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#d2ecfc";
+    sender.style.backgroundColor = sender.baseBgColor;
 }
 sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
+    sender.style.backgroundColor = sender.baseBgColor;
 }
 eb.initMouseEvent(sender);
 sender.style.borderRadius = "50%";
@@ -26490,17 +26518,8 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>43</left>
       <leftRatio>0.311594202898551</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p13.show();]]></onClick>
+      <onClick>g5.p1.p3.f_click(sender);
+g5.p2.p13.show();</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"1 1 24 24\" style=\"display:inline;font-size: 13px;height:2.5em;width:2.5em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMail+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26558,20 +26577,10 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>43</left>
       <leftRatio>0.311594202898551</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
+      <onClick>g5.p1.p3.f_click(sender);
 g5.p2.p12.show();
 
-]]></onClick>
+</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"1 1 24 24\" style=\"display:inline;font-size: 13px;height:2.5em;width:2.5em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconBell+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26629,19 +26638,9 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>43</left>
       <leftRatio>0.311594202898551</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
+      <onClick>g5.p1.p3.f_click(sender);
 g5.p2.p2.show(g5.myUserInfo);
-]]></onClick>
+</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"1 1 24 24\" style=\"display:inline;font-size: 13px;height:2.5em;width:2.5em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconFace+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -27691,6 +27690,7 @@ sender.renderItem = function(root) {
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -31811,6 +31811,7 @@ eb.initMouseEvent(sender);
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a9->手机弹出菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.c_titleBg = ee.getControl("panel562");
@@ -43484,6 +43485,7 @@ if (pageIndex == 0) {
     g5.p2.p35.activePage();
 }
 g5.currentPageIndex = pageIndex;
+g5.p1.p3.refresh();
 
 if (g5.p2.p34.style.visibility!="hidden") ee.setVisible(g5.p2.p34.style.visibility, false);
 return true;]]></functionCode>
