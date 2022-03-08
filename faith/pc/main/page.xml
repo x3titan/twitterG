@@ -1,5 +1,5 @@
 <page>
-  <controls count="760">
+  <controls count="757">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -625,7 +625,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.977443609022556</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.270758122743682</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -1978,7 +1977,6 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -2081,8 +2079,7 @@ sender.show = function(v_userInfo, userId, userName) {
             return;
         }
 
-        var rect = eb.getDivRect(ee.getControl("panel73"),null,cy,null,null);
-        var cy = rect.y + rect.h;
+        var cy = 0;
         var i, item;
         var root = g5.p2.p2.p2sub.p1;
         root.init(); 
@@ -2172,8 +2169,6 @@ sender.activePage = function() {
         document.documentElement.scrollTop = this.v_lastScrollTop;
     }
     g5.pushHistory2("/" + escape(this.v_userInfo.userName));
-    
-    ee.setVisible(this.p2sub.chat, false);
     
     g5.pageMode = 0;
     g5.refreshMain(true);
@@ -2649,6 +2644,7 @@ sender.showByUserInfo = function(v_userInfo) {
     eb.setDivRect(this.p2sub,null,cy,null,null);
     ee.setVisible(this.p2sub, true);
     
+    /*
     var rect = eb.getDivRect(ee.getControl("panel263"));
     cy = rect.y + rect.h;
     eb.setDivRect(ee.getControl("panel19"),null,cy,null,300);
@@ -2658,6 +2654,7 @@ sender.showByUserInfo = function(v_userInfo) {
     eb.setDivRect(ee.getControl("panel73"),null,cy,null,null);
     ee.setVisible(ee.getControl("panel73"), true);
     cy += eb.getDivRect(ee.getControl("panel73")).h;
+    */
     
     //g5.p2PersonSub.init();
     g5.changeP2(1);
@@ -3082,19 +3079,20 @@ sender.changePage = function(pageIndex) {
             this.p1ChatRect = eb.getDivRectSetting(this.p1.c_chat.c_chat);
             this.p1ChatRect.h = 313;
         }
-        ee.setRect(this.p1.c_chat.c_chat, null, this.p1ChatRect.y, null, this.p1ChatRect.h);
-        ee.changeParent(this.chat, this.p1, 1);
-        g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.v_userInfo.id == g5.myUserInfo.id);
-        this.chat.init();
-        this.chat.c_buttons.c_buttons.showButton3(true);
+        //ee.setRect(this.p1.c_chat.c_chat, null, this.p1ChatRect.y, null, this.p1ChatRect.h);
+        //ee.changeParent(this.chat, this.p1, 1);
+        //g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.v_userInfo.id == g5.myUserInfo.id);
+        //this.chat.init();
+        //this.chat.c_buttons.c_buttons.showButton3(true);
         this.p1.resize();
         if (this.p1.v_clear) this.p1.loadMore();
     } else if (pageIndex == 2) {
         this.button2.init(1);
         this.button2.appendChild(this.buttonLine);
         ee.setRect(this.p1.c_chat.c_chat, null, this.p2ChatRect.y, null, this.p2ChatRect.h);
-        ee.changeParent(this.chat, this.p2, 1);
+        //ee.changeParent(this.chat, this.p2, 1);
         g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.id == g5.myUserInfo.id);
+        this.chat.init();
         this.chat.c_buttons.c_buttons.showButton3(false);
         g5.tiledV(this.p2,10,1,0);
         ee.setVisible(this.p2, true);
@@ -3241,8 +3239,8 @@ sender.style.borderBottomStyle = "solid";
     this.bdColor = bdColor;
 }
 sender.v_style = [
-    new sender.BStyle("","#e8f5fe","#d2ecfc","综合","综合","综合","#657786","#1da1f2","#1da1f2",""),
-    new sender.BStyle("","#e8f5fe","#d2ecfc","综合","综合","综合","#1da1f2","#1da1f2","#1da1f2","")
+    new sender.BStyle("","#e8f5fe","#d2ecfc","发言","发言","发言","#657786","#1da1f2","#1da1f2",""),
+    new sender.BStyle("","#e8f5fe","#d2ecfc","发言","发言","发言","#1da1f2","#1da1f2","#1da1f2","")
 ];
 
 sender.init = function(index) {
@@ -3295,7 +3293,7 @@ sender.init(0);
 
 </onCreate>
       <sizeRatio>0.26</sizeRatio>
-      <text>综合</text>
+      <text>发言</text>
       <top>0</top>
       <width>200</width>
       <widthRatio>0.333333333333333</widthRatio>
@@ -3521,8 +3519,7 @@ sender.loadMore = function() {
         var i, j, item;
         var root = sender;
         var itemWidth = eb.getDivRect(root).w;
-        var rect = eb.getDivRect(ee.getControl("panel73"),null,cy,null,null);
-        var cy = rect.y + rect.h;
+        var cy = 0;
         if (sender.v_clear) {
             for (j=0; j<g5.p2.p2.p1Items.length; j++) {
                 ee.removeControl(g5.p2.p2.p1Items[j]);
@@ -3596,35 +3593,30 @@ sender.resize = function() {
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel263">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283">
+      <bindControl>layoutx2</bindControl>
+      <bindTop>bottom</bindTop>
       <dockX>fill</dockX>
-      <fontBold>true</fontBold>
-      <fontColor>657786</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>12</height>
-      <heightRatio>0.0394736842105263</heightRatio>
+      <height>274</height>
+      <heightRatio>0.732620320855615</heightRatio>
+      <layerName><![CDATA[  p2->聊天室]]></layerName>
       <layerVisible>false</layerVisible>
-      <left>20</left>
-      <leftRatio>0.0333333333333333</leftRatio>
-      <note><![CDATA[c_titleChat->聊天室题头]]></note>
-      <outerLeft>20</outerLeft>
-      <outerRight>20</outerRight>
-      <sizeRatio>0.0214285714285714</sizeRatio>
-      <top>4</top>
-      <topRatio>0.0131578947368421</topRatio>
-      <width>560</width>
-      <widthRatio>0.933333333333333</widthRatio>
+      <left>0</left>
+      <onCreate>sender.v_fitInner = true;
+</onCreate>
+      <sizeRatio>0.456666666666667</sizeRatio>
+      <top>52</top>
+      <topRatio>0.13903743315508</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19">
       <backgroundColor>E0E0E0</backgroundColor>
       <dockX>fill</dockX>
       <height>241</height>
-      <heightRatio>0.792763157894737</heightRatio>
+      <heightRatio>0.87956204379562</heightRatio>
       <layerVisible>false</layerVisible>
       <left>20</left>
-      <leftRatio>0.0333333333333333</leftRatio>
       <note><![CDATA[c_chat->个人页聊天]]></note>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -3643,7 +3635,7 @@ sender.init = function() {
     this.c_buttons.init();
     this.c_adminList.init();
     this.c_blackList.init();
-    this.setSize("max");
+    //this.setSize("max");
     g5.tiledV(this,0,0,0);
 }
 
@@ -3777,12 +3769,11 @@ sender.blockUser = function(userInfo) {
       <outerLeft>20</outerLeft>
       <outerRight>20</outerRight>
       <sizeRatio>0.430357142857143</sizeRatio>
-      <top>19</top>
-      <topRatio>0.0625</topRatio>
+      <top>0</top>
       <width>560</width>
       <widthRatio>0.933333333333333</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel324">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel324">
       <dockX>fill</dockX>
       <fontBold>true</fontBold>
       <fontColor>657786</fontColor>
@@ -3821,7 +3812,7 @@ sender.init = function() {
       <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel324/panel325">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel324/panel325">
       <dockX>right</dockX>
       <dockY>fill</dockY>
       <height>38</height>
@@ -3885,7 +3876,7 @@ sender.arrangeButton = function(space) {
       <width>308</width>
       <widthRatio>0.55</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel324/panel325/panel326">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel324/panel325/panel326">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockY>fill</dockY>
@@ -3968,7 +3959,7 @@ sender.init(0);
       <width>68</width>
       <widthRatio>0.220779220779221</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel324/panel325/panel328">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel324/panel325/panel328">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockY>fill</dockY>
@@ -4049,7 +4040,7 @@ sender.init(0);
       <width>68</width>
       <widthRatio>0.220779220779221</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel324/panel325/panel361">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel324/panel325/panel361">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockY>fill</dockY>
@@ -4148,7 +4139,7 @@ sender.init(0);
       <width>68</width>
       <widthRatio>0.220779220779221</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel324/panel325/panel327">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel324/panel325/panel327">
       <cursor>pointer</cursor>
       <dockY>fill</dockY>
       <height>38</height>
@@ -4164,7 +4155,7 @@ sender.init(0);
       <width>37</width>
       <widthRatio>0.12012987012987</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel264">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel264">
       <backgroundColor>F2F2FF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
@@ -4238,7 +4229,7 @@ sender.init = function(videoUrl, isOwner) {
       <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel264/panel287">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel264/panel287">
       <dockX>fill</dockX>
       <height>36</height>
       <heightRatio>0.610169491525424</heightRatio>
@@ -4249,7 +4240,7 @@ sender.init = function(videoUrl, isOwner) {
       <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/panel264/panel286">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/panel264/panel286">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockX>right</dockX>
@@ -4379,7 +4370,7 @@ sender.init(0);
       <width>89</width>
       <widthRatio>0.158928571428571</widthRatio>
     </control>
-    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5">
+    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5">
       <dockX>fill</dockX>
       <fieldCount>2</fieldCount>
       <height>47</height>
@@ -4548,7 +4539,7 @@ sender.renderItem = function(root) {
       <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem10">
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem10">
       <backgroundColor>f0f0f0</backgroundColor>
       <fontColor>B4B4B4</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -4564,7 +4555,7 @@ sender.renderItem = function(root) {
       <width>549</width>
       <widthRatio>0.980357142857143</widthRatio>
     </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17">
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem17">
       <backgroundColor>d0d0d0</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>47</height>
@@ -4577,7 +4568,7 @@ sender.renderItem = function(root) {
       <width>11</width>
       <widthRatio>0.0196428571428571</widthRatio>
     </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12">
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem17/layouty12">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>47</height>
@@ -4624,7 +4615,7 @@ sender.onChange = function() {
       <width>10</width>
       <widthRatio>0.909090909090909</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem27">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem27">
       <backgroundColor>804040</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>15</height>
@@ -4636,7 +4627,7 @@ sender.onChange = function() {
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem27/panel329">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem27/panel329">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
@@ -4728,7 +4719,7 @@ sender.init(0);
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem28">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem28">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <height>17</height>
@@ -4748,7 +4739,7 @@ sender.style.borderBottom = "";
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem28/panel330">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem28/panel330">
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
@@ -4808,7 +4799,7 @@ sender.style.backgroundColor = "#fafaff";</onCreate>
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem29">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem29">
       <backgroundColor>804040</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>15</height>
@@ -4821,7 +4812,7 @@ sender.style.backgroundColor = "#fafaff";</onCreate>
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem29/panel331">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx5/layoutxitem17/layouty12/layoutyitem29/panel331">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
@@ -4913,7 +4904,7 @@ sender.init(0);
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9">
+    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9">
       <dockX>fill</dockX>
       <fieldCount>2</fieldCount>
       <height>42</height>
@@ -5082,7 +5073,7 @@ sender.renderItem = function(root) {
       <width>560</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem18">
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem18">
       <backgroundColor>f0f0f0</backgroundColor>
       <fontColor>B4B4B4</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -5098,7 +5089,7 @@ sender.renderItem = function(root) {
       <width>549</width>
       <widthRatio>0.980357142857143</widthRatio>
     </control>
-    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19">
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem19">
       <backgroundColor>d0d0d0</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>42</height>
@@ -5111,7 +5102,7 @@ sender.renderItem = function(root) {
       <width>11</width>
       <widthRatio>0.0196428571428571</widthRatio>
     </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13">
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem19/layouty13">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>42</height>
@@ -5158,7 +5149,7 @@ sender.onChange = function() {
       <width>10</width>
       <widthRatio>0.909090909090909</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem30">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem30">
       <backgroundColor>804040</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>15</height>
@@ -5170,7 +5161,7 @@ sender.onChange = function() {
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem30/panel332">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem30/panel332">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
@@ -5262,7 +5253,7 @@ sender.init(0);
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem31">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem31">
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <height>12</height>
@@ -5282,7 +5273,7 @@ sender.style.borderBottom = "";
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem31/panel333">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem31/panel333">
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
@@ -5342,7 +5333,7 @@ sender.style.backgroundColor = "#fafaff";</onCreate>
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem32">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem32">
       <backgroundColor>804040</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>15</height>
@@ -5355,7 +5346,7 @@ sender.style.backgroundColor = "#fafaff";</onCreate>
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem32/panel334">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layoutx9/layoutxitem19/layouty13/layoutyitem32/panel334">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
@@ -5447,7 +5438,7 @@ sender.init(0);
       <width>10</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2">
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2">
       <dockX>fill</dockX>
       <fieldCount>2</fieldCount>
       <height>80</height>
@@ -5465,7 +5456,7 @@ sender.c_chatButton = ee.getControl("layoutyitem4");
       <width>558</width>
       <widthRatio>0.996428571428571</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem3">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2/layoutyitem3">
       <backgroundColor>f0f0f0</backgroundColor>
       <height>29</height>
       <heightRatio>0.3625</heightRatio>
@@ -6233,7 +6224,7 @@ sender.onpointerup = function(event) {
       <width>558</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem4">
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2/layoutyitem4">
       <backgroundColor>FAFAFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <heavyEnabled>false</heavyEnabled>
@@ -6261,7 +6252,7 @@ sender.setDonateEnable = function(enabled) {
       <width>558</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem4/panel265">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2/layoutyitem4/panel265">
       <backgroundColor>E6ECF0</backgroundColor>
       <backgroundImgMode>fill</backgroundImgMode>
       <bgColorEnabled>true</bgColorEnabled>
@@ -6280,7 +6271,7 @@ sender.setDonateEnable = function(enabled) {
       <width>558</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Edit" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem4/edit11">
+    <control type="Edit" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2/layoutyitem4/edit11">
       <backgroundSkin>edit1</backgroundSkin>
       <dockX>fill</dockX>
       <fontBold>true</fontBold>
@@ -6374,7 +6365,7 @@ sender._input.addEventListener("keydown", function(event) {
       <width>468</width>
       <widthRatio>0.838709677419355</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem4/panel266">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2/layoutyitem4/panel266">
       <cursor>pointer</cursor>
       <dockX>right</dockX>
       <height>29</height>
@@ -6420,7 +6411,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <width>37</width>
       <widthRatio>0.0663082437275986</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel19/layouty2/layoutyitem4/panel642">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2/layoutyitem4/panel642">
       <cursor>pointer</cursor>
       <dockX>left</dockX>
       <height>29</height>
@@ -6470,65 +6461,6 @@ ee.setOnMouseLeave(c, function(sender,event) {
       <topRatio>0.215686274509804</topRatio>
       <width>29</width>
       <widthRatio>0.0519713261648746</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel73">
-      <dockX>fill</dockX>
-      <fontBold>true</fontBold>
-      <fontColor>657786</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>38</height>
-      <heightRatio>0.125</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>20</left>
-      <leftRatio>0.0333333333333333</leftRatio>
-      <note><![CDATA[c_titleBlog->发言题头]]></note>
-      <outerLeft>20</outerLeft>
-      <outerRight>20</outerRight>
-      <sizeRatio>0.0678571428571429</sizeRatio>
-      <text> 发言</text>
-      <top>257</top>
-      <topRatio>0.845394736842105</topRatio>
-      <width>560</width>
-      <widthRatio>0.933333333333333</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel282/panel73/panel74">
-      <backgroundColor>E6ECF0</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <fontColor>808080</fontColor>
-      <fontFamily>黑体</fontFamily>
-      <fontSizeAuto>25</fontSizeAuto>
-      <hAlign>left</hAlign>
-      <height>1</height>
-      <heightRatio>0.0263157894736842</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>0.00178571428571429</sizeRatio>
-      <top>37</top>
-      <topRatio>0.973684210526316</topRatio>
-      <width>560</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283">
-      <bindControl>layoutx2</bindControl>
-      <bindTop>bottom</bindTop>
-      <dockX>fill</dockX>
-      <height>274</height>
-      <heightRatio>0.732620320855615</heightRatio>
-      <layerName><![CDATA[  p2->聊天室]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onCreate>sender.v_fitInner = true;
-</onCreate>
-      <sizeRatio>0.456666666666667</sizeRatio>
-      <top>52</top>
-      <topRatio>0.13903743315508</topRatio>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel284">
       <bindControl>layoutx2</bindControl>
@@ -25322,6 +25254,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>571</height>
       <heightRatio>0.715538847117794</heightRatio>
       <layerName>===P1===</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel26");
 sender.p2 = ee.getControl("panel199");
@@ -26359,6 +26292,7 @@ sender.style.borderRadius = "50%";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1.p3->手机菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_buttons = new Array();
 sender.c_buttons.push(ee.getControl("panel557"));
