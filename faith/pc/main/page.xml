@@ -20,6 +20,9 @@ c.style.overflow = "";
 var c = ee.getControl("panel134");
 c.style.overflow = "";
 
+document.addEventListener("scroll", g5.onScroll);
+
+
 if (g5.isMobile) {
     var cs = eb.getClientSize();
     g5.p1.changePage("p3");
@@ -674,7 +677,6 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -1977,6 +1979,7 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -40212,7 +40215,7 @@ if (!eb.isEmpty(getPromptCount.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="108">
+  <g5Items count="109">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -44885,6 +44888,46 @@ if (p[0].charAt(p[0].length-1) == "s") {
     result[1] = "url:" + g5.imgUrl + p[0] + "." + p[1];
 }
 return result;]]></functionCode>
+    </item>
+    <item name="onScroll" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode><![CDATA[var safeRange = 700;
+if (eb.isEmpty(g5._lastPageIndex)) g5._lastPageIndex = -10;
+if (!g5._lastScroll) g5._lastScroll = -10000;
+if ((g5._lastPageIndex == g5.currentPageIndex) &amp;&amp; 
+    (Math.abs(document.documentElement.scrollTop-g5._lastScroll)<safeRange)) {
+    return;
+}
+g5._lastPageIndex = g5.currentPageIndex;
+g5._lastScroll = document.documentElement.scrollTop;
+
+var items = new Array();
+if (g5.currentPageIndex == 0) {
+    items = g5.p2.p1.v_items;
+}
+if (items.length<=0) return;
+
+var i,r;
+var screenTop = document.documentElement.scrollTop;
+var screenBottom = eb.getClientSize().h + screenTop;
+for (i=0; i<items.length; i++) {
+    if (!items[i].v_top) {
+        r = eb.getDivRectSetting(items[i]);
+        items[i].v_top = r.y;
+        items[i].v_bottom = r.y + r.h;
+    }
+    
+    if (items[i].v_bottom + safeRange < document.documentElement.scrollTop) {
+        ee.setVisible(items[i], false);
+    } else if (items[i].v_top - safeRange > screenBottom) {
+        ee.setVisible(items[i], false);
+    } else {
+        ee.setVisible(items[i], true);
+    }
+}
+
+]]></functionCode>
     </item>
   </g5Items>
 </page>
