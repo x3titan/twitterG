@@ -677,6 +677,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -7848,7 +7849,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[P2->9->推文页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -8972,6 +8972,8 @@ sender.show = function(v_contentId, bgRefresh) {
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
+        for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+        sender.v_items = new Array();
         for (var i=0; i<dataset.rowCount; i++) {
             var item = createPanel(root, "fwdl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             g5.loadTwitterRecord(item, dataset, i);
@@ -9067,6 +9069,7 @@ sender.loadFromDb = function(v_contentId, changePage) {
             item.v_mode = "";
             g5.renderUserBar(item);
             sender.v_items.push(item);
+            cy += eb.getDivRect(item).h;
         }
         for (var i=0; i<dataset.rowCount; i++) {
             item = createPanel(root, "twlk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
@@ -9167,6 +9170,7 @@ sender.loadFromDb = function(v_contentId, changePage) {
             item.v_mode = "";
             g5.renderUserBar(item);
             sender.v_items.push(item);
+            cy += eb.getDivRect(item).h;
         }
         for (var i=0; i<dataset.rowCount; i++) {
             var item = createPanel(root, "twulk_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
