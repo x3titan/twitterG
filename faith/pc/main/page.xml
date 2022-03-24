@@ -628,6 +628,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.977443609022556</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.270758122743682</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -1980,6 +1981,7 @@ sender.processUserName = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -3040,6 +3042,7 @@ sender.init = function(index) {
       <dockX>fill</dockX>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p2PersonSub,p2sub</note>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -3602,6 +3605,7 @@ sender.resize = function() {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[  p2->聊天室]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.v_fitInner = true;
 </onCreate>
@@ -3616,6 +3620,7 @@ sender.resize = function() {
       <dockX>fill</dockX>
       <height>241</height>
       <heightRatio>0.87956204379562</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.0333333333333333</leftRatio>
       <note><![CDATA[c_chat->个人页聊天]]></note>
@@ -10750,6 +10755,7 @@ sender.loadRecord = function(root, dataset, index) {
     root.v_regDatetime = dataset.getData(x, index); x++;
     root.v_content = dataset.getData(x, index); x++;
     root.v_photo1 = dataset.getData(x, index); x++;
+    root.v_newCount = dataset.getData(x, index); x++;
     root.v_userInfo = new g5.UserInfo();
     root.v_userInfo.loadFromDataset(dataset, x, index); x += root.v_userInfo.size;
 }
@@ -10831,6 +10837,13 @@ sender.render = function(root) {
         c.label.rows[0].cells[0].childNodes[1].innerHTML = "· ";
     }
     
+    //newCount
+    c = createPanel(root, root.id + "redDot1", "", 52, 2, 19, 19);
+    c.style.backgroundColor = "#f1502a";
+    c.style.borderRadius = "9px";
+    addText(c, " ", "center", "middle", "Arial", 9, "FFFFFF", "bold");
+    root.c_newCount = c;
+    
     //button
     c = createPanel(root, root.id + "panel20", "", dw-45, 4, 36, 36);
     ee.setText(c,
@@ -10902,6 +10915,17 @@ sender.render = function(root) {
     }
 }
 
+sender.refreshItem = function(item) {
+    var value = item.v_newCount;
+    if (parseInt(value)>0) {
+        ee.setRect(item.c_newCount, null,null,19+6*(value.length-1), null);
+        addText(item.c_newCount, value, "center", "middle", "Arial", 9, "FFFFFF", "bold");
+        ee.setVisible(item.c_newCount, true);
+    } else {
+        ee.setVisible(item.c_newCount, false);
+    }
+}
+
 sender.loadDataset = function(dataset) {
     var root = this;
     var y = 0;
@@ -10919,6 +10943,7 @@ sender.loadDataset = function(dataset) {
         y += 70;
         this.loadRecord(c, dataset, i);
         this.render(c);
+        this.refreshItem(c);
         this.v_items.push(c);
     }
     if (dataset.rowCount<=0) {
@@ -25258,7 +25283,6 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>571</height>
       <heightRatio>0.715538847117794</heightRatio>
       <layerName>===P1===</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel26");
 sender.p2 = ee.getControl("panel199");
@@ -26296,7 +26320,6 @@ sender.style.borderRadius = "50%";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1.p3->手机菜单]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_buttons = new Array();
 sender.c_buttons.push(ee.getControl("panel557"));
@@ -26351,7 +26374,6 @@ sender.refresh = function() {
       <dockY>fill</dockY>
       <height>571</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.03442028985507</sizeRatio>
       <top>0</top>
@@ -36948,11 +36970,11 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 } 
 var myUserId = parseInt(db.getString(sqlResult,"id"));
 
-sql = "insert into chat (sendUserId, recvUserId, [content], photo1) values (" +
+sql = "exec [chat1v1Send] " +
     myUserId +
     "," + chatUserId + 
     ",N'" + db.encode(content) + "'" +
-    ",'')";
+    ",'';";
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙");
@@ -37005,6 +37027,34 @@ var myUserId = parseInt(db.getString(sqlResult,"id"));
 
 var top = "TOP (" + ((pageIndex+1) * pageSize) + ")";
 sql =
+    "SELECT        " + top + " CAL_ChatList.chatUserId AS uId, CAL_ChatList.maxId, CONVERT(VARCHAR(50), dbo.chat.regDatetime, 120) AS regDatetime, dbo.chat.[content], dbo.chat.photo1, dbo.userInfo.status AS uStatus, "+
+    "                          CONVERT(VARCHAR(50), dbo.userInfo.regDatetime, 120) AS uRegDatetime, dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName, dbo.userInfo.mobile AS uMobile,  "+
+    "                         dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  "+
+    "                         dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN uBlockList.id IS NULL  "+
+    "                         THEN 0 ELSE 1 END AS uIsBlock1, CASE WHEN uBlockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide,  "+
+    "                         CASE WHEN CAL_NewCount.newCount IS NULL THEN 0 ELSE CAL_NewCount.newCount END AS newCount "+
+    "FROM            (SELECT        chatUserId, MAX(id) AS maxId "+
+    "                          FROM            (SELECT        CASE WHEN sendUserId = " + myUserId + " THEN recvUserId WHEN recvUserId = " + myUserId + " THEN sendUserId ELSE - 1 END AS chatUserId, id "+
+    "                                                    FROM            dbo.chat AS t1 "+
+    "                                                    WHERE        (sendUserId = " + myUserId + ") AND (sendStatus = 'new') OR "+
+    "                                                                              (recvUserId = " + myUserId + ") AND (recvStatus = 'new')) AS derivedtbl_1 "+
+    "                          GROUP BY chatUserId) AS CAL_ChatList INNER JOIN "+
+    "                         dbo.chat ON CAL_ChatList.maxId = dbo.chat.id INNER JOIN "+
+    "                         dbo.userInfo ON CAL_ChatList.chatUserId = dbo.userInfo.id LEFT OUTER JOIN "+
+    "                         dbo.blockList AS uBlockList1 ON uBlockList1.userId = dbo.userInfo.id AND uBlockList1.blockUserId = " + myUserId + " LEFT OUTER JOIN "+
+    "                         dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + myUserId + " LEFT OUTER JOIN "+
+    "                         dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + myUserId + " LEFT OUTER JOIN "+
+    "                         dbo.hideList AS uHideList ON CAL_ChatList.chatUserId = uHideList.hideId AND uHideList.userId = " + myUserId + " LEFT OUTER JOIN "+
+    "                             (SELECT        COUNT(*) AS newCount, chat_1.sendUserId, chat_1.recvUserId "+
+    "                               FROM            dbo.chat AS chat_1 INNER JOIN "+
+    "                                                         dbo.chatReadPointer ON chat_1.id > dbo.chatReadPointer.readId AND dbo.chatReadPointer.userId = " + myUserId + " AND dbo.chatReadPointer.targetUserId = chat_1.sendUserId "+
+    "                               WHERE        (chat_1.recvUserId = " + myUserId + ") "+
+    "                               GROUP BY chat_1.sendUserId, chat_1.recvUserId) AS CAL_NewCount ON CAL_NewCount.sendUserId = CAL_ChatList.chatUserId "+
+    "WHERE        (uBlockList.id IS NULL) "+
+    "ORDER BY CAL_ChatList.maxId DESC; ";
+
+    /*
+
     "SELECT   " + top + " derivedtbl_2.chatUserId AS uId, derivedtbl_2.maxId, CONVERT(VARCHAR(50),dbo.chat.regDatetime,120) as regDatetime, dbo.chat.[content], " + 
     "                dbo.chat.photo1, dbo.userInfo.status AS uStatus, CONVERT(VARCHAR(50),dbo.userInfo.regDatetime,120) AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
@@ -37033,7 +37083,8 @@ sql =
     "                left outer join hideList as uHideList on derivedtbl_2.chatUserId = uHideList.hideId and uHideList.userId = " + myUserId + " " +
     "WHERE  uBlockList.id IS NULL " +
     "ORDER BY derivedtbl_2.maxId DESC; ";
-    
+    */
+
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -37041,7 +37092,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"maxId,regDatetime,content,photo1," +
+eio.appendDataSet(sqlResult,"maxId,regDatetime,content,photo1,newCount," +
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsBlock", 
     pageIndex*pageSize, pageSize);
 
