@@ -628,7 +628,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.977443609022556</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.270758122743682</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -10666,7 +10665,6 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p13->私信列表]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -10765,6 +10763,14 @@ sender.render = function(root) {
     root.style.cursor="pointer";
     ee.setOnClick(root,function(sender,event) {
         g5.p2.p14.show(sender.v_userInfo);
+        if (parseInt(root.v_newCount)>0) {
+            var newCount = parseInt(root.v_newCount);
+            root.v_newCount = "0";
+            g5.p2.p13.refreshItem(root);
+            getPromptCount.chat1v1NewCount -= newCount;
+            if (getPromptCount.chat1v1NewCount<0) getPromptCount.chat1v1NewCount = 0;
+            g5.p2.p13.showAlert(getPromptCount.chat1v1NewCount);
+        }
         return;
         if (root.v_userInfo.status == "DISABLED") {
             g5.alert1("提示", "该用户处于禁封状态，目前无法查看与该用户的私信记录");
@@ -10980,14 +10986,14 @@ sender.showAlert = function(value) {
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
         this.c_alert1 = c;
     }
-    if (button2.eeChildren.length<=0) {
+    if (!this.c_alert2) {
         c = createPanel(button2.parentNode, "redDot2", "", 20, r2.y+5, 19, 19);
         c.style.backgroundColor = "#f1502a";
         c.style.borderRadius = "9px";
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
         this.c_alert2 = c;
     }
-    if (button3.eeChildren.length<=0) {
+    if (!this.c_alert3) {
         c = createPanel(button3.parentNode, "redDot3", "", 20, r3.y+5, 19, 19);
         c.style.backgroundColor = "#f1502a";
         c.style.borderRadius = "9px";
@@ -10996,6 +11002,9 @@ sender.showAlert = function(value) {
     }
     value = parseInt(value);
     value = value + "";
+    ee.setText(this.c_alert1, value);
+    ee.setText(this.c_alert2, value);
+    ee.setText(this.c_alert3, value);
     if (value == "0") {
         this.c_alert1.style.visibility = "hidden";
         ee.setRect(button1,null,null,103,null);
@@ -11119,6 +11128,11 @@ sender.activePage = function() {
     ee.setVisible(g5.p4, true);
     g5.p4.changePage("a8");
     ee.setVisible(this, true);
+    
+    markUserReadChat1v1.chatUserId = this.v_userInfo.id;
+    markUserReadChat1v1.onComplete = function() {
+    }
+    markUserReadChat1v1();
 }
 
 sender.close = function() {
@@ -11126,6 +11140,11 @@ sender.close = function() {
     this.v_lastScrollTop = document.documentElement.scrollTop;
     ee.setVisible(g5.p4, false);
     ee.setVisible(this, false)
+    
+    markUserReadChat1v1.chatUserId = this.v_userInfo.id;
+    markUserReadChat1v1.onComplete = function() {
+    }
+    markUserReadChat1v1();
 }
 
 sender.showByUserName = function(userName) {
@@ -25328,6 +25347,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>571</height>
       <heightRatio>0.715538847117794</heightRatio>
       <layerName>===P1===</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel26");
 sender.p2 = ee.getControl("panel199");
@@ -26365,6 +26385,7 @@ sender.style.borderRadius = "50%";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1.p3->手机菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_buttons = new Array();
 sender.c_buttons.push(ee.getControl("panel557"));
@@ -34065,7 +34086,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="75">
+  <taskSet count="76">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -37041,6 +37062,57 @@ if (!eb.isEmpty(sendChat1v1.onComplete)) {
     sendChat1v1.onComplete = null;
 }
 sendChat1v1.busy = false;</script3>
+    </taskSetItem>
+    <taskSetItem name="markUserReadChat1v1">
+      <script1>//chatUserId, onComplete()
+if (markUserReadChat1v1.busy) return;
+markUserReadChat1v1.busy = true;
+
+eio.appendString16(g5.token);
+eio.appendString16(markUserReadChat1v1.chatUserId + "");</script1>
+      <script2><![CDATA[var token = eio.readString16();
+var chatUserId = parseInt(eio.readString16());
+var sql,sqlResult;  
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+
+sql = "exec [chat1v1MarkUserRead] " +
+    myUserId +
+    "," + chatUserId + "; ";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙");
+    es.logCommon("sql执行错误,sql=" + sql);
+    return;
+}
+
+eio.appendString8("T");
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    markUserReadChat1v1.busy = false;
+    return;
+}
+
+if (!eb.isEmpty(markUserReadChat1v1.onComplete)) {
+    markUserReadChat1v1.onComplete(markUserReadChat1v1.dataset);
+    markUserReadChat1v1.onComplete = null;
+}
+markUserReadChat1v1.busy = false;</script3>
     </taskSetItem>
     <taskSetItem name="showChatList">
       <script1><![CDATA[//pageIndex,pageSize,onComplete
@@ -40336,9 +40408,13 @@ eio.appendString16(db.getString(sqlResult,"newCount"));
 }
 
 getPromptCount.count = parseInt(eio.readString16());
-getPromptCount.chat1v1NewCount = parseInt(eio.readString16());
 g5.p2.p12.showAlert(getPromptCount.count);
+
+var newCount = parseInt(eio.readString16());
+var needRefresh = getPromptCount.chat1v1NewCount != newCount; 
+getPromptCount.chat1v1NewCount = newCount;
 g5.p2.p13.showAlert(getPromptCount.chat1v1NewCount);
+if (needRefresh) g5.p2.p13.v_needRefresh = true;
 
 if (!eb.isEmpty(getPromptCount.onComplete)) {
     getPromptCount.onComplete();
