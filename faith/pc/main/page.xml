@@ -34088,7 +34088,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="76">
+  <taskSet count="75">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -34973,76 +34973,6 @@ updateHomepage.busy = false;
 
 
 
-</script3>
-    </taskSetItem>
-    <taskSetItem name="updateContents">
-      <script1><![CDATA[//busy,cIds,onComplete(dataset)
-if (updateContents.cIds.length<=0) return;
-if (updateContents.busy) return;
-updateContents.busy = true;
-eio.appendString16(g5.token);
-eio.appendInt32(updateContents.cIds.length);
-for (var i=0; i<updateContents.cIds.length; i++) eio.appendString8(updateContents.cIds[i]+"");
-
-
-]]></script1>
-      <script2><![CDATA[var token = eio.readString16();
-var len = eio.readInt32();
-var i, cIds = new Array();
-for (i=0; i<len; i++) {
-    cIds.push(eio.readString8());
-}
-var sql,sqlResult;  
-
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-db.read(sqlResult);
-if (db.getString(sqlResult, "sessionId").length < 5) {
-    eio.appendString8("F");
-    eio.appendString8("上次登录时间太久或者您更换了系统");
-    es.logCommon("用户token登录失败,token=" + token);
-    return;
-} 
-var myUserName =db.getString(sqlResult,"userName");
-var myUserId = db.getString(sqlResult,"id");
-var sql1 = "";
-for (i=0; i<cIds.length; i++) {
-    if (sql1.length>0) sql1 += " OR ";
-    sql1 += "id=" + parseInt(cIds[i]);
-}
-
-sql =
-    "SELECT [id] ,[regDatetime],[userId],[status],[forceTopSn],[content],[photoCount],[photo1],[photo2], " +
-    "   [photo3],[photo4],[photo5],[photo6],[uplinkId],[uplinkType],[reCount],[fwCount],[likeCount],[unlikeCount], " +
-    "   [exUserId],[exUplinkType],[exContentId] " +
-    " FROM [twitterG].[dbo].[tContent] " +
-    " WHERE " + sql1 + "; ";
-
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    es.logWarning("数据库执行错误, sql=" + sql);
-    return;
-}
-eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,reCount,fwCount,likeCount,unlikeCount",
-    0, 99999);
-
-
-]]></script2>
-      <script3>if (eio.readString8() != "T") {
-    updateContents.busy = false;
-    return;
-}
-updateContents.dataset = eio.readDataSet();
-updateContents.onComplete(updateContents.dataset); 
-updateContents.busy = false;
-                        
 </script3>
     </taskSetItem>
     <taskSetItem name="showUserPage">
@@ -40365,12 +40295,6 @@ eio.appendString16(g5.token);
 eio.appendInt32(updateMain.cIds.length);
 for (var i=0; i<updateMain.cIds.length; i++) eio.appendString8(updateMain.cIds[i]+"");
 
-//updateContents
-//getPromptCount (getChat1v1count)
-//g5.p2.p1.loadNew()
-
-
-
 ]]></script1>
       <script2><![CDATA[var token = eio.readString16();
 var len = eio.readInt32();
@@ -44395,7 +44319,7 @@ g5.p2.p5.refresh();
       <varValue />
       <functionParam>root</functionParam>
       <functionCode><![CDATA[if (likeContent.busy) return;
-if (updateContents.busy) return;
+if (updateMain.busy) return;
 var stopTimer = function() {
     if (g5.likeItemsTimer) {
         clearTimeout(g5.likeItemsTimer);
