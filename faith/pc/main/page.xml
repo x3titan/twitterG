@@ -46,7 +46,6 @@ var init = function() {
         return;
     }
     getUserInfo();
-    getPromptCount();
     
     g5.changeP3(-1);
     
@@ -628,7 +627,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.977443609022556</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.270758122743682</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -678,7 +676,6 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -977,7 +974,6 @@ eb.initMouseEvent(sender.parentNode);
       <fontSize>20</fontSize>
       <height>429</height>
       <heightRatio>0.55</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>主页顶部发帖a1</note>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel7");
@@ -23295,6 +23291,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.12280701754386</heightRatio>
       <layerName>===P4===</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.273465703971119</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -27230,8 +27227,8 @@ sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
             g5.alert1("不能转发", "对不起，您的账户目前处于冻结状态，不能对短文进行直接转发操作。");
             return;
         }
-        if (updateContents.busy) {
-            updateContents.cancel = true;
+        if (updateMain.busy) {
+            updateMain.cancel = true;
         }
         newTwitter.content="";
         newTwitter.uplinkType="L";
@@ -40360,17 +40357,29 @@ if (!eb.isEmpty(setBookMark.onComplete)) {
 }
 </script3>
     </taskSetItem>
-    <taskSetItem name="getPromptCount">
-      <script1>//onComplete()
+    <taskSetItem name="updateMain">
+      <script1><![CDATA[//cIds,onComplete(dataset) <cancel>
+if (updateMain.cIds.length<=0) return;
+updateMain.busy = true;
 eio.appendString16(g5.token);
-if (eb.isEmpty(getPromptCount.timer)) {
-    getPromptCount.timer = setInterval(function() {
-        getPromptCount();
-    }, 30000);
-}</script1>
-      <script2><![CDATA[var token = eio.readString16();
+eio.appendInt32(updateMain.cIds.length);
+for (var i=0; i<updateMain.cIds.length; i++) eio.appendString8(updateMain.cIds[i]+"");
 
+//updateContents
+//getPromptCount (getChat1v1count)
+//g5.p2.p1.loadNew()
+
+
+
+]]></script1>
+      <script2><![CDATA[var token = eio.readString16();
+var len = eio.readInt32();
+var i, cIds = new Array();
+for (i=0; i<len; i++) {
+    cIds.push(eio.readString8());
+}
 var sql,sqlResult;  
+
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -40385,46 +40394,78 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     es.logCommon("用户token登录失败,token=" + token);
     return;
 } 
-var myUserName = db.getString(sqlResult,"userName");
-var myUserId = parseInt(db.getString(sqlResult,"id"));
+var myUserName =db.getString(sqlResult,"userName");
+var myUserId = db.getString(sqlResult,"id");
+var sql1 = "";
+for (i=0; i<cIds.length; i++) {
+    if (sql1.length>0) sql1 += " OR ";
+    sql1 += "id=" + parseInt(cIds[i]);
+}
 
 sql =
+    "SELECT [id] ,[regDatetime],[userId],[status],[forceTopSn],[content],[photoCount],[photo1],[photo2], " +
+    "   [photo3],[photo4],[photo5],[photo6],[uplinkId],[uplinkType],[reCount],[fwCount],[likeCount],[unlikeCount], " +
+    "   [exUserId],[exUplinkType],[exContentId] " +
+    " FROM [twitterG].[dbo].[tContent] " +
+    " WHERE " + sql1 + "; " +
     "exec getPromptCount " + myUserId + "; " +
     "exec chat1v1GetNewCount " + myUserId + "; ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
+    es.logWarning("数据库执行错误, sql=" + sql);
     return;
 }
-
-db.read(sqlResult);
 eio.appendString8("T");
+eio.appendDataSet(sqlResult,"id,reCount,fwCount,likeCount,unlikeCount",
+    0, 99999);
+
+db.nextResult(sqlResult);
+db.read(sqlResult);
 eio.appendString16(db.getString(sqlResult,"c"));
 
 db.nextResult(sqlResult);
 db.read(sqlResult);
 eio.appendString16(db.getString(sqlResult,"newCount"));
 
+
+
 ]]></script2>
-      <script3>if (eio.readString8() == "F") {
+      <script3>if (eio.readString8() != "T") {
     return;
 }
-
-getPromptCount.count = parseInt(eio.readString16());
-g5.p2.p12.showAlert(getPromptCount.count);
-
-var newCount = parseInt(eio.readString16());
-var needRefresh = getPromptCount.chat1v1NewCount != newCount; 
-getPromptCount.chat1v1NewCount = newCount;
-g5.p2.p13.showAlert(getPromptCount.chat1v1NewCount);
-if (needRefresh) g5.p2.p13.v_needRefresh = true;
-
-if (!eb.isEmpty(getPromptCount.onComplete)) {
-    getPromptCount.onComplete();
-    getPromptCount.onComplete = null;
+if (updateMain.cancel) {
+    updateMain.cancel = false;
+    updateMain.busy = false;
+    return;
 }
+updateMain.dataset = eio.readDataSet();
+
+updateMain.needRefresh = false;
+var newCount = parseInt(eio.readString16());
+if (updateMain.count != newCount) {
+    updateMain.needRefresh = true;
+    updateMain.count = newCount;
+    g5.p2.p12.showAlert(updateMain.count);
+}
+
+newCount = parseInt(eio.readString16());
+if (updateMain.chat1v1NewCount != newCount) {
+    updateMain.needRefresh = true;
+    updateMain.chat1v1NewCount = newCount;
+    g5.p2.p13.v_needRefresh = true;
+    g5.p2.p13.showAlert(updateMain.chat1v1NewCount);
+}
+
+if (!eb.isEmpty(updateMain.onComplete)) {
+    updateMain.onComplete(updateMain.dataset);
+    updateMain.onComplete = null;
+    updateMain.needRefresh = false;
+    updateMain.cancel = false;
+}
+updateMain.busy = false;
+               
 </script3>
     </taskSetItem>
   </taskSet>
@@ -43348,13 +43389,8 @@ g5.RC_CID = cId;
 if ((new Date()).getTime() - g5.RC_LastTime.getTime() < g5.RC_Interval) return;
 g5.RC_LastTime = new Date();
 
-if (updateContents.busy) return;
-updateContents.cIds = cId;
-updateContents.onComplete = function(dataset) {
-    if (updateContents.cancel) {
-        updateContents.cancel = false;
-        return;
-    }
+updateMain.cIds = cId;
+updateMain.onComplete = function(dataset) {
     if (g5.likeBusy|| g5.unlikeBusy) return;
     var changed = false;
     for (var i=0; i<dataset.rowCount; i++) {
@@ -43366,15 +43402,19 @@ updateContents.onComplete = function(dataset) {
         v_content.unlikeCount = dataset.getData(4,i);
         changed = g5.refreshContentCount(v_content) || changed;
     }
-    if (!changed) {
+    if (updateMain.needRefresh) {
+        g5.RC_Interval = g5.RC_MIN;
+    } else if (!changed) {
         g5.RC_Interval = Math.min(parseInt(g5.RC_Interval*1.5), g5.RC_MAX);
     } else {
         g5.RC_Interval = g5.RC_MIN;
     }
-    //g5.writeLog("v_content:"+dataset.rowCount+","+changed);
+    console.log("active:" + g5.RC_Interval);
 }
+updateMain();
 
-updateContents();
+
+
 
 //g5.writeLog(cId + "\n" + (g5.RC_Interval/1000)+"s", true);
 ]]></functionCode>
