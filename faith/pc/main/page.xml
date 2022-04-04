@@ -10270,47 +10270,55 @@ sender.close = function() {
     ee.setVisible(g5.p2.p12, false);
 }
 
-
+sender.c_alert1 = null;
+sender.c_alert2 = null;
+sender.c_alert3 = null;
 sender.showAlert = function(value) {
     var button1 = ee.getControl("panel94");
     var button2 = ee.getControl("panel352");
     var button3 = ee.getControl("panel563");
+    var r2 = eb.getDivRectSetting(button2);
+    var r3 = eb.getDivRectSetting(button3);
     var c;
-    if (button1.eeChildren.length<=0) {
+    if (!this.c_alert1) {
         c = createPanel(button1, "redDot1", "", 93, 14, 19, 19);
         c.style.backgroundColor = "#f1502a";
         c.style.borderRadius = "9px";
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
+        this.c_alert1 = c;
     }
-    if (button2.eeChildren.length<=0) {
-        c = createPanel(button2, "redDot2", "", 20, 5, 19, 19);
+    if (!this.c_alert2) {
+        c = createPanel(button2.parentNode, "redDot2", "", 20, r2.y+5, 19, 19);
         c.style.backgroundColor = "#f1502a";
         c.style.borderRadius = "9px";
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
+        this.c_alert2 = c;
     }
-    if (button3.eeChildren.length<=0) {
-        c = createPanel(button3, "redDot3", "", 20, 5, 19, 19);
+    if (!this.c_alert3) {
+        c = createPanel(button3.parentNode, "redDot3", "", 20, r3.y+5, 19, 19);
         c.style.backgroundColor = "#f1502a";
         c.style.borderRadius = "9px";
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
+        this.c_alert3 = c;
     }
-    var dot1 = button1.eeChildren[0];
-    var dot2 = button2.eeChildren[0];
-    var dot3 = button3.eeChildren[0];
     value = parseInt(value);
     value = value + "";
+    ee.setText(this.c_alert1, value);
+    ee.setText(this.c_alert2, value);
+    ee.setText(this.c_alert3, value);
     if (value == "0") {
-        dot1.style.visibility = "hidden";
+        this.c_alert1.style.visibility = "hidden";
         ee.setRect(button1,null,null,103,null);
-        dot2.style.visibility = "hidden";
-        dot3.style.visibility = "hidden";
+        this.c_alert2.style.visibility = "hidden";
+        this.c_alert3.style.visibility = "hidden";
         return;
     }
     ee.setRect(button1,null,null,142,null);
-    ee.setRect(dot1,null,null,19+6*(value.length-1), null);
-    ee.setRect(dot2,20-6*(value.length-1),null,19+6*(value.length-1), null);
-    ee.setRect(dot3,20-6*(value.length-1),null,19+6*(value.length-1), null);
+    ee.setRect(this.c_alert1,null,null,19+6*(value.length-1), null);
+    ee.setRect(this.c_alert2,r2.x+23-6*(value.length-1),null,19+6*(value.length-1), null);
+    ee.setRect(this.c_alert3,r3.x+25-6*(value.length-1),null,19+6*(value.length-1), null);
 }
+
 
 sender.clear = function() {
     for (var i=0; i<this.v_items.length; i++) {
@@ -43267,7 +43275,10 @@ setTimeout(function() {
       <functionParam />
       <functionCode><![CDATA[g5.RC_MIN = 5000;
 g5.RC_MAX = 10*60*1000;
-if (!g5.RC_LastTime) g5.RC_LastTime = new Date();
+if (!g5.RC_LastTime) {
+    g5.RC_LastTime = new Date();
+    g5.RC_LastTime.setTime(g5.RC_LastTime.getTime() - g5.RC_MIN*1000);
+}
 if (!g5.RC_LastTime1s) g5.RC_LastTime1s = new Date();
 if (!g5.RC_Interval) g5.RC_Interval = g5.RC_MIN;
 if (!g5.RC_CID) g5.RC_CID = new Array();
