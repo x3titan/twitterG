@@ -439,6 +439,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>798</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -903,7 +904,7 @@ sender.parentNode.eeMouseDown = function(senderM, event) {
     sender.v_move = true;
     sender.v_downY = event.touches[0].screenY;
     sender.className = "";
-    sender.v_loadNew = false;
+    sender.v_loadNew = 0;
     g5.p2.p33.className = "";
 }
 
@@ -914,8 +915,7 @@ sender.parentNode.eeMouseUp = function(senderM, event) {
         return;
     }
     sender.v_move = false;
-    if (sender.v_loadNew) {
-        sender.v_loadNew = false;
+    if (sender.v_loadNew == 2) {
         sender.className = "aniAll3";
         eb.setDivRect(sender,null,37,null,null);
         ee.setAnimationEnd(sender, function() {
@@ -923,7 +923,7 @@ sender.parentNode.eeMouseUp = function(senderM, event) {
         });
         g5.p2.p33.className = "aniAll3";
         eb.setDivRect(g5.p2.p33,null,eb.getDivRectSetting(ee.getControl("panel1")).y-eb.getDivRectSetting(g5.p2.p33).h+37,null,null);
-    } else {
+    } else if (sender.v_loadNew == 1) {
         //return;
         sender.className = "aniAll3";
         eb.setDivRect(sender,null,0,null,null);
@@ -938,6 +938,7 @@ sender.parentNode.eeMouseUp = function(senderM, event) {
             g5.p2.p33.close();
         });
     }
+    sender.v_loadNew = 0;
 }
 
 sender.parentNode.eeMouseMove = function(senderM, event) {
@@ -952,7 +953,11 @@ sender.parentNode.eeMouseMove = function(senderM, event) {
         y = maxH*Math.sin((y*Math.PI)/(2*maxMouseY));
         eb.setDivRect(sender,null,y,null,null);
         ee.setRect(g5.p2.p33,null,y-maxH+eb.getDivRectSetting(ee.getControl("panel1")).y,null,null);
-        sender.v_loadNew = (y>=30);
+        if (y>=30) {
+            sender.v_loadNew = 2;
+        } else if (y>0) {
+            sender.v_loadNew = 1;
+        } else sender.v_loadNew = 0;
         g5.p2.p33.show();
         event.preventDefault();
         //g5.writeLog("fire");
@@ -25696,6 +25701,7 @@ sender.init(0);
       <height>571</height>
       <heightRatio>0.715538847117794</heightRatio>
       <layerName>===P1===</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.p1 = ee.getControl("panel26");
 sender.p2 = ee.getControl("panel199");
@@ -26733,6 +26739,7 @@ sender.style.borderRadius = "50%";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1.p3->手机菜单]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_buttons = new Array();
 sender.c_buttons.push(ee.getControl("panel557"));
@@ -28065,7 +28072,6 @@ sender.renderItem = function(root) {
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -28308,7 +28314,6 @@ sender.onpointermove = function(event) {
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[  a2->图片展示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -28718,104 +28723,6 @@ sender.clickRight = function() {
       <width>48</width>
       <widthRatio>0.827586206896552</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel112/panel142/panel613">
-      <backgroundColor>8ED0F9</backgroundColor>
-      <cursor>pointer</cursor>
-      <dockX>center</dockX>
-      <dockY>bottom</dockY>
-      <fontBold>true</fontBold>
-      <fontColor>1DA1F2</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <height>40</height>
-      <heightRatio>0.050125313283208</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>475</left>
-      <leftRatio>0.427797833935018</leftRatio>
-      <note>c_BtnConfirm</note>
-      <onClick>sender.parentNode.f_onConfirm();
-sender.parentNode.parentNode.close();
-window.event? window.event.cancelBubble = true : event.stopPropagation();
-</onClick>
-      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
-    this.color1 = color1;
-    this.color2 = color2
-    this.color3 = color3;
-    this.text1 = text1;
-    this.text2 = text2;
-    this.text3 = text3;
-    this.tColor1 = tColor1;
-    this.tColor2 = tColor2;
-    this.tColor3 = tColor3;
-    this.bdColor = bdColor;
-}
-sender.v_style = [
-    new sender.BStyle("#20b020","#20c020","#30a030","发送","发送","发送","#ffffff","#ffffff","#ffffff","")
-];
-
-sender.init = function(index) {
-    this.v_index = index;
-    this.style.backgroundColor = this.v_style[index].color1;
-    ee.setText(this, this.v_style[index].text1);
-    ee.setTextColor(this, this.v_style[index].tColor1);
-    if (this.v_style[index].bdColor=="") {
-        this.style.borderWidth = "0px";
-    } else {
-        this.style.boxSizing="border-box";
-        this.style.borderWidth = "1px";
-        this.style.borderColor = this.v_style[index].bdColor;
-        this.style.borderStyle = "solid";
-    }
-    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-}
-
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color1;
-    ee.setText(sender, s.text1);
-    ee.setTextColor(sender, s.tColor1);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color3;
-    setTimeout(function() {
-        ee.setText(sender, s.text3);
-    }, 1000); 
-    ee.setTextColor(sender, s.tColor3);
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    setTimeout(function() {
-        ee.setText(sender, s.text2);
-    }, 1000); 
-    ee.setTextColor(sender, s.tColor2);
-}
-eb.initMouseEvent(sender);
-
-sender.init(0);
-
-
-
-
-
-
-
-</onCreate>
-      <outerBottom>30</outerBottom>
-      <sizeRatio>0.25</sizeRatio>
-      <text>发送</text>
-      <top>728</top>
-      <topRatio>0.912280701754386</topRatio>
-      <width>160</width>
-      <widthRatio>0.144404332129964</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel619">
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
@@ -28971,6 +28878,104 @@ eb.initMouseEvent(sender);
       <topRatio>0.389724310776942</topRatio>
       <width>55</width>
       <widthRatio>0.0496389891696751</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel142/panel613">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <dockY>bottom</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.050125313283208</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>475</left>
+      <leftRatio>0.427797833935018</leftRatio>
+      <note>c_BtnConfirm</note>
+      <onClick>sender.parentNode.f_onConfirm();
+sender.parentNode.parentNode.close();
+window.event? window.event.cancelBubble = true : event.stopPropagation();
+</onClick>
+      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
+    this.color1 = color1;
+    this.color2 = color2
+    this.color3 = color3;
+    this.text1 = text1;
+    this.text2 = text2;
+    this.text3 = text3;
+    this.tColor1 = tColor1;
+    this.tColor2 = tColor2;
+    this.tColor3 = tColor3;
+    this.bdColor = bdColor;
+}
+sender.v_style = [
+    new sender.BStyle("#20b020","#20c020","#30a030","发送","发送","发送","#ffffff","#ffffff","#ffffff","")
+];
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+    }
+    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    setTimeout(function() {
+        ee.setText(sender, s.text3);
+    }, 1000); 
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    setTimeout(function() {
+        ee.setText(sender, s.text2);
+    }, 1000); 
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <outerBottom>30</outerBottom>
+      <sizeRatio>0.25</sizeRatio>
+      <text>发送</text>
+      <top>728</top>
+      <topRatio>0.912280701754386</topRatio>
+      <width>160</width>
+      <widthRatio>0.144404332129964</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel42">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
