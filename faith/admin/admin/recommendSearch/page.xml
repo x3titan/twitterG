@@ -205,6 +205,11 @@ query();
       <leftRatio>0.0558558558558559</leftRatio>
       <onClick>var s = prompt("请输入需要增加的搜索关键字","");
 if (s != null) {
+    addNew.text = s;
+    addNew.onComplete = function() {
+        query();
+    }
+    addNew();
 } else {
 }</onClick>
       <onCreate>sender.className = "buttonGray";
@@ -506,7 +511,7 @@ if (y >= query.dataset.rowCount) {
     ee.setText(sender, "");
     return;
 }
-var s = query.dataset.getData(8,y) + "\n@" + query.dataset.getData(4,y);
+var s = query.dataset.getData(1,y);
 ee.setText(sender, s);]]></onUpdate>
       <sizeRatio>0.234972677595628</sizeRatio>
       <text>.</text>
@@ -546,22 +551,12 @@ ee.setText(sender, s);]]></onUpdate>
     return;
 }
 var y = sender.rowIndex;
-var s = query.dataset.getData(1,y);
-if (s == "IDL") {
-    s = "正常";
-} else if (s == "DISABLED") {
-    s = "<font color='#C00000'>封号</font>";
-} else if (s == "FREEZE") {
-    s = "<font color='#C00000'>冻结</font>";
-} else if (s == "DelIn") {
-    s = "<font color='#C00000'>删号冷却期</font>";
-} else if (s == "Del") {
-    s = "<font color='#C00000'>销号</font>";
-} else if (s == "Private") {
-    s = "<font color='#C00000'>私密</font>";
+if (y >= query.dataset.rowCount) {
+    ee.setText(sender, "");
+    return;
 }
-ee.setText(sender, s);
-]]></onUpdate>
+var s = query.dataset.getData(2,y);
+ee.setText(sender, s);]]></onUpdate>
       <sizeRatio>0.614285714285714</sizeRatio>
       <text>.</text>
       <top>0</top>
@@ -595,13 +590,17 @@ ee.setText(sender, s);
       <left>416</left>
       <leftRatio>0.374774774774775</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <onUpdate>if (!query.dataset) {
+      <onUpdate><![CDATA[if (!query.dataset) {
     text = "";
     return;
 }
 var y = sender.rowIndex;
-var s = query.dataset.getData(2,y) + "\n" + query.dataset.getData(3,y);
-ee.setText(sender, s);</onUpdate>
+if (y >= query.dataset.rowCount) {
+    ee.setText(sender, "");
+    return;
+}
+var s = query.dataset.getData(3,y);
+ee.setText(sender, s);]]></onUpdate>
       <sizeRatio>0.0619596541786743</sizeRatio>
       <text>.</text>
       <top>0</top>
@@ -2737,15 +2736,12 @@ var condition = "";
 if (searchText != "") {
     condition +=
         " (" +
-        "(dbo.userInfo.userName like '%" + db.encode(searchText) + "%') or " +
-        "(dbo.userInfo.mobile like '%" + db.encode(searchText) + "%') or " +
-        "(dbo.userInfo.nickName like '%" + db.encode(searchText) + "%') or " +
-        "(dbo.userInfo.note like '%" + db.encode(searchText) + "%') " +
+        "(dbo.recmdSearch.[text] like '%" + db.encode(searchText) + "%') " +
         ") ";
 }
 sql =
     "SELECT count(*) as c " +
-    "FROM dbo.userInfo " +
+    "FROM dbo.recmdSearch " +
     (condition=="" ? "":"WHERE " + condition);
 sqlResult = db.executeQuery("DB", sql);   
 db.read(sqlResult);
@@ -2753,9 +2749,9 @@ var count = db.getInt32(sqlResult, "c");
 
 sql= 
     "SELECT * " +
-    "FROM dbo.userInfo " +
+    "FROM dbo.recmdSearch " +
     (condition=="" ? "":"WHERE " + condition) +
-    "ORDER BY dbo.userInfo.id DESC ";
+    "ORDER BY dbo.recmdSearch.orderNumber DESC ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -2765,10 +2761,7 @@ if (sqlResult == null) {
 eio.appendString8("T");
 eio.appendInt32(count);
 eio.appendDataSet(sqlResult,
-    //0    1       2         3               4        5        6      7     8      9     10
-    "id,status,regDatetime,lastAccessTime,userName,password,mobile,email,nickName,note,photo," +
-    // 11        12        13            14         15         16
-    "titleBg,homePage,chatRoomVideo,followCount,fansCount,lastPromptId",
+    "id,orderNumber,regDatetime,text",
     pageSize*(pageCurrent-1), pageSize
 ); 
 ]]></script2>
@@ -2839,58 +2832,16 @@ alert("删除用户账户完成");
 query();</script3>
     </taskSetItem>
     <taskSetItem name="addNew">
-      <script1><![CDATA[var username = ee.getEditText(ee.getControl("edit2"));
-var password1 = ee.getEditText(ee.getControl("edit4"));
-var password2 = ee.getEditText(ee.getControl("edit5"));
-var nickName = ee.getEditText(ee.getControl("edit6"));
-var mobile = ee.getEditText(ee.getControl("edit7"));
-var companyId = ee.getEditText(ee.getControl("edit8"));
-var note = ee.getEditText(ee.getControl("edit1"));
-
-if (username.length < 3) {
-    alert("用户名长度不能小于3");
-    return;
-}
-if (password1 == "") {
-    alert("密码不能为空");
-    return;
-}
-if (password1.length < 6) {
-    alert("密码长度不能少于6位");
-    return;
-}
-if (password1 != password2) {
-    alert("两次输入的密码不一致");
-    return;
-}
-if (nickName.length < 2) {
-    alert("昵称长度必须是2位以上");
-    return;
-}
-
-companyId = parseInt(companyId);
-if (isNaN(companyId)) {
-    companyId = -1;
-}
-eio.appendString8(eb.getCookie("loginToken"));
-eio.appendString8(username);
-eio.appendString8(password1);
-eio.appendString8(nickName);
-eio.appendString8(mobile);
-eio.appendInt32(companyId);
-eio.appendString16(note);
-]]></script1>
+      <script1>//text, onComplete
+eio.appendString8(eb.getCookie("FAToken"));
+eio.appendString8(addNew.text);
+</script1>
       <script2><![CDATA[var token = eio.readString8();
-var username = eio.readString8();
-var password = eio.readString8();
-var nickName = eio.readString8();
-var mobile = eio.readString8();
-var userCompanyId = eio.readInt32();
-var note = eio.readString16();
+var text = eio.readString8();
 
 //获取用户信息及认证
 var sql,sqlResult;
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -2900,22 +2851,21 @@ if (sqlResult == null) {
 db.read(sqlResult);
 if (db.getString(sqlResult, "sessionId").length < 5) {
     eio.appendString8("F");
-    eio.appendString8("您已经长时间没有登录系统了，请返回登录页面重新登录");
+    eio.appendString8("token失效");
     es.logWarning("用户token失效, sql=" + sql);
     return;
 }   
 var userId = db.getString(sqlResult, "id");
-var companyId = db.getString(sqlResult, "companyId");
+var userName = db.getString(sqlResult, "userName");
 
-//创建
-sql = "exec userCreate " +
+
+//ALTER PROCEDURE [dbo].[recmdSearchAdd]
+//    @operatorId bigint, --操作人
+//    @text nvarchar(50)  --房间号
+
+sql = "exec recmdSearchAdd " +
     userId + "," +
-    "'" + db.encode(username) + "'," +
-    "'" + db.encode(es.getMd5(password)) + "'," +
-    userCompanyId + "," +
-    "'" + db.encode(mobile) + "'," +
-    "'" + db.encode(nickName) + "'," +
-    "'" + db.encode(note) + "'";
+    "'" + db.encode(text) + "';";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -2933,13 +2883,15 @@ eio.appendString8("T");
 eio.appendString8(db.getString(sqlResult, "errorString"));
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
-    alert("无法创建用户：" + eio.readString8());
+    alert("操作失败：" + eio.readString8());
     return;
 }
 
-alert("创建用户成功");
-ee.setVisible(ee.getControl("panel1"), false);
-query();</script3>
+if (addNew.onComplete) {
+    addNew.onComplete();
+    addNew.onComplete = null;
+}
+</script3>
     </taskSetItem>
     <taskSetItem name="modify">
       <script1><![CDATA[var modifyUserId = ee.getText(ee.getControl("panel10"));
@@ -3282,12 +3234,12 @@ delFollow.busy = false;
       <functionCode><![CDATA[//鼠标点击行激活处理,接口：valid,y
 var c, x, y;
 for (y = 0; y < g5.pageSize; y++) {
-    for (x = 0; x < 7; x++) {
+    for (x = 0; x < 3; x++) {
         c = ee.getTableCell(ee.getControl("tablebody2"), x, y);
         c.style.backgroundColor = "";    
     }
 }
-for (x = 0; x < 7; x++) {
+for (x = 0; x < 3; x++) {
     c = ee.getTableCell(ee.getControl("tablebody2"), x, sender.rowIndex);
     c.style.backgroundColor = "#E0EEFF";
 }
