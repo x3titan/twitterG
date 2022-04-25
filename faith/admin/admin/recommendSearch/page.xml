@@ -232,46 +232,28 @@ sender.style.borderRadius = "5px";</onCreate>
       <heightRatio>0.466666666666667</heightRatio>
       <layerVisible>false</layerVisible>
       <left>153</left>
-      <leftRatio>0.134564643799472</leftRatio>
+      <leftRatio>0.137837837837838</leftRatio>
       <onClick>if (!g5.tableClick.valid) {
     alert("请选择有效的记录进行操作");
     return;
 }
-var userId = query.dataset.getData(0,g5.tableClick.y);
-var status = query.dataset.getData(1,g5.tableClick.y);
-if (status == "FREEZE") {
-    if (!confirm("该用户处于冻结状态，是否将其恢复为正常状态？")) {
-        return;
-    }
-    if (freezeUser.busy) return;
-    freezeUser.userId = userId;
-    freezeUser.operation = "0";
-    freezeUser.onComplete = function() {
-        query();
-    }
-    freezeUser();
-} else if (status == "IDL") {
-    if (!confirm("该用户处于正常状态，是否进行冻结？")) {
-        return;
-    }
-    if (freezeUser.busy) return;
-    freezeUser.userId = userId;
-    freezeUser.operation = "1";
-    freezeUser.onComplete = function() {
-        query();
-    }
-    freezeUser();
+
+del.recordId = query.dataset.getData(0,g5.tableClick.y);
+del.onComplete = function() {
+    query();
 }
+del();
+
 </onClick>
       <onCreate>sender.className = "buttonGray";
 sender.style.borderRadius = "5px";</onCreate>
       <outerBottom>5</outerBottom>
       <sizeRatio>0.345679012345679</sizeRatio>
-      <text>冻结/解冻</text>
+      <text>删除</text>
       <top>27</top>
       <topRatio>0.45</topRatio>
       <width>81</width>
-      <widthRatio>0.0712401055408971</widthRatio>
+      <widthRatio>0.072972972972973</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel37">
       <backgroundColor>30B5EF</backgroundColor>
@@ -2779,14 +2761,15 @@ ee.setText(ee.getControl("panel16"), "共找到" +
 ]]></script3>
     </taskSetItem>
     <taskSetItem name="del">
-      <script1>eio.appendString8(eb.getCookie("loginToken"));
-eio.appendInt32(parseInt(g5.userId));</script1>
+      <script1>//recordId,onComplete
+eio.appendString8(eb.getCookie("FAToken"));
+eio.appendInt32(parseInt(del.recordId));</script1>
       <script2><![CDATA[var token = eio.readString8();
 var deleteUserId = eio.readInt32();
 
 //获取用户信息及认证
 var sql,sqlResult;
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -2796,15 +2779,15 @@ if (sqlResult == null) {
 db.read(sqlResult);
 if (db.getString(sqlResult, "sessionId").length < 5) {
     eio.appendString8("F");
-    eio.appendString8("您已经长时间没有登录系统了，请返回登录页面重新登录");
+    eio.appendString8("token失效");
     es.logWarning("用户token失效, sql=" + sql);
     return;
 }   
 var userId = db.getString(sqlResult, "id");
-var companyId = db.getString(sqlResult, "companyId");
+var userName = db.getString(sqlResult, "userName");
 
 //修改
-sql = "exec userDelete " +
+sql = "exec [recmdSearchDel] " +
     userId + "," +
     deleteUserId;
 sqlResult = db.executeQuery("DB", sql); 
@@ -2824,12 +2807,15 @@ eio.appendString8("T");
 eio.appendString8(db.getString(sqlResult, "errorString"));
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
-    alert("无法删除用户账户：" + eio.readString8());
+    alert("操作失败：" + eio.readString8());
     return;
 }
 
-alert("删除用户账户完成");
-query();</script3>
+if (del.onComplete) {
+    del.onComplete();
+    del.onComplete = null;
+}
+</script3>
     </taskSetItem>
     <taskSetItem name="addNew">
       <script1>//text, onComplete
