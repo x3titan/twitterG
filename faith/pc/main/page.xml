@@ -888,6 +888,10 @@ sender.loadFromServer = function() {
             //var item = createPanel(sender, "newThingsEnd", "", 0, cy, itemWidth, 60); cy += 60;
             //addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
             //sender.v_items.push(item);
+            if (getRecommend.busy) return;
+            getRecommend.onComplete = function() {
+            }
+            getRecommend();
             item = sender.c_bottom;
             ee.tiledV(sender.c_bottom,0,0,0);
             ee.tiledResizeV(sender.c_bottom,1);
@@ -34520,7 +34524,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="75">
+  <taskSet count="76">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -35400,6 +35404,62 @@ eio.appendDataSet(sqlResult,
 updateHomepage.dataset = eio.readDataSet();
 updateHomepage.onComplete(updateHomepage.dataset); 
 updateHomepage.busy = false;
+
+
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="getRecommend">
+      <script1>//busy,onComplete(dataset)
+if (getRecommend.busy) return;
+getRecommend.busy = true;
+eio.appendString16(g5.token);
+</script1>
+      <script2><![CDATA[var token = eio.readString16();
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName =db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+
+sql =
+    "select * from recmdSearch order by orderNumber DESC;";
+   
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"id,regDatetime,orderNumber,text",
+    0, 99999);
+
+
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    getRecommend.busy = false;
+    return;
+}
+getRecommend.dataset = eio.readDataSet();
+if (getRecommend.onComplete) {
+    getRecommend.onComplete(getRecommend.dataset);
+    getRecommend.onComplete = null;
+}
+getRecommend.busy = false;
 
 
 
