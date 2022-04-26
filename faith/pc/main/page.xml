@@ -1,5 +1,5 @@
 <page>
-  <controls count="777">
+  <controls count="778">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -889,9 +889,7 @@ sender.loadFromServer = function() {
             //addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
             //sender.v_items.push(item);
             if (getRecommend.busy) return;
-            getRecommend.onComplete = function() {
-                ee.tiledV(sender.c_bottom,0,0,0);
-                ee.tiledResizeV(sender.c_bottom,1);
+            getRecommend.onComplete = function(dataset) {
                 var item;
                 if (sender.v_items.length>0) {
                     item = sender.v_items[sender.v_items.length-1];
@@ -901,6 +899,8 @@ sender.loadFromServer = function() {
                 ee.setRect(sender.c_bottom, null,cy, null, null); cy += eb.getDivRectSetting(sender.c_bottom).h;
                 ee.setVisible(sender.c_bottom, true);
                 sender.v_items.push(sender.c_bottom);
+                
+                sender.c_bottom.refresh(dataset);
                 
                 var ch = $g("divRoot").offsetHeight;
                 var h = cy + ch - eb.getDivRectSetting(sender.c_bottom).h - 51; 
@@ -2016,6 +2016,12 @@ sender.processUserName = function() {
       <heightRatio>0.323076923076923</heightRatio>
       <left>0</left>
       <note><![CDATA[c_bottom->短文底部栏目]]></note>
+      <onCreate>sender.refresh = function(dataset) {
+    g5.p2.p1.c_recmdS.refresh(dataset);
+    ee.tiledV(this,0,0,0);
+    ee.tiledResizeV(this,1);
+}
+</onCreate>
       <sizeRatio>0.42</sizeRatio>
       <top>484</top>
       <topRatio>0.620512820512821</topRatio>
@@ -2045,6 +2051,27 @@ sender.processUserName = function() {
       <heightRatio>0.726190476190476</heightRatio>
       <layerName><![CDATA[c_recmdS->搜索推荐]]></layerName>
       <left>0</left>
+      <onCreate><![CDATA[sender.c_text = ee.getControl("panel652");
+
+sender.refresh = function(dataset) {
+    var s = "";
+    for (var i=0; i<dataset.rowCount; i++) {
+        s += dataset.getData(3,i) + " ";
+    }
+    this.c_text.style.height = "";
+    this.c_text.style.overflow = "";
+    this.c_text.style.wordWrap = "break-word";
+    this.c_text.style.wordBreak = "break-all";
+    this.c_text.style.whiteSpace = "normal";
+    this.c_text.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    this.c_text.style.color = "#000000";
+    this.c_text.innerHTML = "<font style='font-size:14px; line-height:1.2;'>" + s + "</font>";
+    
+    ee.setRect(this.c_text,null,10,null,null);
+    ee.setRect(this, null,null,null, this.c_text.offsetHeight + 20);
+    //eb.processDock();
+}
+]]></onCreate>
       <sizeRatio>0.305</sizeRatio>
       <top>8</top>
       <topRatio>0.0317460317460317</topRatio>
@@ -2052,18 +2079,51 @@ sender.processUserName = function() {
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel650/panel652">
+      <backgroundColor>EAEAFE</backgroundColor>
+      <dockX>fill</dockX>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>20</fontSize>
+      <height>183</height>
+      <heightRatio>1</heightRatio>
+      <left>15</left>
+      <leftRatio>0.025</leftRatio>
+      <note>c_text</note>
+      <onCreate><![CDATA[sender.refresh = function(dataset) {
+    var s = "";
+    for (var i=0; i<dataset.rowCount; i++) {
+        s += dataset.getData(3,i) + " ";
+    }
+    ee.setRect(this,null,null,null,10);
+
+    this.style.overflow = "";
+    this.style.wordWrap = "break-word";
+    this.style.wordBreak = "break-all";
+    this.style.whiteSpace = "normal";
+    this.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    this.style.color = "#000000";
+    this.innerHTML = "<font style='font-size:12px; line-height:1.2;'>" + s + "</font>";
+
+    //ee.setRect(this,null,null,null,this.label.offsetHeight + 20);
+    eb.processDock();
+}
+]]></onCreate>
+      <outerLeft>15</outerLeft>
+      <outerRight>15</outerRight>
+      <sizeRatio>0.321052631578947</sizeRatio>
+      <top>0</top>
+      <width>570</width>
+      <widthRatio>0.95</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel658">
       <backgroundColor>E6ECF0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
-      <dockY>bottom</dockY>
       <height>10</height>
-      <heightRatio>0.0636942675159236</heightRatio>
+      <heightRatio>0.0396825396825397</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <leftRatio>0.571666666666667</leftRatio>
       <sizeRatio>0.0166666666666667</sizeRatio>
-      <top>173</top>
-      <topRatio>0.630573248407643</topRatio>
+      <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2083,19 +2143,16 @@ sender.processUserName = function() {
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel653/panel654">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel656">
       <backgroundColor>E6ECF0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
-      <dockY>bottom</dockY>
       <height>10</height>
-      <heightRatio>0.0636942675159236</heightRatio>
+      <heightRatio>0.0396825396825397</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <leftRatio>0.571666666666667</leftRatio>
       <sizeRatio>0.0166666666666667</sizeRatio>
-      <top>226</top>
-      <topRatio>0.630573248407643</topRatio>
+      <top>0</top>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
