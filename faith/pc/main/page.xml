@@ -628,6 +628,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.977443609022556</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.270758122743682</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -677,6 +678,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -896,11 +898,11 @@ sender.loadFromServer = function() {
                 } else item = sender.a1;
                 item = eb.getDivRectSetting(item);
                 var cy = item.y + item.h;
-                ee.setRect(sender.c_bottom, null,cy, null, null); cy += eb.getDivRectSetting(sender.c_bottom).h;
+                ee.setRect(sender.c_bottom, null,cy, null, null); 
                 ee.setVisible(sender.c_bottom, true);
                 sender.v_items.push(sender.c_bottom);
-                
                 sender.c_bottom.refresh(dataset);
+                cy += eb.getDivRectSetting(sender.c_bottom).h;                
                 
                 var ch = $g("divRoot").offsetHeight;
                 var h = cy + ch - eb.getDivRectSetting(sender.c_bottom).h - 51; 
@@ -2014,6 +2016,7 @@ sender.processUserName = function() {
       <fontSize>20</fontSize>
       <height>252</height>
       <heightRatio>0.323076923076923</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note><![CDATA[c_bottom->短文底部栏目]]></note>
       <onCreate>sender.refresh = function(dataset) {
@@ -2050,22 +2053,30 @@ sender.processUserName = function() {
       <height>183</height>
       <heightRatio>0.726190476190476</heightRatio>
       <layerName><![CDATA[c_recmdS->搜索推荐]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_text = ee.getControl("panel652");
 
 sender.refresh = function(dataset) {
-    var s = "";
+    var s = "热门搜索关键字：<br/>";
     for (var i=0; i<dataset.rowCount; i++) {
-        s += dataset.getData(3,i) + " ";
+        s += "<spawn>" + dataset.getData(3,i) + "</spawn>&amp;nbsp;&amp;nbsp;&amp;nbsp;";
     }
     this.c_text.style.height = "";
     this.c_text.style.overflow = "";
     this.c_text.style.wordWrap = "break-word";
-    this.c_text.style.wordBreak = "break-all";
+    this.c_text.style.wordBreak = "keep-all";
     this.c_text.style.whiteSpace = "normal";
     this.c_text.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     this.c_text.style.color = "#000000";
-    this.c_text.innerHTML = "<font style='font-size:14px; line-height:1.2;'>" + s + "</font>";
+    this.c_text.innerHTML = "<font style='font-size:16px; line-height:1.4;'>" + s + "</font>";
+    var items = this.c_text.getElementsByTagName("spawn");
+    for (var i=0; i<items.length; i++) {
+        items[i].style.color = "rgb(29,161,242)";
+        ee.setOnClick(items[i], function(senderBtn, event) {
+            g5.p2.p11.search(senderBtn.innerText);
+        });
+    }
     
     ee.setRect(this.c_text,null,10,null,null);
     ee.setRect(this, null,null,null, this.c_text.offsetHeight + 20);
@@ -2085,6 +2096,7 @@ sender.refresh = function(dataset) {
       <fontSize>20</fontSize>
       <height>183</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>15</left>
       <leftRatio>0.025</leftRatio>
       <note>c_text</note>
@@ -23511,7 +23523,6 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.12280701754386</heightRatio>
       <layerName>===P4===</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.273465703971119</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -23617,7 +23628,6 @@ setTimeout(function() {
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a1->主页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
