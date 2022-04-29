@@ -907,18 +907,19 @@ sender.loadFromServer = function() {
                 var ch = $g("divRoot").offsetHeight;
                 var h = cy + ch - eb.getDivRectSetting(sender.c_bottom).h - 51; 
                 eb.setDivRect(g5.p2,null,null,null,h);
-                eb.setDivRect(g5.p2.p1,null,null,null,cy);
+                eb.setDivRect(g5.p2.p1,null,null,null,h);
             }
             getRecommend();
         }
-        if (g5.currentPageIndex == 0) {
-            if (item!=null) {
-                var ch = $g("divRoot").offsetHeight;
-                var h = cy + ch - eb.getDivRect(item).h - 51; 
+        if (sender.v_items.length>0) {
+            item = sender.v_items[sender.v_items.length-1];
+            var ch = $g("divRoot").offsetHeight;
+            var h = cy + ch - eb.getDivRect(item).h - 51; 
+            if (g5.currentPageIndex == 0) {
                 eb.setDivRect(g5.p2,null,null,null,h);
-            }    
+            }
+            eb.setDivRect(g5.p2.p1,null,null,null,h);
         }
-        eb.setDivRect(g5.p2.p1,null,null,null,cy);
     }
     //if (updateHomepage.isForward) g5.loading.show2();
     updateHomepage();    
@@ -40935,7 +40936,6 @@ updateMain.dataset = eio.readDataSet();
 
 updateMain.needRefresh = false;
 var newCount = parseInt(eio.readString16());
-console.log(newCount);
 if (updateMain.count != newCount) {
     updateMain.needRefresh = true;
     updateMain.count = newCount;
