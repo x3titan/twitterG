@@ -232,46 +232,27 @@ sender.style.borderRadius = "5px";</onCreate>
       <heightRatio>0.466666666666667</heightRatio>
       <layerVisible>false</layerVisible>
       <left>153</left>
-      <leftRatio>0.134564643799472</leftRatio>
+      <leftRatio>0.137837837837838</leftRatio>
       <onClick>if (!g5.tableClick.valid) {
     alert("请选择有效的记录进行操作");
     return;
 }
-var userId = query.dataset.getData(0,g5.tableClick.y);
-var status = query.dataset.getData(1,g5.tableClick.y);
-if (status == "FREEZE") {
-    if (!confirm("该用户处于冻结状态，是否将其恢复为正常状态？")) {
-        return;
-    }
-    if (freezeUser.busy) return;
-    freezeUser.userId = userId;
-    freezeUser.operation = "0";
-    freezeUser.onComplete = function() {
-        query();
-    }
-    freezeUser();
-} else if (status == "IDL") {
-    if (!confirm("该用户处于正常状态，是否进行冻结？")) {
-        return;
-    }
-    if (freezeUser.busy) return;
-    freezeUser.userId = userId;
-    freezeUser.operation = "1";
-    freezeUser.onComplete = function() {
-        query();
-    }
-    freezeUser();
+
+del.recordId = query.dataset.getData(17,g5.tableClick.y);
+del.onComplete = function() {
+    query();
 }
+del();
 </onClick>
       <onCreate>sender.className = "buttonGray";
 sender.style.borderRadius = "5px";</onCreate>
       <outerBottom>5</outerBottom>
       <sizeRatio>0.345679012345679</sizeRatio>
-      <text>冻结/解冻</text>
+      <text>删除</text>
       <top>27</top>
       <topRatio>0.45</topRatio>
       <width>81</width>
-      <widthRatio>0.0712401055408971</widthRatio>
+      <widthRatio>0.072972972972973</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel37">
       <backgroundColor>30B5EF</backgroundColor>
@@ -283,34 +264,43 @@ sender.style.borderRadius = "5px";</onCreate>
       <heightRatio>0.466666666666667</heightRatio>
       <layerVisible>false</layerVisible>
       <left>244</left>
-      <leftRatio>0.214599824098505</leftRatio>
-      <onClick>if (!g5.tableClick.valid) {
+      <leftRatio>0.21981981981982</leftRatio>
+      <onClick><![CDATA[if (!g5.tableClick.valid) {
     alert("请选择有效的记录进行操作");
     return;
 }
-var userId = query.dataset.getData(0,g5.tableClick.y);
-var status = query.dataset.getData(1,g5.tableClick.y);
-if (!confirm("本操作不可逆，您确定要删除该用户所有的关注状态吗？完成后该用户的关注将变为0")) {
+
+var dist = prompt("请输入向上移动的步数","1");
+if (dist != null) {
+    if (isNaN(dist)) {
+        alert("步数必须是整数");
+        return;
+    }
+    dist = parseInt(dist);
+    if (dist<=0) {
+        alert("步数必须是大于0的整数");
+        return;
+    }
+} else {
     return;
 }
-if (delFollow.busy) return;
-delFollow.userId = userId;
-delFollow.onComplete = function(result) {
-    alert("操作完成：" + result);
+moveUp.recordId = query.dataset.getData(17,g5.tableClick.y);
+moveUp.moveUpDist = dist;
+moveUp.onComplete = function() {
     query();
 }
-delFollow();
+moveUp();
 
-</onClick>
+]]></onClick>
       <onCreate>sender.className = "buttonGray";
 sender.style.borderRadius = "5px";</onCreate>
       <outerBottom>5</outerBottom>
       <sizeRatio>0.345679012345679</sizeRatio>
-      <text>强删关注</text>
+      <text>向上移动</text>
       <top>27</top>
       <topRatio>0.45</topRatio>
       <width>81</width>
-      <widthRatio>0.0712401055408971</widthRatio>
+      <widthRatio>0.072972972972973</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel40">
       <backgroundColor>30B5EF</backgroundColor>
@@ -322,36 +312,43 @@ sender.style.borderRadius = "5px";</onCreate>
       <heightRatio>0.466666666666667</heightRatio>
       <layerVisible>false</layerVisible>
       <left>335</left>
-      <leftRatio>0.294635004397537</leftRatio>
+      <leftRatio>0.301801801801802</leftRatio>
       <onClick><![CDATA[if (!g5.tableClick.valid) {
     alert("请选择有效的记录进行操作");
     return;
 }
 
-var userId = query.dataset.getData(0,g5.tableClick.y);
-
-g5.p1.a1.show(sender, "<font color='#00A000'>正常状态</font>,IDL;销号状态,Del;封号状态,DISABLED;冻结状态,FREEZE;私密状态,Private;", function(index, results) {
-    if (index<0) return;
-    if (!confirm("本操作属于危险操作，用户会强制进入新的状态而忽略当前的状态。您是否继续进行本操作？")) {
+var dist = prompt("请输入向下移动的步数","1");
+if (dist != null) {
+    if (isNaN(dist)) {
+        alert("步数必须是整数");
         return;
     }
-    if (setUserStatus.busy) return;
-    setUserStatus.userId = userId;
-    setUserStatus.newStatus = results[1];
-    setUserStatus.onComplete = function() {
-        query();
+    dist = parseInt(dist);
+    if (dist<=0) {
+        alert("步数必须是大于0的整数");
+        return;
     }
-    setUserStatus();
-});]]></onClick>
+} else {
+    return;
+}
+moveDown.recordId = query.dataset.getData(17,g5.tableClick.y);
+moveDown.moveDownDist = dist;
+moveDown.onComplete = function() {
+    query();
+}
+moveDown();
+
+]]></onClick>
       <onCreate>sender.className = "buttonGray";
 sender.style.borderRadius = "5px";</onCreate>
       <outerBottom>5</outerBottom>
       <sizeRatio>0.345679012345679</sizeRatio>
-      <text>强置状态</text>
+      <text>向下移动</text>
       <top>27</top>
       <topRatio>0.45</topRatio>
       <width>81</width>
-      <widthRatio>0.0712401055408971</widthRatio>
+      <widthRatio>0.072972972972973</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
       <autoScroll>true</autoScroll>
@@ -5909,7 +5906,7 @@ sender.itemsAdd = function(value) {
       <widthRatio>0.356200527704486</widthRatio>
     </control>
   </controls>
-  <taskSet count="8">
+  <taskSet count="10">
     <taskSetItem name="query">
       <script1>eio.appendString8(eb.getCookie("FAToken")); 
 eio.appendString8(ee.getEditText(ee.getControl("edit3")));
@@ -5995,59 +5992,6 @@ ee.setText(ee.getControl("layoutxitem45"), g5.pageCurrent + "/" + g5.pageCount);
 ee.setText(ee.getControl("panel16"), "共找到" +
     "<font color = '#d00000'>" + query.pageRecordCount + "条</font>记录");
 ]]></script3>
-    </taskSetItem>
-    <taskSetItem name="del">
-      <script1>eio.appendString8(eb.getCookie("loginToken"));
-eio.appendInt32(parseInt(g5.userId));</script1>
-      <script2><![CDATA[var token = eio.readString8();
-var deleteUserId = eio.readInt32();
-
-//获取用户信息及认证
-var sql,sqlResult;
-sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    es.logWarning("数据库执行错误, sql=" + sql);
-    return;
-}
-db.read(sqlResult);
-if (db.getString(sqlResult, "sessionId").length < 5) {
-    eio.appendString8("F");
-    eio.appendString8("您已经长时间没有登录系统了，请返回登录页面重新登录");
-    es.logWarning("用户token失效, sql=" + sql);
-    return;
-}   
-var userId = db.getString(sqlResult, "id");
-var companyId = db.getString(sqlResult, "companyId");
-
-//修改
-sql = "exec userDelete " +
-    userId + "," +
-    deleteUserId;
-sqlResult = db.executeQuery("DB", sql); 
-if (sqlResult == null) {
-    eio.appendString8("F");
-    es.logWarning("数据库执行错误, sql=" + sql);
-    return;
-}
-db.read(sqlResult);
-if (db.getInt32(sqlResult, "errorCode") < 0) {
-    eio.appendString8("F");
-    eio.appendString8(db.getString(sqlResult, "errorString"));
-    return;
-}
-
-eio.appendString8("T");
-eio.appendString8(db.getString(sqlResult, "errorString"));
-]]></script2>
-      <script3>if (eio.readString8() != "T") {
-    alert("无法删除用户账户：" + eio.readString8());
-    return;
-}
-
-alert("删除用户账户完成");
-query();</script3>
     </taskSetItem>
     <taskSetItem name="modify">
       <script1><![CDATA[var modifyUserId = ee.getText(ee.getControl("panel10"));
@@ -6430,6 +6374,183 @@ eio.appendString8(db.getString(sqlResult, "errorString"));
 if (addNew.onComplete) {
     addNew.onComplete();
     addNew.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="del">
+      <script1>//recordId,onComplete
+eio.appendString8(eb.getCookie("FAToken"));
+eio.appendInt32(parseInt(del.recordId));</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var deleteUserId = eio.readInt32();
+
+//获取用户信息及认证
+var sql,sqlResult;
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var userName = db.getString(sqlResult, "userName");
+
+//修改
+sql = "exec [recmdUserDel] " +
+    userId + "," +
+    deleteUserId;
+sqlResult = db.executeQuery("DB", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "errorCode") < 0) {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert("操作失败：" + eio.readString8());
+    return;
+}
+
+if (del.onComplete) {
+    del.onComplete();
+    del.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="moveUp">
+      <script1>//recordId,moveUpDist,onComplete
+eio.appendString8(eb.getCookie("FAToken"));
+eio.appendInt32(parseInt(moveUp.recordId));
+eio.appendInt32(parseInt(moveUp.moveUpDist));</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var recordId = eio.readInt32();
+var moveUpDist = eio.readInt32();
+
+//获取用户信息及认证
+var sql,sqlResult;
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var userName = db.getString(sqlResult, "userName");
+
+//修改
+sql = "exec [recmdUserMoveUp] " +
+    userId + "," +
+    recordId + "," +
+    moveUpDist + ";";
+sqlResult = db.executeQuery("DB", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "errorCode") < 0) {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert("操作失败：" + eio.readString8());
+    return;
+}
+
+if (moveUp.onComplete) {
+    moveUp.onComplete();
+    moveUp.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="moveDown">
+      <script1>//recordId,moveDownDist,onComplete
+eio.appendString8(eb.getCookie("FAToken"));
+eio.appendInt32(parseInt(moveDown.recordId));
+eio.appendInt32(parseInt(moveDown.moveDownDist));</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var recordId = eio.readInt32();
+var moveDownDist = eio.readInt32();
+
+//获取用户信息及认证
+var sql,sqlResult;
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var userName = db.getString(sqlResult, "userName");
+
+//修改
+sql = "exec [recmdUserMoveDown] " +
+    userId + "," +
+    recordId + "," +
+    moveDownDist + ";";
+sqlResult = db.executeQuery("DB", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "errorCode") < 0) {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert("操作失败：" + eio.readString8());
+    return;
+}
+
+if (moveDown.onComplete) {
+    moveDown.onComplete();
+    moveDown.onComplete = null;
 }
 </script3>
     </taskSetItem>
