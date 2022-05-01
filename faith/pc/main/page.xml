@@ -893,25 +893,30 @@ sender.loadFromServer = function() {
             //var item = createPanel(sender, "newThingsEnd", "", 0, cy, itemWidth, 60); cy += 60;
             //addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
             //sender.v_items.push(item);
-            if (getRecommend.busy) return;
-            getRecommend.onComplete = function(dsSearch, dsUser) {
-                var item;
-                if (sender.v_items.length>0) {
-                    item = sender.v_items[sender.v_items.length-1];
-                } else item = sender.a1;
-                item = eb.getDivRectSetting(item);
-                var cy = item.y + item.h;
-                ee.setRect(sender.c_bottom, null,cy, null, null); 
+            if (!sender.c_bottom.v_valid) {
+                if (getRecommend.busy) return;
+                getRecommend.onComplete = function(dsSearch, dsUser) {
+                    var item;
+                    if (sender.v_items.length>0) {
+                        item = sender.v_items[sender.v_items.length-1];
+                    } else item = sender.a1;
+                    item = eb.getDivRectSetting(item);
+                    var cy = item.y + item.h;
+                    ee.setRect(sender.c_bottom, null,cy, null, null); 
+                    ee.setVisible(sender.c_bottom, true);
+                    sender.c_bottom.refresh(dsSearch,dsUser);
+                    cy += eb.getDivRectSetting(sender.c_bottom).h;                
+                    
+                    var ch = $g("divRoot").offsetHeight;
+                    var h = cy + ch - eb.getDivRectSetting(sender.c_bottom).h - 51;
+                    h += eb.getDivRectSetting(sender.c_noResult).y;
+                    eb.setDivRect(g5.p2,null,null,null,h);
+                    eb.setDivRect(g5.p2.p1,null,null,null,h);
+                }
+                getRecommend();
+            } else {
                 ee.setVisible(sender.c_bottom, true);
-                sender.c_bottom.refresh(dsSearch,dsUser);
-                cy += eb.getDivRectSetting(sender.c_bottom).h;                
-                
-                var ch = $g("divRoot").offsetHeight;
-                var h = cy + ch - eb.getDivRectSetting(sender.c_bottom).h - 51; 
-                eb.setDivRect(g5.p2,null,null,null,h);
-                eb.setDivRect(g5.p2.p1,null,null,null,h);
             }
-            getRecommend();
         }
         if (sender.v_items.length>0) {
             item = sender.v_items[sender.v_items.length-1];
@@ -2016,11 +2021,13 @@ sender.processUserName = function() {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note><![CDATA[c_bottom->短文底部栏目]]></note>
-      <onCreate>sender.refresh = function(dsSearch, dsUser) {
+      <onCreate>sender.v_valid = false;
+sender.refresh = function(dsSearch, dsUser) {
     g5.p2.p1.c_recmdS.refresh(dsSearch);
     g5.p2.p1.c_recmdU.refresh(dsUser);
     ee.tiledV(this,0,0,0);
     ee.tiledResizeV(this,1);
+    sender.v_valid = true;
 }
 </onCreate>
       <sizeRatio>0.42</sizeRatio>
