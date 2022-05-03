@@ -863,6 +863,8 @@ sender.loadFromServer = function() {
                 if (dataset.rowCount<root.v_items.length) {
                     var dy = cy - eb.getDivRectSetting(root.v_items[dataset.rowCount]).y; 
                     g5.batchMoveY(root.v_items,dataset.rowCount,dy);
+                    eb.setDivRect(g5.p2.p1,null,null,null,eb.getDivRectSetting(g5.p2.p1).h + dy);
+                    if (g5.currentPageIndex == 0) eb.setDivRect(g5.p2,null,null,null,eb.getDivRectSetting(g5.p2).h + dy);
                 }
                 sender.className = "";
                 g5.p2.p33.close();
@@ -876,13 +878,12 @@ sender.loadFromServer = function() {
                 ee.setAnimationEnd(g5.p2.p33, function() {
                 });
             }
-            if (root.v_items.lengthn>0) {
+            if (root.v_items.length>0) {
                 var rect = eb.getDivRectSetting(root.v_items[root.v_items.length-1]);
                 cy = rect.y + rect.h;
             } else cy = 0;
         }
 
-        console.log(dataset.rowCount + "," + updateHomepage.isForward);
         if ((dataset.rowCount<=0) &amp;&amp; (updateHomepage.isForward)) {
             sender.v_status = "noResult";
             sender.c_bottom.show(true);
@@ -891,13 +892,15 @@ sender.loadFromServer = function() {
             sender.c_bottom.show(false);
         } else if (!updateHomepage.isForward) {
             if (sender.v_items.length>0) {
-                item = sender.v_items[sender.v_items.length-1];
-                var r = eb.getDivRectSetting(item);
-                var h = r.y + r.h;
-                if (g5.currentPageIndex == 0) {
-                    eb.setDivRect(g5.p2,null,null,null,h);
-                }
-                eb.setDivRect(g5.p2.p1,null,null,null,h);
+                
+                //item = sender.v_items[sender.v_items.length-1];
+                //var ch = $g("divRoot").offsetHeight;
+                //var h = cy + ch - eb.getDivRect(item).h - 51; 
+                //if (g5.currentPageIndex == 0) {
+                //    eb.setDivRect(g5.p2,null,null,null,h);
+                //}
+                //eb.setDivRect(g5.p2.p1,null,null,null,h);
+                //console.log("adjust");
             }
         }
     }
