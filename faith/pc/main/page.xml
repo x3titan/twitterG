@@ -856,7 +856,14 @@ sender.loadFromServer = function() {
             
             itemCount++;
         }
-        if (!updateHomepage.isForward) {
+
+        if ((dataset.rowCount<=0) &amp;&amp; (updateHomepage.isForward)) {
+            sender.v_status = "noResult";
+            sender.c_bottom.show(true);
+        } else if (updateHomepage.isForward) {
+            sender.v_status = "";
+            sender.c_bottom.show(false);
+        } else if (!updateHomepage.isForward) {
             document.documentElement.scrollTop+=dy;
             if (itemCount>0) {
                 if (dataset.rowCount<root.v_items.length) {
@@ -881,26 +888,6 @@ sender.loadFromServer = function() {
                 var rect = eb.getDivRectSetting(root.v_items[root.v_items.length-1]);
                 cy = rect.y + rect.h;
             } else cy = 0;
-        }
-
-        if ((dataset.rowCount<=0) &amp;&amp; (updateHomepage.isForward)) {
-            sender.v_status = "noResult";
-            sender.c_bottom.show(true);
-        } else if (updateHomepage.isForward) {
-            sender.v_status = "";
-            sender.c_bottom.show(false);
-        } else if (!updateHomepage.isForward) {
-            if (sender.v_items.length>0) {
-                
-                //item = sender.v_items[sender.v_items.length-1];
-                //var ch = $g("divRoot").offsetHeight;
-                //var h = cy + ch - eb.getDivRect(item).h - 51; 
-                //if (g5.currentPageIndex == 0) {
-                //    eb.setDivRect(g5.p2,null,null,null,h);
-                //}
-                //eb.setDivRect(g5.p2.p1,null,null,null,h);
-                //console.log("adjust");
-            }
         }
     }
     //if (updateHomepage.isForward) g5.loading.show2();
