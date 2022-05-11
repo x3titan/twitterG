@@ -800,6 +800,7 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     root.v_items.splice(0, 0, item);
     cy = eb.getDivRect(item).h;
     g5.batchMoveY(this.v_items, 1, cy);
+    this.c_bottom.adjustP1();
     eb.setDivRect(this, null,null,null,eb.getDivRect(this).h + cy);
     eb.setDivRect(this.parentNode, null,null,null,eb.getDivRect(this.parentNode).h + cy);
 }
@@ -869,6 +870,7 @@ sender.loadFromServer = function() {
                 if (dataset.rowCount<root.v_items.length) {
                     var dy = cy - eb.getDivRectSetting(root.v_items[dataset.rowCount]).y; 
                     g5.batchMoveY(root.v_items,dataset.rowCount,dy);
+                    sender.c_bottom.adjustP1();
                     eb.setDivRect(g5.p2.p1,null,null,null,eb.getDivRectSetting(g5.p2.p1).h + dy);
                     if (g5.currentPageIndex == 0) eb.setDivRect(g5.p2,null,null,null,eb.getDivRectSetting(g5.p2).h + dy);
                 }
@@ -43200,6 +43202,7 @@ for (var i=0; i<task.length; i++) {
                         ee.removeControl(aniItem);
                         aniItems.splice(aniItemIndex,1);
                         g5.batchMoveY(aniItems, aniItemIndex, - aniHeight);
+                        g5.p2.p1.c_bottom.adjustP1();
                     }
                 }
                 if (onComplete) onComplete();
