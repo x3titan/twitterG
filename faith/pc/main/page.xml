@@ -1982,12 +1982,12 @@ sender.processUserName = function() {
       <fontSize>20</fontSize>
       <height>252</height>
       <heightRatio>0.323076923076923</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note><![CDATA[c_bottom->短文底部栏目]]></note>
       <onCreate><![CDATA[sender.c_recmdS = ee.getControl("panel650");
 sender.c_recmdU = ee.getControl("panel653");
 sender.c_noResult = ee.getControl("panel651");
+sender.c_barTop = ee.getControl("panel655");
 sender.v_valid = false;
 
 ee.setVisible(sender.c_recmdS, true);
@@ -2036,7 +2036,13 @@ sender.adjustP1 = function() {
     var item;
     if (g5.p2.p1.v_items.length>0) {
         item = g5.p2.p1.v_items[g5.p2.p1.v_items.length-1];
-    } else item = g5.p2.p1.a1;
+        ee.setVisible(this.c_barTop, true);
+        ee.tiledResizeV(this, 1);
+    } else {
+        item = g5.p2.p1.a1;
+        ee.setVisible(this.c_barTop, false);
+        ee.tiledResizeV(this, 1);
+    }
     item = eb.getDivRectSetting(item);
     var cy = item.y + item.h;
     ee.setRect(this,null,cy,null,null);
