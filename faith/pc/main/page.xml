@@ -439,6 +439,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>798</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -627,6 +628,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.977443609022556</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.27027027027027</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -676,6 +678,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p1->Home主页面]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.a1 = ee.getControl("panel1");
@@ -1982,6 +1985,7 @@ sender.processUserName = function() {
       <fontSize>20</fontSize>
       <height>252</height>
       <heightRatio>0.323076923076923</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note><![CDATA[c_bottom->短文底部栏目]]></note>
       <onCreate><![CDATA[sender.c_recmdS = ee.getControl("panel650");
@@ -7901,7 +7905,7 @@ sender.addButton = function(root) {
     }
     eb.initMouseEvent(c);
     c.init(0);
-    ee.setVisible(c, g5.isMobile);
+    ee.setVisible(c, false);
     
     var e1 = root.eeOnMouseEnter;
     var e2 = root.eeOnMouseLeave;
@@ -27562,7 +27566,6 @@ eb.initMouseEvent(sender);
       <height>798</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -27655,7 +27658,6 @@ if (sender.v_closeCount>=4) {
       <height>155</height>
       <heightRatio>0.194235588972431</heightRatio>
       <layerName>p1.A自己选项</layerName>
-      <layerVisible>false</layerVisible>
       <left>381</left>
       <leftRatio>0.343243243243243</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -27689,7 +27691,12 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
     } else {    
         ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> 在个人主页中取消置顶");
     }
-    ee.setVisible(this.c_button3, this.v_isBookMark ? false:true); this.v_isBookMark = false;
+    if (this.v_isBookMark) {
+        this.c_button3.setText("移除此收藏");
+    } else {
+        this.c_button3.setText("收藏此发言");
+    }
+
     ee.tiledV(this, 0, 0, 0);
     ee.tiledResizeV(this, 1);
     ee.setVisible(this.parentNode, true);
@@ -27785,23 +27792,35 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button3</note>
-      <onClick>setBookMark.operation = "add";
-setBookMark.contentId = sender.parentNode.v_content.id;
-setBookMark.onComplete = function() {
-    g5.alert1(
-        "增加（标记）书签",
-        "您已经将此发言标记为书签，点击书签可以随时查看。"
-    );
+      <onClick>if (sender.parentNode.v_isBookMark) {
+    setBookMark.operation = "del";
+    setBookMark.contentId = sender.parentNode.v_content.id;
+    setBookMark.onComplete = function() {
+    }
+    setBookMark();
+} else {
+    setBookMark.operation = "add";
+    setBookMark.contentId = sender.parentNode.v_content.id;
+    setBookMark.onComplete = function() {
+        g5.alert1(
+            "增加（标记）书签",
+            "您已经将此发言标记为书签，点击书签可以随时查看。"
+        );
+    }
+    setBookMark();
+}</onClick>
+      <onCreate><![CDATA[sender.setText = function(text) {
+    ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+        g5.icon.bookMark +
+        "</svg> <div style='display:inline;'>" + text + "</div>");
 }
-setBookMark();
-</onClick>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-    g5.icon.bookMark +
-    "</svg> <div style='display:inline;'>添加发言到书签</div>");    ]]></onCreate>
+sender.setText("收藏此发言");
+
+]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
       <sizeRatio>0.204081632653061</sizeRatio>
-      <text> x 添加发言到书签</text>
+      <text> x 收藏此发言</text>
       <top>104</top>
       <topRatio>0.670967741935484</topRatio>
       <width>245</width>
@@ -28029,6 +28048,11 @@ sender.show = function(refDiv, content, userInfo) {
         ee.setText(this.c_button5,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.mute + 
             "</svg> <div style='display:inline;'>隐藏 @"+userInfo.userName+"</div>");    
     }
+    if (this.v_isBookMark) {
+        this.c_button3.setText("移除此收藏");
+    } else {
+        this.c_button3.setText("收藏此发言");
+    }    
 
     ee.tiledV(this,0,0,0);
     ee.setVisible(this.parentNode, true);
@@ -28118,19 +28142,32 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";</onCreate>
       <note>c_button3</note>
       <onClick>var cid = sender.parentNode.v_content.id;
 if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
-setBookMark.operation = "add";
-setBookMark.contentId = cid;
-setBookMark.onComplete = function() {
-    g5.alert1(
-        "发言已收藏",
-        "可点击菜单栏“收藏”按钮进行查看。"
-    );
+if (sender.parentNode.v_isBookMark) {
+    setBookMark.operation = "del";
+    setBookMark.contentId = cid;
+    setBookMark.onComplete = function() {
+    }
+    setBookMark();
+} else {
+    setBookMark.operation = "add";
+    setBookMark.contentId = cid;
+    setBookMark.onComplete = function() {
+        g5.alert1(
+            "发言已收藏",
+            "可点击菜单栏“收藏”按钮进行查看。"
+        );
+    }
+    setBookMark();
 }
-setBookMark();
 </onClick>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-    g5.icon.bookMark +
-    "</svg> <div style='display:inline;'>收藏此发言</div>");    
+      <onCreate><![CDATA[sender.setText = function(text) {
+    ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+        g5.icon.bookMark +
+        "</svg> <div style='display:inline;'>" + text + "</div>");    
+}
+
+sender.setText("收藏此发言");
+
 ]]></onCreate>
       <onMouseEnter>sender.style.backgroundColor = "rgb(245,248,250)";</onMouseEnter>
       <onMouseLeave>sender.style.backgroundColor = "";</onMouseLeave>
@@ -41921,6 +41958,7 @@ ee.setOnClick(c,function(sender,event) {
         g5.popup1.p1.v_isBookMark = root.v_isBookMark;
         g5.popup1.p1.show(sender, root.v_content, root.v_reContent, root.v_userInfo, root.v_reUserInfo);
     } else {
+        g5.popup1.p3.v_isBookMark = root.v_isBookMark;
         g5.popup1.p3.show(sender, root.v_content, root.v_userInfo);
     }
     window.event? window.event.cancelBubble = true : event.stopPropagation();
