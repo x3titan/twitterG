@@ -45328,7 +45328,18 @@ if (root.v_photos.length==1) {
       <functionParam>root</functionParam>
       <functionCode><![CDATA[var c;
 var rect = eb.getDivRectSetting(root);
-if (root.v_photo.substr(0,4) == "?YTB") {
+
+if ((root.v_photo.substr(0,4) == "?YTB") &amp;&amp; (!g5.YTReady)) {
+    var t = "对不起，您的网络无法访问YouTube视频：\n"+
+        "https://www.youtube.com/watch?v=" + root.v_photo.substr(4, root.v_photo.length);
+    if (root.label) {
+        root.label.rows[0].cells[0].innerHTML = t;
+    } else {
+        addText(root, t, "center", "middle",
+            "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+            12, "#000000", "normal");
+    }
+} else if (root.v_photo.substr(0,4) == "?YTB") {
     root.innerHTML = "<div id='" + root.id + "_ytb'></div>";
     var domYT = root.childNodes[0];
     var root0 = root.parentNode;
