@@ -1779,13 +1779,15 @@ sender.getPlanText = function() {
     var text = "";
     var addPos = function(node) {
         for (var i=0; i<node.childNodes.length; i++) {
-            if (node.childNodes[i].nodeName == "DIV") {
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
                 if (i>0) text += "\n";
                 addPos(node.childNodes[i]);
-            } else if (node.childNodes[i].nodeName == "BR") {
-            } else if (node.childNodes[i].nodeName == "SPAN") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
                 text += node.childNodes[i].textContent;
-            } else if (node.childNodes[i].nodeName == "#text") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
+                text += node.childNodes[i].textContent;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
                 text += node.childNodes[i].textContent;
             }
         }
