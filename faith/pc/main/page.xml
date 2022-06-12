@@ -1525,7 +1525,7 @@ if (newText.split("\n").length-1>20) {
 var cp = sender.getCurPosAbs();
 var sTemp = sender.convertHtml(newText);
 var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
-sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
+sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>");
 sender.c_edit.innerHTML = sTemp;
 sender.setCurPosAbs(cp);
 
@@ -1715,17 +1715,19 @@ sender.getCurPosAbs = function() {
     var addPos = function(node) {
         for (var i=0; i<node.childNodes.length; i++) {
             if (node.childNodes[i] == nodeSel) {
-                if (nodeSel.nodeName =="DIV") pos++;
+                if (nodeSel.nodeName.toUpperCase() =="DIV") pos++;
                 pos += curPos.curPos;
                 return true;
             }
-            if (node.childNodes[i].nodeName == "DIV") {
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
                 if (i>0) pos++;
                 if (addPos(node.childNodes[i])) return true;
-            } else if (node.childNodes[i].nodeName == "BR") {
-            } else if (node.childNodes[i].nodeName == "SPAN") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
                 if (addPos(node.childNodes[i])) return true;
-            } else if (node.childNodes[i].nodeName == "#text") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
                 pos += node.childNodes[i].textContent.length;
             }
         }
@@ -1740,7 +1742,7 @@ sender.setCurPosAbs = function(absPos) {
     var setNode, setPos;
     var addPos = function(node) {
         for (var i=0; i<node.childNodes.length; i++) {
-            if (node.childNodes[i].nodeName == "DIV") {
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
                 if (i>0) pos++;
                 if (pos>=absPos) {
                     if (node.childNodes[i].childNodes.length>0) {
@@ -1752,10 +1754,17 @@ sender.setCurPosAbs = function(absPos) {
                     return true;
                 }
                 if (addPos(node.childNodes[i])) return true;
-            } else if (node.childNodes[i].nodeName == "BR") {
-            } else if (node.childNodes[i].nodeName == "SPAN") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
                 if (addPos(node.childNodes[i])) return true;
-            } else if (node.childNodes[i].nodeName == "#text") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
+                if (pos+node.childNodes[i].textContent.length>=absPos) {
+                    setNode = node.childNodes[i];
+                    setPos = absPos - pos;
+                    return true;
+                }
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
                 if (pos+node.childNodes[i].textContent.length>=absPos) {
                     setNode = node.childNodes[i];
                     setPos = absPos - pos;
@@ -1789,6 +1798,8 @@ sender.getPlanText = function() {
                 text += node.childNodes[i].textContent;
             } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
                 text += node.childNodes[i].textContent;
+            } else {
+                console.log("undefined node name: " + node.childNodes[i].nodeName);
             }
         }
         return false;
