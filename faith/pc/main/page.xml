@@ -5760,6 +5760,7 @@ sender.c_chatButton = ee.getControl("layoutyitem4");
     </control>
     <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2/layoutyitem3">
       <backgroundColor>f0f0f0</backgroundColor>
+      <fontSize>10</fontSize>
       <height>29</height>
       <heightRatio>0.3625</heightRatio>
       <layerVisible>false</layerVisible>
@@ -41242,7 +41243,7 @@ updateMain.busy = false;
     this.loadFromDataset = function(ds, x, idx) {
         this.id = ds.getData(x+0,idx);
         this.status = ds.getData(x+1,idx);    
-        this.regDatetime = ds.getData(x+2,idx);    
+        this.regDatetime = g5.getUtcTime(ds.getData(x+2,idx), true);
         this.lastAccessTime = ds.getData(x+3,idx);    
         this.userName = ds.getData(x+4,idx);    
         this.mobile = ds.getData(x+5,idx);    
@@ -45585,19 +45586,31 @@ this.bdColor = bdColor;</functionCode>
     </item>
     <item name="getUtcTime" type="20">
       <varValue />
-      <functionParam>dbTime</functionParam>
-      <functionCode>//04 19 2020 10:35 UTC
+      <functionParam>dbTime,returnString</functionParam>
+      <functionCode><![CDATA[//04 19 2020 10:35 UTC
 //yyyy-mm-dd hh:nn:ss
 //0123456789012345678
 if (dbTime.length!=19) return new Date();
-return new Date(Date.UTC(
+
+var r = new Date(Date.UTC(
     parseInt(dbTime.substr(0,4)),
     parseInt(dbTime.substr(5,2)) - 1,
     parseInt(dbTime.substr(8,2)),
     parseInt(dbTime.substr(11,2)),
     parseInt(dbTime.substr(14,2)),
     parseInt(dbTime.substr(17,2))
-));</functionCode>
+));
+
+if (returnString) {
+    return ((r.getYear()<1000)?(r.getYear()+1900):r.getYear()) + "-" +
+        ((r.getMonth()+1)<10?"0":"") + (r.getMonth()+1) + "-" +
+        (r.getDate()<10?"0":"") + r.getDate() + " " +
+        (r.getHours()<10?"0":"") + r.getHours() + ":" +
+        (r.getMinutes()<10?"0":"") + r.getMinutes() + ":" +
+        (r.getSeconds()<10?"0":"") + r.getSeconds();
+} else {
+    return r;
+}]]></functionCode>
     </item>
     <item name="getRectAbs" type="20">
       <varValue />
