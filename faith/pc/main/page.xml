@@ -9906,25 +9906,21 @@ sender.activePage = function() {
     ee.setVisible(g5.p4, true);
     g5.p4.changePage("a3");
     ee.setVisible(g5.p2.p11, true);
-    this.init();
-    this.changePage("c1");
-    if (this.noHis) {
-        this.noHis=false;
-    } else {
-        g5.pushHistory2("/search/hot/" + escape(g5.p2.p11.v_searchString));
-    }
+    //this.init();
+    //this.changePage("c1");
 }
 
 sender.close = function() {
+    //if (this.style.visibility == "hidden") return;
+    var page = this.getPageByName(this.currentPage);
+    if (page!=null) {
+        page.v_scrollTop = document.documentElement.scrollTop;
+    }
     ee.setVisible(g5.p4, false);
     ee.setVisible(this, false);
 }
 
 sender.show = function(searchString) {
-    if (this.v_searchString.length<=0) {
-        this.search(searchString);
-        return;
-    }
     this.search(searchString);
 }
 
@@ -9938,7 +9934,7 @@ sender.showByPage = function(pageName, searchString) {
 }
 
 sender.search = function(searchString) {
-    this.clear();
+    //this.clear();
     this.v_searchString = searchString;
     ee.setEditText(ee.getControl("edit14"), searchString);
     ee.setEditText(ee.getControl("edit7"), searchString);
@@ -9946,6 +9942,7 @@ sender.search = function(searchString) {
         g5.changeP2(10);
         this.changePage("c1");
         this.c_pages.c1.search(searchString);    
+        g5.pushHistory2("/search/hot/" + escape(searchString));
     } else {
         if (this.currentPage == "c1") {
             g5.pushHistory2("/search/hot/" + escape(g5.p2.p11.v_searchString));
@@ -10015,6 +10012,7 @@ sender.currentPage = "";
 sender.changePage = function(pageName) {
     var page = this.getPageByName(this.currentPage);
     if (page!=null) {
+        if (this.currentPage != pageName) page.v_scrollTop = document.documentElement.scrollTop;
         ee.setVisible(page, false);
     }
 
@@ -10049,9 +10047,7 @@ sender.userChangePage = function(pageName) {
     this.changePage(pageName);
     var page = this.getPageByName(pageName);
     if (page==null) return;
-    if (page.v_status=="init") {
-        page.search(this.v_searchString);
-    }
+    page.search(this.v_searchString);
 
     if (pageName == "c1") {
         g5.pushHistory2("/search/hot/" + escape(g5.p2.p11.v_searchString));
@@ -10114,8 +10110,8 @@ sender.v_items.push(sender.c5);
 
 </onCreate>
       <sizeRatio>1.04833333333333</sizeRatio>
-      <top>110</top>
-      <topRatio>0.143042912873862</topRatio>
+      <top>91</top>
+      <topRatio>0.118335500650195</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -10129,8 +10125,8 @@ sender.v_items.push(sender.c5);
       <onCreate><![CDATA[sender.v_headerName = "page11c1_";
 sender.v_searchOptions = "hot";
 sender.v_items = new Array();
-sender.v_status = "init";
 sender.v_searchString = "";
+sender.v_scrollTop = 0;
 sender.v_pageIndex = 0;
 
 sender.clear = function() {
@@ -10141,7 +10137,12 @@ sender.clear = function() {
 }
 
 sender.search = function(searchString) {
-    if (this.v_items.length>0) return;
+    if (this.v_searchString == searchString) {
+        setTimeout(function() {
+            document.documentElement.scrollTop = sender.v_scrollTop;
+        }, 1); 
+        return;
+    }
     this.v_searchString = searchString;
     this.v_pageIndex = 0;
     this.fSearch();
@@ -10219,8 +10220,8 @@ sender.fSearch = function() {
       <onCreate><![CDATA[sender.v_headerName = "page11c2_";
 sender.v_searchOptions = "new";
 sender.v_items = new Array();
-sender.v_status = "init";
 sender.v_searchString = "";
+sender.v_scrollTop = 0;
 sender.v_pageIndex = 0;
 
 sender.clear = function() {
@@ -10231,7 +10232,12 @@ sender.clear = function() {
 }
 
 sender.search = function(searchString) {
-    if (this.v_items.length>0) return;
+    if (this.v_searchString == searchString) {
+        setTimeout(function() {
+            document.documentElement.scrollTop = sender.v_scrollTop;
+        }, 1); 
+        return;
+    }
     this.v_searchString = searchString;
     this.v_pageIndex = 0;
     this.fSearch();
@@ -10309,8 +10315,8 @@ sender.fSearch = function() {
       <onCreate><![CDATA[sender.v_headerName = "page11c3_";
 sender.v_searchOptions = "user";
 sender.v_items = new Array();
-sender.v_status = "init";
 sender.v_searchString = "";
+sender.v_scrollTop = 0;
 sender.v_pageIndex = 0;
 
 sender.clear = function() {
@@ -10321,7 +10327,12 @@ sender.clear = function() {
 }
 
 sender.search = function(searchString) {
-    if (this.v_items.length>0) return;
+    if (this.v_searchString == searchString) {
+        setTimeout(function() {
+            document.documentElement.scrollTop = sender.v_scrollTop;
+        }, 1); 
+        return;
+    }
     this.v_searchString = searchString;
     this.v_pageIndex = 0;
     this.fSearch();
@@ -10392,8 +10403,8 @@ sender.fSearch = function() {
       <onCreate><![CDATA[sender.v_headerName = "page11c4_";
 sender.v_searchOptions = "photo";
 sender.v_items = new Array();
-sender.v_status = "init";
 sender.v_searchString = "";
+sender.v_scrollTop = 0;
 sender.v_pageIndex = 0;
 
 sender.clear = function() {
@@ -10404,7 +10415,12 @@ sender.clear = function() {
 }
 
 sender.search = function(searchString) {
-    if (this.v_items.length>0) return;
+    if (this.v_searchString == searchString) {
+        setTimeout(function() {
+            document.documentElement.scrollTop = sender.v_scrollTop;
+        }, 1); 
+        return;
+    }
     this.v_searchString = searchString;
     this.v_pageIndex = 0;
     this.fSearch();
@@ -10482,8 +10498,8 @@ sender.fSearch = function() {
       <onCreate><![CDATA[sender.v_headerName = "page11c5_";
 sender.v_searchOptions = "video";
 sender.v_items = new Array();
-sender.v_status = "init";
 sender.v_searchString = "";
+sender.v_scrollTop = 0;
 sender.v_pageIndex = 0;
 
 sender.clear = function() {
@@ -10494,7 +10510,12 @@ sender.clear = function() {
 }
 
 sender.search = function(searchString) {
-    if (this.v_items.length>0) return;
+    if (this.v_searchString == searchString) {
+        setTimeout(function() {
+            document.documentElement.scrollTop = sender.v_scrollTop;
+        }, 1); 
+        return;
+    }
     this.v_searchString = searchString;
     this.v_pageIndex = 0;
     this.fSearch();
@@ -44641,7 +44662,8 @@ history.pushState(pageState,"",param);
     <item name="pushHistory2" type="20">
       <varValue />
       <functionParam>getString</functionParam>
-      <functionCode><![CDATA[var url = new URL(window.location.href);
+      <functionCode><![CDATA[//console.log("his=" + getString);
+var url = new URL(window.location.href);
 var header = url.origin;
 
 if (g5.notPushHistoryCount>0) {
