@@ -1,5 +1,5 @@
 <page>
-  <controls count="37">
+  <controls count="40">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -42,6 +42,7 @@
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName>主界面黑背景弹窗合辑</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -788,6 +789,7 @@ sender.init(0);
       <height>211</height>
       <heightRatio>0.268789808917197</heightRatio>
       <layerName>通用提示窗口</layerName>
+      <layerVisible>false</layerVisible>
       <left>389</left>
       <leftRatio>0.335344827586207</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -1862,6 +1864,477 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <topRatio>0.0579150579150579</topRatio>
       <width>36</width>
       <widthRatio>0.0942408376963351</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel577">
+      <__U_editFontColor>000000</__U_editFontColor>
+      <__U_editFontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
+      <__U_editFontSize>16pt</__U_editFontSize>
+      <__U_editMaxY>300px</__U_editMaxY>
+      <__U_onCurPosChange-sender-oldPos-newPos>sender.processUserName();</__U_onCurPosChange-sender-oldPos-newPos>
+      <__U_onFocusChange-sender-isFocus />
+      <__U_onHeightChange-sender-oldH-newH />
+      <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml><![CDATA[var text = ee.getEditText(sender.c_edit);
+
+if (newText.split("\n").length-1>20) {
+    return false;
+}
+
+var cp = sender.getCurPosAbs();
+var sTemp = sender.convertHtml(newText);
+var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
+sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>");
+sender.c_edit.innerHTML = sTemp;
+sender.setCurPosAbs(cp);
+
+sender.processUserName();
+
+
+]]></__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml>
+      <backgroundColor>D3D3D3</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <ee_LocalName>c_edit</ee_LocalName>
+      <height>120</height>
+      <heightRatio>0.152866242038217</heightRatio>
+      <left>29</left>
+      <leftRatio>0.025</leftRatio>
+      <note>富文本编辑框</note>
+      <onCreate><![CDATA[//public
+sender.currentText = "";
+sender.currentHtml = "";
+sender.currentCurPos = 0;
+sender.getEditText = function() {
+    return this.getPlanText().replace(/\xA0/g, " ");
+}
+sender.setEditText = function(text, inOnChange) {
+    this.c_edit.innerHTML = this.convertHtml(text);
+    if (!inOnChange) this.f_onChange();
+}
+
+sender.setEditHtm = function(htmlText, inOnChange) {
+    this.c_edit.innerHTML = text;
+    if (!inOnChange) this.f_onChange();
+}
+
+sender.convertHtml = function(text) {
+    var textS = text.replace(/ /g, "\xA0").split("\n");
+    text = "";
+    for (var i=0; i<textS.length; i++) {
+        if (textS[i].length<=0) {
+            text += "<div><br\></div>";
+        } else {
+            text += "<div>" + textS[i] + "</div>";
+        }
+    }
+    return text;
+}
+
+
+//protected
+sender.c_label = sender.eeChildren[0];
+sender.c_edit = sender.eeChildren[1];
+
+//private
+var e = sender.c_edit;
+e.contentEditable = true;
+e.style.border = "none";
+e.style.outline = "none";
+e.style.height = "";
+e.style.minHeight = (eb.getDivRectSetting(sender).h - e.outerTop - e.outerBottom) + "px";
+e.style.maxHeight = sender.editMaxY;
+e.style.overflowY = "auto";
+e.style.fontFamily = sender.editFontFamily;
+e.style.fontSize = sender.editFontSize;
+e.style.color = "#" + sender.editFontColor;
+e.style.wordBreak = "break-all";
+e.style.wordWrap = "break-word";
+e.style.whiteSpace = "normal";
+e.innerHTML = "";
+eb.setDivRect(e, e.outerLeft, e.outerTop, eb.getDivRectSetting(sender).w - e.outerLeft - e.outerRight, null);
+sender.v_lastH = eb.getDivRectSetting(sender).h;
+
+sender.refreshH = function() {
+    if (this.v_lastH!=eb.getDivRect(sender.c_edit).h+e.outerTop+e.outerBottom) {
+        var lastH = this.v_lastH;
+        this.v_lastH = eb.getDivRect(sender.c_edit).h+e.outerTop+e.outerBottom;
+        ee.setRect(this,null,null,null,this.v_lastH);
+        sender.onHeightChange(this, lastH, this.v_lastH);
+    }
+}
+
+sender.onSizeChange = function(sender, rectOld, rectNew) {
+    eb.setDivRect(sender.c_edit, sender.c_edit.outerLeft, sender.c_edit.outerTop,
+        rectNew.w - sender.c_edit.outerLeft - sender.c_edit.outerRight, null);
+}
+
+sender.f_onChange = function() {
+    if (sender.v_isIme) {
+        ee.setVisible(this.c_label, this.getPlanText().length<=0); 
+        return;
+    }
+    this.refreshH();
+    var oldText = this.currentText;
+    var oldHtml = this.currentHtml;
+    this.currentText = this.getPlanText().replace(/\xA0/g, " ");
+    this.currentHtml = this.c_edit.innerHTML;
+    ee.setVisible(this.c_label, (!this.c_edit.innerText) || (this.c_edit.innerText.trim().length<=0)); 
+    if (this.onInputChange(this, this.lastKey, oldText, this.currentText, oldHtml, this.currentHtml)==false) {
+        this.setEditText(oldHtml, true);
+        this.currentHtml = oldHtml;
+        this.currentText = oldText;
+        this.setCurPosAbs(this.currentCurPos);
+    }
+}
+
+sender.CurPos = function() {
+    this.elmIndex = new Array();
+    this.curPos = 0;
+}
+   
+sender.getCurPos = function() {
+    var curPos = new this.CurPos();
+    var sel, range;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        if (sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            var node = range.commonAncestorContainer;
+            while (node.parentNode) {
+                var i;
+                for (i=0; i<node.parentNode.childNodes.length; i++) {
+                    if (node.parentNode.childNodes[i] == node) {
+                        curPos.elmIndex.push(i);
+                        break;
+                    }
+                }
+                node = node.parentNode;
+                if (node == this.c_edit) break;
+            }
+            curPos.curPos = range.endOffset;
+        }
+    } else if (document.selection &amp;&amp; document.selection.createRange) {
+        console.log("not perform");
+        range = document.selection.createRange();
+        if (range.parentElement() == this.c_edit) {
+            var tempEl = document.createElement("span");
+            this.c_edit.insertBefore(tempEl, this.c_edit.firstChild);
+            var tempRange = range.duplicate();
+            tempRange.moveToElementText(tempEl);
+            tempRange.setEndPoint("EndToEnd", range);
+            caretPos = tempRange.text.length;
+        }
+    }
+    return curPos;
+}
+
+sender.setCurPos = function(curPos) {
+    var range = document.createRange()
+    var sel = window.getSelection()
+    var node = this.c_edit;
+    for (var i=curPos.elmIndex.length-1; i>=0; i--) {
+        if (!node.childNodes[curPos.elmIndex[i]]) break;
+        node = node.childNodes[curPos.elmIndex[i]];
+    }
+    range.setStart(node, curPos.curPos);
+    range.collapse(true)
+    sel.removeAllRanges()
+    sel.addRange(range)
+}
+
+sender.getCurPosAbs = function() {
+    var curPos = this.getCurPos();
+    var nodeSel = this.c_edit;
+    for (var i=curPos.elmIndex.length-1; i>=0; i--) {
+        if (!nodeSel.childNodes[curPos.elmIndex[i]]) break;
+        nodeSel = nodeSel.childNodes[curPos.elmIndex[i]];
+    }
+    var pos = 0;
+    var addPos = function(node) {
+        for (var i=0; i<node.childNodes.length; i++) {
+            if (node.childNodes[i] == nodeSel) {
+                if (nodeSel.nodeName.toUpperCase() =="DIV") pos++;
+                pos += curPos.curPos;
+                return true;
+            }
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
+                if (i>0) pos++;
+                if (addPos(node.childNodes[i])) return true;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
+                if (addPos(node.childNodes[i])) return true;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
+                pos += node.childNodes[i].textContent.length;
+            }
+        }
+        return false;
+    }
+    addPos(this.c_edit);
+    return pos;
+}
+
+sender.setCurPosAbs = function(absPos) {
+    var pos = 0;
+    var setNode, setPos;
+    var addPos = function(node) {
+        for (var i=0; i<node.childNodes.length; i++) {
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
+                if (i>0) pos++;
+                if (pos>=absPos) {
+                    if (node.childNodes[i].childNodes.length>0) {
+                        setNode = node.childNodes[i].childNodes[0];
+                    } else {
+                        setNode = node.childNodes[i];
+                    }
+                    setPos = 0;
+                    return true;
+                }
+                if (addPos(node.childNodes[i])) return true;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
+                if (addPos(node.childNodes[i])) return true;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
+                if (pos+node.childNodes[i].textContent.length>=absPos) {
+                    setNode = node.childNodes[i];
+                    setPos = absPos - pos;
+                    return true;
+                }
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
+                if (pos+node.childNodes[i].textContent.length>=absPos) {
+                    setNode = node.childNodes[i];
+                    setPos = absPos - pos;
+                    return true;
+                }
+                pos += node.childNodes[i].textContent.length;
+            }
+        }
+        return false;
+    }
+    addPos(this.c_edit);
+    var range = document.createRange()
+    var sel = window.getSelection()
+    range.setStart(setNode, setPos);
+    range.collapse(true)
+    sel.removeAllRanges()
+    sel.addRange(range)
+}
+
+sender.getPlanText = function() {
+    var text = "";
+    var addPos = function(node) {
+        for (var i=0; i<node.childNodes.length; i++) {
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
+                if (i>0) text += "\n";
+                addPos(node.childNodes[i]);
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
+                text += node.childNodes[i].textContent;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
+                text += node.childNodes[i].textContent;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
+                text += node.childNodes[i].textContent;
+            } else {
+                console.log("undefined node name: " + node.childNodes[i].nodeName);
+            }
+        }
+        return false;
+    }
+    addPos(this.c_edit);
+    return text;
+}
+
+e.onkeydown = function(event) {
+    sender.lastCurPos = sender.getCurPos();
+    sender.lastKey = {};
+    sender.lastKey.key = event.key;
+    sender.lastKey.keyCode = event.keyCode;
+    sender.lastKey.shiftKey = event.shiftKey;
+    sender.lastKey.ctrlKey = event.ctrlKey;
+    sender.lastKey.altKey = event.altKey;
+}
+
+e.oninput = function(event) {
+    sender.f_onChange();
+}
+
+e.onpaste = function() {
+    //sender.f_onChange();
+}
+
+e.onfocus = function() {
+    document.addEventListener("selectionchange", sender.f_onSelectionChange, false);
+}
+
+e.onblur = function() {
+    document.removeEventListener("selectionchange", sender.f_onSelectionChange, false);
+}
+
+sender.f_onSelectionChange = function(event) {
+    var oldPos = sender.currentCurPos;
+    sender.currentCurPos = sender.getCurPosAbs();
+    if (oldPos!=sender.currentCurPos) {
+        if (sender.onCurPosChange) {
+            sender.onCurPosChange(sender,oldPos,sender.currentCurPos);
+        }
+    }
+}
+
+sender.c_edit.addEventListener("compositionstart", function(event) {
+    sender.v_isIme = true;
+});
+
+sender.c_edit.addEventListener("compositionupdate", function(event) {
+    //console.log("ime update");
+});
+
+sender.c_edit.addEventListener("compositionend", function(event) {
+    sender.v_isIme = false;
+    sender.f_onChange();
+});
+
+sender.c_edit.addEventListener("touchstart", function(event) {
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    return;
+});
+
+//user
+sender.getUsername = function() {
+    var newText = this.getEditText();
+    var cp = this.getCurPosAbs();
+    var i;
+    for (i=cp-1; i>=0; i--) {
+        if (newText.charAt(i)=="@") break;
+    }
+    if (i<0) return "";
+    var pos = i;
+    var userName = "";
+    for (i=pos+1; i<=newText.length; i++) {
+        var ch = newText.charAt(i);
+        if ((ch>="a" &amp;&amp; ch<="z") ||
+            (ch>="A" &amp;&amp; ch<="Z") ||
+            (ch>="0" &amp;&amp; ch<="9") ||
+            (ch=="_") || (ch=="-")) {
+            userName += ch;
+        } else break;
+    }
+    if (userName.length<2) return "";
+    if (i<=cp-1) return "";
+    userName = userName.substr(0,20);
+    return userName;
+}
+
+sender.setUsername = function(username) {
+    var cp = sender.getCurPosAbs();
+    var newText = sender.getEditText();
+    var i;
+    for (i=cp-1; i>=0; i--) {
+        if (newText.charAt(i)=="@") break;
+    }
+    if (i<0) return;
+    var pos = i+1;
+    for (i=pos; i<=newText.length; i++) {
+        var ch = newText.charAt(i);
+        if ((ch>="a" &amp;&amp; ch<="z") ||
+            (ch>="A" &amp;&amp; ch<="Z") ||
+            (ch>="0" &amp;&amp; ch<="9") ||
+            (ch=="_") || (ch=="-")) {
+        } else break;
+    }
+    if (i-pos<2) return;
+    if (i<=cp-1) return;
+    if (i-pos>20) i=20-pos;
+    var s = newText.substr(0, pos);
+    s += username;
+    if (i>=newText.length) {
+        s += " ";
+    } else if (newText.charAt(i)=="\n") {
+        s += " " + newText.substr(i);
+    } else {
+        s += newText.substr(i);
+    }
+    
+    var sTemp = sender.convertHtml(s);
+    var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
+    sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
+    sender.c_edit.innerHTML = sTemp;
+    sender.setCurPosAbs(i+1);
+}
+
+sender.processUserName = function() {
+    var userName = this.getUsername();
+    return;
+    if (userName.length>0) {
+        //g5.p2.p34.show(sender, userName, function(username) {
+        //    sender.setUsername(username);
+        //    sender.c_edit.blur();
+        //});
+    } else g5.p2.p34.close();
+}
+]]></onCreate>
+      <outerLeft>77</outerLeft>
+      <outerRight>20</outerRight>
+      <sizeRatio>0.43010752688172</sizeRatio>
+      <top>90</top>
+      <topRatio>0.114649681528662</topRatio>
+      <userProperty>//#P:editFontFamily|多行文字录入V2|'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif|string||用户输入文字的字体样式
+//#P:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
+//#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
+//#P:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
+//#P:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
+//#P:onInputChange(sender,key,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变，返回false表示取消本次修改。sender:触发事件的控件，key:用户按键，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
+//#P:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
+//#P:onCurPosChange(sender,oldPos,newPos)|多行文字录入V2||jsMix||光标位置发生变化。sender:触发事件的控件，oldPos:原来的光标位置；newPos:新的光标位置；
+
+
+
+</userProperty>
+      <width>279</width>
+      <widthRatio>0.24051724137931</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel577/panel603">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>9197A3</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>16</fontSize>
+      <hAlign>left</hAlign>
+      <height>120</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_label</note>
+      <sizeRatio>0.541218637992832</sizeRatio>
+      <text>有什么新鲜事？</text>
+      <top>0</top>
+      <vAlign>top</vAlign>
+      <width>279</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel577/panel604">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <fontColor>404040</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>26</height>
+      <heightRatio>0.490566037735849</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>16</left>
+      <leftRatio>0.0318091451292246</leftRatio>
+      <note>c_edit</note>
+      <outerBottom>2</outerBottom>
+      <outerLeft>5</outerLeft>
+      <outerRight>2</outerRight>
+      <outerTop>2</outerTop>
+      <sizeRatio>0.257425742574257</sizeRatio>
+      <top>15</top>
+      <topRatio>0.283018867924528</topRatio>
+      <v_color1>FFC0C0</v_color1>
+      <v_Str>as223</v_Str>
+      <vAlign>top</vAlign>
+      <width>101</width>
+      <widthRatio>0.200795228628231</widthRatio>
     </control>
   </controls>
   <taskSet count="0" />
