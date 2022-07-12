@@ -439,7 +439,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.993630573248408</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.258620689655172</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -2087,7 +2086,6 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2->用户(个人)信息页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -2637,8 +2635,17 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setVisible(ee.getControl("layoutx6"), false);
     } else {
         eb.setDivRect(ee.getControl("layoutx6"),null,cy,null,null);
-        ee.setText(ee.getControl("layoutxitem12"), v_userInfo.homePage);
-        ee.getControl("layoutxitem12").homePage = v_userInfo.homePage;
+        var h = v_userInfo.homePage;
+        var hf = v_userInfo.homePage;
+        if (h.toLowerCase().search("http://")==0) {
+            h = h.substr(7);
+        } else if (h.toLowerCase().search("https://")==0) {
+            h = h.substr(8);
+        } else {
+            hf = "http://" + h;
+        }
+        ee.setText(ee.getControl("layoutxitem12"), h);
+        ee.getControl("layoutxitem12").homePage = hf;
         ee.setVisible(ee.getControl("layoutx6"), true);
         cy += vspace + eb.getDivRect(ee.getControl("layoutx6")).h;
     }
@@ -23497,6 +23504,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.12484076433121</heightRatio>
       <layerName>===P4===</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.261206896551724</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -23602,6 +23610,7 @@ setTimeout(function() {
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a1->主页]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
