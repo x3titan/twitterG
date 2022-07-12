@@ -251,7 +251,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>785</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -12128,6 +12127,9 @@ sender.v_items = new Array();
 sender.v_userInfo = new g5.UserInfo();
 sender.c_title = ee.getControl("panel100");
 sender.v_needRefresh = false;
+sender.v_status = "";
+
+sender.v_pageIndex = 0;
 
 sender.activePage = function() {
     g5.pushHistory2("/" + escape(this.v_userInfo.userName) + "/followers");
@@ -12215,9 +12217,21 @@ sender.show = function(v_userInfo) {
     sender.v_items = new Array();
     g5.changeP2(-1);
     g5.changeP2(14);
-    showFansList.userId = v_userInfo.id;
+    this.loadFromDB();
+}
+
+
+sender.loadFromDB = function() {
+    if (showFansList.busy) return;
+    showFansList.userId = sender.v_userInfo.id;
+    showFansList.pageIndex = sender.v_pageIndex;
     showFansList.onComplete = function(dataset) {
         g5.loading.close();
+        if (sender.v_pageIndex==0) {
+            for (var i=0; i<sender.v_items.length; i++) ee.removeControl(sender.v_items[i]);
+            sender.v_items = new Array();
+            document.documentElement.scrollTop = 0;
+        }
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
@@ -12246,6 +12260,12 @@ sender.show = function(v_userInfo) {
 sender.loadRecord = function(panel, dataset, index) {
     panel.v_userInfo = new g5.UserInfo();
     panel.v_userInfo.loadFromDataset(dataset,0,index);
+}
+
+sender.loadMore = function() {
+    if (this.v_status == "noResult") return;
+    this.v_pageIndex++;
+    this.loadFromDB();
 }
 ]]></onCreate>
       <sizeRatio>1.3</sizeRatio>
@@ -23477,7 +23497,6 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.12484076433121</heightRatio>
       <layerName>===P4===</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.261206896551724</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -23583,7 +23602,6 @@ setTimeout(function() {
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName><![CDATA[  a1->主页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -23901,7 +23919,7 @@ sender.style.borderRadius = "0 "+r2+" "+r2+" 0";
       <widthRatio>0.111486486486486</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel24/panel34/panel559/panel606">
-      <backgroundImg>user.png</backgroundImg>
+      <backgroundImg>fistalk72x72.png</backgroundImg>
       <cursor>pointer</cursor>
       <dockX>center</dockX>
       <dockY>center</dockY>
@@ -23912,14 +23930,16 @@ sender.style.borderRadius = "0 "+r2+" "+r2+" 0";
       <leftRatio>0.227272727272727</leftRatio>
       <note>c_userPhoto</note>
       <onCreate>sender.style.borderRadius = "50%";
-ee.setOnMouseEnter(c, function(sender,e) {
-    sender.style.webkitFilter="brightness(80%)";
-    sender.style.filter="brightness(80%)";
-});
-ee.setOnMouseLeave(c, function(sender,e) {
-    sender.style.webkitFilter="brightness(100%)";
-    sender.style.filter="brightness(100%)";
-});
+if (!g5.isMobile) {
+    ee.setOnMouseEnter(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+    });
+    ee.setOnMouseLeave(c, function(sender,e) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+    });
+}
 </onCreate>
       <sizeRatio>1</sizeRatio>
       <top>9</top>
@@ -28307,6 +28327,7 @@ sender.renderItem = function(root) {
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -30884,6 +30905,7 @@ sender.onpointermove = function(event) {
       <height>211</height>
       <heightRatio>0.268789808917197</heightRatio>
       <layerName><![CDATA[  a7->通用提示窗口]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>389</left>
       <leftRatio>0.335344827586207</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -38256,14 +38278,17 @@ showFollowList.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="showFansList">
-      <script1>//userId, onComplete
+      <script1>//userId,pageIndex,onComplete
 if (showFansList.busy) return;
 showFansList.busy = true;
 eio.appendString16(g5.token);
 eio.appendString16(showFansList.userId);
+eio.appendInt32(showFansList.pageIndex);
 </script1>
       <script2><![CDATA[var token = eio.readString16();
 var userId = parseInt(eio.readString16());
+var pageIndex = eio.readInt32();
+var pageSize = 20;
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -38282,8 +38307,10 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 } 
 var myUserId = parseInt(db.getString(sqlResult,"id"));
 
+var top = (pageIndex+1)*pageSize;
+
 sql =
-    "SELECT   TOP (100) PERCENT dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, CONVERT(VARCHAR(50),dbo.userInfo.regDatetime,120) AS uRegDatetime,  " +
+    "SELECT   TOP (" + top + ") dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, CONVERT(VARCHAR(50),dbo.userInfo.regDatetime,120) AS uRegDatetime,  " +
     "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
     "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName,  " +
     "                dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg,  " +
@@ -38311,7 +38338,7 @@ if (sqlResult == null) {
 eio.appendString8("T");
 eio.appendDataSet(sqlResult,
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide",
-    0, 99999);
+    pageIndex*pageSize, pageSize);
 
 
 
@@ -44038,6 +44065,8 @@ if ((p2h-viewPortH-document.documentElement.scrollTop) < 3000) {
         g5.p2.p12.loadMore();
     } else if (g5.currentPageIndex == 12) {
         g5.p2.p13.loadMore();
+    } else if (g5.currentPageIndex == 14) {
+        g5.p2.p15.loadMore();
     } else if (g5.currentPageIndex == 1) {
         if (g5.p2.p2.p2sub.currentPageIndex == 1) {
             g5.p2.p2.p2sub.p1.loadMore();
@@ -44443,11 +44472,11 @@ ee.setEditText(ee.getControl("edit4"), g5.myUserInfo.homePage);
 if (g5.myUserInfo.photo == "") {
     ee.setImage(g5.p2.p1.a1.c_userPhoto, "/faith/main/user.png");
     ee.setImage(g5.popBlack.a8.c_userPhoto, "/faith/main/user.png");
-    ee.setImage(ee.getControl("panel606"), "/faith/main/user.png");
+    //ee.setImage(ee.getControl("panel606"), "/faith/main/user.png");
 } else {
     ee.setImage(g5.p2.p1.a1.c_userPhoto, "url:" + g5.imgUrl + g5.myUserInfo.photo);
     ee.setImage(g5.popBlack.a8.c_userPhoto, "url:" + g5.imgUrl + g5.myUserInfo.photo);
-    ee.setImage(ee.getControl("panel606"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
+    //ee.setImage(ee.getControl("panel606"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
 }
 if (g5.myUserInfo.titleBg == "") {
     ee.setImage(g5.popBlack.a8.c_titleBg, "");
@@ -44546,8 +44575,7 @@ if (eb.isEmpty(style)) style = 1;
 if (style == 1) {
     if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + "秒";
     if (seconds<60*60) {
-        a = seconds%60;
-        return parseInt(seconds/60) + "分" + (a<10 ? "0"+a:a) + "秒";
+        return parseInt(seconds/60) + "分钟";
     } else if (seconds<60*60*24) {
         a = parseInt((seconds%(60*60))/60);
         return parseInt(seconds/60/60) + "小时" + (a<10 ? "0"+a:a) + "分钟";
