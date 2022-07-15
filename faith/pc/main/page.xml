@@ -9704,7 +9704,6 @@ ee.setOnMouseLeave(sender, function(sender,e){
       <height>769</height>
       <heightRatio>0.985897435897436</heightRatio>
       <layerName><![CDATA[p2.p11->搜索页]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_topBlank = ee.getControl("panel336");
@@ -9917,7 +9916,6 @@ sender.style.borderRight = "";</onCreate>
       <dockX>fill</dockX>
       <height>629</height>
       <heightRatio>0.817945383615085</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_pages</note>
       <onCreate>sender.c1 = ee.getControl("panel339");
@@ -10041,7 +10039,6 @@ sender.fSearch = function() {
       <height>441</height>
       <heightRatio>0.701112877583466</heightRatio>
       <layerName><![CDATA[    c2->最新]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_headerName = "page11c2_";
 sender.v_searchOptions = "new";
@@ -12130,6 +12127,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p15->粉丝列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -12254,8 +12252,10 @@ sender.loadFromDB = function() {
         var root = sender;
         var cy = 0;
         var itemWidth = eb.getDivRect(root).w;
+        var itemCount = 0;
         for (var i=0; i<dataset.rowCount; i++) {
             if (showFansList.userId == dataset.getData(0,i)) continue;
+            itemCount++;
             var item = createPanel(root, "fanl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
             item.v_mode = "";
@@ -12265,7 +12265,16 @@ sender.loadFromDB = function() {
         }
         eb.processDock();
         var rect = eb.getDivRectSetting(g5.p4);
-        ee.tiledV(sender, 0, rect.h, 500); 
+        ee.tiledV(sender, 0, rect.h, 500);
+         
+        if (itemCount<=0) {
+            sender.v_status = "noResult";
+            var item = createPanel(sender, "p2p11end", "", 0, cy, itemWidth, 60);
+            addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+            sender.v_items.push(item);
+        } else {
+            sender.v_status = "normal";
+        }
         if (sender.v_items.length>0) {
             var rect1 = eb.getDivRect(sender.v_items[sender.v_items.length-1]);
             ee.tiledV(sender, 0, rect.h, eb.getClientSize().h - eb.getDivRect(sender.v_items[sender.v_items.length-1]).h - rect.h + 2); 
