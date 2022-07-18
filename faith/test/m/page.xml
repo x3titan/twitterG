@@ -1,5 +1,5 @@
 <page>
-  <controls count="41">
+  <controls count="42">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -7,6 +7,12 @@
       <dockY>fill</dockY>
       <height>796</height>
       <left>0</left>
+      <pageHead><![CDATA[<style>
+.aniAll3 {
+    transition: all 0.3s;
+}
+
+</style>]]></pageHead>
       <top>0</top>
       <width>1164</width>
     </control>
@@ -766,7 +772,6 @@ sender.init(0);
       <height>211</height>
       <heightRatio>0.265075376884422</heightRatio>
       <layerName>通用提示窗口</layerName>
-      <layerVisible>false</layerVisible>
       <left>391</left>
       <leftRatio>0.335910652920962</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -790,7 +795,7 @@ sender.style.borderColor = "#a0a0a0";
 sender.style.borderStyle = "solid";
 sender.style.borderRadius = "10px";
 sender.style.boxShadow = "5px 5px 15px #808080";
-
+//sender.className = "elementToFadeInAndOut";
    
    
 //implementation
@@ -1045,7 +1050,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <aniAlpha>appear:渐变出现</aniAlpha>
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundSkin>body5</backgroundSkin>
+      <bgColorEnabled>true</bgColorEnabled>
       <dockX>center</dockX>
       <dockY>center</dockY>
       <ee_LocalName>a10</ee_LocalName>
@@ -1059,15 +1064,22 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
 </onClick>
-      <onCreate>sender.show = function(title,text,inputHint,defaultValue,bStyle1,bStyle2,onComplete,onButton1) {
-    ee.setText(ee.getControl("panel632"),title);
-    ee.setText(ee.getControl("panel631"),text);
-    ee.getControl("panel634").v_style = bStyle1;
-    ee.getControl("panel634").init(0);
-    ee.getControl("panel635").v_style = bStyle2;
-    ee.getControl("panel635").init(0);
-    ee.setText(ee.getControl("edit1"), inputHint);
-    ee.setEditText(ee.getControl("edit1"), defaultValue);
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#a0a0a0";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = "10px";
+sender.style.boxShadow = "5px 5px 15px #808080";
+
+sender.show = function(title,text,inputHint,defaultValue,bStyle1,bStyle2,onComplete,onButton1) {
+    ee.setText(this.c_title,title);
+    ee.setText(this.c_p1.c_text,text);
+    this.c_btnCancel.v_style = bStyle1;
+    this.c_btnCancel.init(0);
+    this.c_btnOK.v_style = bStyle2;
+    this.c_btnOK.init(0);
+    ee.setText(this.c_p1.c_edit, inputHint);
+    ee.setEditText(this.c_p1.c_edit, defaultValue);
     this.onComplete = onComplete;
     this.onButton1 = onButton1;
     ee.setVisible(this.parentNode, true);
@@ -1105,6 +1117,7 @@ sender.onKeyDown = function(event) {
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel632">
       <dockX>center</dockX>
+      <ee_LocalName>c_title</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>202326</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -1182,12 +1195,13 @@ sender.onpointermove = function(event) {
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel634">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
+      <ee_LocalName>c_btnCancel</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1DA1F2</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
-      <height>40</height>
-      <heightRatio>0.180995475113122</heightRatio>
+      <height>39</height>
+      <heightRatio>0.176470588235294</heightRatio>
       <layerVisible>false</layerVisible>
       <left>54</left>
       <leftRatio>0.141361256544503</leftRatio>
@@ -1197,20 +1211,9 @@ if (!eb.isEmpty(sender.parentNode.onButton1)) {
     sender.parentNode.onButton1 = null;
 }
 </onClick>
-      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
-    this.color1 = color1;
-    this.color2 = color2
-    this.color3 = color3;
-    this.text1 = text1;
-    this.text2 = text2;
-    this.text3 = text3;
-    this.tColor1 = tColor1;
-    this.tColor2 = tColor2;
-    this.tColor3 = tColor3;
-    this.bdColor = bdColor;
-}
+      <onCreate>var text = ee.getText(sender);
 sender.v_style = [
-    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")
+    new g5.BStyle("","#e8f5fe","#d2ecfc",text,text,text,"#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
 ];
 
 sender.init = function(index) {
@@ -1225,6 +1228,7 @@ sender.init = function(index) {
         this.style.borderWidth = "1px";
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
+        eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
 }
@@ -1268,7 +1272,7 @@ sender.init(0);
 
 
 </onCreate>
-      <sizeRatio>0.317460317460317</sizeRatio>
+      <sizeRatio>0.30952380952381</sizeRatio>
       <text>取消</text>
       <top>155</top>
       <topRatio>0.701357466063348</topRatio>
@@ -1278,12 +1282,13 @@ sender.init(0);
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel635">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
+      <ee_LocalName>c_btnOK</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1DA1F2</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
-      <height>40</height>
-      <heightRatio>0.180995475113122</heightRatio>
+      <height>39</height>
+      <heightRatio>0.176470588235294</heightRatio>
       <layerVisible>false</layerVisible>
       <left>203</left>
       <leftRatio>0.531413612565445</leftRatio>
@@ -1317,6 +1322,7 @@ sender.init = function(index) {
         this.style.borderWidth = "1px";
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
+        eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
 }
@@ -1360,7 +1366,7 @@ sender.init(0);
 
 
 </onCreate>
-      <sizeRatio>0.317460317460317</sizeRatio>
+      <sizeRatio>0.30952380952381</sizeRatio>
       <text>确认</text>
       <top>155</top>
       <topRatio>0.701357466063348</topRatio>
@@ -1400,6 +1406,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <backgroundColor>F5F8FA</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
+      <ee_LocalName>c_p1</ee_LocalName>
       <height>66</height>
       <heightRatio>0.298642533936652</heightRatio>
       <layerVisible>false</layerVisible>
@@ -1419,6 +1426,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
     <control type="Edit" pathname="/divRoot/panel112/panel630/panel637/edit1">
       <backgroundSkin>empty</backgroundSkin>
       <dockX>fill</dockX>
+      <ee_LocalName>c_edit</ee_LocalName>
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
@@ -1462,6 +1470,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel637/panel631">
       <dockX>fill</dockX>
+      <ee_LocalName>c_text</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>657786</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -1493,8 +1502,9 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>259</height>
       <heightRatio>0.325376884422111</heightRatio>
       <layerName>通用确认窗口</layerName>
+      <layerVisible>false</layerVisible>
       <left>391</left>
-      <leftRatio>0.335910652920962</leftRatio>
+      <leftRatio>0.335051546391753</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -1507,12 +1517,12 @@ sender.style.borderRadius = "10px";
 sender.style.boxShadow = "5px 5px 15px #808080";
 
 sender.show = function(title,text,bStyle1,bStyle2,onComplete,onButton1) {
-    ee.setText(ee.getControl("panel259"),title);
-    ee.setText(ee.getControl("panel258"),text);
-    ee.getControl("panel261").v_style = bStyle1;
-    ee.getControl("panel261").init(0);
-    ee.getControl("panel262").v_style = bStyle2;
-    ee.getControl("panel262").init(0);
+    ee.setText(this.c_title,title);
+    ee.setText(this.c_text,text);
+    this.c_btnCancel.v_style = bStyle1;
+    this.c_btnCancel.init(0);
+    this.c_btnOK.v_style = bStyle2;
+    this.c_btnOK.init(0);
     this.onComplete = onComplete;
     this.onButton1 = onButton1;
     ee.setVisible(this.parentNode, true);
@@ -1549,6 +1559,7 @@ sender.onKeyDown = function(event) {
       <widthRatio>0.328178694158076</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel258">
+      <ee_LocalName>c_text</ee_LocalName>
       <fontColor>657786</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
@@ -1566,6 +1577,7 @@ sender.onKeyDown = function(event) {
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel259">
       <dockX>center</dockX>
+      <ee_LocalName>c_title</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>202326</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -1643,6 +1655,7 @@ sender.onpointermove = function(event) {
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel261">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
+      <ee_LocalName>c_btnCancel</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1DA1F2</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -1739,6 +1752,7 @@ sender.init(0);
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel262">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
+      <ee_LocalName>c_btnOK</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1DA1F2</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -2369,9 +2383,9 @@ sender.init = function(index) {
         this.style.borderWidth = "1px";
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
+        eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-    eb.setDivRect(this.label.parentNode,null,-1,null,null);
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -2458,9 +2472,9 @@ sender.init = function(index) {
         this.style.borderWidth = "1px";
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
+        eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-    eb.setDivRect(this.label.parentNode,null,-1,null,null);
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -2504,8 +2518,102 @@ sender.init(0);
 </onCreate>
       <sizeRatio>0.203703703703704</sizeRatio>
       <text>通用确认窗口</text>
-      <top>82</top>
-      <topRatio>0.103015075376884</topRatio>
+      <top>88</top>
+      <topRatio>0.110552763819095</topRatio>
+      <width>162</width>
+      <widthRatio>0.139175257731959</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <height>33</height>
+      <heightRatio>0.0414572864321608</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>25</left>
+      <leftRatio>0.0214776632302406</leftRatio>
+      <onClick><![CDATA[ee.getControl("divRoot").popBlack.a10.show(
+    "输入", "付款类型：", "请在这里输入付款类型，长度2-6", "",
+    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
+    function(text) {
+        if ((text.length>6) || (text.length<2)) {
+            alert("输入错误,付款类型的长度应该在2-6个汉字或英文字符之间");
+            return;
+        }
+    },
+    function() {
+    }
+);]]></onClick>
+      <onCreate>var text = ee.getText(sender);
+sender.v_style = [
+    new g5.BStyle("","#e8f5fe","#d2ecfc",text,text,text,"#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
+];
+sender.style.boxShadow = "2px 2px 4px #a0a0a0";
+
+sender.init = function(index) {
+    this.v_index = index;
+    this.style.backgroundColor = this.v_style[index].color1;
+    ee.setText(this, this.v_style[index].text1);
+    ee.setTextColor(this, this.v_style[index].tColor1);
+    if (this.v_style[index].bdColor=="") {
+        this.style.borderWidth = "0px";
+    } else {
+        this.style.boxSizing="border-box";
+        this.style.borderWidth = "1px";
+        this.style.borderColor = this.v_style[index].bdColor;
+        this.style.borderStyle = "solid";
+        eb.setDivRect(this.label.parentNode,-1,-1,null,null);
+    }
+    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+}
+
+ee.setOnMouseEnter(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    ee.setText(sender, s.text2);
+    ee.setTextColor(sender, s.tColor2);
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color3;
+    setTimeout(function() {
+        ee.setText(sender, s.text3);
+    }, 1000); 
+    ee.setTextColor(sender, s.tColor3);
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color2;
+    setTimeout(function() {
+        ee.setText(sender, s.text2);
+    }, 1000); 
+    ee.setTextColor(sender, s.tColor2);
+}
+eb.initMouseEvent(sender);
+
+sender.init(0);
+
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.203703703703704</sizeRatio>
+      <text>通用输入窗口</text>
+      <top>143</top>
+      <topRatio>0.17964824120603</topRatio>
       <width>162</width>
       <widthRatio>0.139175257731959</widthRatio>
     </control>
