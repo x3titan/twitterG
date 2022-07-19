@@ -692,6 +692,7 @@ sender.loadFromServer = function() {
                 }
                 sender.className = "";
                 g5.p2.p33.close();
+                g5.onScroll();
             } else {
                 eb.setDivRect(sender,null,0,null,null);
                 ee.setAnimationEnd(sender, function() {
@@ -41104,7 +41105,7 @@ updateMain.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="110">
+  <g5Items count="111">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -45273,15 +45274,6 @@ if (g5.itemsHome.length>0) {
       <functionCode><![CDATA[for (var i=index; i<items.length; i++) {
     ee.setRect(items[i],null,eb.getDivRectSetting(items[i]).y+dy,null,null);
 }
-return;
-var r,rSelf;
-if (index>=items.length) return;
-rSelf = eb.getDivRectSetting(items[index]);
-for (var i=0; i<items.length; i++) {
-    r = eb.getDivRectSetting(items[i]);
-    if (r.y<rSelf.y) continue;
-    ee.setRect(items[i],null,r.y+dy,null,null);
-}
 ]]></functionCode>
     </item>
     <item name="batchMoveYPage" type="20">
@@ -45854,9 +45846,7 @@ var screenTop = document.documentElement.scrollTop;
 var screenBottom = eb.getClientSize().h + screenTop;
 for (i=0; i<items.length; i++) {
     if (!items[i].v_top) {
-        r = eb.getDivRectSetting(items[i]);
-        items[i].v_top = r.y;
-        items[i].v_bottom = r.y + r.h;
+        g5.refreshVTop(items);
     }
     
     if (items[i].v_bottom + safeRange < document.documentElement.scrollTop) {
@@ -45866,6 +45856,17 @@ for (i=0; i<items.length; i++) {
     } else {
         ee.setVisible(items[i], true);
     }
+}
+
+]]></functionCode>
+    </item>
+    <item name="refreshVTop" type="20">
+      <varValue />
+      <functionParam>items</functionParam>
+      <functionCode><![CDATA[for (i=0; i<items.length; i++) {
+    r = eb.getDivRectSetting(items[i]);
+    items[i].v_top = r.y;
+    items[i].v_bottom = r.y + r.h;
 }
 
 ]]></functionCode>
