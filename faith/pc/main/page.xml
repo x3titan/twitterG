@@ -130,7 +130,16 @@ initLButton = function(button,text,dy,icon,size,dx) {
     ee.setText(button.status3, "<svg viewBox='"+dx+" "+dy+" "+size+"' style='height: 1.75rem;color: rgba(29,161,242,1.00);fill: currentcolor;vertical-align:middle;'>"+ icon +"</svg>  " + text);
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
-]]></onPageCreate>
+
+
+ee.setText = function (panel, text) {
+        if (panel.label) {
+            panel.label.rows[0].cells[0].innerHTML = text;
+        } else {
+            addText(panel, text, "center", "middle", "宋体", 9, "#000000", "normal");
+        }
+        //if (panel._input) panel._inputHint = text;
+    }]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammerDecode.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
@@ -254,6 +263,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>785</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -442,6 +452,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.257731958762887</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -557,9 +568,7 @@ sender.activePage = function() {
     ee.setRect(g5.p4, null,null,null,eb.getDivRect(g5.p4.a1).h);
     ee.setRect(g5.p2,null,null,null,eb.getDivRect(this).h+1);
     ee.setVisible(this, true);
-    setTimeout(function() {
-        document.documentElement.scrollTop = sender.v_lastScrollTop;
-    }, 20);
+    document.documentElement.scrollTop = sender.v_lastScrollTop;
 }
 
 sender.close = function() {
@@ -10896,9 +10905,9 @@ sender.show = function() {
         ee.tiledResizeV(this, 2);
         return;
     }
-    document.documentElement.scrollTop = 0;
     this.clear();
     g5.changeP2(12);
+    document.documentElement.scrollTop = 0;
     var rect = eb.getDivRectSetting(g5.p4);
     ee.tiledV(this, 0, rect.h, 500); 
     this.load();
@@ -12137,6 +12146,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[p2.p15->粉丝列表]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -23704,7 +23714,8 @@ sender.refreshMobile = function() {
 
 </onCreate>
       <sizeRatio>0.089527027027027</sizeRatio>
-      <top>0</top>
+      <top>-1</top>
+      <topRatio>-0.0102040816326531</topRatio>
       <width>592</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -23854,7 +23865,7 @@ sender._input.style.lineHeight = "";</onCreate>
       <outerBottom>2</outerBottom>
       <outerLeft>10</outerLeft>
       <sizeRatio>0.0682819383259912</sizeRatio>
-      <text>站内搜索</text>
+      <text>站内搜索.</text>
       <top>0</top>
       <width>454</width>
       <widthRatio>0.978448275862069</widthRatio>
@@ -24444,8 +24455,8 @@ sender.v_style = [
 ];
 sender.v_index = 0;
 </onCreate>
-      <onFocus>ee.getControl("layoutx10").init(1);</onFocus>
-      <onFocusLost>ee.getControl("layoutx10").init(0);</onFocusLost>
+      <onFocus>ee.getControl("layoutx16").init(1);</onFocus>
+      <onFocusLost>ee.getControl("layoutx16").init(0);</onFocusLost>
       <outerBottom>2</outerBottom>
       <outerLeft>10</outerLeft>
       <sizeRatio>0.0813648293963255</sizeRatio>
@@ -28401,7 +28412,6 @@ sender.renderItem = function(root) {
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -28412,16 +28422,6 @@ sender.close();
 </onClick>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
-sender.a1 = ee.getControl("panel117");
-sender.a2 = ee.getControl("panel142");
-sender.a3 = ee.getControl("panel42");
-sender.a4 = ee.getControl("panel10");
-sender.a5 = ee.getControl("panel217");
-sender.a6  = ee.getControl("panel257");
-sender.a7 = ee.getControl("panel344");
-sender.a8 = ee.getControl("panel54");
-sender.a9 = ee.getControl("panel560");
-sender.a10 = ee.getControl("panel630");
 sender.v_canScroll = false;
 
 sender.addEventListener("mousewheel", function(e) {
@@ -28468,7 +28468,7 @@ if ("ontouchstart" in window) {
     }
 }
 ]]></onCreate>
-      <sizeRatio>0.683848797250859</sizeRatio>
+      <sizeRatio>0.676724137931034</sizeRatio>
       <top>0</top>
       <width>1160</width>
       <widthRatio>1</widthRatio>
@@ -28482,12 +28482,13 @@ if ("ontouchstart" in window) {
       <backgroundSkin>body5</backgroundSkin>
       <dockX>center</dockX>
       <dockY>center</dockY>
+      <ee_LocalName>a1</ee_LocalName>
       <height>228</height>
-      <heightRatio>0.28643216080402</heightRatio>
-      <layerName><![CDATA[  a1->删除发言确认]]></layerName>
+      <heightRatio>0.290445859872611</heightRatio>
+      <layerName>删除发言确认</layerName>
       <layerVisible>false</layerVisible>
       <left>407</left>
-      <leftRatio>0.351374570446735</leftRatio>
+      <leftRatio>0.350862068965517</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 if (sender.formResult) {
     sender.formResult = false;
@@ -28499,9 +28500,9 @@ if (sender.formResult) {
       <onCreate>sender.formResult = false;</onCreate>
       <sizeRatio>0.658959537572254</sizeRatio>
       <top>278</top>
-      <topRatio>0.35678391959799</topRatio>
+      <topRatio>0.354140127388535</topRatio>
       <width>346</width>
-      <widthRatio>0.297250859106529</widthRatio>
+      <widthRatio>0.298275862068966</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel117/panel139">
       <fontColor>14171A</fontColor>
@@ -28641,9 +28642,10 @@ sender.onpointermove = function(event) {
       <aniAlpha>appear:渐变出现</aniAlpha>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>a2</ee_LocalName>
       <height>785</height>
       <heightRatio>1</heightRatio>
-      <layerName><![CDATA[  a2->图片展示]]></layerName>
+      <layerName>图片展示</layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
@@ -28953,7 +28955,7 @@ sender.clickRight = function() {
     eb.setDivRect(this.c_photoRoot,0,null,null,null);
 }
 ]]></onCreate>
-      <sizeRatio>0.683848797250859</sizeRatio>
+      <sizeRatio>0.676724137931034</sizeRatio>
       <top>0</top>
       <width>1160</width>
       <widthRatio>1</widthRatio>
@@ -29316,12 +29318,13 @@ sender.init(0);
       <backgroundSkin>body5</backgroundSkin>
       <dockX>center</dockX>
       <dockY>center</dockY>
+      <ee_LocalName>a3</ee_LocalName>
       <height>611</height>
-      <heightRatio>0.767587939698492</heightRatio>
-      <layerName><![CDATA[  a3->发短文]]></layerName>
+      <heightRatio>0.778343949044586</heightRatio>
+      <layerName>发短文</layerName>
       <layerVisible>false</layerVisible>
       <left>314</left>
-      <leftRatio>0.271477663230241</leftRatio>
+      <leftRatio>0.270689655172414</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel412");
 sender.c_edit = ee.getControl("panel614");
@@ -29507,9 +29510,9 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
 }]]></onCreate>
       <sizeRatio>1.1484962406015</sizeRatio>
       <top>87</top>
-      <topRatio>0.115577889447236</topRatio>
+      <topRatio>0.110828025477707</topRatio>
       <width>532</width>
-      <widthRatio>0.457044673539519</widthRatio>
+      <widthRatio>0.458620689655172</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel42/panel618">
       <backgroundSkin>edit1</backgroundSkin>
@@ -30595,12 +30598,13 @@ sender.fSearch = function() {
       <backgroundSkin>body5</backgroundSkin>
       <dockX>center</dockX>
       <dockY>center</dockY>
+      <ee_LocalName>a4</ee_LocalName>
       <height>650</height>
-      <heightRatio>0.816582914572864</heightRatio>
-      <layerName><![CDATA[  a4->转发用户列表]]></layerName>
+      <heightRatio>0.828025477707006</heightRatio>
+      <layerName>转发用户列表</layerName>
       <layerVisible>false</layerVisible>
       <left>280</left>
-      <leftRatio>0.242268041237113</leftRatio>
+      <leftRatio>0.241379310344828</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);</onAni2End>
       <onAniStart>ee.setVisible(ee.getControl("panel112"), true);</onAniStart>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
@@ -30645,9 +30649,9 @@ sender.loadRecord = function(panel, dataset, index) {
 ]]></onCreate>
       <sizeRatio>1.08333333333333</sizeRatio>
       <top>67</top>
-      <topRatio>0.0917085427135678</topRatio>
+      <topRatio>0.0853503184713376</topRatio>
       <width>600</width>
-      <widthRatio>0.515463917525773</widthRatio>
+      <widthRatio>0.517241379310345</widthRatio>
     </control>
     <control type="LayoutY" pathname="/divRoot/panel112/panel10/layouty1">
       <dockX>fill</dockX>
@@ -30810,12 +30814,13 @@ sender.onpointermove = function(event) {
       <backgroundSkin>body5</backgroundSkin>
       <dockX>center</dockX>
       <dockY>center</dockY>
+      <ee_LocalName>a5</ee_LocalName>
       <height>228</height>
-      <heightRatio>0.28643216080402</heightRatio>
-      <layerName><![CDATA[  a5->屏蔽确认]]></layerName>
+      <heightRatio>0.290445859872611</heightRatio>
+      <layerName>屏蔽确认</layerName>
       <layerVisible>false</layerVisible>
       <left>407</left>
-      <leftRatio>0.351374570446735</leftRatio>
+      <leftRatio>0.350862068965517</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
 </onClick>
@@ -30829,9 +30834,9 @@ sender.show = function() {
 }</onCreate>
       <sizeRatio>0.658959537572254</sizeRatio>
       <top>278</top>
-      <topRatio>0.35678391959799</topRatio>
+      <topRatio>0.354140127388535</topRatio>
       <width>346</width>
-      <widthRatio>0.297250859106529</widthRatio>
+      <widthRatio>0.298275862068966</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel217/panel218">
       <fontColor>14171A</fontColor>
@@ -30976,12 +30981,13 @@ sender.onpointermove = function(event) {
       <backgroundSkin>body5</backgroundSkin>
       <dockX>center</dockX>
       <dockY>center</dockY>
+      <ee_LocalName>a7</ee_LocalName>
       <height>211</height>
-      <heightRatio>0.265075376884422</heightRatio>
-      <layerName><![CDATA[  a7->通用提示窗口]]></layerName>
+      <heightRatio>0.268789808917197</heightRatio>
+      <layerName>通用提示窗口</layerName>
       <layerVisible>false</layerVisible>
       <left>389</left>
-      <leftRatio>0.335910652920962</leftRatio>
+      <leftRatio>0.335344827586207</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -31017,9 +31023,9 @@ sender.onKeyDown = function(event) {
 </onCreate>
       <sizeRatio>0.552356020942408</sizeRatio>
       <top>287</top>
-      <topRatio>0.366834170854271</topRatio>
+      <topRatio>0.365605095541401</topRatio>
       <width>382</width>
-      <widthRatio>0.328178694158076</widthRatio>
+      <widthRatio>0.329310344827586</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel344/panel345">
       <fontColor>657786</fontColor>
@@ -31239,12 +31245,13 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <backgroundSkin>body5</backgroundSkin>
       <dockX>center</dockX>
       <dockY>center</dockY>
+      <ee_LocalName>a8</ee_LocalName>
       <height>645</height>
-      <heightRatio>0.810301507537688</heightRatio>
-      <layerName><![CDATA[  a8->编辑个人信息]]></layerName>
+      <heightRatio>0.821656050955414</heightRatio>
+      <layerName>编辑个人信息</layerName>
       <layerVisible>false</layerVisible>
       <left>280</left>
-      <leftRatio>0.242268041237113</leftRatio>
+      <leftRatio>0.241379310344828</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onClick>return;
 window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -31297,9 +31304,9 @@ ee.setVisible(ee.getControl("panel230"), false);
 ee.setVisible(ee.getControl("panel233"), false);]]></onCreate>
       <sizeRatio>1.075</sizeRatio>
       <top>70</top>
-      <topRatio>0.0942211055276382</topRatio>
+      <topRatio>0.089171974522293</topRatio>
       <width>600</width>
-      <widthRatio>0.515463917525773</widthRatio>
+      <widthRatio>0.517241379310345</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel54/panel56">
       <backgroundImg>close.png</backgroundImg>
@@ -32151,9 +32158,10 @@ eb.initMouseEvent(sender);
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>left</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>a9</ee_LocalName>
       <height>785</height>
       <heightRatio>1</heightRatio>
-      <layerName><![CDATA[  a9->手机弹出菜单]]></layerName>
+      <layerName>手机弹出菜单</layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
@@ -32267,10 +32275,10 @@ sender.refreshFansFollowCount = function() {
     }
 }
 ]]></onCreate>
-      <sizeRatio>2.73539518900344</sizeRatio>
+      <sizeRatio>2.69759450171821</sizeRatio>
       <top>0</top>
       <width>291</width>
-      <widthRatio>0.25</widthRatio>
+      <widthRatio>0.250862068965517</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel562">
       <backgroundColor>C0C0FF</backgroundColor>
@@ -32770,28 +32778,36 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <aniAlpha>appear:渐变出现</aniAlpha>
       <backgroundColor>FFFFFF</backgroundColor>
       <backgroundImgMode>fill</backgroundImgMode>
-      <backgroundSkin>body5</backgroundSkin>
+      <bgColorEnabled>true</bgColorEnabled>
       <dockX>center</dockX>
       <dockY>center</dockY>
-      <height>221</height>
-      <heightRatio>0.277638190954774</heightRatio>
-      <layerName><![CDATA[  a10->通用字符串输入窗口]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>389</left>
-      <leftRatio>0.335910652920962</leftRatio>
+      <ee_LocalName>a10</ee_LocalName>
+      <height>209</height>
+      <heightRatio>0.266242038216561</heightRatio>
+      <layerName>通用字符串输入窗口</layerName>
+      <left>401</left>
+      <leftRatio>0.345689655172414</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
 </onClick>
-      <onCreate>sender.show = function(title,text,inputHint,defaultValue,bStyle1,bStyle2,onComplete,onButton1) {
-    ee.setText(ee.getControl("panel632"),title);
-    ee.setText(ee.getControl("panel631"),text);
-    ee.getControl("panel634").v_style = bStyle1;
-    ee.getControl("panel634").init(0);
-    ee.getControl("panel635").v_style = bStyle2;
-    ee.getControl("panel635").init(0);
-    ee.setText(ee.getControl("edit1"), inputHint);
-    ee.setEditText(ee.getControl("edit1"), defaultValue);
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "#a0a0a0";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = "10px";
+sender.style.boxShadow = "5px 5px 15px #808080";
+
+sender.show = function(title,text,inputHint,defaultValue,bStyle1,bStyle2,onComplete,onButton1) {
+    ee.setText(this.c_title,title);
+    ee.setText(this.c_p1.c_text,text);
+    this.c_btnCancel.v_style = bStyle1;
+    this.c_btnCancel.init(0);
+    this.c_btnOK.v_style = bStyle2;
+    this.c_btnOK.init(0);
+    ee.setText(this.c_p1.c_edit, inputHint);
+    this.c_p1.c_edit._inputHint = inputHint;
+    ee.setEditText(this.c_p1.c_edit, defaultValue);
     this.onComplete = onComplete;
     this.onButton1 = onButton1;
     ee.setVisible(this.parentNode, true);
@@ -32821,34 +32837,35 @@ sender.onKeyDown = function(event) {
 
 
 </onCreate>
-      <sizeRatio>0.578534031413613</sizeRatio>
-      <top>282</top>
-      <topRatio>0.360552763819095</topRatio>
-      <width>382</width>
-      <widthRatio>0.328178694158076</widthRatio>
+      <sizeRatio>0.583798882681564</sizeRatio>
+      <top>288</top>
+      <topRatio>0.36687898089172</topRatio>
+      <width>358</width>
+      <widthRatio>0.308620689655172</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel632">
       <dockX>center</dockX>
+      <ee_LocalName>c_title</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>202326</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <height>39</height>
-      <heightRatio>0.176470588235294</heightRatio>
+      <heightRatio>0.186602870813397</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>63</left>
-      <leftRatio>0.164921465968586</leftRatio>
+      <left>50</left>
+      <leftRatio>0.139664804469274</leftRatio>
       <onCreate>sender.label.style.tableLayout = "fixed";
 sender.label.rows[0].cells[0].style.overflow = "hidden";
 sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
 sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
 </onCreate>
-      <sizeRatio>0.152941176470588</sizeRatio>
+      <sizeRatio>0.151750972762646</sizeRatio>
       <text>删除发言</text>
       <top>18</top>
-      <topRatio>0.081447963800905</topRatio>
-      <width>255</width>
-      <widthRatio>0.667539267015707</widthRatio>
+      <topRatio>0.0861244019138756</topRatio>
+      <width>257</width>
+      <widthRatio>0.717877094972067</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel633">
       <backgroundColor>00C0C0</backgroundColor>
@@ -32900,41 +32917,31 @@ sender.onpointermove = function(event) {
 ]]></onCreate>
       <sizeRatio>0.170157068062827</sizeRatio>
       <top>0</top>
-      <width>382</width>
+      <width>358</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel634">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
+      <ee_LocalName>c_btnCancel</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1DA1F2</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
-      <height>40</height>
-      <heightRatio>0.180995475113122</heightRatio>
+      <height>35</height>
+      <heightRatio>0.167464114832536</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>54</left>
-      <leftRatio>0.141361256544503</leftRatio>
+      <left>46</left>
+      <leftRatio>0.128491620111732</leftRatio>
       <onClick>sender.parentNode.parentNode.close();
 if (!eb.isEmpty(sender.parentNode.onButton1)) {
     sender.parentNode.onButton1();
     sender.parentNode.onButton1 = null;
 }
 </onClick>
-      <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
-    this.color1 = color1;
-    this.color2 = color2
-    this.color3 = color3;
-    this.text1 = text1;
-    this.text2 = text2;
-    this.text3 = text3;
-    this.tColor1 = tColor1;
-    this.tColor2 = tColor2;
-    this.tColor3 = tColor3;
-    this.bdColor = bdColor;
-}
+      <onCreate>var text = ee.getText(sender);
 sender.v_style = [
-    new sender.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")
+    new g5.BStyle("","#e8f5fe","#d2ecfc",text,text,text,"#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
 ];
 
 sender.init = function(index) {
@@ -32949,6 +32956,7 @@ sender.init = function(index) {
         this.style.borderWidth = "1px";
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
+        eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
 }
@@ -32992,25 +33000,26 @@ sender.init(0);
 
 
 </onCreate>
-      <sizeRatio>0.317460317460317</sizeRatio>
+      <sizeRatio>0.277777777777778</sizeRatio>
       <text>取消</text>
       <top>155</top>
-      <topRatio>0.701357466063348</topRatio>
+      <topRatio>0.741626794258373</topRatio>
       <width>126</width>
-      <widthRatio>0.329842931937173</widthRatio>
+      <widthRatio>0.35195530726257</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel635">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
+      <ee_LocalName>c_btnOK</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1DA1F2</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
-      <height>40</height>
-      <heightRatio>0.180995475113122</heightRatio>
+      <height>35</height>
+      <heightRatio>0.167464114832536</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>203</left>
-      <leftRatio>0.531413612565445</leftRatio>
+      <left>195</left>
+      <leftRatio>0.544692737430168</leftRatio>
       <onClick>sender.parentNode.parentNode.close();
 sender.parentNode.onComplete(ee.getEditText(ee.getControl("edit1")));</onClick>
       <onCreate>sender.BStyle = function(color1,color2,color3,text1,text2,text3,tColor1,tColor2,tColor3,bdColor) {
@@ -33041,6 +33050,7 @@ sender.init = function(index) {
         this.style.borderWidth = "1px";
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
+        eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
 }
@@ -33084,12 +33094,12 @@ sender.init(0);
 
 
 </onCreate>
-      <sizeRatio>0.317460317460317</sizeRatio>
+      <sizeRatio>0.277777777777778</sizeRatio>
       <text>确认</text>
       <top>155</top>
-      <topRatio>0.701357466063348</topRatio>
+      <topRatio>0.741626794258373</topRatio>
       <width>126</width>
-      <widthRatio>0.329842931937173</widthRatio>
+      <widthRatio>0.35195530726257</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel636">
       <cursor>pointer</cursor>
@@ -33098,11 +33108,11 @@ sender.init(0);
       <height>36</height>
       <heightRatio>0.16289592760181</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>328</left>
+      <left>304</left>
       <leftRatio>0.858638743455497</leftRatio>
       <onClick>sender.parentNode.parentNode.close();</onClick>
       <onCreate><![CDATA[ee.setText(sender,
-    "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.iconClose + "</svg>"
+    "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.icon.close + "</svg>"
 );
 sender.style.borderRadius = "50%";
 ee.setOnMouseEnter(sender, function(sender,event) {
@@ -33124,6 +33134,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <backgroundColor>F5F8FA</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
+      <ee_LocalName>c_p1</ee_LocalName>
       <height>66</height>
       <heightRatio>0.298642533936652</heightRatio>
       <layerVisible>false</layerVisible>
@@ -33137,12 +33148,13 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <sizeRatio>0.18232044198895</sizeRatio>
       <top>75</top>
       <topRatio>0.339366515837104</topRatio>
-      <width>362</width>
+      <width>338</width>
       <widthRatio>0.947643979057592</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel112/panel630/panel637/edit1">
       <backgroundSkin>empty</backgroundSkin>
       <dockX>fill</dockX>
+      <ee_LocalName>c_edit</ee_LocalName>
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
@@ -33161,7 +33173,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <text>输入提示位置</text>
       <top>25</top>
       <topRatio>0.378787878787879</topRatio>
-      <width>332</width>
+      <width>308</width>
       <widthRatio>0.917127071823204</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel637/panel641">
@@ -33181,11 +33193,12 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <sizeRatio>0.00552486187845304</sizeRatio>
       <top>64</top>
       <topRatio>0.96969696969697</topRatio>
-      <width>362</width>
+      <width>338</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630/panel637/panel631">
       <dockX>fill</dockX>
+      <ee_LocalName>c_text</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>657786</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -33201,7 +33214,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <sizeRatio>0.0942249240121581</sizeRatio>
       <text>输入字符串说明</text>
       <top>0</top>
-      <width>329</width>
+      <width>305</width>
       <widthRatio>0.908839779005525</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268">
@@ -41542,6 +41555,7 @@ mute: "<g><path d=\"M1.75 22.354c-.192 0-.384-.073-.53-.22-.293-.293-.293-.768 0
 homePage: "<g><path d=\"M22.58 7.35L12.475 1.897c-.297-.16-.654-.16-.95 0L1.425 7.35c-.486.264-.667.87-.405 1.356.18.335.525.525.88.525.16 0 .324-.038.475-.12l.734-.396 1.59 11.25c.216 1.214 1.31 2.062 2.66 2.062h9.282c1.35 0 2.444-.848 2.662-2.088l1.588-11.225.737.398c.485.263 1.092.082 1.354-.404.263-.486.08-1.093-.404-1.355zM12 15.435c-1.795 0-3.25-1.455-3.25-3.25s1.455-3.25 3.25-3.25 3.25 1.455 3.25 3.25-1.455 3.25-3.25 3.25z\"></path></g>",
 menu: "<g><path d=\"M19.98 1.775H4.02c-1.24 0-2.25 1.01-2.25 2.25v15.95c0 1.24 1.01 2.25 2.25 2.25h15.96c1.24 0 2.25-1.01 2.25-2.25V4.025c0-1.24-1.01-2.25-2.25-2.25zm.75 18.2c0 .42-.34.75-.75.75H4.02c-.41 0-.75-.33-.75-.75v-9.48h17.46v9.48zm0-10.23H3.27v-5.72c0-.42.34-.75.75-.75h15.96c.41 0 .75.33.75.75v5.72z\"></path><path d=\"M8.96 6.515v.09c0 .95-.78 1.72-1.73 1.72h-.08c-.95 0-1.73-.77-1.73-1.72v-.09c0-.95.78-1.73 1.73-1.73h.08c.95 0 1.73.78 1.73 1.73zm9.54.04c0 .42-.34.75-.75.75h-6.39c-.41 0-.75-.33-.75-.75 0-.41.34-.75.75-.75h6.39c.41 0 .75.34.75.75zm-9.54 7.17v.09c0 .95-.78 1.73-1.73 1.73h-.08c-.95 0-1.73-.78-1.73-1.73v-.09c0-.95.78-1.72 1.73-1.72h.08c.95 0 1.73.77 1.73 1.72zm9.54.05c0 .41-.34.75-.75.75h-6.39c-.41 0-.75-.34-.75-.75 0-.42.34-.75.75-.75h6.39c.41 0 .75.33.75.75zm0 3.6c0 .42-.34.75-.75.75h-6.39c-.41 0-.75-.33-.75-.75 0-.41.34-.75.75-.75h6.39c.41 0 .75.34.75.75z\"></path></g>",
 speaker: "<g transform='translate(0.000000,300.000000) scale(0.100000,-0.12000)' stroke='none'> <path d='M1954 2476 c-37 -16 -64 -51 -64 -84 0 -51 27 -78 124 -126 222 -108 379 -295 448 -533 20 -67 23 -100 22 -238 0 -152 -2 -165 -32 -255 -78 -235 -230 -404 -463 -514 -76 -36 -99 -61 -99 -107 0 -50 49 -99 101 -99 11 0 49 14 86 30 211 96 412 295 509 505 66 144 86 233 91 410 6 184 -11 292 -66 430 -96 239 -288 445 -513 549 -96 45 -107 47 -144 32z'/> <path d='M1185 2215 l-260 -153 0 -562 0 -562 260 -154 c143 -84 270 -154 283 -154 33 0 76 25 98 57 18 27 19 61 22 797 2 752 2 770 -18 810 -21 45 -64 76 -102 75 -12 0 -140 -70 -283 -154z'/> <path d='M1812 2036 c-38 -18 -56 -57 -48 -105 7 -46 27 -65 96 -90 80 -29 151 -95 192 -179 30 -60 33 -75 33 -157 0 -82 -3 -97 -32 -156 -40 -81 -103 -141 -188 -180 -73 -33 -105 -68 -105 -115 0 -39 39 -90 75 -96 33 -7 127 26 190 66 76 49 122 93 164 155 157 235 130 520 -69 722 -111 113 -235 167 -308 135z'/> <path d='M384 1951 c-66 -40 -64 -27 -64 -444 0 -407 2 -420 53 -449 15 -9 85 -15 215 -18 l192 -5 0 468 0 467 -182 0 c-163 0 -187 -2 -214 -19z'/> </g>",
+close: "<g><path d=\"M13.414 12l5.793-5.793c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0L12 10.586 6.207 4.793c-.39-.39-1.023-.39-1.414 0s-.39 1.023 0 1.414L10.586 12l-5.793 5.793c-.39.39-.39 1.023 0 1.414.195.195.45.293.707.293s.512-.098.707-.293L12 13.414l5.793 5.793c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L13.414 12z\"></path></g>",
 end:""
 }]]></varValue>
       <functionParam />
