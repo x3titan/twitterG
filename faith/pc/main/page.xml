@@ -263,6 +263,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>785</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -451,6 +452,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.993630573248408</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.262008733624454</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -12127,6 +12129,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>粉丝列表</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -28415,7 +28418,6 @@ sender.renderItem = function(root) {
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -32248,7 +32250,6 @@ eb.initMouseEvent(sender);
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName>手机弹出菜单</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.c_titleBg = ee.getControl("panel562");
@@ -32258,6 +32259,11 @@ sender.c_userName = ee.getControl("panel575");
 sender.c_followInfo = ee.getControl("panel576");
 
 sender.show = function() {
+    this.refresh();
+    ee.setVisible(sender, true);
+    ee.setVisible(sender.parentNode, true);
+    ee.setRect(sender, 0,null,null,null);
+    return;
     ee.setVisible(this, false);
     ee.setVisible(this.parentNode, false);
     sender.className = "";
@@ -32274,6 +32280,10 @@ sender.show = function() {
 }
 
 sender.close = function() {
+    ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
+    return;
+
     sender.className = "";
     ee.setRect(this, 0,null,null,null);
     var r = eb.getDivRectSetting(this);
