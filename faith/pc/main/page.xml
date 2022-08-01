@@ -10408,6 +10408,7 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>通知</layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -12126,7 +12127,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>粉丝列表</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -41361,7 +41361,7 @@ updateMain.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="110">
+  <g5Items count="112">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -44106,6 +44106,7 @@ for (var j=0; j<currentItemsArr.length; j++) {
     }
 }
 
+g5.RM_ProcessResize();
 
 if (g5.isMobile) {
     var pButton = false;
@@ -44196,6 +44197,21 @@ ee.setRect(g5.pLine1, left+p1w,null,null,null);
 ee.setRect(g5.pLine2, left+p1w+p2w,null,null,null);
 
 eb.processDock();]]></functionCode>
+    </item>
+    <item name="RM_ProcessResize" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode>var clientSize = eb.getClientSize();
+if ((g5.RM_LastCW == clientSize.w) &amp;&amp; (g5.RM_LastCH == clientSize.h)) return;
+g5.RM_LastCW = clientSize.w;
+g5.RM_LastCH = clientSize.h;
+g5.RM_OnResize(g5.RM_LastCW,g5.RM_LastCH);</functionCode>
+    </item>
+    <item name="RM_OnResize" type="20">
+      <varValue />
+      <functionParam>w,h</functionParam>
+      <functionCode>
+      </functionCode>
     </item>
     <item name="refreshScreen" type="20">
       <varValue />
