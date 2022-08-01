@@ -12262,9 +12262,7 @@ sender.loadFromDB = function() {
             sender.v_items.push(item);
         }
         eb.processDock();
-        var rect = eb.getDivRectSetting(g5.p4);
-        ee.tiledV(sender, 0, rect.h, 500);
-         
+        
         if (itemCount<=0) {
             sender.v_status = "noResult";
             var item = createPanel(sender, "p2p15end", "", 0, cy, itemWidth, 60);
@@ -12273,14 +12271,21 @@ sender.loadFromDB = function() {
         } else {
             sender.v_status = "normal";
         }
-        if (sender.v_items.length>0) {
-            var rect1 = eb.getDivRect(sender.v_items[sender.v_items.length-1]);
-            ee.tiledV(sender, 0, rect.h, eb.getClientSize().h - eb.getDivRect(sender.v_items[sender.v_items.length-1]).h - rect.h + 2); 
-        }
-        ee.tiledResizeV(sender, 2);
+        
+        sender.processBottom();
     }
     g5.loading.show();
     showFansList();               
+}
+
+sender.processBottom = function() {
+    var rect = eb.getDivRectSetting(g5.p4);
+    ee.tiledV(sender, 0, rect.h, 500);
+    if (sender.v_items.length>0) {
+        var rect1 = eb.getDivRect(sender.v_items[sender.v_items.length-1]);
+        ee.tiledV(sender, 0, rect.h, eb.getClientSize().h - eb.getDivRect(sender.v_items[sender.v_items.length-1]).h - rect.h + 2); 
+    }
+    ee.tiledResizeV(sender, 2);
 }
 
 sender.loadRecord = function(panel, dataset, index) {
@@ -44210,8 +44215,9 @@ g5.RM_OnResize(g5.RM_LastCW,g5.RM_LastCH);</functionCode>
     <item name="RM_OnResize" type="20">
       <varValue />
       <functionParam>w,h</functionParam>
-      <functionCode>
-      </functionCode>
+      <functionCode>if (g5.currentPageIndex == 14) {
+    g5.p2.p15.processBottom();
+}</functionCode>
     </item>
     <item name="refreshScreen" type="20">
       <varValue />
