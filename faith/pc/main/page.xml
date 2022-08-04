@@ -139,6 +139,38 @@ ee.setText = function (panel, text) {
             addText(panel, text, "center", "middle", "宋体", 9, "#000000", "normal");
         }
         //if (panel._input) panel._inputHint = text;
+    }
+
+
+
+ee.setOnClick = function (div, func) {
+        div.eeOnClick = func;
+        if ("ontouchstart" in window) {
+            eb.addEvent(div, "touchstart", function (event) {
+                div.eeMouseDownX = event.changedTouches[0].screenX;
+                div.eeMouseDownY = event.changedTouches[0].screenY;
+                div.eeTouchStartTime = new Date();
+            }, false);
+            eb.addEvent(div, "touchend", function (event) {
+                var d = Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX);
+                d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
+                if ((d < 10) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 300000)) {
+                    if (div.eeOnClick) {
+                        //setTimeout(function () { //?
+                        div.eeOnClick(div, event);
+                        //}, 1);
+                    }
+                }
+            }, false);
+            eb.addEvent(div, "touchmove", function (event) {
+            }, false);
+        } else {
+            eb.addEvent(div, "click", function (event) {
+                if (div.eeOnClick) {
+                    div.eeOnClick(div, event);
+                }
+            }, false);
+        }
     }]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammerDecode.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -24829,6 +24861,13 @@ sender.eeMouseUp = function(sender, event, x, y) {
         sender.style.backgroundColor = "#dfeffa";
     }
 }
+if ("ontouchstart" in window) {
+    eb.addEvent(sender, "touchcancel", function (event) {
+        sender.style.backgroundColor = "";
+        console.log("touch cancel");
+    }, false);
+}
+
 eb.initMouseEvent(sender);]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
