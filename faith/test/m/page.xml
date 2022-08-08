@@ -19,7 +19,7 @@
             eb.addEvent(div, "touchend", function (event) {
                 var d = Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX);
                 d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
-                if ((d < 10) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 300000)) {
+                if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 600)) {
                     if (div.eeOnClick) {
                         //setTimeout(function () { //?
                         div.eeOnClick(div, event);
@@ -36,7 +36,31 @@
                 }
             }, false);
         }
-    }]]></onPageCreate>
+    }
+
+ee.setOnMouseEnter = function (div, func) {
+        div.eeOnMouseEnter = func;
+        if (!("ontouchstart" in window)) {
+            eb.addEvent(div, "mouseenter", function (e) {
+                div.eeOnMouseEnter(div, e);
+            }, false);
+            eb.addEvent(div, "mouseover", function (e) {
+                div.eeOnMouseEnter(div, e);
+            }, false);
+        }
+    }
+ee.setOnMouseLeave = function (div, func) {
+        div.eeOnMouseLeave = func;
+        if (!("ontouchstart" in window)) {
+            eb.addEvent(div, "mouseleave", function (e) {
+                div.eeOnMouseLeave(div, e);
+            }, false);
+            eb.addEvent(div, "mouseout", function (e) {
+                div.eeOnMouseLeave(div, e);
+            }, false);
+        }
+    }
+]]></onPageCreate>
       <pageHead><![CDATA[<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <style>
@@ -2663,12 +2687,15 @@ sender.init(0);
       <layerVisible>false</layerVisible>
       <left>49</left>
       <leftRatio>0.0427947598253275</leftRatio>
-      <onClick>g5.writeLog("click");
+      <onClick>g5.writeLog("==============click===============");
+if (!sender.v_count) sender.v_count=0;
+sender.v_count++;
+g5.writeLog(sender.v_count, true);
 window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 26 26\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:5px 0px 0px 4px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">"+g5.icon.back+"</svg>";
 sender.style.borderRadius = "50%";
 ee.setOnMouseEnter(sender, function(sender,event) {
-    g5.writeLog("mouse enter");    
+    g5.writeLog("mouse enter..");    
     if ("ontouchstart" in window) {
     } else {
         sender.style.backgroundColor = "#dfeffa";
