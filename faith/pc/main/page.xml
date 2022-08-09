@@ -154,7 +154,7 @@ ee.setOnClick = function (div, func) {
             eb.addEvent(div, "touchend", function (event) {
                 var d = Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX);
                 d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
-                if ((d < 10) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 300000)) {
+                if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 600)) {
                     if (div.eeOnClick) {
                         //setTimeout(function () { //?
                         div.eeOnClick(div, event);
@@ -169,6 +169,29 @@ ee.setOnClick = function (div, func) {
                 if (div.eeOnClick) {
                     div.eeOnClick(div, event);
                 }
+            }, false);
+        }
+    }
+
+ee.setOnMouseEnter = function (div, func) {
+        div.eeOnMouseEnter = func;
+        if (!("ontouchstart" in window)) {
+            eb.addEvent(div, "mouseenter", function (e) {
+                div.eeOnMouseEnter(div, e);
+            }, false);
+            eb.addEvent(div, "mouseover", function (e) {
+                div.eeOnMouseEnter(div, e);
+            }, false);
+        }
+    }
+ee.setOnMouseLeave = function (div, func) {
+        div.eeOnMouseLeave = func;
+        if (!("ontouchstart" in window)) {
+            eb.addEvent(div, "mouseleave", function (e) {
+                div.eeOnMouseLeave(div, e);
+            }, false);
+            eb.addEvent(div, "mouseout", function (e) {
+                div.eeOnMouseLeave(div, e);
             }, false);
         }
     }]]></onPageCreate>
@@ -24797,6 +24820,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName>粉丝列表</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -24807,7 +24831,8 @@ sender.style.borderLeft = "";
 sender.style.borderRight = "";
 </onCreate>
       <sizeRatio>0.089527027027027</sizeRatio>
-      <top>0</top>
+      <top>-1</top>
+      <topRatio>-0.0102040816326531</topRatio>
       <width>592</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -24855,17 +24880,11 @@ sender.eeMouseDown = function(sender, event, x, y) {
     sender.style.backgroundColor = "#cfdfea";
 }
 sender.eeMouseUp = function(sender, event, x, y) {
-    if (g5.isMobile) {
+    if ("ontouchstart" in window) {
         sender.style.backgroundColor = "";
     } else {
         sender.style.backgroundColor = "#dfeffa";
     }
-}
-if ("ontouchstart" in window) {
-    eb.addEvent(sender, "touchcancel", function (event) {
-        sender.style.backgroundColor = "";
-        console.log("touch cancel");
-    }, false);
 }
 
 eb.initMouseEvent(sender);]]></onCreate>
@@ -24883,7 +24902,6 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName>关注列表</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -24941,8 +24959,13 @@ sender.eeMouseDown = function(sender, event, x, y) {
     sender.style.backgroundColor = "#cfdfea";
 }
 sender.eeMouseUp = function(sender, event, x, y) {
-    sender.style.backgroundColor = "#dfeffa";
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+    } else {
+        sender.style.backgroundColor = "#dfeffa";
+    }
 }
+
 eb.initMouseEvent(sender);]]></onCreate>
       <sizeRatio>1</sizeRatio>
       <text><![CDATA[<]]></text>
