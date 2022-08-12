@@ -156,9 +156,11 @@ ee.setOnClick = function (div, func) {
                 d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
                 if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 600)) {
                     if (div.eeOnClick) {
-                        //setTimeout(function () { //?
-                        div.eeOnClick(div, event);
-                        //}, 1);
+                        if (div.eeOnClick(div, event) == false) {
+                            window.event? window.event.cancelBubble = true : event.stopPropagation();
+                            event.returnValue = false;
+                            return false;
+                        }
                     }
                 }
             }, false);
@@ -167,7 +169,11 @@ ee.setOnClick = function (div, func) {
         } else {
             eb.addEvent(div, "click", function (event) {
                 if (div.eeOnClick) {
-                    div.eeOnClick(div, event);
+                    if (div.eeOnClick(div, event) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
                 }
             }, false);
         }
@@ -194,7 +200,69 @@ ee.setOnMouseLeave = function (div, func) {
                 div.eeOnMouseLeave(div, e);
             }, false);
         }
-    }]]></onPageCreate>
+    }
+
+
+eb.initMouseEvent = function (div) {
+        if ("ontouchstart" in window) {
+            if (div.eeMouseDown) {
+                eb.addEvent(div, "touchstart", function (event) {
+                    if (div.eeMouseDown(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+            if (div.eeMouseUp) {
+                eb.addEvent(div, "touchend", function (event) {
+                    if (div.eeMouseUp(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+            if (div.eeMouseMove) {
+                eb.addEvent(div, "touchmove", function (event) {
+                    if (div.eeMouseMove(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+        } else {
+            if (div.eeMouseDown) {
+                eb.addEvent(div, "mousedown", function (event) {
+                    if (div.eeMouseDown(div, event, event.x, event.y) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+            if (div.eeMouseUp) {
+                eb.addEvent(div, "mouseup", function (event) {
+                    if (div.eeMouseUp(div, event, event.x, event.y) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+            if (div.eeMouseMove) {
+                eb.addEvent(div, "mousemove", function (event) {
+                    if (div.eeMouseMove(div, event, event.x, event.y) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+        }
+    }
+]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammerDecode.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
@@ -506,7 +574,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.993630573248408</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.262008733624454</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -18430,7 +18497,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>756</height>
       <heightRatio>0.969230769230769</heightRatio>
       <layerName>发短文手机版</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel587");
@@ -18676,7 +18742,11 @@ sender.eeMouseDown = function(sender, event, x, y) {
     sender.style.backgroundColor = "#cfdfea";
 }
 sender.eeMouseUp = function(sender, event, x, y) {
-    sender.style.backgroundColor = "#dfeffa";
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+    } else {
+        sender.style.backgroundColor = "#dfeffa";
+    }
 }
 eb.initMouseEvent(sender);]]></onCreate>
       <sizeRatio>1</sizeRatio>
@@ -23641,6 +23711,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.12484076433121</heightRatio>
       <layerName>===P4===</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.264628820960699</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -25248,6 +25319,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>106</height>
       <heightRatio>1.08163265306122</heightRatio>
       <layerName>搜索页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -42221,7 +42293,6 @@ if ((root.v_mode.charAt(2) != "x") &amp;&amp; (root.v_content.status!="DEL"))  {
         sender.style.backgroundColor = "#ffffff";
     });
     root.eeMouseDown = function(sender,event,x,y) {
-        if (event.target!=root) return;
         sender.style.backgroundColor = "rgb(242,245,247)";
     }
     root.eeMouseUp = function(sender,event,x,y) {
@@ -42391,7 +42462,6 @@ root.c_titleText.id = root.id + "_titleText";
 root.c_titleText.v_userName = root.v_userInfo.userName;
 ee.setOnClick(root.c_titleText,function(sender,event) {
     g5.p2.p2.show(root.v_userInfo);
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
 ee.setOnMouseEnter(root.c_titleText,function(sender,e){
     sender.childNodes[0].style.textDecoration="underline";
@@ -42399,7 +42469,10 @@ ee.setOnMouseEnter(root.c_titleText,function(sender,e){
 ee.setOnMouseLeave(root.c_titleText,function(sender,e){
     sender.childNodes[0].style.textDecoration="";
 });
-
+root.c_titleText.eeMouseDown = function(sender, event, x, y) {
+    return false;
+}
+eb.initMouseEvent(root.c_titleText);
 
 //right corner button
 c = createPanel(root, root.id+"_optionBtn1", "", w-45, 6, 27, 27);
@@ -42430,6 +42503,7 @@ ee.setOnClick(c,function(sender,event) {
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#cfdfea";
     sender.childNodes[0].style.color = "rgb(29,161,242)";
+    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -42976,6 +43050,7 @@ ee.setOnClick(c,function(sender,event) {
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#cfdfea";
     sender.childNodes[0].style.color = "rgb(29,161,242)";
+    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -43027,6 +43102,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#cee2db";
     sender.childNodes[0].style.color = "#17bf63";
+    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -43073,6 +43149,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#e3d3db";
     sender.childNodes[0].style.color = "#e23c70";
+    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -43116,6 +43193,7 @@ ee.setOnMouseLeave(c, function(sender,event) {
 });
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#cfdfea";
+    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
