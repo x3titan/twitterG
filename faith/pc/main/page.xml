@@ -24002,7 +24002,11 @@ sender.eeMouseDown = function(sender,event,x,y) {
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = s.color1;
+    } else {
+        sender.style.backgroundColor = s.color2;
+    }
     setTimeout(function() {
         ee.setText(sender, s.text2);
     }, 1000); 
@@ -25585,7 +25589,11 @@ sender.eeMouseDown = function(sender,event,x,y) {
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = s.color1;
+    } else {
+        sender.style.backgroundColor = s.color2;
+    }
     setTimeout(function() {
         ee.setText(sender, s.text2);
     }, 1000); 
@@ -42212,6 +42220,18 @@ if ((root.v_mode.charAt(2) != "x") &amp;&amp; (root.v_content.status!="DEL"))  {
     ee.setOnMouseLeave(root, function(sender,e){
         sender.style.backgroundColor = "#ffffff";
     });
+    root.eeMouseDown = function(sender,event,x,y) {
+        if (event.target!=root) return;
+        sender.style.backgroundColor = "rgb(242,245,247)";
+    }
+    root.eeMouseUp = function(sender,event,x,y) {
+        if ("ontouchstart" in window) {
+            sender.style.backgroundColor = "#ffffff";
+        } else {
+            sender.style.backgroundColor = "rgb(245,248,250)";
+        }
+    }
+    eb.initMouseEvent(root);
 }
  
 if (root.v_content.exUplinkType == "L") {
@@ -42267,6 +42287,20 @@ ee.setOnMouseLeave(c, function(sender,e) {
     sender.style.webkitFilter="brightness(100%)";
     sender.style.filter="brightness(100%)";
 });
+c.eeMouseDown = function(sender,event,x,y) {
+    sender.style.webkitFilter="brightness(70%)";
+    sender.style.filter="brightness(70%)";
+}
+c.eeMouseUp = function(sender,event,x,y) {
+    if ("ontouchstart" in window) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+    } else {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+    }
+}
+eb.initMouseEvent(c);
 
 var mainWidth = parseInt(w-95);
     
@@ -42393,6 +42427,21 @@ ee.setOnClick(c,function(sender,event) {
     }
     window.event? window.event.cancelBubble = true : event.stopPropagation();
 });
+c.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#cfdfea";
+    sender.childNodes[0].style.color = "rgb(29,161,242)";
+}
+c.eeMouseUp = function(sender,event,x,y) {
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+        sender.childNodes[0].style.color = "rgb(101,119,134)";
+    } else {
+        sender.style.backgroundColor = "#dfeffa";
+        sender.childNodes[0].style.color = "rgb(29,161,242)";
+    }
+}
+eb.initMouseEvent(c);
+
 
 //reUsername
 /*
