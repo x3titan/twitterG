@@ -42660,7 +42660,11 @@ if (root.v_content.photos.length>0) {
     c.v_photos = root.v_content.photos;
     c.v_mode = "";
     g5.refreshPhoto(c);
-    root.c_photos = c;
+    root.c_photos = c; 
+    c.eeMouseDown = function(sender,event,x,y) {
+        return false;
+    }
+    eb.initMouseEvent(c);
 } else {
     cy +=10;
 }
@@ -42809,6 +42813,19 @@ if (!showRe) {
     ee.setOnMouseLeave(c, function(sender,e){
         sender.style.backgroundColor = "";
     });
+    c.eeMouseDown = function(sender,event,x,y) {
+        sender.style.backgroundColor = "rgb(232,235,237)";
+        return false;
+    }
+    c.eeMouseUp = function(sender,event,x,y) {
+        if ("ontouchstart" in window) {
+            sender.style.backgroundColor = "";
+        } else {
+            sender.style.backgroundColor = "rgb(237,240,242)";
+        }
+    }
+    eb.initMouseEvent(c);
+    
     c.v_uplinkId = root.v_content.uplinkId
     ee.setOnClick(c,function(sender,event) {
         root.v_reContent.uplinkType = "";
@@ -42843,6 +42860,22 @@ if (!showRe) {
         sender.style.webkitFilter="brightness(100%)";
         sender.style.filter="brightness(100%)";
     });
+    c.eeMouseDown = function(sender,event,x,y) {
+        sender.style.webkitFilter="brightness(70%)";
+        sender.style.filter="brightness(70%)";
+        return false;
+    }
+    c.eeMouseUp = function(sender,event,x,y) {
+        if ("ontouchstart" in window) {
+            sender.style.webkitFilter="brightness(100%)";
+            sender.style.filter="brightness(100%)";
+        } else {
+            sender.style.webkitFilter="brightness(80%)";
+            sender.style.filter="brightness(80%)";
+        }
+    }
+    eb.initMouseEvent(c);
+    
     //reUserName,reNickName,reTime
     c = createPanel(cRe, root.id+"_panel11s", "", 39, 10, p1w-60, null);
     root.c_reTitle = c;
@@ -42888,6 +42921,10 @@ if (!showRe) {
         c.v_mode = "";
         g5.refreshPhoto(c);
         root.c_rePhotos = c;
+        c.eeMouseDown = function(sender,event,x,y) {
+            return false;
+        }
+        eb.initMouseEvent(c);
     }
 } else if (root.v_content.uplinkType == "F") {
     var p1ratio = 2.64;
