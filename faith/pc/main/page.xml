@@ -149,12 +149,14 @@ ee.setOnClick = function (div, func) {
             eb.addEvent(div, "touchstart", function (event) {
                 div.eeMouseDownX = event.changedTouches[0].screenX;
                 div.eeMouseDownY = event.changedTouches[0].screenY;
+                div.i_clickCanceled = false;
                 div.eeTouchStartTime = new Date();
             }, false);
             eb.addEvent(div, "touchend", function (event) {
-                var d = Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX);
-                d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
-                if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 600)) {
+                var d = Math.pow(Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX),2);
+                d += Math.pow(Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY),2);
+                d = Math.sqrt(d);
+                if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 600) &amp;&amp; (!div.i_clickCanceled)) {
                     if (div.eeOnClick) {
                         if (div.eeOnClick(div, event) == false) {
                             window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -165,6 +167,15 @@ ee.setOnClick = function (div, func) {
                 }
             }, false);
             eb.addEvent(div, "touchmove", function (event) {
+                var d = Math.pow(Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX),2);
+                d += Math.pow(Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY),2);
+                d = Math.sqrt(d);
+                if ((d>20) &amp;&amp; (!div.i_clickCanceled)) {
+                    div.i_clickCanceled = true;
+                    if (div.eeOnClickCancel) {
+                        div.eeOnClickCancel(div, event);
+                    }
+                }
             }, false);
         } else {
             eb.addEvent(div, "click", function (event) {
