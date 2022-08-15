@@ -159,6 +159,13 @@ ee.setOnClick = function (div, func) {
                 if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 600) &amp;&amp; (!div.i_clickCanceled)) {
                     if (div.eeOnClick) {
                         if (div.eeOnClick(div, event) == false) {
+                            var d = div.parentNode;
+                            while (d) {
+                                if (d.eeOnClickCancel) {
+                                    d.eeOnClickCancel(d, event);
+                                }
+                                d = d.parentNode;
+                            }
                             window.event? window.event.cancelBubble = true : event.stopPropagation();
                             event.returnValue = false;
                             return false;
@@ -42353,6 +42360,9 @@ if ((root.v_mode.charAt(2) != "x") &amp;&amp; (root.v_content.status!="DEL"))  {
             sender.style.backgroundColor = "rgb(245,248,250)";
         }
     }
+    root.eeOnClickCancel = function(sender,event) {
+        sender.style.backgroundColor = "#ffffff";
+    }
     eb.initMouseEvent(root);
 }
  
@@ -42875,6 +42885,9 @@ if (!showRe) {
             sender.style.backgroundColor = "rgb(237,240,242)";
         }
     }
+    c.eeOnClickCancel = function(sender,event) {
+        sender.style.backgroundColor = "";
+    }
     eb.initMouseEvent(c);
     
     c.v_uplinkId = root.v_content.uplinkId
@@ -43000,7 +43013,7 @@ if (!showRe) {
     ee.setOnClick(c,function(sender,event) {
         root.v_reContent.uplinkType = "";
         g5.p2.p9.show(root.v_reContent,null,root.v_reUserInfo, null);
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
+        return false;
     });
     c.eeMouseDown = function(sender,event,x,y) {
         sender.style.backgroundColor = "rgb(232,235,237)";
@@ -43012,6 +43025,9 @@ if (!showRe) {
         } else {
             sender.style.backgroundColor = "rgb(237,240,242)";
         }
+    }
+    c.eeOnClickCancel = function(sender,event) {
+        sender.style.backgroundColor = "";
     }
     eb.initMouseEvent(c);
     
