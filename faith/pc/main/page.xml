@@ -42351,6 +42351,15 @@ if ((root.v_mode.charAt(2) != "x") &amp;&amp; (root.v_content.status!="DEL"))  {
         sender.style.backgroundColor = "#ffffff";
     });
     root.eeMouseDown = function(sender,event,x,y) {
+        var t=event.target;
+        while (true) {
+            if (t==sender) break;
+            if (!t) break;
+            if (t.eeOnClick) {
+                return;
+            }
+            t = t.parentNode;
+        }
         sender.style.backgroundColor = "rgb(242,245,247)";
     }
     root.eeMouseUp = function(sender,event,x,y) {
@@ -42422,7 +42431,6 @@ ee.setOnMouseLeave(c, function(sender,e) {
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.webkitFilter="brightness(70%)";
     sender.style.filter="brightness(70%)";
-    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -42433,47 +42441,15 @@ c.eeMouseUp = function(sender,event,x,y) {
         sender.style.filter="brightness(80%)";
     }
 }
+c.eeOnClickCancel = function(sender,event) {
+    sender.style.webkitFilter="brightness(100%)";
+    sender.style.filter="brightness(100%)";
+}
 eb.initMouseEvent(c);
 
 var mainWidth = parseInt(w-95);
     
 //v_titleText
-/*
-c = createPanel(root, root.id+"_panel16", "", 78, cy-1, mainWidth-80, null); cy+=17;
-c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-c.style.fontSize = "12pt";
-c.style.whiteSpace = "nowrap";
-c.style.cursor="pointer";
-root.v_titleText = c;
-var temp = "";
-if (root.v_mode.charAt(2) == "x") {
-    temp = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-175)+"px'><b>" + root.v_userInfo.nickName + "</b></div>";
-    temp += "<font color='#808080'></font>";
-    c.innerHTML = temp;
-    root.c_titleText = c.childNodes[0];
-    root.c_forceTopLabel = c.childNodes[1]; 
-    c.v_username = root.v_userInfo.userName;
-    
-    cy += 5;
-    c = createPanel(root, root.id+"_panel16x", "", 78, cy-1, mainWidth-80, null);
-    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    c.style.fontSize = "12pt";
-    c.style.whiteSpace = "nowrap";
-    c.style.cursor="pointer";
-    c.innerHTML = "<font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font>";
-    cy = 59 + 5;
-} else {
-    temp = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-290)+"px'><b>" + root.v_userInfo.nickName + "</b> <font color='#808080' style='font-size:12pt'>@" + root.v_userInfo.userName + "</font></div>";
-    temp+="<font> · </font><font>" + g5.getMins(root.v_content.seconds) + "</font>";
-    temp += "<font color='#808080'></font>";
-    c.innerHTML = temp;
-    root.c_username = c.childNodes[0]; 
-    root.c_titleText = c.childNodes[0];
-    root.v_timeLabel = c.childNodes[2]; 
-    root.c_forceTopLabel = c.childNodes[3]; 
-    c.v_username = root.v_userInfo.userName;
-}
-*/
 c = createPanel(root, root.id+"_panel16", "", 78, cy-1, mainWidth-30, null); cy+=17;
 c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
 c.style.fontSize = "12pt";
@@ -42524,6 +42500,7 @@ root.c_titleText.id = root.id + "_titleText";
 root.c_titleText.v_userName = root.v_userInfo.userName;
 ee.setOnClick(root.c_titleText,function(sender,event) {
     g5.p2.p2.show(root.v_userInfo);
+    return false;
 });
 ee.setOnMouseEnter(root.c_titleText,function(sender,e){
     sender.childNodes[0].style.textDecoration="underline";
@@ -42531,8 +42508,18 @@ ee.setOnMouseEnter(root.c_titleText,function(sender,e){
 ee.setOnMouseLeave(root.c_titleText,function(sender,e){
     sender.childNodes[0].style.textDecoration="";
 });
-root.c_titleText.eeMouseDown = function(sender, event, x, y) {
-    return false;
+root.c_titleText.eeMouseDown = function(sender,event,x,y) {
+    sender.childNodes[0].style.textDecoration="underline";
+}
+root.c_titleText.eeMouseUp = function(sender,event,x,y) {
+    if ("ontouchstart" in window) {
+        sender.childNodes[0].style.textDecoration="";
+    } else {
+        sender.childNodes[0].style.textDecoration="underline";
+    }
+}
+root.c_titleText.eeOnClickCancel = function(sender,event) {
+    sender.childNodes[0].style.textDecoration="";
 }
 eb.initMouseEvent(root.c_titleText);
 
@@ -42560,12 +42547,11 @@ ee.setOnClick(c,function(sender,event) {
         g5.popup1.p3.v_isBookMark = root.v_isBookMark;
         g5.popup1.p3.show(sender, root.v_content, root.v_userInfo);
     }
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    return false;
 });
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#cfdfea";
     sender.childNodes[0].style.color = "rgb(29,161,242)";
-    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -42575,6 +42561,10 @@ c.eeMouseUp = function(sender,event,x,y) {
         sender.style.backgroundColor = "#dfeffa";
         sender.childNodes[0].style.color = "rgb(29,161,242)";
     }
+}
+c.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
+    sender.childNodes[0].style.color = "rgb(101,119,134)";
 }
 eb.initMouseEvent(c);
 
@@ -42875,8 +42865,16 @@ if (!showRe) {
         sender.style.backgroundColor = "";
     });
     c.eeMouseDown = function(sender,event,x,y) {
+        var t=event.target;
+        while (true) {
+            if (t==sender) break;
+            if (!t) break;
+            if (t.eeOnClick) {
+                return;
+            }
+            t = t.parentNode;
+        }
         sender.style.backgroundColor = "rgb(232,235,237)";
-        return false;
     }
     c.eeMouseUp = function(sender,event,x,y) {
         if ("ontouchstart" in window) {
@@ -43016,8 +43014,16 @@ if (!showRe) {
         return false;
     });
     c.eeMouseDown = function(sender,event,x,y) {
+        var t=event.target;
+        while (true) {
+            if (t==sender) break;
+            if (!t) break;
+            if (t.eeOnClick) {
+                return;
+            }
+            t = t.parentNode;
+        }
         sender.style.backgroundColor = "rgb(232,235,237)";
-        //return false;
     }
     c.eeMouseUp = function(sender,event,x,y) {
         if ("ontouchstart" in window) {
@@ -43177,12 +43183,11 @@ ee.setOnClick(c,function(sender,event) {
     } else {
         g5.popBlack.a3.showRe(root.v_content.clone(),root.v_reContent.clone(),root.v_userInfo,root.v_reUserInfo);
     }
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    return false;
 });
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#cfdfea";
     sender.childNodes[0].style.color = "rgb(29,161,242)";
-    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -43192,6 +43197,10 @@ c.eeMouseUp = function(sender,event,x,y) {
         sender.style.backgroundColor = "#dfeffa";
         sender.childNodes[0].style.color = "rgb(29,161,242)";
     }
+}
+c.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
+    sender.childNodes[0].style.color = "rgb(101,119,134)";
 }
 eb.initMouseEvent(c);
 
@@ -43221,7 +43230,7 @@ ee.setOnClick(c,function(sender,event) {
         g5.popup1.p2.show(sender, root.v_content, root.v_reContent, root.v_userInfo, root.v_reUserInfo);
         break;
     }
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    return false;
 });
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#def2eb";
@@ -43234,7 +43243,6 @@ ee.setOnMouseLeave(c, function(sender,event) {
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#cee2db";
     sender.childNodes[0].style.color = "#17bf63";
-    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -43244,6 +43252,10 @@ c.eeMouseUp = function(sender,event,x,y) {
         sender.style.backgroundColor = "#def2eb";
         sender.childNodes[0].style.color = "#17bf63";
     }
+}
+c.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
+    sender.childNodes[0].style.color = sender.v_defaultColor;
 }
 eb.initMouseEvent(c);
 c.init(root.v_content.isForward ? 1:0);
@@ -43268,7 +43280,7 @@ c.init = function(styleIndex) {
 }
 ee.setOnClick(c,function(sender,event) {
     g5.setLike(root);
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    return false;
 });
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#f3e3eb";
@@ -43281,7 +43293,6 @@ ee.setOnMouseLeave(c, function(sender,event) {
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#e3d3db";
     sender.childNodes[0].style.color = "#e23c70";
-    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -43291,6 +43302,10 @@ c.eeMouseUp = function(sender,event,x,y) {
         sender.style.backgroundColor = "#f3e3eb";
         sender.childNodes[0].style.color = "#e23c70";
     }
+}
+c.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
+    sender.childNodes[0].style.color = sender.v_defaultColor;
 }
 eb.initMouseEvent(c);
 c.init(root.v_content.isLike ? 1:0);
@@ -43315,7 +43330,7 @@ c.init = function(styleIndex) {
 }
 ee.setOnClick(c,function(sender,event) {
     g5.setUnlike(root);
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    return false;
 });
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#dfeffa";
@@ -43325,7 +43340,6 @@ ee.setOnMouseLeave(c, function(sender,event) {
 });
 c.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#cfdfea";
-    return false;
 }
 c.eeMouseUp = function(sender,event,x,y) {
     if ("ontouchstart" in window) {
@@ -43335,6 +43349,9 @@ c.eeMouseUp = function(sender,event,x,y) {
     }
 }
 eb.initMouseEvent(c);
+c.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
+}
 c.init(root.v_content.isUnlike ? 1:0);
 
 //4 label
@@ -46133,7 +46150,7 @@ if ((root.v_photo.substr(0,4) == "?YTB") &amp;&amp; (!g5.YTReady)) {
     ee.setOnClick(root, function(sender, event) {
         g5.popBlack.a2.show(sender.parentNode.v_photos, sender.v_photo);
         g5.player.stop();
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
+        return false;
     }); 
 }
 //ee.getControl("panel53").style.pointerEvents = "none";
