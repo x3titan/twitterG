@@ -837,6 +837,7 @@ sender.parentNode.eeMouseDown = function(senderM, event) {
     if (g5.currentPageIndex!=0) return;
     sender.v_move = true;
     sender.v_downY = event.touches[0].screenY;
+    sender.v_downScroll = document.documentElement.scrollTop;
     sender.className = "";
     sender.v_loadNew = 0;
     g5.p2.p33.className = "";
@@ -879,7 +880,7 @@ sender.parentNode.eeMouseMove = function(senderM, event) {
     if (!sender.v_move) return;
     if (!g5.isMobile) return;
     //g5.writeLog(sender.v_downY - event.touches[0].screenY);
-    var dy = sender.v_downY - event.touches[0].screenY;
+    var dy = sender.v_downY - event.touches[0].screenY + sender.v_downScroll;
     if ((document.documentElement.scrollTop == 0) &amp;&amp; (dy<0)) {
         var maxH = eb.getDivRectSetting(g5.p2.p33).h;
         var maxMouseY = 600;
@@ -893,7 +894,7 @@ sender.parentNode.eeMouseMove = function(senderM, event) {
             sender.v_loadNew = 1;
         } else sender.v_loadNew = 0;
         g5.p2.p33.show();
-        event.preventDefault();
+        //event.preventDefault();
         //g5.writeLog("fire");
     }
     //event.y;
@@ -23824,7 +23825,6 @@ setTimeout(function() {
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName>主页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -24129,15 +24129,8 @@ sender.init(0);
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick>g5.popBlack.a9.show();</onClick>
-      <onCreate><![CDATA[sender.style.cursor="pointer";
-/*
-sender.innerHTML = "<svg viewBox=\"-3 -2 24 24\" style=\"font-size: 13px;height:2.5em;width:2.5em;margin:8px 8px 8px 8px;color:rgb(255,255,255);fill: currentcolor;vertical-align:middle;\">" + g5.icon.menu + "</svg>";
-var r = eb.getDivRectSetting(sender);
-var r2 = parseInt(r.h/2) + "px";
-sender.style.borderRadius = "0 "+r2+" "+r2+" 0";
-*/
-]]></onCreate>
+      <onCreate>sender.style.cursor="pointer";
+</onCreate>
       <sizeRatio>0.803030303030303</sizeRatio>
       <text>Menu</text>
       <top>0</top>
@@ -24155,18 +24148,35 @@ sender.style.borderRadius = "0 "+r2+" "+r2+" 0";
       <left>15</left>
       <leftRatio>0.227272727272727</leftRatio>
       <note>c_userPhoto</note>
+      <onClick>g5.popBlack.a9.show();
+return false;</onClick>
       <onCreate>sender.style.borderRadius = "50%";
-if (!g5.isMobile) {
-    ee.setOnMouseEnter(c, function(sender,e) {
-        sender.style.webkitFilter="brightness(80%)";
-        sender.style.filter="brightness(80%)";
-    });
-    ee.setOnMouseLeave(c, function(sender,e) {
+ee.setOnMouseEnter(sender, function(sender,e) {
+    sender.style.webkitFilter="brightness(80%)";
+    sender.style.filter="brightness(80%)";
+});
+ee.setOnMouseLeave(sender, function(sender,e) {
+    sender.style.webkitFilter="brightness(100%)";
+    sender.style.filter="brightness(100%)";
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.webkitFilter="brightness(70%)";
+    sender.style.filter="brightness(70%)";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    if ("ontouchstart" in window) {
         sender.style.webkitFilter="brightness(100%)";
         sender.style.filter="brightness(100%)";
-    });
+    } else {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+    }
 }
-</onCreate>
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.webkitFilter="brightness(100%)";
+    sender.style.filter="brightness(100%)";
+}
+eb.initMouseEvent(sender);</onCreate>
       <sizeRatio>1</sizeRatio>
       <top>9</top>
       <topRatio>0.169811320754717</topRatio>
@@ -25360,6 +25370,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>106</height>
       <heightRatio>1.08163265306122</heightRatio>
       <layerName>搜索页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -27319,13 +27330,10 @@ sender.f_click = function(btn) {
         if (eb.isEmpty(items[i].baseColor)) continue;
         if (items[i]==btn) {
             items[i].baseColor="#1fa2f2";
-            items[i].baseBgColor = "#e8f5fe";
         } else {
             items[i].baseColor="#14171a";
-            items[i].baseBgColor = "";
         }
         ee.setTextColor(items[i], items[i].baseColor);
-        items[i].style.backgroundColor = items[i].baseBgColor;
     }
 }
 
@@ -27408,7 +27416,8 @@ sender.refresh = function() {
       <onClick>g5.p1.p3.f_click(sender);
 g5.p2.p1.show();
 </onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
+      <onCreate><![CDATA[sender.style.borderRadius = "50%";
+sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"20 -15 280 280\" style=\"display:inline;font-size: 13px;height:2.5em;width:2.5em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.icon.speaker+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
     sender.style.backgroundColor = "#e8f5fe";
@@ -27421,11 +27430,17 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#d2ecfc";
 }
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
+sender.eeMouseUp = function(sender, event, x, y) {
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+    } else {
+        sender.style.backgroundColor = "#e8f5fe";
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
 }
 eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
 
 
 
@@ -27467,7 +27482,8 @@ sender.style.borderRadius = "50%";
       <leftRatio>0.311594202898551</leftRatio>
       <onClick>g5.p1.p3.f_click(sender);
 g5.p2.p13.show();</onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
+      <onCreate><![CDATA[sender.style.borderRadius = "50%";
+sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"1 1 24 24\" style=\"display:inline;font-size: 13px;height:2.5em;width:2.5em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMail+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
     sender.style.backgroundColor = "#e8f5fe";
@@ -27480,11 +27496,17 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#d2ecfc";
 }
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
+sender.eeMouseUp = function(sender, event, x, y) {
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+    } else {
+        sender.style.backgroundColor = "#e8f5fe";
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
 }
 eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
 
 
 
@@ -27528,7 +27550,8 @@ sender.style.borderRadius = "50%";
 g5.p2.p12.show();
 
 </onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
+      <onCreate><![CDATA[sender.style.borderRadius = "50%";
+sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"1 1 24 24\" style=\"display:inline;font-size: 13px;height:2.5em;width:2.5em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconBell+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
     sender.style.backgroundColor = "#e8f5fe";
@@ -27541,11 +27564,18 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     sender.style.backgroundColor = "#d2ecfc";
 }
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e8f5fe";
+sender.eeMouseUp = function(sender, event, x, y) {
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+    } else {
+        sender.style.backgroundColor = "#e8f5fe";
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
 }
 eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
+
 
 
 
@@ -27588,11 +27618,11 @@ sender.style.borderRadius = "50%";
       <onClick>g5.p1.p3.f_click(sender);
 g5.p2.p2.show(g5.myUserInfo);
 </onClick>
-      <onCreate><![CDATA[sender.baseColor = "#14171a";
-sender.baseBgColor = "";
+      <onCreate><![CDATA[sender.style.borderRadius = "50%";
+sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"1 1 24 24\" style=\"display:inline;font-size:13px;height:2.5em;width:2.5em;fill: currentcolor;margin:8px 8px 12px 8px;vertical-align:middle;\">"+g5.icon.homePage+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
-    sender.style.backgroundColor = sender.baseBgColor;
+    sender.style.backgroundColor = "#e8f5fe";
     ee.setTextColor(sender, "#1fa2f2");
 });
 ee.setOnMouseLeave(sender, function(sender,event) { 
@@ -27600,13 +27630,20 @@ ee.setOnMouseLeave(sender, function(sender,event) {
     ee.setTextColor(sender, sender.baseColor);
 });
 sender.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = sender.baseBgColor;
+    sender.style.backgroundColor = "#d2ecfc";
 }
-sender.eeMouseUp = function(sender,event,x,y) {
-    sender.style.backgroundColor = sender.baseBgColor;
+sender.eeMouseUp = function(sender, event, x, y) {
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+    } else {
+        sender.style.backgroundColor = "#e8f5fe";
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
 }
 eb.initMouseEvent(sender);
-sender.style.borderRadius = "50%";
+
 
 
 
@@ -27824,26 +27861,28 @@ sender.style.right = "15px";
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick>g5.p2.p31.showNew();</onClick>
-      <onCreate><![CDATA[sender.baseColor1 = "rgb(29, 161, 242)";
-//sender.style.backgroundColor = sender.baseColor1;
-//ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 8px 8px;fill:#ffffff;vertical-align:middle;\">"+g5.iconNew+"</svg>");
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    //sender.style.backgroundColor = "#1a91da";
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    //sender.style.backgroundColor = sender.baseColor1;
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    //sender.style.backgroundColor = "#1781c2";
+      <onClick>g5.p2.p31.showNew();
+return false;</onClick>
+      <onCreate>sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.webkitFilter="brightness(70%)";
+    sender.style.filter="brightness(70%)";
 }
 sender.eeMouseUp = function(sender,event,x,y) {
-    //sender.style.backgroundColor = "#1a91da";
+    if ("ontouchstart" in window) {
+        sender.style.webkitFilter="brightness(100%)";
+        sender.style.filter="brightness(100%)";
+    } else {
+        sender.style.webkitFilter="brightness(80%)";
+        sender.style.filter="brightness(80%)";
+    }
 }
-eb.initMouseEvent(sender);
-//sender.style.borderRadius = "50%";
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.webkitFilter="brightness(100%)";
+    sender.style.filter="brightness(100%)";
+}
+eb.initMouseEvent(c);
 
-]]></onCreate>
+</onCreate>
       <sizeRatio>1</sizeRatio>
       <top>0</top>
       <width>80</width>
