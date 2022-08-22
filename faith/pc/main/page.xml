@@ -131,6 +131,22 @@ initLButton = function(button,text,dy,icon,size,dx) {
     ee.setTextColor(button.status3, "rgb(29,161,242)");
 }
 
+function createPanel(parent, name, bgColor, left, top, width, height) {
+    var result = eb.createDiv(parent);
+    result.id = name;
+    eb.setDivRect(result, left, top, width, height);
+    if (bgColor.length == 6) {
+        result.style.backgroundColor = "#" + bgColor;
+    } else if (bgColor.length>0) {
+        result.style.backgroundColor = bgColor;
+    }
+    if (parent.eeChildren == undefined) {
+        parent.eeChildren = new Array();
+    }
+    parent.eeChildren.push(result);
+    result.eeChildren = new Array();
+    return result;
+}
 
 ee.setText = function (panel, text) {
         if (panel.label) {
@@ -592,7 +608,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.993630573248408</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.262008733624454</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -2221,7 +2236,6 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -7286,6 +7300,10 @@ sender.init = function(index) {
         this.style.borderStyle = "solid";
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+    if (!this.c_cover) {
+        this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+        eb.setDock(this.c_cover,"fill","fill");
+    }
 }
 
 sender.setText = function(text) {
@@ -7312,18 +7330,26 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color3;
-    //setTimeout(function() {
-    //    ee.setText(sender, s.text3);
-    //}, 1000); 
+    ee.setText(sender, s.text3);
     ee.setTextColor(sender, s.tColor3);
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    //setTimeout(function() {
-    //    ee.setText(sender, s.text2);
-    //}, 1000); 
-    ee.setTextColor(sender, s.tColor2);
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    } else {
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
 }
 eb.initMouseEvent(sender);
 
@@ -23732,6 +23758,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.12484076433121</heightRatio>
       <layerName>===P4===</layerName>
+      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.264628820960699</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -25387,6 +25414,7 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>106</height>
       <heightRatio>1.08163265306122</heightRatio>
       <layerName>搜索页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";

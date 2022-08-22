@@ -17,31 +17,57 @@
         //if (panel._input) panel._inputHint = text;
     }
 
+
+
 ee.setOnClick = function (div, func) {
         div.eeOnClick = func;
         if ("ontouchstart" in window) {
             eb.addEvent(div, "touchstart", function (event) {
                 div.eeMouseDownX = event.changedTouches[0].screenX;
                 div.eeMouseDownY = event.changedTouches[0].screenY;
+                div.i_clickCanceled = false;
                 div.eeTouchStartTime = new Date();
             }, false);
             eb.addEvent(div, "touchend", function (event) {
-                var d = Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX);
-                d += Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY);
-                if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 600)) {
+                var d = Math.pow(Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX),2);
+                d += Math.pow(Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY),2);
+                d = Math.sqrt(d);
+                if ((d < 20) &amp;&amp; ((new Date()).getTime() - div.eeTouchStartTime.getTime() < 600) &amp;&amp; (!div.i_clickCanceled)) {
                     if (div.eeOnClick) {
-                        //setTimeout(function () { //?
-                        div.eeOnClick(div, event);
-                        //}, 1);
+                        if (div.eeOnClick(div, event) == false) {
+                            var d = div.parentNode;
+                            while (d) {
+                                if (d.eeOnClickCancel) {
+                                    d.eeOnClickCancel(d, event);
+                                }
+                                d = d.parentNode;
+                            }
+                            window.event? window.event.cancelBubble = true : event.stopPropagation();
+                            event.returnValue = false;
+                            return false;
+                        }
                     }
                 }
             }, false);
             eb.addEvent(div, "touchmove", function (event) {
+                var d = Math.pow(Math.abs(event.changedTouches[0].screenX - div.eeMouseDownX),2);
+                d += Math.pow(Math.abs(event.changedTouches[0].screenY - div.eeMouseDownY),2);
+                d = Math.sqrt(d);
+                if ((d>20) &amp;&amp; (!div.i_clickCanceled)) {
+                    div.i_clickCanceled = true;
+                    if (div.eeOnClickCancel) {
+                        div.eeOnClickCancel(div, event);
+                    }
+                }
             }, false);
         } else {
             eb.addEvent(div, "click", function (event) {
                 if (div.eeOnClick) {
-                    div.eeOnClick(div, event);
+                    if (div.eeOnClick(div, event) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
                 }
             }, false);
         }
@@ -69,7 +95,87 @@ ee.setOnMouseLeave = function (div, func) {
             }, false);
         }
     }
-]]></onPageCreate>
+
+
+eb.initMouseEvent = function (div) {
+        if ("ontouchstart" in window) {
+            if (div.eeMouseDown) {
+                eb.addEvent(div, "touchstart", function (event) {
+                    if (div.eeMouseDown(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+            if (div.eeMouseUp) {
+                eb.addEvent(div, "touchend", function (event) {
+                    if (div.eeMouseUp(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+            if (div.eeMouseMove) {
+                eb.addEvent(div, "touchmove", function (event) {
+                    if (div.eeMouseMove(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+        } else {
+            if (div.eeMouseDown) {
+                eb.addEvent(div, "mousedown", function (event) {
+                    if (div.eeMouseDown(div, event, event.x, event.y) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+            if (div.eeMouseUp) {
+                eb.addEvent(div, "mouseup", function (event) {
+                    if (div.eeMouseUp(div, event, event.x, event.y) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+            if (div.eeMouseMove) {
+                eb.addEvent(div, "mousemove", function (event) {
+                    if (div.eeMouseMove(div, event, event.x, event.y) == false) {
+                        window.event? window.event.cancelBubble = true : event.stopPropagation();
+                        event.returnValue = false;
+                        return false;
+                    }
+                }, false);
+            }
+        }
+    }
+
+function createPanel(parent, name, bgColor, left, top, width, height) {
+    var result = eb.createDiv(parent);
+    result.id = name;
+    eb.setDivRect(result, left, top, width, height);
+    if (bgColor.length == 6) {
+        result.style.backgroundColor = "#" + bgColor;
+    } else if (bgColor.length>0) {
+        result.style.backgroundColor = bgColor;
+    }
+    //if (name.length > 3) {
+    //    eval("parent." + name.substr(3, name.length) + "=result");
+    //}
+    if (parent.eeChildren == undefined) {
+        parent.eeChildren = new Array();
+    }
+    parent.eeChildren.push(result);
+    result.eeChildren = new Array();
+    return result;
+}]]></onPageCreate>
       <pageHead><![CDATA[<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <style>
@@ -151,7 +257,7 @@ if ("ontouchstart" in window) {
     }
 }
 ]]></onCreate>
-      <sizeRatio>0.683848797250859</sizeRatio>
+      <sizeRatio>0.685589519650655</sizeRatio>
       <top>0</top>
       <width>1145</width>
       <widthRatio>1</widthRatio>
@@ -474,7 +580,7 @@ sender.clickRight = function() {
     eb.setDivRect(this.c_photoRoot,0,null,null,null);
 }
 ]]></onCreate>
-      <sizeRatio>0.683848797250859</sizeRatio>
+      <sizeRatio>0.685589519650655</sizeRatio>
       <top>0</top>
       <width>1145</width>
       <widthRatio>1</widthRatio>
@@ -489,7 +595,7 @@ sender.clickRight = function() {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_mobileBg</note>
-      <sizeRatio>0.683848797250859</sizeRatio>
+      <sizeRatio>0.685589519650655</sizeRatio>
       <top>0</top>
       <width>1145</width>
       <widthRatio>1</widthRatio>
@@ -499,21 +605,21 @@ sender.clickRight = function() {
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <height>685</height>
-      <heightRatio>0.874371859296482</heightRatio>
+      <heightRatio>0.872611464968153</heightRatio>
       <layerVisible>false</layerVisible>
       <left>80</left>
-      <leftRatio>0.0687285223367698</leftRatio>
+      <leftRatio>0.0698689956331878</leftRatio>
       <note>c_photoRoot</note>
       <onClick>sender.parentNode.parentNode.close();</onClick>
       <outerBottom>50</outerBottom>
       <outerLeft>80</outerLeft>
       <outerRight>80</outerRight>
       <outerTop>50</outerTop>
-      <sizeRatio>0.693227091633466</sizeRatio>
+      <sizeRatio>0.695431472081218</sizeRatio>
       <top>50</top>
-      <topRatio>0.0628140703517588</topRatio>
+      <topRatio>0.0636942675159236</topRatio>
       <width>985</width>
-      <widthRatio>0.862542955326461</widthRatio>
+      <widthRatio>0.860262008733624</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel145/panel75">
       <dockX>fill</dockX>
@@ -523,7 +629,7 @@ sender.clickRight = function() {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_photo</note>
-      <sizeRatio>0.693227091633466</sizeRatio>
+      <sizeRatio>0.695431472081218</sizeRatio>
       <top>0</top>
       <width>985</width>
       <widthRatio>1</widthRatio>
@@ -536,22 +642,22 @@ sender.clickRight = function() {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_video</note>
-      <sizeRatio>0.693227091633466</sizeRatio>
+      <sizeRatio>0.695431472081218</sizeRatio>
       <top>0</top>
       <width>985</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel147">
       <height>49</height>
-      <heightRatio>0.0615577889447236</heightRatio>
+      <heightRatio>0.0624203821656051</heightRatio>
       <layerVisible>false</layerVisible>
       <left>10</left>
-      <leftRatio>0.00859106529209622</leftRatio>
+      <leftRatio>0.00873362445414847</leftRatio>
       <sizeRatio>0.844827586206897</sizeRatio>
       <top>10</top>
-      <topRatio>0.0125628140703518</topRatio>
+      <topRatio>0.0127388535031847</topRatio>
       <width>58</width>
-      <widthRatio>0.0498281786941581</widthRatio>
+      <widthRatio>0.0506550218340611</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel147/panel146">
       <backgroundImg>i087_01.png</backgroundImg>
@@ -639,7 +745,7 @@ sender.addEventListener("pointermove", function(ev) {
 
 
 </onCreate>
-      <sizeRatio>0.683848797250859</sizeRatio>
+      <sizeRatio>0.685589519650655</sizeRatio>
       <top>0</top>
       <width>1145</width>
       <widthRatio>1</widthRatio>
@@ -653,7 +759,7 @@ sender.addEventListener("pointermove", function(ev) {
       <fontColor>1E90FF</fontColor>
       <fontSize>14</fontSize>
       <height>176</height>
-      <heightRatio>0.221105527638191</heightRatio>
+      <heightRatio>0.224203821656051</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.borderRadius = "0px 25px 25px 0px";
@@ -682,9 +788,9 @@ eb.initMouseEvent(sender);
       <sizeRatio>3.2</sizeRatio>
       <text><![CDATA[<]]></text>
       <top>304</top>
-      <topRatio>0.389447236180905</topRatio>
+      <topRatio>0.387261146496815</topRatio>
       <width>55</width>
-      <widthRatio>0.0472508591065292</widthRatio>
+      <widthRatio>0.0480349344978166</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel52">
       <backgroundImgMode>fill</backgroundImgMode>
@@ -695,10 +801,10 @@ eb.initMouseEvent(sender);
       <fontColor>1E90FF</fontColor>
       <fontSize>14</fontSize>
       <height>176</height>
-      <heightRatio>0.221105527638191</heightRatio>
+      <heightRatio>0.224203821656051</heightRatio>
       <layerVisible>false</layerVisible>
       <left>1090</left>
-      <leftRatio>0.952749140893471</leftRatio>
+      <leftRatio>0.951965065502183</leftRatio>
       <onCreate><![CDATA[sender.style.borderRadius = "25px 0px 0px 25px";
 sender.baseColor = "rgba(0,0,0,0.2)";
 sender.style.backgroundColor = sender.baseColor;
@@ -727,9 +833,9 @@ eb.initMouseEvent(sender);
       <sizeRatio>3.2</sizeRatio>
       <text><![CDATA[>]]></text>
       <top>304</top>
-      <topRatio>0.389447236180905</topRatio>
+      <topRatio>0.387261146496815</topRatio>
       <width>55</width>
-      <widthRatio>0.0472508591065292</widthRatio>
+      <widthRatio>0.0480349344978166</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel613">
       <backgroundColor>8ED0F9</backgroundColor>
@@ -741,10 +847,10 @@ eb.initMouseEvent(sender);
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>40</height>
-      <heightRatio>0.050251256281407</heightRatio>
+      <heightRatio>0.0509554140127389</heightRatio>
       <layerVisible>false</layerVisible>
       <left>492</left>
-      <leftRatio>0.43127147766323</leftRatio>
+      <leftRatio>0.429694323144105</leftRatio>
       <note>c_BtnConfirm</note>
       <onClick>sender.parentNode.f_onConfirm();
 sender.parentNode.parentNode.close();
@@ -825,9 +931,9 @@ sender.init(0);
       <sizeRatio>0.25</sizeRatio>
       <text>发送</text>
       <top>715</top>
-      <topRatio>0.912060301507538</topRatio>
+      <topRatio>0.910828025477707</topRatio>
       <width>160</width>
-      <widthRatio>0.13745704467354</widthRatio>
+      <widthRatio>0.139737991266376</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -844,6 +950,7 @@ sender.init(0);
       <layerName>通用确认窗口</layerName>
       <layerVisible>false</layerVisible>
       <left>387</left>
+      <leftRatio>0.337991266375546</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -913,6 +1020,7 @@ if ("ontouchstart" in window) {
 </onCreate>
       <sizeRatio>0.689189189189189</sizeRatio>
       <top>265</top>
+      <topRatio>0.337579617834395</topRatio>
       <width>370</width>
       <widthRatio>0.323144104803493</widthRatio>
     </control>
@@ -1278,6 +1386,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <layerName>通用提示窗口</layerName>
       <layerVisible>false</layerVisible>
       <left>393</left>
+      <leftRatio>0.343231441048035</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -1348,6 +1457,7 @@ if ("ontouchstart" in window) {
 }</onCreate>
       <sizeRatio>0.587743732590529</sizeRatio>
       <top>287</top>
+      <topRatio>0.365605095541401</topRatio>
       <width>359</width>
       <widthRatio>0.31353711790393</widthRatio>
     </control>
@@ -1379,13 +1489,13 @@ if ("ontouchstart" in window) {
       <heightRatio>0.184834123222749</heightRatio>
       <layerVisible>false</layerVisible>
       <left>25</left>
-      <leftRatio>0.0942408376963351</leftRatio>
+      <leftRatio>0.0696378830083565</leftRatio>
       <sizeRatio>0.12621359223301</sizeRatio>
       <text>删除发言</text>
       <top>18</top>
       <topRatio>0.0853080568720379</topRatio>
       <width>309</width>
-      <widthRatio>0.808900523560209</widthRatio>
+      <widthRatio>0.860724233983287</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel344/panel347">
       <backgroundColor>00C0C0</backgroundColor>
@@ -1490,7 +1600,7 @@ if ("ontouchstart" in window) {
 
 
 ]]></onCreate>
-      <sizeRatio>0.170157068062827</sizeRatio>
+      <sizeRatio>0.181058495821727</sizeRatio>
       <top>0</top>
       <width>359</width>
       <widthRatio>1</widthRatio>
@@ -1508,7 +1618,7 @@ if ("ontouchstart" in window) {
       <heightRatio>0.18957345971564</heightRatio>
       <layerVisible>false</layerVisible>
       <left>116</left>
-      <leftRatio>0.335078534031414</leftRatio>
+      <leftRatio>0.323119777158774</leftRatio>
       <onClick>sender.parentNode.close();
 sender.parentNode.onComplete();</onClick>
       <onCreate>var text = ee.getText(sender);
@@ -1577,7 +1687,7 @@ sender.init(0);
       <top>142</top>
       <topRatio>0.672985781990521</topRatio>
       <width>126</width>
-      <widthRatio>0.329842931937173</widthRatio>
+      <widthRatio>0.350974930362117</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel344/panel350">
       <cursor>pointer</cursor>
@@ -1587,7 +1697,7 @@ sender.init(0);
       <heightRatio>0.170616113744076</heightRatio>
       <layerVisible>false</layerVisible>
       <left>305</left>
-      <leftRatio>0.858638743455497</leftRatio>
+      <leftRatio>0.84958217270195</leftRatio>
       <onClick>sender.parentNode.close();</onClick>
       <onCreate><![CDATA[ee.setText(sender,
     "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.icon.close + "</svg>"
@@ -1606,7 +1716,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <top>15</top>
       <topRatio>0.0710900473933649</topRatio>
       <width>36</width>
-      <widthRatio>0.0942408376963351</widthRatio>
+      <widthRatio>0.100278551532033</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel630">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
@@ -1622,6 +1732,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <heightRatio>0.266242038216561</heightRatio>
       <layerName>通用字符串输入窗口</layerName>
       <left>393</left>
+      <leftRatio>0.343231441048035</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -1681,6 +1792,7 @@ if ("ontouchstart" in window) {
 </onCreate>
       <sizeRatio>0.583798882681564</sizeRatio>
       <top>288</top>
+      <topRatio>0.36687898089172</topRatio>
       <width>358</width>
       <widthRatio>0.312663755458515</widthRatio>
     </control>
@@ -2130,10 +2242,10 @@ sender.processUserName();
       <bgColorEnabled>true</bgColorEnabled>
       <ee_LocalName>c_edit</ee_LocalName>
       <height>120</height>
-      <heightRatio>0.150753768844221</heightRatio>
+      <heightRatio>0.152866242038217</heightRatio>
       <layerVisible>false</layerVisible>
       <left>263</left>
-      <leftRatio>0.225945017182131</leftRatio>
+      <leftRatio>0.229694323144105</leftRatio>
       <note>富文本编辑框</note>
       <onCreate><![CDATA[//public
 sender.style.boxSizing="border-box";
@@ -2518,7 +2630,7 @@ sender.processUserName = function() {
 ]]></onCreate>
       <sizeRatio>0.43010752688172</sizeRatio>
       <top>33</top>
-      <topRatio>0.0414572864321608</topRatio>
+      <topRatio>0.0420382165605096</topRatio>
       <userProperty>//#P:editFontFamily|多行文字录入V2|'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif|string||用户输入文字的字体样式
 //#P:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
 //#P:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
@@ -2532,7 +2644,7 @@ sender.processUserName = function() {
 
 </userProperty>
       <width>279</width>
-      <widthRatio>0.239690721649485</widthRatio>
+      <widthRatio>0.243668122270742</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel577/panel603">
       <dockX>fill</dockX>
@@ -2586,19 +2698,19 @@ sender.processUserName = function() {
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <height>33</height>
-      <heightRatio>0.0414572864321608</heightRatio>
+      <heightRatio>0.0420382165605096</heightRatio>
       <layerVisible>false</layerVisible>
       <left>25</left>
-      <leftRatio>0.0214776632302406</leftRatio>
+      <leftRatio>0.0218340611353712</leftRatio>
       <onClick>ee.getControl("divRoot").popBlack.a7.show(
     "提示", "修改您的用户信息完成",
     [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
     //[new g5.BStyle("","#e8f5fe","#d2ecfc","确定","确定","确定","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
     function() {}
 );</onClick>
-      <onCreate>var text = ee.getText(sender);
+      <onCreate><![CDATA[var text = ee.getText(sender);
 sender.v_style = [
-    new g5.BStyle("#ffffff","#e8f5fe","#d2ecfc",text,text,text,"#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
+    new g5.BStyle("#ffffff","#e8f5fe","#d2ecfc",text,text+">热点",text+">按下","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
 ];
 sender.style.boxShadow = "2px 2px 4px #a0a0a0";
 
@@ -2617,6 +2729,10 @@ sender.init = function(index) {
         eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
+    if (!this.c_cover) {
+        this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+        eb.setDock(this.c_cover,"fill","fill");
+    }
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -2634,22 +2750,26 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color3;
-    setTimeout(function() {
-        ee.setText(sender, s.text3);
-    }, 1000); 
+    ee.setText(sender,s.text3);
     ee.setTextColor(sender, s.tColor3);
 }
-sender.eeMouseUp = function(sender,event,x,y) {
+sender.eeMouseUp = function(sender,event,x,y) {                                                    s
     var s =sender.v_style[sender.v_index];
     if ("ontouchstart" in window) {
         sender.style.backgroundColor = s.color1;
+        ee.setText(sender,s.text1);
+        ee.setTextColor(sender, s.tColor1);
     } else {
         sender.style.backgroundColor = s.color2;
+        ee.setText(sender,s.text2);
+        ee.setTextColor(sender, s.tColor2);
     }
-    setTimeout(function() {
-        ee.setText(sender, s.text2);
-    }, 1000); 
-    ee.setTextColor(sender, s.tColor2);
+}
+sender.eeOnClickCancel = function(sender,event) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender,s.text1);
+    ee.setTextColor(sender, s.tColor1);
 }
 eb.initMouseEvent(sender);
 
@@ -2661,13 +2781,13 @@ sender.init(0);
 
 
 
-</onCreate>
-      <sizeRatio>0.203703703703704</sizeRatio>
+]]></onCreate>
+      <sizeRatio>0.146666666666667</sizeRatio>
       <text>通用提示窗口</text>
       <top>33</top>
-      <topRatio>0.0414572864321608</topRatio>
-      <width>162</width>
-      <widthRatio>0.139175257731959</widthRatio>
+      <topRatio>0.0420382165605096</topRatio>
+      <width>225</width>
+      <widthRatio>0.196506550218341</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel1">
       <backgroundColor>8ED0F9</backgroundColor>
@@ -2677,10 +2797,10 @@ sender.init(0);
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <height>33</height>
-      <heightRatio>0.0414572864321608</heightRatio>
+      <heightRatio>0.0420382165605096</heightRatio>
       <layerVisible>false</layerVisible>
       <left>25</left>
-      <leftRatio>0.0214776632302406</leftRatio>
+      <leftRatio>0.0218340611353712</leftRatio>
       <onClick>ee.getControl("divRoot").popBlack.a6.show(
     "删除确认",
     "在没有保存之前，本操作将不会生效，确认删除本记录吗？",
@@ -2758,9 +2878,9 @@ sender.init(0);
       <sizeRatio>0.203703703703704</sizeRatio>
       <text>通用确认窗口</text>
       <top>88</top>
-      <topRatio>0.110552763819095</topRatio>
+      <topRatio>0.112101910828025</topRatio>
       <width>162</width>
-      <widthRatio>0.139175257731959</widthRatio>
+      <widthRatio>0.141484716157205</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel3">
       <backgroundColor>8ED0F9</backgroundColor>
@@ -2770,10 +2890,10 @@ sender.init(0);
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <height>33</height>
-      <heightRatio>0.0414572864321608</heightRatio>
+      <heightRatio>0.0420382165605096</heightRatio>
       <layerVisible>false</layerVisible>
       <left>25</left>
-      <leftRatio>0.0214776632302406</leftRatio>
+      <leftRatio>0.0218340611353712</leftRatio>
       <onClick><![CDATA[ee.getControl("divRoot").popBlack.a10.show(
     "输入", "付款类型：", "请在这里输入付款类型，长度2-6", "",
     [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
@@ -2856,9 +2976,9 @@ sender.init(0);
       <sizeRatio>0.203703703703704</sizeRatio>
       <text>通用输入窗口</text>
       <top>143</top>
-      <topRatio>0.17964824120603</topRatio>
+      <topRatio>0.182165605095541</topRatio>
       <width>162</width>
-      <widthRatio>0.139175257731959</widthRatio>
+      <widthRatio>0.141484716157205</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel104">
       <cursor>pointer</cursor>
