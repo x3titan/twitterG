@@ -420,6 +420,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>785</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -608,6 +609,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.993630573248408</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.262008733624454</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -2236,6 +2238,7 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p2sub = ee.getControl("panel279");
@@ -7293,11 +7296,13 @@ sender.init = function(index) {
     ee.setTextColor(this, this.v_style[index].tColor1);
     if (this.v_style[index].bdColor=="") {
         this.style.borderWidth = "0px";
+        eb.setDivRect(this.label.parentNode,0,0,null,null);
     } else {
         this.style.boxSizing="border-box";
         this.style.borderWidth = "1px";
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
+        eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
     if (!this.c_cover) {
@@ -28760,7 +28765,6 @@ sender.renderItem = function(root) {
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -33264,7 +33268,6 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <height>209</height>
       <heightRatio>0.266242038216561</heightRatio>
       <layerName>通用字符串输入窗口</layerName>
-      <layerVisible>false</layerVisible>
       <left>393</left>
       <leftRatio>0.343231441048035</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
@@ -33504,6 +33507,7 @@ sender.init = function(index) {
     ee.setTextColor(this, this.v_style[index].tColor1);
     if (this.v_style[index].bdColor=="") {
         this.style.borderWidth = "0px";
+        eb.setDivRect(this.label.parentNode,0,0,null,null);
     } else {
         this.style.boxSizing="border-box";
         this.style.borderWidth = "1px";
@@ -44527,13 +44531,19 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         ee.setTextColor(this, this.v_style[index].tColor1);
         if (this.v_style[index].bdColor=="") {
             this.style.borderWidth = "0px";
+            eb.setDivRect(this.label.parentNode,0,0,null,null);
         } else {
             this.style.boxSizing="border-box";
             this.style.borderWidth = "1px";
             this.style.borderColor = this.v_style[index].bdColor;
             this.style.borderStyle = "solid";
+            eb.setDivRect(this.label.parentNode,-1,-1,null,null);
         }
         this.style.borderRadius = parseInt(eb.getDivRectSetting(this).h/2) + "px";
+        if (!this.c_cover) {
+            this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+            eb.setDock(this.c_cover,"fill","fill");
+        }
         var w = 100;
         if (index == 0) {
             w = 90;
@@ -44566,9 +44576,21 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
     }
     c.eeMouseUp = function(sender,event,x,y) {
         var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color2;
-        ee.setText(sender, s.text2);
-        ee.setTextColor(sender, s.tColor2);
+        if ("ontouchstart" in window) {
+            sender.style.backgroundColor = s.color1;
+            ee.setText(sender, s.text1);
+            ee.setTextColor(sender, s.tColor1);
+        } else {
+            sender.style.backgroundColor = s.color2;
+            ee.setText(sender, s.text2);
+            ee.setTextColor(sender, s.tColor2);
+        }
+    }
+    c.eeOnClickCancel = function(sender,event) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
     }
     eb.initMouseEvent(c);
     root.refreshButton = function() {
