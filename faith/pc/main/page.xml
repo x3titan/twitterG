@@ -420,7 +420,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>785</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -1067,7 +1066,6 @@ sender.onDeletePhoto = function() {
       <widthRatio>0.838333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel9">
-      <backgroundImg>CPY0003.jpg</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
       <dockY>bottom</dockY>
@@ -1141,8 +1139,12 @@ sender.onDeletePhoto = function() {
 
 
 ]]></onClick>
-      <onCreate><![CDATA[sender.innerHTML = "<svg viewBox=\"0 0 4500 4500\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:7px 8px 8px 4px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">" + g5.icon.youtube + "</svg>";
+      <onCreate><![CDATA[ee.setText(sender, "<svg viewBox=\"0 0 4500 4500\" style=\"font-size: 13px;height:2.0em;width:2.0em;margin:4px 8px 8px 1px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\">" + g5.icon.youtube + "</svg>");
 sender.style.borderRadius = "50%";
+if (!sender.c_cover) {
+    sender.c_cover = createPanel(sender, "", "#00000001", 0, 0, 1, 1);
+    eb.setDock(sender.c_cover,"fill","fill");
+}
 
 ee.setOnMouseEnter(sender, function(sender,event) {
     sender.style.backgroundColor = "#dfeffa";
@@ -1150,9 +1152,25 @@ ee.setOnMouseEnter(sender, function(sender,event) {
 ee.setOnMouseLeave(sender, function(sender,event) {
     sender.style.backgroundColor = "";
 });
+
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#daeaf5";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+    } else {
+        sender.style.backgroundColor = "#dfeffa";
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
+}
+eb.initMouseEvent(sender);
 ]]></onCreate>
       <outerBottom>15</outerBottom>
       <sizeRatio>1</sizeRatio>
+      <text>YTB</text>
       <top>378</top>
       <topRatio>0.881118881118881</topRatio>
       <width>36</width>
@@ -1286,6 +1304,10 @@ sender.setEnabled = function(enabled) {
     this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
 }
 sender.setEnabled(false);
+if (!sender.c_cover) {
+    sender.c_cover = createPanel(sender, "", "#00000001", 0, 0, 1, 1);
+    eb.setDock(sender.c_cover,"fill","fill");
+}
 
 sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -1302,7 +1324,14 @@ sender.eeMouseDown = function(sender,event,x,y) {
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = sender.bgColorEnabled;
+    } else {
+        sender.style.backgroundColor = sender.bgColorHot;
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = sender.bgColorEnabled;
 }
 eb.initMouseEvent(sender);
 
@@ -1349,7 +1378,20 @@ ee.setOnMouseEnter(sender, function(sender,event) {
 ee.setOnMouseLeave(sender, function(sender,event) {
     sender.style.backgroundColor = "";
 });
-
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.backgroundColor = "#daeaf5";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    if ("ontouchstart" in window) {
+        sender.style.backgroundColor = "";
+    } else {
+        sender.style.backgroundColor = "#dfeffa";
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.backgroundColor = "";
+}
+eb.initMouseEvent(sender);
 
 //implementation
 var c = document.createElement("input");
@@ -23763,7 +23805,6 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.12484076433121</heightRatio>
       <layerName>===P4===</layerName>
-      <layerVisible>false</layerVisible>
       <left>303</left>
       <leftRatio>0.264628820960699</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -25419,7 +25460,6 @@ eb.initMouseEvent(sender);]]></onCreate>
       <height>106</height>
       <heightRatio>1.08163265306122</heightRatio>
       <layerName>搜索页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -25883,6 +25923,10 @@ sender.init = function(index) {
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
     }
+    if (!this.c_cover) {
+        this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+        eb.setDock(this.c_cover,"fill","fill");
+    }
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -25900,22 +25944,26 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color3;
-    setTimeout(function() {
-        ee.setText(sender, s.text3);
-    }, 1000); 
+    ee.setText(sender, s.text3);
     ee.setTextColor(sender, s.tColor3);
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     if ("ontouchstart" in window) {
         sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
     } else {
         sender.style.backgroundColor = s.color2;
-    }
-    setTimeout(function() {
         ee.setText(sender, s.text2);
-    }, 1000); 
-    ee.setTextColor(sender, s.tColor2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
 }
 eb.initMouseEvent(sender);
 
@@ -25995,6 +26043,10 @@ sender.init = function(index) {
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
     }
+    if (!this.c_cover) {
+        this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+        eb.setDock(this.c_cover,"fill","fill");
+    }
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26012,22 +26064,26 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color3;
-    setTimeout(function() {
-        ee.setText(sender, s.text3);
-    }, 1000); 
+    ee.setText(sender, s.text3);
     ee.setTextColor(sender, s.tColor3);
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     if ("ontouchstart" in window) {
         sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
     } else {
         sender.style.backgroundColor = s.color2;
-    }
-    setTimeout(function() {
         ee.setText(sender, s.text2);
-    }, 1000); 
-    ee.setTextColor(sender, s.tColor2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
 }
 eb.initMouseEvent(sender);
 sender.init(0);
@@ -26086,6 +26142,10 @@ sender.init = function(index) {
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
     }
+    if (!this.c_cover) {
+        this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+        eb.setDock(this.c_cover,"fill","fill");
+    }
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26112,13 +26172,19 @@ sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     if ("ontouchstart" in window) {
         sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
     } else {
         sender.style.backgroundColor = s.color2;
-    }
-    setTimeout(function() {
         ee.setText(sender, s.text2);
-    }, 1000); 
-    ee.setTextColor(sender, s.tColor2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
 }
 eb.initMouseEvent(sender);
 
@@ -26178,6 +26244,10 @@ sender.init = function(index) {
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
     }
+    if (!this.c_cover) {
+        this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+        eb.setDock(this.c_cover,"fill","fill");
+    }
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26195,22 +26265,26 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color3;
-    setTimeout(function() {
-        ee.setText(sender, s.text3);
-    }, 1000); 
+    ee.setText(sender, s.text3);
     ee.setTextColor(sender, s.tColor3);
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     if ("ontouchstart" in window) {
         sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
     } else {
         sender.style.backgroundColor = s.color2;
-    }
-    setTimeout(function() {
         ee.setText(sender, s.text2);
-    }, 1000); 
-    ee.setTextColor(sender, s.tColor2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
 }
 eb.initMouseEvent(sender);
 
@@ -26270,6 +26344,10 @@ sender.init = function(index) {
         this.style.borderColor = this.v_style[index].bdColor;
         this.style.borderStyle = "solid";
     }
+    if (!this.c_cover) {
+        this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+        eb.setDock(this.c_cover,"fill","fill");
+    }
 }
 
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26287,22 +26365,26 @@ ee.setOnMouseLeave(sender, function(sender,event) {
 sender.eeMouseDown = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     sender.style.backgroundColor = s.color3;
-    setTimeout(function() {
-        ee.setText(sender, s.text3);
-    }, 1000); 
+    ee.setText(sender, s.text3);
     ee.setTextColor(sender, s.tColor3);
 }
 sender.eeMouseUp = function(sender,event,x,y) {
     var s =sender.v_style[sender.v_index];
     if ("ontouchstart" in window) {
         sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
     } else {
         sender.style.backgroundColor = s.color2;
-    }
-    setTimeout(function() {
         ee.setText(sender, s.text2);
-    }, 1000); 
-    ee.setTextColor(sender, s.tColor2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+}
+sender.eeOnClickCancel = function(sender,event) {
+    var s =sender.v_style[sender.v_index];
+    sender.style.backgroundColor = s.color1;
+    ee.setText(sender, s.text1);
+    ee.setTextColor(sender, s.tColor1);
 }
 eb.initMouseEvent(sender);
 
@@ -27949,6 +28031,7 @@ eb.initMouseEvent(c);
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -28423,6 +28506,7 @@ sender.close = function() {
       <height>281</height>
       <heightRatio>0.35796178343949</heightRatio>
       <layerName>p3.C其他人选项</layerName>
+      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.265502183406114</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
