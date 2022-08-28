@@ -13374,6 +13374,7 @@ sender.setEnabled(true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>设置-隐私和安全</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.show = function() {
     g5.changeP2(17);
@@ -13982,16 +13983,15 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName>设置-账号-修改用户名</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.show = function() {
+      <onCreate><![CDATA[sender.c_edit = this.c_body.c_p2.c_edit;
+sender.c_btnSave = this.c_body.c_btnSave;      
+
+sender.show = function() {
     g5.changeP2(19);
-    ee.setEditText(ee.getControl("edit8"),"");
-    ee.setEditText(ee.getControl("edit9"),"");
-    ee.setEditText(ee.getControl("edit10"),"");
-    ee.getControl("panel248").setEnabled(false);
-    ee.setText(ee.getControl("panel187"), g5.myUserInfo.nickName);
-    ee.setEditText(ee.getControl("edit19"), "");
+    ee.setText(this.c_body.c_p1.c_labelNickName, g5.myUserInfo.nickName);
+    ee.setEditText(this.c_edit, "");
+    this.refresh();
 }
 
 sender.activePage = function() {
@@ -14006,9 +14006,15 @@ sender.close = function() {
     ee.setVisible(this, false);
 }
 
+sender.refresh = function() {
+    var t = ee.getEditText(this.c_edit);
+    this.c_btnSave.setEnabled(
+        t.length<=20 &amp;&amp; t.length>=3
+    );
+}
 
                                 
-</onCreate>
+]]></onCreate>
       <sizeRatio>1.17</sizeRatio>
       <top>0</top>
       <width>600</width>
@@ -14088,6 +14094,7 @@ eb.initMouseEvent(sender);]]></onCreate>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel61/panel166">
       <bindTop>bottom</bindTop>
       <dockX>fill</dockX>
+      <ee_LocalName>c_body</ee_LocalName>
       <height>309</height>
       <heightRatio>0.44017094017094</heightRatio>
       <layerVisible>false</layerVisible>
@@ -14109,6 +14116,7 @@ sender.style.borderLeft = "";</onCreate>
       <backgroundColor>F5F8FA</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
+      <ee_LocalName>c_p1</ee_LocalName>
       <height>66</height>
       <heightRatio>0.213592233009709</heightRatio>
       <layerVisible>false</layerVisible>
@@ -14145,6 +14153,7 @@ sender.style.borderLeft = "";</onCreate>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel61/panel166/panel185/panel187">
       <backgroundImgMode>fill</backgroundImgMode>
       <dockX>fill</dockX>
+      <ee_LocalName>c_labelNickName</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>282828</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -14168,6 +14177,7 @@ sender.style.borderLeft = "";</onCreate>
       <backgroundColor>F5F8FA</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
+      <ee_LocalName>c_p2</ee_LocalName>
       <height>66</height>
       <heightRatio>0.213592233009709</heightRatio>
       <layerVisible>false</layerVisible>
@@ -14204,6 +14214,7 @@ sender.style.borderLeft = "";</onCreate>
     <control type="Edit" pathname="/divRoot/panel134/panel135/panel61/panel166/panel188/edit19">
       <backgroundSkin>empty</backgroundSkin>
       <dockX>fill</dockX>
+      <ee_LocalName>c_edit</ee_LocalName>
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
@@ -14215,7 +14226,7 @@ sender.style.borderLeft = "";</onCreate>
       <layerVisible>false</layerVisible>
       <left>15</left>
       <leftRatio>0.0258620689655172</leftRatio>
-      <onChange>ee.getControl("panel231").refresh();</onChange>
+      <onChange>g5.p2.p20.refresh();</onChange>
       <outerLeft>15</outerLeft>
       <outerRight>15</outerRight>
       <sizeRatio>0.0745454545454545</sizeRatio>
@@ -14278,6 +14289,7 @@ sender.style.borderLeft = "";</onCreate>
       <bgColorEnabled>true</bgColorEnabled>
       <cursor>pointer</cursor>
       <dockX>right</dockX>
+      <ee_LocalName>c_btnSave</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>FFFFFF</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -14306,35 +14318,19 @@ changeNickName.onComplete = function() {
 }
 changeNickName();
 ]]></onClick>
-      <onCreate>sender.bgColorDisabled = "#8ed0f9";
-sender.bgColorEnabled = "#1da1f2";
-sender.bgColorHot = "#1a91da";
-sender.bgColorDown = "#1781c2";
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","","","",""),
+    new g5.BStyle("#8ed0f9","#8ed0f9","#8ed0f9","","","","","","","")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
 sender.v_enabled = true;
 sender.setEnabled = function(enabled) {
     this.v_enabled = enabled;
-    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+    this.init(enabled?0:1);
 }
 sender.setEnabled(true);
 
-sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorEnabled;
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorDown;
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-}
-eb.initMouseEvent(sender);
 
 
 
