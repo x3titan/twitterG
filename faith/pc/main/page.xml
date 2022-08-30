@@ -43438,34 +43438,13 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
     c.style.borderRadius = "20px";
     root.v_isBlock = false;
     root.c_button11 = c;
+    g5.initButtonV3(c,[
+        new g5.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","已屏蔽","已屏蔽","#ffffff","#ffffff","#ffffff",""),
+        new g5.BStyle("#ffffff","#f3e3eb","#f1cddb","屏蔽","屏蔽","屏蔽","#e0245e","#1da1f2","#1da1f2","#e0245e")
+    ]);
     root.changeButton = function() {
         this.v_isBlock = !this.v_isBlock;    
-        if (this.v_isBlock) {
-            this.c_button11.style.backgroundColor = "#e0245e";
-            ee.setTextColor(this.c_button11, "#ffffff");
-            ee.setText(this.c_button11, "已屏蔽");
-            this.c_button11.style.borderWidth = "0px";
-            this.c_button11.style.borderStyle = "solid";
-        } else {
-            c.style.backgroundColor = "#ffffff";
-            ee.setTextColor(this.c_button11, "#e0245e");
-            ee.setText(this.c_button11, "屏蔽");
-            this.c_button11.style.borderWidth = "1px";
-            this.c_button11.style.borderStyle = "solid";
-            this.c_button11.style.borderColor = "#e0245e";
-        }
-    }
-    ee.setOnMouseEnter(c, function(sender,event) {
-        sender.style.backgroundColor = sender.parentNode.v_isBlock ? "#ca2055" : "#f3e3eb";
-    });
-    ee.setOnMouseLeave(c, function(sender,event) {
-        sender.style.backgroundColor = sender.parentNode.v_isBlock ? "#e0245e" : "#ffffff";
-    });
-    c.eeMouseDown = function(sender, event, x, y) {
-        sender.style.backgroundColor = sender.parentNode.v_isBlock ? "#b31d4b" : "#f1cddb";
-    }
-    c.eeMouseUp = function(sender, event, x, y) {
-        sender.style.backgroundColor = sender.parentNode.v_isBlock ? "#ca2055" : "#f3e3eb";
+        this.c_button11.init(this.v_isBlock?0:1);
     }
     ee.setOnClick(c, function(sender, event) {
         if (sender.parentNode.v_isBlock) {
@@ -43488,32 +43467,15 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
     root.button1 = c;
     c.style.cursor="pointer";
     addText(c, "...", "center", "top", "微软雅黑", 11, "1DA1F2", "bold");
-    c.v_style = [
+    g5.initButtonV3(c,[
         new g5.BStyle("#e0245e","#ca2055","#b31d4b","已屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff",""),
         new g5.BStyle("","#e8f5fe","#d2ecfc","关注","关注","关注","#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
         new g5.BStyle("#1da1f2","#ca2055","#b31d4b","正在关注","取消关注","取消关注","#ffffff","#ffffff","#ffffff",""),
         new g5.BStyle("","#e8f5fe","#d2ecfc","编辑个人资料","编辑个人资料","编辑个人资料","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
-    ];
-    c.init = function(index) {
-        this.v_index = index;
-        this.style.backgroundColor = this.v_style[index].color1;
-        ee.setText(this, this.v_style[index].text1);
-        ee.setTextColor(this, this.v_style[index].tColor1);
-        if (this.v_style[index].bdColor=="") {
-            this.style.borderWidth = "0px";
-            eb.setDivRect(this.label.parentNode,0,0,null,null);
-        } else {
-            this.style.boxSizing="border-box";
-            this.style.borderWidth = "1px";
-            this.style.borderColor = this.v_style[index].bdColor;
-            this.style.borderStyle = "solid";
-            eb.setDivRect(this.label.parentNode,-1,-1,null,null);
-        }
-        this.style.borderRadius = parseInt(eb.getDivRectSetting(this).h/2) + "px";
-        if (!this.c_cover) {
-            this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
-            eb.setDock(this.c_cover,"fill","fill");
-        }
+    ]);
+    c.style.borderRadius = parseInt(eb.getDivRectSetting(c).h/2) + "px";
+    c.refreshStatus = function(index) {
+        this.init(index);
         var w = 100;
         if (index == 0) {
             w = 90;
@@ -43526,54 +43488,17 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         }
         ee.setRect(this, this.v_right-w,null,w,null);
     }
-    ee.setOnMouseEnter(c, function(sender,event) { 
-        var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color2;
-        ee.setText(sender, s.text2);
-        ee.setTextColor(sender, s.tColor2);
-    });
-    ee.setOnMouseLeave(c, function(sender,event) { 
-        var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color1;
-        ee.setText(sender, s.text1);
-        ee.setTextColor(sender, s.tColor1);
-    });
-    c.eeMouseDown = function(sender,event,x,y) {
-        var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color3;
-        ee.setText(sender, s.text3);
-        ee.setTextColor(sender, s.tColor3);
-    }
-    c.eeMouseUp = function(sender,event,x,y) {
-        var s =sender.v_style[sender.v_index];
-        if ("ontouchstart" in window) {
-            sender.style.backgroundColor = s.color1;
-            ee.setText(sender, s.text1);
-            ee.setTextColor(sender, s.tColor1);
-        } else {
-            sender.style.backgroundColor = s.color2;
-            ee.setText(sender, s.text2);
-            ee.setTextColor(sender, s.tColor2);
-        }
-    }
-    c.eeOnClickCancel = function(sender,event) {
-        var s =sender.v_style[sender.v_index];
-        sender.style.backgroundColor = s.color1;
-        ee.setText(sender, s.text1);
-        ee.setTextColor(sender, s.tColor1);
-    }
-    eb.initMouseEvent(c);
     root.refreshButton = function() {
         if (root.v_userInfo.isFollow) {
-            root.button1.init(2);
+            root.button1.refreshStatus(2);
         } else {
-            root.button1.init(1);
+            root.button1.refreshStatus(1);
         }
         if (root.v_userInfo.userName == g5.myUserInfo.userName) {
-            root.button1.init(3);
+            root.button1.refreshStatus(3);
         }
         if (root.v_userInfo.isBlock1) {
-            root.button1.init(0);
+            root.button1.refreshStatus(0);
         }
     }
     root.refreshButton();
@@ -43583,13 +43508,13 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         } else if (sender.v_index==1) {
             //follow
             g5.setFollow(root.v_userInfo, function(v_userInfo) {
-                sender.init(2);
+                sender.refreshStatus(2);
                 root.v_userInfo = v_userInfo.clone();
             });
         } else if (sender.v_index==2) {
             //unfollow
             g5.setFollow(root.v_userInfo, function(v_userInfo) {
-                sender.init(1);
+                sender.refreshStatus(1);
                 root.v_userInfo = v_userInfo.clone();
             });
         } else if (sender.v_index==3) {
