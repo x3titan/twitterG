@@ -27733,6 +27733,7 @@ sender.renderItem = function(root) {
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -31591,25 +31592,15 @@ sender.refreshFansFollowCount = function() {
     c.link03=$g("mobileMenu03");
     if (g5.myUserInfo.followCount>0) {
         c.link01.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link01,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link01,function(sender,e){
-            sender.style.textDecoration="";
-        });
         ee.setOnClick(c.link01, function(senderLink, event) {
             g5.popBlack.a9.close();
             g5.p2.p16.show(g5.myUserInfo);
         });
+        g5.initLinkV1(c.link01);
     }
     if (g5.myUserInfo.fansCount>0) {
         c.link02.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link02,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link02,function(sender,e){
-            sender.style.textDecoration="";
-        });
+        g5.initLinkV1(c.link02);
         ee.setOnClick(c.link02, function(senderLink, event) {
             g5.popBlack.a9.close();
             g5.p2.p15.show(g5.myUserInfo);
@@ -31617,12 +31608,7 @@ sender.refreshFansFollowCount = function() {
     }
     if (!eb.isEmpty(c.link03)) {
         c.link03.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link03,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link03,function(sender,e){
-            sender.style.textDecoration="";
-        });
+        g5.initLinkV1(c.link03);
         ee.setOnClick(c.link03, function(senderLink, event) {
             g5.popBlack.a9.close();
             g5.p2.p29.show();
@@ -32134,6 +32120,7 @@ g5.initButtonV3(sender,[
       <height>209</height>
       <heightRatio>0.266242038216561</heightRatio>
       <layerName>通用字符串输入窗口</layerName>
+      <layerVisible>false</layerVisible>
       <left>393</left>
       <leftRatio>0.343231441048035</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
@@ -32533,7 +32520,6 @@ g5.initButtonV3(sender,[
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>sender.close();</onClick>
       <onCreate><![CDATA[sender.style.zIndex=100;
@@ -32613,7 +32599,6 @@ if (currentDist>100) {
       <height>300</height>
       <heightRatio>0.382165605095541</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.222707423580786</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -32682,12 +32667,7 @@ sender.refresh = function() {
     var root = this;
     if (this.v_userInfo.followCount>0) {
         c.link01.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link01,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link01,function(sender,e){
-            sender.style.textDecoration="";
-        });
+        g5.initLinkV1(c.link01);
         ee.setOnClick(c.link01, function(senderLink1, event) {
             g5.p2.p16.show(sender.v_userInfo);
             ee.setVisible(sender, false);
@@ -32696,12 +32676,7 @@ sender.refresh = function() {
     }
     if (this.v_userInfo.fansCount>0) {
         c.link02.style.cursor = "pointer";
-        ee.setOnMouseEnter(c.link02,function(sender,e){
-            sender.style.textDecoration="underline";
-        });
-        ee.setOnMouseLeave(c.link02,function(sender,e){
-            sender.style.textDecoration="";
-        });
+        g5.initLinkV1(c.link02);
         ee.setOnClick(c.link02, function(senderLink2, event) {
             ee.setVisible(sender, false);
             ee.setVisible(sender.parentNode, false);
@@ -40416,7 +40391,7 @@ updateMain.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="114">
+  <g5Items count="115">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -45481,6 +45456,27 @@ sender.eeOnClickCancel = function(sender,event) {
 eb.initMouseEvent(sender);
 
 sender.init();</functionCode>
+    </item>
+    <item name="initLinkV1" type="20">
+      <varValue />
+      <functionParam>sender</functionParam>
+      <functionCode>ee.setOnMouseEnter(sender, function(sender,event) { 
+    sender.style.textDecoration="underline";
+});
+ee.setOnMouseLeave(sender, function(sender,event) { 
+    sender.style.textDecoration="";
+});
+sender.eeMouseDown = function(sender,event,x,y) {
+    sender.style.textDecoration="underline";
+}
+sender.eeMouseUp = function(sender,event,x,y) {
+    sender.style.textDecoration="";
+}
+sender.eeOnClickCancel = function(sender,event) {
+    sender.style.textDecoration="";
+}
+eb.initMouseEvent(sender);
+</functionCode>
     </item>
   </g5Items>
 </page>
