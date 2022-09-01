@@ -247,63 +247,95 @@ ee.setOnMouseLeave = function (div, func) {
 eb.initMouseEvent = function (div) {
         if ("ontouchstart" in window) {
             if (div.eeMouseDown) {
-                eb.addEvent(div, "touchstart", function (event) {
+                div.eb_fMouseDown = function (event) {
                     if (div.eeMouseDown(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
                         window.event? window.event.cancelBubble = true : event.stopPropagation();
                         event.returnValue = false;
                         return false;
                     }
-                }, false);
+                }
+                eb.removeEvent(div, "touchstart", div.eb_fMouseDown, false);
+                eb.addEvent(div, "touchstart", div.eb_fMouseDown, false);
             }
             if (div.eeMouseUp) {
-                eb.addEvent(div, "touchend", function (event) {
+                div.eb_fMouseUp = function (event) {
                     if (div.eeMouseUp(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
                         window.event? window.event.cancelBubble = true : event.stopPropagation();
                         event.returnValue = false;
                         return false;
                     }
-                }, false);
+                }
+                eb.removeEvent(div, "touchend", div.eb_fMouseUp, false);
+                eb.addEvent(div, "touchend", div.eb_fMouseUp, false);
             }
             if (div.eeMouseMove) {
-                eb.addEvent(div, "touchmove", function (event) {
+                div.eb_fMouseMove = function (event) {
                     if (div.eeMouseMove(div, event, event.changedTouches[0].clientX, event.changedTouches[0].clientY) == false) {
                         window.event? window.event.cancelBubble = true : event.stopPropagation();
                         event.returnValue = false;
                         return false;
                     }
-                }, false);
+                }
+                eb.removeEvent(div, "touchmove", div.eb_fMouseMove, false);
+                eb.addEvent(div, "touchmove", div.eb_fMouseMove, false);
             }
         } else {
             if (div.eeMouseDown) {
-                eb.addEvent(div, "mousedown", function (event) {
+                div.eb_fMouseDown = function (event) {
                     if (div.eeMouseDown(div, event, event.x, event.y) == false) {
                         window.event? window.event.cancelBubble = true : event.stopPropagation();
                         event.returnValue = false;
                         return false;
                     }
-                }, false);
+                }
+                eb.removeEvent(div, "mousedown", div.eb_fMouseDown, false);
+                eb.addEvent(div, "mousedown", div.eb_fMouseDown, false);
             }
             if (div.eeMouseUp) {
-                eb.addEvent(div, "mouseup", function (event) {
+                div.eb_fMouseUp = function (event) {
                     if (div.eeMouseUp(div, event, event.x, event.y) == false) {
                         window.event? window.event.cancelBubble = true : event.stopPropagation();
                         event.returnValue = false;
                         return false;
                     }
-                }, false);
+                }
+                eb.removeEvent(div, "mouseup", div.eb_fMouseUp, false);
+                eb.addEvent(div, "mouseup", div.eb_fMouseUp, false);
             }
             if (div.eeMouseMove) {
-                eb.addEvent(div, "mousemove", function (event) {
+                div.eb_fMouseMove = function (event) {
                     if (div.eeMouseMove(div, event, event.x, event.y) == false) {
                         window.event? window.event.cancelBubble = true : event.stopPropagation();
                         event.returnValue = false;
                         return false;
                     }
-                }, false);
+                }
+                eb.removeEvent(div, "mousemove", div.eb_fMouseMove, false);
+                eb.addEvent(div, "mousemove", div.eb_fMouseMove, false);
             }
         }
     }
-]]></onPageCreate>
+
+ee.removeControl = function (c) {
+        if (c.eeChildren) {
+            while (c.eeChildren.length > 0) {
+                this.removeControl(c.eeChildren[0]);
+            }
+        }
+        var i = 0;
+        while (i < eb.dockItem.length) {
+            if (eb.dockItem[i] == c) {
+                eb.dockItem.splice(i, 1);
+            } else i++;
+        }
+        i = 0;
+        while ((c.parentNode) &amp;&amp; (i < c.parentNode.eeChildren.length)) {
+            if (c.parentNode.eeChildren[i] == c) {
+                c.parentNode.eeChildren.splice(i, 1);
+            } else i++;
+        }
+        if (c.parentNode) c.parentNode.removeChild(c);
+    }]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammerDecode.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
@@ -26916,7 +26948,6 @@ return false;</onClick>
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -27189,7 +27220,6 @@ g5.initButtonV3(sender,[
       <height>103</height>
       <heightRatio>0.131210191082803</heightRatio>
       <layerName>p2.B转推菜单</layerName>
-      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.324890829694323</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -32503,6 +32533,7 @@ g5.initButtonV3(sender,[
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>sender.close();</onClick>
       <onCreate><![CDATA[sender.style.zIndex=100;
@@ -32582,6 +32613,7 @@ if (currentDist>100) {
       <height>300</height>
       <heightRatio>0.382165605095541</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.222707423580786</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -41867,7 +41899,7 @@ var b3=76+parseInt((w-76*2-20)/3*2);
 var b4=76+parseInt((w-76*2-20)/3*3);
 c = createPanel(root, root.id+"_sbutton01", "", b1, cy, 36, 36);
 c.style.cursor="pointer";
-c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.632.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.04-3.97 3.043-6.312v-.017c-.006-4.367-3.43-7.787-7.8-7.788zm3.787 12.972c-1.134.96-4.862 3.405-6.772 4.643V16.67c0-.414-.335-.75-.75-.75h-.396c-3.66 0-6.318-2.476-6.318-5.886 0-3.534 2.768-6.302 6.3-6.302l4.147.01h.002c3.532 0 6.3 2.766 6.302 6.296-.003 1.91-.942 3.844-2.514 5.176z\"></path></g></svg>";
+c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;fill: currentcolor;vertical-align:middle;\"><g><path d=\"M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.632.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.04-3.97 3.043-6.312v-.017c-.006-4.367-3.43-7.787-7.8-7.788zm3.787 12.972c-1.134.96-4.862 3.405-6.772 4.643V16.67c0-.414-.335-.75-.75-.75h-.396c-3.66 0-6.318-2.476-6.318-5.886 0-3.534 2.768-6.302 6.3-6.302l4.147.01h.002c3.532 0 6.3 2.766 6.302 6.296-.003 1.91-.942 3.844-2.514 5.176z\"></path></g></svg>";
 c.style.borderRadius = "50%";
 ee.setOnMouseEnter(c, function(sender,event) {
     sender.style.backgroundColor = "#dfeffa";
@@ -41886,24 +41918,9 @@ ee.setOnClick(c,function(sender,event) {
     }
     return false;
 });
-c.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#cfdfea";
-    sender.childNodes[0].style.color = "rgb(29,161,242)";
-}
-c.eeMouseUp = function(sender,event,x,y) {
-    if ("ontouchstart" in window) {
-        sender.style.backgroundColor = "";
-        sender.childNodes[0].style.color = "rgb(101,119,134)";
-    } else {
-        sender.style.backgroundColor = "#dfeffa";
-        sender.childNodes[0].style.color = "rgb(29,161,242)";
-    }
-}
-c.eeOnClickCancel = function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = "rgb(101,119,134)";
-}
-eb.initMouseEvent(c);
+g5.initButtonV3(c,[
+    new g5.BStyle("","#dfeffa","#cfdfea","","","","rgb(101,119,134)","rgb(29,161,242)","rgb(29,161,242)","")
+]);
 
 //button2
 c = createPanel(root, root.id+"_sbutton02", "", b2, cy, 36, 36);
@@ -41912,18 +41929,23 @@ c.style.borderRadius = "50%";
 root.c_button2 = c;
 c.v_styleIndex = 0;
 c.v_enabled = true;
-c.init = function(styleIndex) {
+c.refreshBtn = function(styleIndex) {
     if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
     this.v_styleIndex = styleIndex;
-    this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">" + g5.icon.forward + "</svg>";        
+    this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;fill: currentcolor;vertical-align:middle;\">" + g5.icon.forward + "</svg>";        
     if (this.v_styleIndex == 0) {
         this.v_defaultColor = "rgb(101,119,134)";
         if (root.c_label2) ee.setTextColor(root.c_label2, "rgb(101,119,134)");
+        g5.initButtonV3(root.c_button2,[
+            new g5.BStyle("","#def2eb","#cee2db","","","","rgb(101,119,134)","#17bf63","#17bf63","")
+        ]);
     } else {
         this.v_defaultColor = "#17bf63";
         if (root.c_label2) ee.setTextColor(root.c_label2, "#17bf63");
+        g5.initButtonV3(root.c_button2,[
+            new g5.BStyle("","#def2eb","#cee2db","","","","#17bf63","#17bf63","#17bf63","")
+        ]);
     }
-    this.childNodes[0].style.color = this.v_defaultColor;
 }
 ee.setOnClick(c,function(sender,event) {
     while(1) {
@@ -41933,33 +41955,7 @@ ee.setOnClick(c,function(sender,event) {
     }
     return false;
 });
-ee.setOnMouseEnter(c, function(sender,event) {
-    sender.style.backgroundColor = "#def2eb";
-    sender.childNodes[0].style.color = "#17bf63";
-});    
-ee.setOnMouseLeave(c, function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = sender.v_defaultColor;
-});
-c.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#cee2db";
-    sender.childNodes[0].style.color = "#17bf63";
-}
-c.eeMouseUp = function(sender,event,x,y) {
-    if ("ontouchstart" in window) {
-        sender.style.backgroundColor = "";
-        sender.childNodes[0].style.color = sender.v_defaultColor;
-    } else {
-        sender.style.backgroundColor = "#def2eb";
-        sender.childNodes[0].style.color = "#17bf63";
-    }
-}
-c.eeOnClickCancel = function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = sender.v_defaultColor;
-}
-eb.initMouseEvent(c);
-c.init(root.v_content.isForward ? 1:0);
+c.refreshBtn(root.v_content.isForward ? 1:0);
 
 //button3
 c = createPanel(root, root.id+"_sbutton03", "", b3, cy, 36, 36);
@@ -41968,48 +41964,28 @@ c.style.borderRadius = "50%";
 root.c_button3 = c;
 c.v_styleIndex = 0;
 c.v_enabled = true;
-c.init = function(styleIndex) {
+c.refreshBtn = function(styleIndex) {
     if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
     this.v_styleIndex = styleIndex;
     if (this.v_styleIndex == 0) {
-        this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart1 + "</svg>";        
+        this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart1 + "</svg>";        
         this.v_defaultColor = "rgb(101,119,134)";
+        g5.initButtonV3(root.c_button3,[
+            new g5.BStyle("","#f3e3eb","#e3d3db","","","","rgb(101,119,134)","#e23c70","#e23c70","")
+        ]);
     } else {
-        this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:#e23c70;fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart2 + "</svg>";        
+        this.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;fill: currentcolor;vertical-align:middle;\">" + g5.icon.heart2 + "</svg>";        
         this.v_defaultColor = "#e23c70";
+        g5.initButtonV3(root.c_button3,[
+            new g5.BStyle("","#f3e3eb","#e3d3db","","","","#e23c70","#e23c70","#e23c70","")
+        ]);
     }
 }
 ee.setOnClick(c,function(sender,event) {
     g5.setLike(root);
     return false;
 });
-ee.setOnMouseEnter(c, function(sender,event) {
-    sender.style.backgroundColor = "#f3e3eb";
-    sender.childNodes[0].style.color = "#e23c70";
-});    
-ee.setOnMouseLeave(c, function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = sender.v_defaultColor;
-});
-c.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#e3d3db";
-    sender.childNodes[0].style.color = "#e23c70";
-}
-c.eeMouseUp = function(sender,event,x,y) {
-    if ("ontouchstart" in window) {
-        sender.style.backgroundColor = "";
-        sender.childNodes[0].style.color = sender.v_defaultColor;
-    } else {
-        sender.style.backgroundColor = "#f3e3eb";
-        sender.childNodes[0].style.color = "#e23c70";
-    }
-}
-c.eeOnClickCancel = function(sender,event) {
-    sender.style.backgroundColor = "";
-    sender.childNodes[0].style.color = sender.v_defaultColor;
-}
-eb.initMouseEvent(c);
-c.init(root.v_content.isLike ? 1:0);
+c.refreshBtn(root.v_content.isLike ? 1:0);
 
 //button4
 c = createPanel(root, root.id+"_sbutton04", "", b4, cy, 36, 36);
@@ -42018,42 +41994,27 @@ c.style.borderRadius = "50%";
 root.c_button4 = c;
 c.v_styleIndex = 0;
 c.v_enabled = true;
-c.init = function(styleIndex) {
+c.refreshBtn = function(styleIndex) {
     if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
     this.v_styleIndex = styleIndex;
-    this.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(101,119,134);fill: currentcolor;vertical-align:middle;\">"+g5.icon.unlike+"</svg>";
+    this.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.icon.unlike+"</svg>";
     if (this.v_styleIndex == 0) {
         this.v_defaultColor = "rgb(101,119,134)";
+        g5.initButtonV3(root.c_button4,[
+            new g5.BStyle("","#dfeffa","#cfdfea","","","","rgb(101,119,134)","rgb(29,161,242)","rgb(29,161,242)","")
+        ]);
     } else {
         this.v_defaultColor = "rgb(29,161,242)";
+        g5.initButtonV3(root.c_button4,[
+            new g5.BStyle("","#dfeffa","#cfdfea","","","","rgb(29,161,242)","rgb(101,119,134)","rgb(101,119,134)","")
+        ]);
     }
-    this.childNodes[0].style.color = this.v_defaultColor;
 }
 ee.setOnClick(c,function(sender,event) {
     g5.setUnlike(root);
     return false;
 });
-ee.setOnMouseEnter(c, function(sender,event) {
-    sender.style.backgroundColor = "#dfeffa";
-});    
-ee.setOnMouseLeave(c, function(sender,event) {
-    sender.style.backgroundColor = "";
-});
-c.eeMouseDown = function(sender,event,x,y) {
-    sender.style.backgroundColor = "#cfdfea";
-}
-c.eeMouseUp = function(sender,event,x,y) {
-    if ("ontouchstart" in window) {
-        sender.style.backgroundColor = "";
-    } else {
-        sender.style.backgroundColor = "#dfeffa";
-    }
-}
-eb.initMouseEvent(c);
-c.eeOnClickCancel = function(sender,event) {
-    sender.style.backgroundColor = "";
-}
-c.init(root.v_content.isUnlike ? 1:0);
+c.refreshBtn(root.v_content.isUnlike ? 1:0);
 
 //4 label
 if (root.v_mode.charAt(2) != "x") {
@@ -42471,7 +42432,7 @@ if (itemsMode) {
       <functionCode>//root,v_content,v_reContent,v_userInfo,v_reUserInfo
 if (root.v_content.isLike != v_content.isLike) {
     root.v_content.isLike = v_content.isLike;
-    if (root.c_button3) root.c_button3.init(root.v_content.isLike ? 1:0);
+    if (root.c_button3) root.c_button3.refreshBtn(root.v_content.isLike ? 1:0);
     if (root.c_label3) root.c_label3.init(root.v_content.isLike ? 1:0);
 }
 
@@ -42482,7 +42443,7 @@ if (root.v_content.likeCount != v_content.likeCount) {
 
 if (root.v_content.isUnlike != v_content.isUnlike) {
     root.v_content.isUnlike = v_content.isUnlike;
-    if (root.c_button4) root.c_button4.init(root.v_content.isUnlike ? 1:0);
+    if (root.c_button4) root.c_button4.refreshBtn(root.v_content.isUnlike ? 1:0);
     if (root.c_label4) root.c_label4.init(root.v_content.isUnlike ? 1:0);
 }
 
@@ -42498,7 +42459,7 @@ if (root.v_content.reCount != v_content.reCount) {
 
 if (root.v_content.isForward != v_content.isForward) {
     root.v_content.isForward = v_content.isForward;
-    if (root.c_button2) root.c_button2.init(root.v_content.isForward ? 1:0);
+    if (root.c_button2) root.c_button2.refreshBtn(root.v_content.isForward ? 1:0);
     if (root.c_label2) root.c_label2.init(root.v_content.isForward ? 1:0);
 }
 
@@ -45344,10 +45305,9 @@ sender.init = function(index) {
         if (this.label) eb.setDivRect(this.label.parentNode,-1,-1,null,null);
     }
     //this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-    if (!this.c_cover) {
-        this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
-        eb.setDock(this.c_cover,"fill","fill");
-    }
+    if (this.c_cover) ee.removeControl(this.c_cover);
+    this.c_cover = createPanel(this, "", "#00000001", 0, 0, 1, 1);
+    eb.setDock(this.c_cover,"fill","fill");
 }
 
 sender.setText = function(text) {
