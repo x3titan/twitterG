@@ -459,7 +459,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>785</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -648,7 +647,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.993630573248408</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.262008733624454</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -2596,36 +2594,21 @@ sender.refreshFansFollowCount = function() {
         c.link03=$g("userPageLink03");
         if (this.v_userInfo.followCount>0) {
             c.link01.style.cursor = "pointer";
-            ee.setOnMouseEnter(c.link01,function(sender,e){
-                sender.style.textDecoration="underline";
-            });
-            ee.setOnMouseLeave(c.link01,function(sender,e){
-                sender.style.textDecoration="";
-            });
+            g5.initLinkV1(c.link01);
             ee.setOnClick(c.link01, function(senderLink, event) {
                 g5.p2.p16.show(sender.v_userInfo);
             });
         }
         if (this.v_userInfo.fansCount>0) {
             c.link02.style.cursor = "pointer";
-            ee.setOnMouseEnter(c.link02,function(sender,e){
-                sender.style.textDecoration="underline";
-            });
-            ee.setOnMouseLeave(c.link02,function(sender,e){
-                sender.style.textDecoration="";
-            });
+            g5.initLinkV1(c.link02);
             ee.setOnClick(c.link02, function(senderLink, event) {
                 g5.p2.p15.show(sender.v_userInfo);
             });
         }
         if (!eb.isEmpty(c.link03)) {
             c.link03.style.cursor = "pointer";
-            ee.setOnMouseEnter(c.link03,function(sender,e){
-                sender.style.textDecoration="underline";
-            });
-            ee.setOnMouseLeave(c.link03,function(sender,e){
-                sender.style.textDecoration="";
-            });
+            g5.initLinkV1(c.link03);
             ee.setOnClick(c.link03, function(senderLink, event) {
                 g5.p2.p29.show();
             });
@@ -3073,7 +3056,9 @@ sender.insertAtPage = function(pageIndex, v_content, v_reContent, v_userInfo, v_
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.popBlack.a2.show([sender.v_photo], sender.v_photo);</onClick>
-      <onCreate>sender.init = function(photoString) {
+      <onCreate>g5.initImgButtonV1(sender,"100%","80%","70%");
+
+sender.init = function(photoString) {
     ee.setImage(this, "");
     ee.setImage(this, g5.getUserTitleBgUrl(photoString)[1]);
     this.v_photo = photoString;
@@ -3283,6 +3268,9 @@ g5.popBlack.a2.show([sender.v_photo], sender.v_photo);</onClick>
 sender.style.borderWidth = "4px";
 sender.style.borderColor = "#ffffff";
 sender.style.borderStyle = "solid";
+
+g5.initImgButtonV1(sender,"100%","80%","70%");
+
 sender.init = function(photoString) {
     ee.setImage(this, "");
     ee.setVisible(this, false);
@@ -18277,7 +18265,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>756</height>
       <heightRatio>0.969230769230769</heightRatio>
       <layerName>发短文手机版</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel587");
@@ -18567,37 +18554,18 @@ if ((content.length<=0) &amp;&amp; (photos.length<=0)) {
 if (sender.parentNode.parentNode.onComplete) {
     sender.parentNode.parentNode.onComplete();
 }]]></onClick>
-      <onCreate>sender.bgColorDisabled = "#8ed0f9";
-sender.bgColorEnabled = "#1da1f2";
-sender.bgColorHot = "#1a91da";
-sender.bgColorDown = "#1781c2";
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","","","",""),
+    new g5.BStyle("#8ed0f9","#8ed0f9","#8ed0f9","","","","","","","")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
 sender.v_enabled = true;
 sender.setEnabled = function(enabled) {
     this.v_enabled = enabled;
-    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+    this.init(enabled?0:1);
 }
 sender.setEnabled(false);
-
-sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorEnabled;
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorDown;
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-}
-eb.initMouseEvent(sender);
-
-
 
 
 
@@ -26948,6 +26916,7 @@ return false;</onClick>
       <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -27220,6 +27189,7 @@ g5.initButtonV3(sender,[
       <height>103</height>
       <heightRatio>0.131210191082803</heightRatio>
       <layerName>p2.B转推菜单</layerName>
+      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.324890829694323</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
