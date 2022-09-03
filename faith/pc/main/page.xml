@@ -2289,7 +2289,6 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -10615,7 +10614,30 @@ sender.renderItem = function(root) {
         sender.style.backgroundColor = root.v_bgColor;
     });
     root.style.backgroundColor = root.v_bgColor;
-
+    root.eeMouseDown = function(sender,event,x,y) {
+        var t=event.target;
+        while (true) {
+            if (t==sender) break;
+            if (!t) break;
+            if (t.eeOnClick) {
+                return;
+            }
+            t = t.parentNode;
+        }
+        sender.style.backgroundColor = "rgb(242,245,247)";
+    }
+    root.eeMouseUp = function(sender,event,x,y) {
+        if ("ontouchstart" in window) {
+            sender.style.backgroundColor = "#ffffff";
+        } else {
+            sender.style.backgroundColor = "rgb(245,248,250)";
+        }
+    }
+    root.eeOnClickCancel = function(sender,event) {
+        sender.style.backgroundColor = "#ffffff";
+    }                       
+    
+    eb.initMouseEvent(root);
     //user photo
     c = createPanel(root, root.id+"_panel13", "", 16, cy, 50, 50);
     root.c_userPhoto = c;
@@ -10679,12 +10701,13 @@ sender.renderItem = function(root) {
         g5.p2.p2.show(root.v_userInfo);
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
-    ee.setOnMouseEnter(root.c_titleText,function(sender,e){
-        sender.childNodes[0].style.textDecoration="underline";
-    });
-    ee.setOnMouseLeave(root.c_titleText,function(sender,e){
-        sender.childNodes[0].style.textDecoration="";
-    });    
+    g5.initLinkV1(root.c_titleText);
+    //ee.setOnMouseEnter(root.c_titleText,function(sender,e){
+    //    sender.childNodes[0].style.textDecoration="underline";
+    //});
+    //ee.setOnMouseLeave(root.c_titleText,function(sender,e){
+    //    sender.childNodes[0].style.textDecoration="";
+    //});    
     
     //content
     c = createPanel(root, root.id+"_panel17", "", 75, cy, w-80, 10);
@@ -10880,6 +10903,7 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>私信列表</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
