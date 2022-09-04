@@ -2289,6 +2289,7 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -10702,12 +10703,6 @@ sender.renderItem = function(root) {
         window.event? window.event.cancelBubble = true : event.stopPropagation();
     });
     g5.initLinkV1(root.c_titleText);
-    //ee.setOnMouseEnter(root.c_titleText,function(sender,e){
-    //    sender.childNodes[0].style.textDecoration="underline";
-    //});
-    //ee.setOnMouseLeave(root.c_titleText,function(sender,e){
-    //    sender.childNodes[0].style.textDecoration="";
-    //});    
     
     //content
     c = createPanel(root, root.id+"_panel17", "", 75, cy, w-80, 10);
@@ -19424,7 +19419,6 @@ sender.v_photos = new Array();</onCreate>
       <height>644</height>
       <heightRatio>0.825641025641026</heightRatio>
       <layerName>youtube视频链接</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 sender.c_video.innerHTML = "";
@@ -19593,54 +19587,10 @@ setTimeout(function() {
     }
 }, 300);
 ]]></onClick>
-      <onCreate>sender.v_style = [
+      <onCreate>g5.initButtonV3(sender,[
     new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff",""),
-];
-
-sender.init = function(index) {
-    this.v_index = index;
-    this.style.backgroundColor = this.v_style[index].color1;
-    ee.setText(this, this.v_style[index].text1);
-    ee.setTextColor(this, this.v_style[index].tColor1);
-    if (this.v_style[index].bdColor=="") {
-        this.style.borderWidth = "0px";
-    } else {
-        this.style.boxSizing="border-box";
-        this.style.borderWidth = "1px";
-        this.style.borderColor = this.v_style[index].bdColor;
-        this.style.borderStyle = "solid";
-    }
-    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-}
-
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color1;
-    ee.setText(sender, s.text1);
-    ee.setTextColor(sender, s.tColor1);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color3;
-    ee.setText(sender, s.text3);
-    ee.setTextColor(sender, s.tColor3);
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-}
-eb.initMouseEvent(sender);
-
-sender.init(0);
-
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
 
 
 
