@@ -18285,7 +18285,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>756</height>
       <heightRatio>0.969230769230769</heightRatio>
       <layerName>发短文手机版</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel587");
@@ -18690,10 +18689,6 @@ sender.convertHtml = function(text) {
 }
 
 
-//protected
-sender.c_label = sender.eeChildren[0];
-sender.c_edit = sender.eeChildren[1];
-
 //private
 var e = sender.c_edit;
 e.contentEditable = true;
@@ -18812,17 +18807,21 @@ sender.getCurPosAbs = function() {
     var addPos = function(node) {
         for (var i=0; i<node.childNodes.length; i++) {
             if (node.childNodes[i] == nodeSel) {
-                if (nodeSel.nodeName =="DIV") pos++;
+                if (nodeSel.nodeName.toUpperCase() =="DIV") pos++;
                 pos += curPos.curPos;
                 return true;
             }
-            if (node.childNodes[i].nodeName == "DIV") {
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
                 if (i>0) pos++;
                 if (addPos(node.childNodes[i])) return true;
-            } else if (node.childNodes[i].nodeName == "BR") {
-            } else if (node.childNodes[i].nodeName == "SPAN") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
                 if (addPos(node.childNodes[i])) return true;
-            } else if (node.childNodes[i].nodeName == "#text") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "H1") {
                 pos += node.childNodes[i].textContent.length;
             }
         }
@@ -18832,13 +18831,12 @@ sender.getCurPosAbs = function() {
     return pos;
 }
 
-
 sender.setCurPosAbs = function(absPos) {
     var pos = 0;
     var setNode, setPos;
     var addPos = function(node) {
         for (var i=0; i<node.childNodes.length; i++) {
-            if (node.childNodes[i].nodeName == "DIV") {
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
                 if (i>0) pos++;
                 if (pos>=absPos) {
                     if (node.childNodes[i].childNodes.length>0) {
@@ -18850,10 +18848,24 @@ sender.setCurPosAbs = function(absPos) {
                     return true;
                 }
                 if (addPos(node.childNodes[i])) return true;
-            } else if (node.childNodes[i].nodeName == "BR") {
-            } else if (node.childNodes[i].nodeName == "SPAN") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
                 if (addPos(node.childNodes[i])) return true;
-            } else if (node.childNodes[i].nodeName == "#text") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
+                if (pos+node.childNodes[i].textContent.length>=absPos) {
+                    setNode = node.childNodes[i];
+                    setPos = absPos - pos;
+                    return true;
+                }
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
+                if (pos+node.childNodes[i].textContent.length>=absPos) {
+                    setNode = node.childNodes[i];
+                    setPos = absPos - pos;
+                    return true;
+                }
+                pos += node.childNodes[i].textContent.length;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "H1") {
                 if (pos+node.childNodes[i].textContent.length>=absPos) {
                     setNode = node.childNodes[i];
                     setPos = absPos - pos;
@@ -18877,14 +18889,20 @@ sender.getPlanText = function() {
     var text = "";
     var addPos = function(node) {
         for (var i=0; i<node.childNodes.length; i++) {
-            if (node.childNodes[i].nodeName == "DIV") {
+            if (node.childNodes[i].nodeName.toUpperCase() == "DIV") {
                 if (i>0) text += "\n";
                 addPos(node.childNodes[i]);
-            } else if (node.childNodes[i].nodeName == "BR") {
-            } else if (node.childNodes[i].nodeName == "SPAN") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "BR") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "SPAN") {
                 text += node.childNodes[i].textContent;
-            } else if (node.childNodes[i].nodeName == "#text") {
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "#TEXT") {
                 text += node.childNodes[i].textContent;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "A") {
+                text += node.childNodes[i].textContent;
+            } else if (node.childNodes[i].nodeName.toUpperCase() == "H1") {
+                text += node.childNodes[i].textContent;
+            } else {
+                console.log("undefined node name: " + node.childNodes[i].nodeName);
             }
         }
         return false;
@@ -18908,7 +18926,7 @@ e.oninput = function(event) {
 }
 
 e.onpaste = function() {
-    sender.f_onChange();
+    //sender.f_onChange();
 }
 
 e.onfocus = function() {
@@ -18928,7 +18946,6 @@ sender.f_onSelectionChange = function(event) {
         }
     }
 }
-
 
 sender.c_edit.addEventListener("compositionstart", function(event) {
     sender.v_isIme = true;
@@ -19044,6 +19061,7 @@ sender.processUserName = function() {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel608/panel609">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>c_label</ee_LocalName>
       <fontColor>9197A3</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>16</fontSize>
@@ -19052,7 +19070,6 @@ sender.processUserName = function() {
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>c_label</note>
       <sizeRatio>0.203703703703704</sizeRatio>
       <text>在这里输入您的发言内容</text>
       <top>0</top>
@@ -19062,6 +19079,7 @@ sender.processUserName = function() {
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel579/panel608/panel610">
       <backgroundColor>FFFFFF</backgroundColor>
+      <ee_LocalName>c_edit</ee_LocalName>
       <fontColor>404040</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
@@ -19071,7 +19089,6 @@ sender.processUserName = function() {
       <layerVisible>false</layerVisible>
       <left>16</left>
       <leftRatio>0.0296296296296296</leftRatio>
-      <note>c_edit</note>
       <outerBottom>2</outerBottom>
       <outerLeft>5</outerLeft>
       <outerRight>2</outerRight>
@@ -19419,6 +19436,7 @@ sender.v_photos = new Array();</onCreate>
       <height>644</height>
       <heightRatio>0.825641025641026</heightRatio>
       <layerName>youtube视频链接</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 sender.c_video.innerHTML = "";
