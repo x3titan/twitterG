@@ -339,7 +339,7 @@ ee.removeControl = function (c) {
 
 
 eb.processDock = function () {
-        var dock, r, r1, ro, i, d, item;
+        var dock, r, r1, ro, i, d, item, rp;
         var modified = true;
         var a = new Array();
         while (modified) {
@@ -349,6 +349,14 @@ eb.processDock = function () {
                 item = this.dockItem[i];
                 dock = item.dockX;
                 r = eb.getDivRectSetting(item);
+                if (item.parentNode) {
+                    if (item.id == "ee_divRoot") {
+                        rp = eb.getClientSize();
+                        rp = new Rect(0, 0, rp.w, rp.h);
+                    } else {
+                        rp = eb.getDivRectSetting(item.parentNode);
+                    }
+                } else rp = new Rect(0, 0, 1, 1);
                 if (eb.isEmpty(item.outerLeft)) {
                     ro = new Rect(0, 0, 0, 0);
                 } else {
@@ -363,22 +371,22 @@ eb.processDock = function () {
                 if (dock == "left") {
                     r.x = ro.x;
                 } else if (dock == "right") {
-                    r.x = eb.getDivRectSetting(item.parentNode).w - r.w - ro.w;
+                    r.x = rp.w - r.w - ro.w;
                 } else if (dock == "center") {
-                    r.x = parseInt((eb.getDivRectSetting(item.parentNode).w - r.w) / 2 + ro.x / 2 - ro.w / 2);
+                    r.x = parseInt((rp.w - r.w) / 2 + ro.x / 2 - ro.w / 2);
                 } else if (dock == "fill") {
                     r.x = ro.x;
-                    r.w = eb.getDivRectSetting(item.parentNode).w - ro.x - ro.w;
+                    r.w = rp.w - ro.x - ro.w;
                     if (!eb.isEmpty(item.lockRatio)) {
                         r.h = parseInt(item.sizeRatio * r.w);
                     }
                 } else if (dock == "ratio") {
-                    d = item.widthRatio * eb.getDivRectSetting(item.parentNode).w;
+                    d = item.widthRatio * rp.w;
                     if (!eb.isEmpty(item.lockRatio)) {
-                        r.w = parseInt(Math.min(d, item.heightRatio * eb.getDivRectSetting(item.parentNode).h / item.sizeRatio));
-                        r.x = parseInt((item.leftRatio + item.widthRatio / 2) * eb.getDivRectSetting(item.parentNode).w - r.w / 2);
+                        r.w = parseInt(Math.min(d, item.heightRatio * rp.h / item.sizeRatio));
+                        r.x = parseInt((item.leftRatio + item.widthRatio / 2) * rp.w - r.w / 2);
                     } else {
-                        r.x = parseInt(item.leftRatio * eb.getDivRectSetting(item.parentNode).w);
+                        r.x = parseInt(item.leftRatio * rp.w);
                         r.w = parseInt(d);
                     }
                 }
@@ -392,35 +400,35 @@ eb.processDock = function () {
                     }
                 } else if (dock == "bottom") {
                     if (!eb.isEmpty(item.tableBody)) {
-                        r.y = eb.getDivRectSetting(item.parentNode).h - r.h - r1.h - ro.h;
+                        r.y = rp.h - r.h - r1.h - ro.h;
                         r1.y = r.y + r.h;
                     } else {
-                        r.y = eb.getDivRectSetting(item.parentNode).h - r.h - ro.h;
+                        r.y = rp.h - r.h - ro.h;
                     }
                 } else if (dock == "center") {
                     if (!eb.isEmpty(item.tableBody)) {
-                        r.y = parseInt((eb.getDivRectSetting(item.parentNode).h - r.h - r1.h) / 2);
+                        r.y = parseInt((rp.h - r.h - r1.h) / 2);
                         r1.y = r.y + r.h;
                     } else {
-                        r.y = parseInt((eb.getDivRectSetting(item.parentNode).h - r.h) / 2);
+                        r.y = parseInt((rp.h - r.h) / 2);
                     }
                     r.y += ro.y / 2 - ro.h / 2;
                 } else if (dock == "fill") {
                     if (!eb.isEmpty(item.tableBody)) {
                         r.y = ro.y;
                         r1.y = r.y + r.h;
-                        r1.h = eb.getDivRectSetting(item.parentNode).h - r.h - ro.y - ro.h;
+                        r1.h = rp.h - r.h - ro.y - ro.h;
                     } else {
                         r.y = ro.y;
-                        r.h = eb.getDivRectSetting(item.parentNode).h - ro.y - ro.h;
+                        r.h = rp.h - ro.y - ro.h;
                     }
                 } else if (dock == "ratio") {
-                    d = item.heightRatio * eb.getDivRectSetting(item.parentNode).h;
+                    d = item.heightRatio * rp.h;
                     if (!eb.isEmpty(item.lockRatio)) {
-                        r.h = parseInt(Math.min(d, item.widthRatio * eb.getDivRectSetting(item.parentNode).w * item.sizeRatio));
-                        r.y = parseInt((item.topRatio + item.heightRatio / 2) * eb.getDivRectSetting(item.parentNode).h - r.h / 2);
+                        r.h = parseInt(Math.min(d, item.widthRatio * rp.w * item.sizeRatio));
+                        r.y = parseInt((item.topRatio + item.heightRatio / 2) * rp.h - r.h / 2);
                     } else {
-                        r.y = parseInt(item.topRatio * eb.getDivRectSetting(item.parentNode).h);
+                        r.y = parseInt(item.topRatio * rp.h);
                         r.h = parseInt(d);
                     }
                 }
@@ -499,7 +507,6 @@ eb.processDock = function () {
                 if (r.w < 0) r.w = 0;
                 if (r.h < 0) r.h = 0;
                 if (!r.equals(eb.getDivRectSetting(item))) {
-                    console.log(i);
                     modified = true;
                     ee.setRect(item, r.x, r.y, r.w, r.h);
                 }
@@ -522,6 +529,22 @@ eb.processDock = function () {
                 eb.fontSizeAutoItem[i]._input.style.fontSize = parseInt(sw * 3 / eb.fontSizeAutoItem[i].inputFontSizeAuto / 4) + "pt";
             }
         }
+    }
+
+ee.getGlobalPoint = function (control) {
+        if (eb.isEmpty(control)) return new Point(0, 0);
+        var r = new Point(0, 0);
+        var rect;
+        while (true) {
+            rect = eb.getDivRectSetting(control);
+            r.x += rect.x;
+            r.y += rect.y;
+            if (control.id == "divRoot") break;
+            if (control.id == "") break;
+            control = control.parentNode;
+            if (eb.isEmpty(control)) break;
+        }
+        return r;
     }]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammerDecode.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
