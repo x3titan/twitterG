@@ -681,7 +681,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>766</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -870,7 +869,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.01827676240209</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.33003300330033</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -2513,7 +2511,6 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -2690,19 +2687,19 @@ sender.close = function() {
 }
 
 sender.activePage = function() {
-    if (this.v_needRefresh) {
-        document.documentElement.scrollTop = 0;
-    } else {
-        document.documentElement.scrollTop = this.v_lastScrollTop;
-    }
+    var nf = this.v_needRefresh;
     g5.pushHistory2("/" + escape(this.v_userInfo.userName));
     
     g5.pageMode = 0;
     g5.refreshMain(true);
     eb.setDivRect(g5.p2,null,null,null,eb.getDivRect(this).h);
     ee.setVisible(this, true);
-    //g5.changeP3(8);
     g5.p4.changePage("a6");
+    if (nf) {
+        document.documentElement.scrollTop = 0;
+    } else {
+        document.documentElement.scrollTop = this.v_lastScrollTop;
+    }
 }
 
 sender.refreshContent = function() {
@@ -27135,6 +27132,7 @@ return false;</onClick>
       <height>766</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -27561,6 +27559,7 @@ g5.initButtonV3(sender,[
       <height>281</height>
       <heightRatio>0.366840731070496</heightRatio>
       <layerName>p3.C其他人选项</layerName>
+      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.334433443344334</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -43908,16 +43907,6 @@ var url = new URL(window.location.href);
 var pn = url.pathname;
 var pns = url.pathname.split("/");
 pns.splice(0,1);
-if ((window.location.href.toLowerCase() == "http://www.fistalk.com/") ||
-   (window.location.href.toLowerCase() == "http://www.fistalk.com")) {
-    window.location.href = "https://www.fistalk.com";
-    return;
-}
-if (url.origin.toLowerCase().indexOf("//fistalk.com")>0) {
-    //window.location.href = "https://www.fistalk.com" + url.pathname;
-    //return;
-}
-
 
 if (pn == "" || pn == "/") pn = "/home";
 
