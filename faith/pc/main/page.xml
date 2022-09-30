@@ -79,7 +79,16 @@ init();
 
 
                                             ]]></onControlLoad>
-      <onPageCreate><![CDATA[//history control
+      <onPageCreate><![CDATA[var tk = eb.getCookie("twitterGToken");
+if (!tk) tk = "";
+if (tk.length<=0) {
+    window.location.href = "https://fistalk.com/login";
+}
+if (window.location.href.toLowerCase().indexOf("http:")==0) {
+    window.location.href = "https://fistalk.com/home";
+}
+
+//history control
 window.addEventListener("popstate", function (a) {
     g5.processUrl();
 })
