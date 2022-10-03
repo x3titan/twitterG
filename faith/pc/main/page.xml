@@ -11120,6 +11120,7 @@ sender.fLoad = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>私信列表</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -11140,7 +11141,7 @@ sender.activePage = function() {
 sender.close = function() {
     this.v_lastScrollTop = document.documentElement.scrollTop;
     ee.setVisible(g5.p4, false);
-    ee.setVisible(this, false)
+    ee.setVisible(this, false);
 }
 
 sender.show = function() {
@@ -11229,14 +11230,6 @@ sender.render = function(root) {
             updateMain.chat1v1NewCount -= newCount;
             if (updateMain.chat1v1NewCount<0) updateMain.chat1v1NewCount = 0;
             g5.p2.p13.showAlert(updateMain.chat1v1NewCount);
-        }
-        return;
-        if (root.v_userInfo.status == "DISABLED") {
-            g5.alert1("提示", "该用户处于禁封状态，目前无法查看与该用户的私信记录");
-        } else if (root.v_userInfo.status == "Del") {
-            g5.alert1("提示", "该用户已销号，目前无法查看与该用户的私信记录");
-        } else {
-            g5.p2.p14.show(sender.v_userInfo);
         }
     });
     ee.setOnMouseEnter(root, function(sender,e){
@@ -11424,6 +11417,17 @@ sender.loadDataset = function(dataset) {
         this.render(c);
         this.refreshItem(c);
         this.v_items.push(c);
+        //if (g5.debugMode) {
+        //    for (var a =0; a<50;a++) {
+        //        hd = "prvLst_" + dataset.getData(4,i);
+        //        c = createPanel(root, hd, "", 0, y, rw, 70);
+        //        y += 70;
+        //        this.loadRecord(c, dataset, i);
+        //        this.render(c);
+        //        this.refreshItem(c);
+        //        this.v_items.push(c);
+        //    }
+        //}
     }
     if (dataset.rowCount<=0) {
             sender.v_status = "noResult";
@@ -11632,9 +11636,6 @@ sender.showByUserName = function(userName) {
 }
 
 sender.show = function(v_userInfo) {
-    var r = eb.getClientSize();
-    ee.setRect(g5.p2,null,null,null,r.h);
-    eb.processDock();
     if (g5.isMobile) {
         ee.setRect(ee.getControl("layoutyitem13"),null,null,null,113);
     }
@@ -11644,6 +11645,9 @@ sender.show = function(v_userInfo) {
     g5.p4.a8.setText1(this.v_userInfo.nickName);
     g5.p4.a8.setText2("@" + this.v_userInfo.userName);
     g5.changeP2(13);
+    var r = eb.getClientSize();
+    ee.setRect(g5.p2,null,null,null,r.h);
+    eb.processDock();
     var rect = eb.getDivRectSetting(g5.p4);
     ee.setRect(ee.getControl("layoutyitem11"),null,null,null,rect.h);
     ee.setRect(ee.getControl("layouty6"),0,null,null,null,null);
@@ -12408,7 +12412,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>粉丝列表</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
