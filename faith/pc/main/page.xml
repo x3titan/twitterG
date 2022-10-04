@@ -22,6 +22,11 @@ c.style.overflow = "";
 
 document.addEventListener("scroll", g5.onScroll);
 
+if (g5.isIOS) {
+    document.body.ontouchend = function(e) {
+        if (e.cancelable) e.preventDefault();
+    }
+}
 
 if (g5.isMobile) {
     var cs = eb.getClientSize();
@@ -34,7 +39,7 @@ if (g5.isMobile) {
 
 var url = new URL(window.location.href);
 var pns = url.pathname.toLowerCase().split("/")
-pns.splice(0,1);;
+pns.splice(0,1);
 if (pns[0]=="twitterg") g5.pushHistory2("/home");
 
 
@@ -559,7 +564,7 @@ ee.getGlobalPoint = function (control) {
     }
        */]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammerDecode.js" type="text/javascript"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 
 <style>
 .scrollBar01::-webkit-scrollbar-track {
@@ -40586,7 +40591,7 @@ updateMain.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="115">
+  <g5Items count="116">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -41020,6 +41025,19 @@ end:""
     [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
     function() {}
 );</functionCode>
+    </item>
+    <item name="isIOS" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode>return [
+        "iPad Simulator",
+        "iPhone Simulator",
+        "iPod Simulator",
+        "iPad",
+        "iPhone",
+        "iPod"
+    ].includes(navigator.platform)
+    || (navigator.userAgent.includes("Mac") &amp;&amp; "ontouchend" in document);</functionCode>
     </item>
     <item name="loadTwitterRecord" type="20">
       <varValue />
