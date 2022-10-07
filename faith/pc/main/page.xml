@@ -11976,7 +11976,7 @@ sender.renderMsg = function(root) {
             case 4: c.style.borderRadius = "0px 20px 20px 0px"; break;
             default:
         }
-        c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 5, w-110-15*2, null);
+        c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 5, null, null);
     } else {
         c = createPanel(root, root.id+"_panel2", "", 65, cy, w-110, 40);
         switch (mode) {
@@ -11987,7 +11987,7 @@ sender.renderMsg = function(root) {
             default:
         }
         c.style.backgroundColor = "#1da1f2";
-        c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 5,w-110-15*2, null); //40);
+        c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 5, null, null); //40);
     }
     var ph = "/photo ";
     if (root.v_msgContent.substr(0, ph.length) == ph) {
@@ -12011,13 +12011,21 @@ sender.renderMsg = function(root) {
         cy += pHeight+4;
     } else {
         c.style.overflow = "";
-        c.style.wordWrap = "break-word";
-        c.style.wordBreak = "break-all";
-        c.style.whiteSpace = "normal";
         c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
         c.style.color = left ? "#000000":"#FFFFFF";
+                
+        c.style.wordBreak = "break-all";
+        c.style.whiteSpace = "nowrap";
         c.innerHTML = "<font style='font-size:12pt; line-height:1.2;'>" +
             g5.showCommonText(root.v_msgContent, left? "tam_hlink1":"tam_hlink2").replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
+        var rect = eb.getDivRect(c);
+        if (rect.w > w-110-15*2) {
+            c.style.wordWrap = "break-word";
+            c.style.wordBreak = "break-all";
+            c.style.whiteSpace = "normal";
+            eb.setDivRect(c,null,null,w-110-15*2, null);
+        }
+        
         for (var i=0; i<c.childNodes[0].childNodes.length; i++) {
             if (c.childNodes[0].childNodes[i].nodeName=="SPAN") {
                 ee.setOnClick(c.childNodes[0].childNodes[i], function(sender, event) {
@@ -12026,10 +12034,7 @@ sender.renderMsg = function(root) {
                 });
             }
         }
-        //ee.changeParent(c,g5.pLine1);
-        var rect = eb.getDivRect(c);
-        //ee.changeParent(c,root);
-        //eb.setDivRect(c, null, null, null, rect.h);
+        rect = eb.getDivRect(c);
         c = c.parentNode;
         ee.setRect(c,null,null,rect.w+15*2,rect.h+14);
         rect = eb.getDivRect(c);
