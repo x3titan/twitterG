@@ -648,26 +648,49 @@ a.css_button1:hover{
 </style>
 
 <style>
-a.css_button2 {
+.tam_hlink1 {
     display:inline-block;
     padding:0.1em 0.5em 0.1em 0.0em;
     margin:0 0.3em -0.3em 0.0em;
     border-radius:0.4em;
     box-sizing: border-box;
     text-decoration:none;
-    font-family:'Roboto',sans-serif;
-    color:#ffffff;
+    color:#1DA1F2;
     text-align:left;
+    cursor: pointer;
 }
-a.css_button2:hover{
+.tam_hlink1:hover{
     text-decoration: underline;
 }
 @media all and (max-width:30em){
-    .css_button2{
+    .tam_hlink1{
         splay:block;
         margin:0.01em auto;
 }
 </style>
+
+<style>
+.tam_hlink2 {
+    display:inline-block;
+    padding:0.1em 0.5em 0.1em 0.0em;
+    margin:0 0.3em -0.3em 0.0em;
+    border-radius:0.4em;
+    box-sizing: border-box;
+    text-decoration:none;
+    color:#ffffff;
+    text-align:left;
+    cursor: pointer;
+}
+.tam_hlink2:hover{
+    text-decoration: underline;
+}
+@media all and (max-width:30em){
+    .tam_hlink2{
+        splay:block;
+        margin:0.01em auto;
+}
+</style>
+
 
 
 <style>
@@ -11954,7 +11977,6 @@ sender.renderMsg = function(root) {
             default:
         }
         c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 5, w-110-15*2, null);
-        //addText(c, " ", "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "normal");
     } else {
         c = createPanel(root, root.id+"_panel2", "", 65, cy, w-110, 40);
         switch (mode) {
@@ -11966,7 +11988,6 @@ sender.renderMsg = function(root) {
         }
         c.style.backgroundColor = "#1da1f2";
         c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 5,w-110-15*2, null); //40);
-        //addText(c, " ", "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "FFFFFF", "normal");
     }
     var ph = "/photo ";
     if (root.v_msgContent.substr(0, ph.length) == ph) {
@@ -11996,7 +12017,7 @@ sender.renderMsg = function(root) {
         c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
         c.style.color = left ? "#000000":"#FFFFFF";
         c.innerHTML = "<font style='font-size:12pt; line-height:1.2;'>" +
-            g5.showCommonText(root.v_msgContent, left? "css_button1":"css_button2").replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
+            g5.showCommonText(root.v_msgContent, left? "tam_hlink1":"tam_hlink2").replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
         for (var i=0; i<c.childNodes[0].childNodes.length; i++) {
             if (c.childNodes[0].childNodes[i].nodeName=="SPAN") {
                 ee.setOnClick(c.childNodes[0].childNodes[i], function(sender, event) {
@@ -44067,6 +44088,13 @@ var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
 // Email addresses *** here I've changed the expression ***
 var emailAddressPattern = /(([a-zA-Z0-9_\-\.]+)@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6}))+/gim;
 var altPattern = /@([a-zA-Z0-9_\-]{2,20})/gim;
+
+return text //&amp;#x1f310;
+    //style='text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:100px
+    .replace(urlPattern, "<a class='" + style + "' style='white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:280px' target='_blank' href='$&amp;' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$&amp;</a>")
+    .replace(pseudoUrlPattern, "$1<a class='" + style + "' style='white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:280px' target='_blank' href='http://$2' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$2</a>")
+    .replace(emailAddressPattern, "<a class='" + style + "' target='_blank' href='mailto:$1' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x2709; $1</a>")
+    .replace(altPattern, "<span class='" + style + "'>@$1</span>");
 
 return text //&amp;#x1f310;
     //style='text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:100px
