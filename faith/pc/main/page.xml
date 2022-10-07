@@ -629,7 +629,7 @@ a.css_button1 {
     display:inline-block;
     padding:0.1em 0.5em 0.1em 0.0em;
     //border:0.1em solid #1DA1F2;
-    margin:0 0.3em 0 0.0em;
+    margin:0em 0.3em -0.3em 0.0em;
     border-radius:0.4em;
     box-sizing: border-box;
     text-decoration:none;
@@ -642,6 +642,28 @@ a.css_button1:hover{
 }
 @media all and (max-width:30em){
     .css_button1{
+        splay:block;
+        margin:0.01em auto;
+}
+</style>
+
+<style>
+a.css_button2 {
+    display:inline-block;
+    padding:0.1em 0.5em 0.1em 0.0em;
+    margin:0 0.3em -0.3em 0.0em;
+    border-radius:0.4em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    color:#ffffff;
+    text-align:left;
+}
+a.css_button2:hover{
+    text-decoration: underline;
+}
+@media all and (max-width:30em){
+    .css_button2{
         splay:block;
         margin:0.01em auto;
 }
@@ -686,7 +708,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>766</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -875,7 +896,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.01827676240209</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.33003300330033</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -11597,7 +11617,6 @@ sender.showAlert = function(value) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -11925,7 +11944,7 @@ sender.renderMsg = function(root) {
     
     //content
     if (left) {
-        c = createPanel(root, root.id+"_panel2", "", 65, cy, w-150, 40);
+        c = createPanel(root, root.id+"_panel2", "", 65, cy, w-110, 40);
         c.style.backgroundColor = "#e6ecf0";
         switch (mode) {
             case 1: c.style.borderRadius = "20px 20px 20px 0px"; break;
@@ -11934,10 +11953,10 @@ sender.renderMsg = function(root) {
             case 4: c.style.borderRadius = "0px 20px 20px 0px"; break;
             default:
         }
-        c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 0, 350-15*2, 40);
-        addText(c, " ", "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "normal");
+        c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 5, w-110-15*2, null);
+        //addText(c, " ", "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "normal");
     } else {
-        c = createPanel(root, root.id+"_panel2", "", 65, cy, w-150, 40);
+        c = createPanel(root, root.id+"_panel2", "", 65, cy, w-110, 40);
         switch (mode) {
             case 1: c.style.borderRadius = "20px 20px 0px 20px"; break;
             case 2: c.style.borderRadius = "20px 20px 0px 20px"; break;
@@ -11946,8 +11965,8 @@ sender.renderMsg = function(root) {
             default:
         }
         c.style.backgroundColor = "#1da1f2";
-        c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 0, 390-15*2, 40);
-        addText(c, " ", "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "FFFFFF", "normal");
+        c = createPanel($g(root.id+"_panel2"), root.id+"_content", "", 15, 5,w-110-15*2, null); //40);
+        //addText(c, " ", "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "FFFFFF", "normal");
     }
     var ph = "/photo ";
     if (root.v_msgContent.substr(0, ph.length) == ph) {
@@ -11970,9 +11989,38 @@ sender.renderMsg = function(root) {
         }); 
         cy += pHeight+4;
     } else {
+        c.style.overflow = "";
+        c.style.wordWrap = "break-word";
+        c.style.wordBreak = "break-all";
+        c.style.whiteSpace = "normal";
+        c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+        c.style.color = left ? "#000000":"#FFFFFF";
+        c.innerHTML = "<font style='font-size:12pt; line-height:1.2;'>" +
+            g5.showCommonText(root.v_msgContent, left? "css_button1":"css_button2").replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
+        for (var i=0; i<c.childNodes[0].childNodes.length; i++) {
+            if (c.childNodes[0].childNodes[i].nodeName=="SPAN") {
+                ee.setOnClick(c.childNodes[0].childNodes[i], function(sender, event) {
+                    g5.p2.p2.show(null,null,sender.innerText.substr(1));
+                    window.event? window.event.cancelBubble = true : event.stopPropagation();
+                });
+            }
+        }
+        //ee.changeParent(c,g5.pLine1);
+        var rect = eb.getDivRect(c);
+        //ee.changeParent(c,root);
+        //eb.setDivRect(c, null, null, null, rect.h);
+        c = c.parentNode;
+        ee.setRect(c,null,null,rect.w+15*2,rect.h+14);
+        rect = eb.getDivRect(c);
+        if (!left) {
+            ee.setRect(c, w-25-rect.w, null, null, null)
+        }
+        cy += rect.h + 4;
+        
+        /*
         c.label.style.wordBreak = "break-all";
         c.label.style.whiteSpace = "nowrap";
-        ee.setText(c, root.v_msgContent);
+        ee.setText(c, g5.processTextUrl(root.v_msgContent,left ? "css_button1":"css_button2"));
         eb.processDock();
         eb.setDivRect(c.label, null, null, 10,10);
         rect = eb.getDivRect(c.label);
@@ -11998,6 +12046,7 @@ sender.renderMsg = function(root) {
             ee.setRect(c, w-25-rect.w, null, null, null)
         }
         cy += rect.h + 4;
+        */
     }
     
     //time
@@ -27939,6 +27988,7 @@ sender.renderItem = function(root) {
       <height>766</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -28174,6 +28224,7 @@ sender.onpointermove = function(event) {
       <height>766</height>
       <heightRatio>1</heightRatio>
       <layerName>图片展示</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -44007,8 +44058,9 @@ if (pn=="/bookmarks") {
     </item>
     <item name="processTextUrl" type="20">
       <varValue />
-      <functionParam>text</functionParam>
-      <functionCode><![CDATA[// http://, https://, ftp://
+      <functionParam>text,style</functionParam>
+      <functionCode><![CDATA[if (!style) style = "css_button1";
+// http://, https://, ftp://
 var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&amp;@#\/%?=~_|!:,.;]*[a-z0-9-+&amp;@#\/%=~_|]/gim;
 // www. sans http:// or https://
 var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
@@ -44018,9 +44070,9 @@ var altPattern = /@([a-zA-Z0-9_\-]{2,20})/gim;
 
 return text //&amp;#x1f310;
     //style='text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:100px
-    .replace(urlPattern, "<a class='css_button1' style='white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:280px' target='_blank' href='$&amp;' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$&amp;</a>")
-    .replace(pseudoUrlPattern, "$1<a class='css_button1' style='white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:280px' target='_blank' href='http://$2' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$2</a>")
-    .replace(emailAddressPattern, "<a class='css_button1' target='_blank' href='mailto:$1' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x2709; $1</a>")
+    .replace(urlPattern, "<a class='" + style + "' style='white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:280px' target='_blank' href='$&amp;' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$&amp;</a>")
+    .replace(pseudoUrlPattern, "$1<a class='" + style + "' style='white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:280px' target='_blank' href='http://$2' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>$2</a>")
+    .replace(emailAddressPattern, "<a class='" + style + "' target='_blank' href='mailto:$1' onclick='window.event? window.event.cancelBubble = true : event.stopPropagation();'>&amp;#x2709; $1</a>")
     .replace(altPattern, "<span style='color:#1da1f2;cursor:pointer'>@$1</span>");
 ]]></functionCode>
     </item>
@@ -44743,7 +44795,7 @@ if (g5.unlikeItems.length>0) {
     </item>
     <item name="showCommonText" type="20">
       <varValue />
-      <functionParam>text</functionParam>
+      <functionParam>text,style</functionParam>
       <functionCode><![CDATA[text = text.replace(/[<">']/g, (a) => {
     return {
         '<': '&amp;lt;',
@@ -44752,7 +44804,7 @@ if (g5.unlikeItems.length>0) {
         "'": '&amp;#39;'
     }[a]
 });
-text = g5.processTextUrl(text);
+text = g5.processTextUrl(text,style);
 return text;]]></functionCode>
     </item>
     <item name="refreshPage2" type="20">
