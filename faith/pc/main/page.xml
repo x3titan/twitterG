@@ -919,6 +919,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.01827676240209</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.33003300330033</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -11640,6 +11641,7 @@ sender.showAlert = function(value) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -25612,7 +25614,6 @@ sender.setEnabled = function(enabled) {
       <height>571</height>
       <heightRatio>0.745430809399478</heightRatio>
       <layerName>===P1===</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.line1 = ee.getControl("panel555");
 ee.setVisible(sender, true);
@@ -26153,8 +26154,49 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName>收窄菜单</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate><![CDATA[sender.c_buttons = new Array();
+sender.c_buttons.push(sender.c_p1.c_button1);
+sender.c_buttons.push(sender.c_p1.c_button2);
+sender.c_buttons.push(sender.c_p1.c_button3);
+sender.c_buttons.push(sender.c_p1.c_button4);
+sender.c_buttons.push(sender.c_p1.c_button5);
+sender.c_buttons.push(sender.c_p1.c_button6);
+sender.c_buttons.push(sender.c_p1.c_button7);
+
+sender.f_click = function(btn) {
+    var items = this.c_buttons;
+    for (var i=0; i<items.length; i++) {
+        if (eb.isEmpty(items[i].baseColor)) continue;
+        if (items[i]==btn) {
+            items[i].baseColor="#1fa2f2";
+        } else {
+            items[i].baseColor="#14171a";
+        }
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+sender.refresh = function() {
+    if (g5.currentPageIndex == 0) {
+        this.f_click(this.c_buttons[0]);
+    } else if (g5.currentPageIndex == 11) {
+        this.f_click(this.c_buttons[1]);
+    } else if (g5.currentPageIndex == 12) {
+        this.f_click(this.c_buttons[2]);
+    } else if (g5.currentPageIndex == 4) {
+        this.f_click(this.c_buttons[3]);
+    } else if (g5.currentPageIndex == 1) {
+        this.f_click(this.c_buttons[4]);
+    } else if (g5.currentPageIndex == 9) {
+        this.f_click(this.c_buttons[5]);
+    } else {
+        this.f_click(null);
+    }
+}
+
+
+]]></onCreate>
       <sizeRatio>1.03442028985507</sizeRatio>
       <top>0</top>
       <width>552</width>
@@ -26168,6 +26210,7 @@ sender.style.borderRadius = "24px";
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>c_p1</ee_LocalName>
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
@@ -26182,6 +26225,7 @@ sender.style.borderRadius = "24px";
       <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
       <dockX>center</dockX>
+      <ee_LocalName>c_button8</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1E90FF</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -26248,6 +26292,7 @@ g5.p2.p1.show();]]></onClick>
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel210">
       <cursor>pointer</cursor>
       <dockX>center</dockX>
+      <ee_LocalName>c_button1</ee_LocalName>
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
@@ -26257,17 +26302,8 @@ g5.p2.p1.show();]]></onClick>
       <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.458333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p1.show();]]></onClick>
+      <onClick>g5.p1.p2.f_click(sender);
+g5.p2.p1.show();</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"20 -15 280 280\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.icon.speaker+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26303,6 +26339,7 @@ sender.style.borderRadius = "50%";
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel203">
       <cursor>pointer</cursor>
       <dockX>center</dockX>
+      <ee_LocalName>c_button3</ee_LocalName>
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
@@ -26312,17 +26349,8 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.458333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-g5.p2.p13.show();]]></onClick>
+      <onClick>g5.p1.p2.f_click(sender);
+g5.p2.p13.show();</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMail+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26358,6 +26386,7 @@ sender.style.borderRadius = "50%";
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel204">
       <cursor>pointer</cursor>
       <dockX>center</dockX>
+      <ee_LocalName>c_button4</ee_LocalName>
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
@@ -26367,18 +26396,8 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.458333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
-g5.p2.p5.show();]]></onClick>
+      <onClick>g5.p1.p2.f_click(sender);
+g5.p2.p5.show();</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconMark+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26414,6 +26433,7 @@ sender.style.borderRadius = "50%";
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel205">
       <cursor>pointer</cursor>
       <dockX>center</dockX>
+      <ee_LocalName>c_button5</ee_LocalName>
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
@@ -26423,19 +26443,9 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.458333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
+      <onClick>g5.p1.p2.f_click(sender);
 g5.p2.p2.show(g5.myUserInfo);
-]]></onClick>
+</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.icon.homePage+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26471,6 +26481,7 @@ sender.style.borderRadius = "50%";
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel206">
       <cursor>pointer</cursor>
       <dockX>center</dockX>
+      <ee_LocalName>c_button6</ee_LocalName>
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
@@ -26480,20 +26491,10 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.458333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
+      <onClick>g5.p1.p2.f_click(sender);
 g5.p2.p10.show();
 
-]]></onClick>
+</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconConfig+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26529,6 +26530,7 @@ sender.style.borderRadius = "50%";
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel207">
       <cursor>pointer</cursor>
       <dockX>center</dockX>
+      <ee_LocalName>c_button7</ee_LocalName>
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
@@ -26538,19 +26540,9 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.458333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
+      <onClick>g5.p1.p2.f_click(sender);
 eb.delCookie("twitterGToken");
-window.location.href = ee.getUrl("/pc/new");]]></onClick>
+window.location.href = ee.getUrl("/pc/new");</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconExit+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -26586,6 +26578,7 @@ sender.style.borderRadius = "50%";
     <control type="Panel" pathname="/divRoot/panel134/panel136/panel199/panel200/panel352">
       <cursor>pointer</cursor>
       <dockX>center</dockX>
+      <ee_LocalName>c_button2</ee_LocalName>
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
@@ -26595,20 +26588,10 @@ sender.style.borderRadius = "50%";
       <layerVisible>false</layerVisible>
       <left>253</left>
       <leftRatio>0.458333333333333</leftRatio>
-      <onClick><![CDATA[var items = sender.parentNode.eeChildren;
-for (var i=0; i<items.length; i++) {
-    if (eb.isEmpty(items[i].baseColor)) continue;
-    if (items[i]==sender) {
-        items[i].baseColor="#1fa2f2";
-    } else {
-        items[i].baseColor="#14171a";
-        ee.setTextColor(items[i], items[i].baseColor);
-    }
-}
-
+      <onClick>g5.p1.p2.f_click(sender);
 g5.p2.p12.show();
 
-]]></onClick>
+</onClick>
       <onCreate><![CDATA[sender.baseColor = "#14171a";
 ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.iconBell+"</svg>");
 ee.setOnMouseEnter(sender, function(sender,event) { 
@@ -43939,6 +43922,7 @@ if (pageIndex == 0) {
 }
 g5.currentPageIndex = pageIndex;
 g5.p1.p3.refresh();
+g5.p1.p2.refresh();
 
 if (g5.p2.p34.style.visibility!="hidden") ee.setVisible(g5.p2.p34.style.visibility, false);
 return true;]]></functionCode>
