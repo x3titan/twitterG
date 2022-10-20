@@ -724,6 +724,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>766</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -11493,10 +11494,12 @@ sender.loadDataset = function(dataset) {
 sender.c_alert1 = null;
 sender.c_alert2 = null;
 sender.c_alert3 = null;
+sender.c_alert4 = null;
 sender.showAlert = function(value) {
     var button1 = ee.getControl("panel150");
     var button2 = ee.getControl("panel203");
     var button3 = ee.getControl("panel558");
+    var button4 = ee.getControl("panel566");
     var r2 = eb.getDivRectSetting(button2);
     var r3 = eb.getDivRectSetting(button3);
     var c;
@@ -11521,22 +11524,38 @@ sender.showAlert = function(value) {
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
         this.c_alert3 = c;
     }
+    if (!this.c_alert4) {
+        var r = eb.getDivRectSetting(button4);
+        c = createPanel(button4, "redDot4", "", 105, parseInt(r.h/2-10), 19, 19);
+        c.style.backgroundColor = "#f1502a";
+        c.style.borderRadius = "9px";
+        addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
+        this.c_alert4 = c;
+    }
     value = parseInt(value);
+    if (isNaN(value)) value = 0;
     value = value + "";
     ee.setText(this.c_alert1, value);
     ee.setText(this.c_alert2, value);
     ee.setText(this.c_alert3, value);
+    ee.setText(this.c_alert4, value);
     if (value == "0") {
         this.c_alert1.style.visibility = "hidden";
         ee.setRect(button1,null,null,103,null);
         this.c_alert2.style.visibility = "hidden";
         this.c_alert3.style.visibility = "hidden";
+        this.c_alert4.style.visibility = "hidden";
         return;
     }
+    ee.setVisible(this.c_alert1, true);
+    ee.setVisible(this.c_alert2, true);
+    ee.setVisible(this.c_alert3, true);
+    ee.setVisible(this.c_alert4, true);
     ee.setRect(button1,null,null,142,null);
     ee.setRect(this.c_alert1,null,null,19+6*(value.length-1), null);
     ee.setRect(this.c_alert2,r2.x+25-6*(value.length-1),null,19+6*(value.length-1), null);
     ee.setRect(this.c_alert3,r3.x+30-6*(value.length-1),null,19+6*(value.length-1), null);
+    ee.setRect(this.c_alert4,null,null,19+6*(value.length-1), null);
 }
 
 
@@ -25607,6 +25626,7 @@ sender.setEnabled = function(enabled) {
       <height>571</height>
       <heightRatio>0.745430809399478</heightRatio>
       <layerName>===P1===</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.line1 = ee.getControl("panel555");
 ee.setVisible(sender, true);
@@ -25669,6 +25689,7 @@ sender.changePage = function(pageName) {
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName>标准菜单</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_buttons = new Array();
 sender.c_buttons.push(sender.c_p1.c_button1);
@@ -26607,7 +26628,7 @@ sender.style.borderRadius = "50%";
       <ee_LocalName>p3</ee_LocalName>
       <height>571</height>
       <heightRatio>1</heightRatio>
-      <layerName>手机菜单</layerName>
+      <layerName>手机底部菜单</layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_buttons = new Array();
@@ -27972,7 +27993,6 @@ sender.renderItem = function(root) {
       <height>766</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -31747,8 +31767,7 @@ eb.initMouseEvent(sender);
       <ee_LocalName>a9</ee_LocalName>
       <height>766</height>
       <heightRatio>1</heightRatio>
-      <layerName>手机弹出菜单</layerName>
-      <layerVisible>false</layerVisible>
+      <layerName>手机左侧弹出菜单</layerName>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.c_titleBg = ee.getControl("panel562");
@@ -43555,7 +43574,7 @@ setTimeout(function() {
       <varValue />
       <functionParam />
       <functionCode><![CDATA[g5.RC_MIN = 5000;
-g5.RC_MAX = 10*60*1000;
+g5.RC_MAX = 3*60*1000;
 if (!g5.RC_LastTime) {
     g5.RC_LastTime = new Date();
     g5.RC_LastTime.setTime(g5.RC_LastTime.getTime() - g5.RC_MIN*1000);
