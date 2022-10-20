@@ -10755,10 +10755,12 @@ sender.close = function() {
 sender.c_alert1 = null;
 sender.c_alert2 = null;
 sender.c_alert3 = null;
+sender.c_alert4 = null;
 sender.showAlert = function(value) {
     var button1 = ee.getControl("panel94");
     var button2 = ee.getControl("panel352");
     var button3 = ee.getControl("panel563");
+    var button4 = ee.getControl("panel571");
     var r2 = eb.getDivRectSetting(button2);
     var r3 = eb.getDivRectSetting(button3);
     var c;
@@ -10783,22 +10785,38 @@ sender.showAlert = function(value) {
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
         this.c_alert3 = c;
     }
+    if (!this.c_alert4) {
+        var r = eb.getDivRectSetting(button4);
+        c = createPanel(button4, "redDot4", "", 105, parseInt(r.h/2-10), 19, 19);
+        c.style.backgroundColor = "#f1502a";
+        c.style.borderRadius = "9px";
+        addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
+        this.c_alert4 = c;
+    }
     value = parseInt(value);
+    if (isNaN(value)) value = 0;
     value = value + "";
     ee.setText(this.c_alert1, value);
     ee.setText(this.c_alert2, value);
     ee.setText(this.c_alert3, value);
+    ee.setText(this.c_alert4, value);
     if (value == "0") {
         this.c_alert1.style.visibility = "hidden";
         ee.setRect(button1,null,null,103,null);
         this.c_alert2.style.visibility = "hidden";
         this.c_alert3.style.visibility = "hidden";
+        this.c_alert4.style.visibility = "hidden";
         return;
     }
+    ee.setVisible(this.c_alert1, true);
+    ee.setVisible(this.c_alert2, true);
+    ee.setVisible(this.c_alert3, true);
+    ee.setVisible(this.c_alert4, true);
     ee.setRect(button1,null,null,142,null);
     ee.setRect(this.c_alert1,null,null,19+6*(value.length-1), null);
     ee.setRect(this.c_alert2,r2.x+23-6*(value.length-1),null,19+6*(value.length-1), null);
     ee.setRect(this.c_alert3,r3.x+25-6*(value.length-1),null,19+6*(value.length-1), null);
+    ee.setRect(this.c_alert4,null,null,19+6*(value.length-1), null);
 }
 
 
