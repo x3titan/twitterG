@@ -1113,7 +1113,7 @@ sender.loadFromServer = function() {
             
             itemCount++;
         }
-
+        
         if ((dataset.rowCount<=0) &amp;&amp; (updateHomepage.isForward)) {
             sender.v_status = "noResult";
             sender.c_bottom.show(true);
@@ -1121,6 +1121,10 @@ sender.loadFromServer = function() {
             sender.v_status = "";
             sender.c_bottom.show(false);
         } else if (!updateHomepage.isForward) {
+            if (!updateMain.newContentCount) updateMain.newContentCount = 0;
+            updateMain.newContentCount += itemCount;
+            g5.p2.p1.showAlert(updateMain.newContentCount);
+            
             document.documentElement.scrollTop+=dy;
             if (itemCount>0) {
                 if (dataset.rowCount<root.v_items.length) {
@@ -1238,7 +1242,7 @@ sender.showAlert = function(value) {
     var r3 = eb.getDivRectSetting(button3);
     var c;
     if (!this.c_alert1) {
-        c = createPanel(button1, "redDot1", "", 93, 14, 19, 19);
+        c = createPanel(button1, "redDot1", "", 110, 14, 19, 19);
         c.style.backgroundColor = "#f1502a";
         c.style.borderRadius = "9px";
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
@@ -1260,7 +1264,7 @@ sender.showAlert = function(value) {
     }
     if (!this.c_alert4) {
         var r = eb.getDivRectSetting(button4);
-        c = createPanel(button4, "redDot4", "", 105, parseInt(r.h/2-10), 19, 19);
+        c = createPanel(button4, "redDot4", "", 130, parseInt(r.h/2-10), 19, 19);
         c.style.backgroundColor = "#f1502a";
         c.style.borderRadius = "9px";
         addText(c, value+"", "center", "middle", "Arial", 9, "FFFFFF", "bold");
@@ -1275,7 +1279,7 @@ sender.showAlert = function(value) {
     ee.setText(this.c_alert4, value);
     if (value == "0") {
         this.c_alert1.style.visibility = "hidden";
-        ee.setRect(button1,null,null,103,null);
+        ee.setRect(button1,null,null,120,null);
         this.c_alert2.style.visibility = "hidden";
         this.c_alert3.style.visibility = "hidden";
         this.c_alert4.style.visibility = "hidden";
@@ -1285,7 +1289,7 @@ sender.showAlert = function(value) {
     ee.setVisible(this.c_alert2, true);
     ee.setVisible(this.c_alert3, true);
     ee.setVisible(this.c_alert4, true);
-    ee.setRect(button1,null,null,142,null);
+    ee.setRect(button1,null,null,152,null);
     ee.setRect(this.c_alert1,null,null,19+6*(value.length-1), null);
     ee.setRect(this.c_alert2,r2.x+25-6*(value.length-1),null,19+6*(value.length-1), null);
     ee.setRect(this.c_alert3,r3.x+30-6*(value.length-1),null,19+6*(value.length-1), null);
@@ -40701,8 +40705,7 @@ if (updateMain.cancel) {
 }
 updateMain.dataset = eio.readDataSet();
 if (!updateMain.newContentCount) updateMain.newContentCount = 0;
-///updateMain.newContentCount += updateMain.dataset.rowCount;
-console.log(updateMain.newContentCount);
+//updateMain.newContentCount += updateMain.dataset.rowCount;
 updateMain.clearNewContentCount = function() {
     updateMain.newContentCount = 0;
     g5.p2.p1.showAlert(0);
@@ -43790,10 +43793,6 @@ return result;
       <functionCode><![CDATA[var viewPortH = eb.getClientSize().h;
 var eeDivRoot = $g("divRoot");
 var p2h = eb.getDivRect(g5.p2).h;
-
-if (g5.currentPageIndex == 0) {
-    if (updateMain.clearNewContentCount) updateMain.clearNewContentCount();
-}
 
 if ((p2h-viewPortH-document.documentElement.scrollTop) < 3000) {
     if (g5.currentPageIndex == 0) {
