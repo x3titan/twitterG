@@ -36395,6 +36395,7 @@ sql =
     "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
     "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail, " +
     "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide, " +
+    "                CASE WHEN dbo.tContent.userId = " + userId + " THEN 0 ELSE 1 END AS isMe, " +
     "                CASE WHEN rHideList.id IS NULL THEN 0 ELSE 1 END AS rIsHide " +
     "FROM      dbo.blockList AS rBlockList FULL OUTER JOIN " +
     "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
@@ -36420,7 +36421,7 @@ sql =
     "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + userId + " " +
     "                left outer join hideList as rHideList on tContent_1.userId = rHideList.hideId and rHideList.userId = " + userId + " " +
     "WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' " +
-    "ORDER BY dbo.tContent.id DESC; ";
+    "ORDER BY isMe,dbo.tContent.id DESC; ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
