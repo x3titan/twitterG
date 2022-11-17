@@ -3181,6 +3181,8 @@ sender.c_canvas = c;
       <widthRatio>0.432343234323432</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel5">
+      <__U_blockSize>1000</__U_blockSize>
+      <__U_onNotSupportUpload />
       <backgroundColor>008080</backgroundColor>
       <cursor>pointer</cursor>
       <height>36</height>
@@ -3230,7 +3232,7 @@ sender.c_file = c;
 
 c.addEventListener("change", function() {
     if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) {
-        var file = sender.c_file.files[0];
+        sender.v_fileBlob = sender.c_file.files[0];
         var pos = file.name.lastIndexOf(".");
         var fileExt = pos<0 ? "" : file.name.substring(pos);
         
@@ -3266,9 +3268,30 @@ c.addEventListener("change", function() {
             }
             uploadImage();
         }
-        reader.readAsDataURL(file);
+        //reader.readAsDataURL(sender.v_fileBlob);
+        uploadFile.status = "s";
+        uploadFile.data = event.target.result;
+        uploadFile.controlName = sender.id;
+        uploadFile.onComplete = function() {
+            if (ee.getControl("panel7").v_photos.length>=4) return;
+            ee.getControl("panel7").v_photos.push(uploadImage.newFileName);
+            g5.refreshPhoto(ee.getControl("panel7"));
+            if (ee.getControl("panel7").style.visibility=="hidden") {
+                ee.setVisible(ee.getControl("panel7"), true);
+                var cy = 462-140;
+                ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+cy);
+                g5.batchMoveY(g5.p2.p1.v_items,0,cy);
+                eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + cy);
+                eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + cy);
+                g5.p2.p1.c_bottom.adjustP1();
+                eb.processDock();
+            }
+            ee.getControl("panel1").check();
+            return;
+        }
+        uploadFile();
     } else {
-        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
+        if (sender.onNotSupportUpload) sender.onNotSupportUpload(sender);
     }
 });
 
@@ -3292,14 +3315,27 @@ sender.resize = function (img) {
 }
 ]]></onCreate>
       <sizeRatio>1</sizeRatio>
-      <text>图片</text>
+      <text>文件</text>
       <top>237</top>
       <topRatio>0.309399477806789</topRatio>
+      <userProperty>//#P:blockSize|文件分段上传|1000|int||上传文件的分块大小，单位KB(1024bytes)
+//#P:onNotSupportUpload|文件分段上传||jsMix||不支持文件上传,参数sender:控件自身
+
+
+//#P1:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
+//#P1:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
+//#P1:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
+//#P1:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
+//#P1:onInputChange(sender,key,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变，返回false表示取消本次修改。sender:触发事件的控件，key:用户按键，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
+//#P1:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
+//#P1:onCurPosChange(sender,oldPos,newPos)|多行文字录入V2||jsMix||光标位置发生变化。sender:触发事件的控件，oldPos:原来的光标位置；newPos:新的光标位置；
+
+</userProperty>
       <width>36</width>
       <widthRatio>0.0396039603960396</widthRatio>
     </control>
   </controls>
-  <taskSet count="1">
+  <taskSet count="2">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -3307,6 +3343,68 @@ sender.resize = function (img) {
 eio.appendString16(uploadImage.controlName);
 eio.appendString32(uploadImage.data);</script1>
       <script2><![CDATA[var controlName = eio.readString16();
+
+var sql,sqlResult;  
+var getFileName = function(sn, sep) {
+    sn = parseInt(sn);
+    var f1 = (sn &amp; 0xFF000000) >> 24;
+    var f2 = (sn &amp; 0x00fff000) >> 12;
+    f1 = f1 ^ 0x59AE;
+    f2 = f2 ^ 0xA93;
+    sn = ((sn >> 7) | ((sn &amp; 0x7f)<<24)) ^ 0x5BC3A96A;
+    return "usrb" + sep + "usr" + f1 + sep + f2 + sep + "p" + sn + ".jpg";
+}
+
+//onUploadStart(): newFilePathName,newFileName
+var newFilePathName, newFileName;
+sql = "select next value for dbo.SEQImageSn as Sn";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = getFileName(sn, "/");
+newFilePathName = "c:\\www\\incoming\\"+ getFileName(sn, "\\");
+es.logCommon("upload test 1 file:" + newFilePathName);
+
+//implementation
+var buff = eio.readString32();
+var pos = buff.indexOf("base64,",0);
+if (pos<0) return;
+pos += "base64,".length;
+buff = buff.substr(pos, buff.length - pos);
+es.saveBase64AsFile(newFilePathName, buff);
+es.logCommon("upload test file:" + newFilePathName);
+
+if (controlName == "ee_panel299") {
+} else if (controlName == "ee_panel4") {
+} else if (controlName == "ee_panel5") {
+}
+
+eio.appendString8("T");
+eio.appendString16(newFileName);
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    return;
+}
+
+uploadImage.newFileName = eio.readString16();  
+
+if (!eb.isEmpty(uploadImage.onComplete)) {
+    uploadImage.onComplete(uploadImage.newFileName);
+    uploadImage.onComplete = null;
+}</script3>
+    </taskSetItem>
+    <taskSetItem name="uploadFile">
+      <script1>//status(s/p),data,controlName,onComplete
+//newFileName
+eio.appendString8(uploadFile.status);
+eio.appendString16(uploadFile.controlName);
+eio.appendString32(uploadFile.data);</script1>
+      <script2><![CDATA[var status = eio.readString8();
+var controlName = eio.readString16();
 
 var sql,sqlResult;  
 var getFileName = function(sn, sep) {
