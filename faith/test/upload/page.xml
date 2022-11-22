@@ -2623,6 +2623,12 @@ sender.showBytes = function(bytes) {
     } else if (len<=12) {
         r = (b/1000000000) + "G";
     } else r = (b/1000000000000) + "T";
+    if (r.indexOf(".",0)>0) {
+        while (r.length < 5) {
+            r = r.substr(0, r.length - 1) + "0" + r.substr(r.length-1,1);
+        }
+    }
+    if (r.length == 2) r = r.substr(0, r.length - 1) + ".00" + r.substr(r.length-1,1);
     return r;
 }
 
