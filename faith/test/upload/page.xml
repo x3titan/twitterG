@@ -2313,25 +2313,42 @@ sender.init(0);
       <width>200</width>
       <widthRatio>0.22002200220022</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel5">
+    <control type="Panel" pathname="/divRoot/panel7">
+      <__U_blockSize type="int">1024</__U_blockSize>
+      <__U_multiSelect type="enum">true</__U_multiSelect>
+      <__U_onComplete-sender-worker type="jsMix" />
+      <__U_onNotSupportUpload-sender type="jsMix" />
+      <__U_onStatusChange-sender type="jsMix"><![CDATA[/*
+var s = "";
+for (var i = 0; i < sender.workers.length; i++) {
+    var w = sender.workers[i];
+    w.percent = parseInt(w.bytesSent/w.fileBlob.size*1000)/10 + "%";
+    s += 
+        w.status + "," +
+        w.bytesSent + "," +
+        w.percent + "," +
+        w.id + "," +
+        w.url + "<br/>";
+}
+
+ee.setText(ee.getControl("panel8"), s);
+*/
+g5.root.c_status.refresh(sender.workers);]]></__U_onStatusChange-sender>
       <backgroundColor>008080</backgroundColor>
       <cursor>pointer</cursor>
       <dockX>center</dockX>
       <ee_LocalName>c_upload</ee_LocalName>
-      <height>36</height>
-      <heightRatio>0.0469973890339426</heightRatio>
+      <height>31</height>
+      <heightRatio>0.0404699738903394</heightRatio>
+      <layerName>s</layerName>
       <layerVisible>false</layerVisible>
-      <left>436</left>
-      <leftRatio>0.47964796479648</leftRatio>
+      <left>422</left>
+      <leftRatio>0.464246424642464</leftRatio>
       <onClick>if (event.target.tagName.toUpperCase() == "INPUT") return;
 sender.c_file.blur();
 sender.c_file.click();
 </onClick>
-      <onCreate><![CDATA[sender.maxSqr = 1200*1200;
-sender.compressRatio = 0.85;
-
-sender.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;color:rgb(29,161,242);fill: currentcolor;vertical-align:middle;\"><g><path d=\"M19.75 2H4.25C3.01 2 2 3.01 2 4.25v15.5C2 20.99 3.01 22 4.25 22h15.5c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2zM4.25 3.5h15.5c.413 0 .75.337.75.75v9.676l-3.858-3.858c-.14-.14-.33-.22-.53-.22h-.003c-.2 0-.393.08-.532.224l-4.317 4.384-1.813-1.806c-.14-.14-.33-.22-.53-.22-.193-.03-.395.08-.535.227L3.5 17.642V4.25c0-.413.337-.75.75-.75zm-.744 16.28l5.418-5.534 6.282 6.254H4.25c-.402 0-.727-.322-.744-.72zm16.244.72h-2.42l-5.007-4.987 3.792-3.85 4.385 4.384v3.703c0 .413-.337.75-.75.75z\"></path><circle cx=\"8.868\" cy=\"8.309\" r=\"1.542\"></circle></g></svg>";
-sender.style.borderRadius = "50%";
+      <onCreate><![CDATA[sender.style.borderRadius = "20%";
 
 ee.setOnMouseEnter(sender, function(sender,event) {
     sender.style.backgroundColor = "#dfeffa";
@@ -2354,127 +2371,319 @@ sender.eeOnClickCancel = function(sender,event) {
 }
 eb.initMouseEvent(sender);
 
+
+
+
 //implementation
+sender.workers = new Array();
+sender.TWorker = function() {
+    this.id = "";
+    this.fileBlob = "";
+    this.url = "";
+    this.status = "new";
+    this.bytesSent = 0;
+    this.currentBlockSize = 0;
+}
+sender.v_currentIndex = 0;
+sender.v_timer = null;
+sender.v_status = "idle";
+sender.f_start = function() {
+    this.f_stop();
+    this.v_timer =  setInterval(this.timeFragment, 20);
+}
+sender.f_stop = function() {
+    if (!this.v_timer) return;
+    clearInterval(this.v_timer);
+    this.v_timer = null;
+}
+sender.f_setStatus = function(status) {
+    if (sender.v_status == status) return;
+    sender.v_status = status;
+    if (sender.onStatusChange) sender.onStatusChange(sender);
+}
+sender.f_complete = function(worker) {
+    for (var i=0; i<sender.workers.length; i++) {
+        if (sender.workers[i] != worker) continue;
+        sender.workers.splice(i,1);
+        if (sender.onStatusChange) sender.onStatusChange(sender);        
+        if (sender.onComplete) {
+            sender.onComplete(sender, worker);
+        }
+        break;
+    }
+}
+
+sender.timeFragment = function() {
+    if (sender.workers.length<=0) {
+        sender.f_stop();
+        return;
+    }
+    if (sender.v_status != "idle") return;
+    sender.v_currentIndex = (sender.v_currentIndex + 1) % sender.workers.length;
+    var w = sender.workers[sender.v_currentIndex];
+    if (w.id.length<=0) {
+        w.status = "start";
+        sender.f_setStatus("start");
+        sender.taskSet.status = "s";
+        sender.taskSet.fileSize = w.fileBlob.size;
+        sender.taskSet.fileName = w.fileBlob.name;
+        sender.taskSet();
+    } else {
+        w.currentBlockSize = Math.min(w.fileBlob.size - w.bytesSent, sender.blockSize*1024);
+        if (w.currentBlockSize<=0) {
+            sender.f_complete(w);
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            sender.taskSet.status = "p";
+            sender.taskSet.id = w.id;
+            sender.taskSet.data = event.target.result;
+            sender.taskSet();
+        }
+        w.status = "send";
+        sender.f_setStatus("send");
+        reader.readAsDataURL(w.fileBlob.slice(w.bytesSent, w.bytesSent + w.currentBlockSize));
+    }
+}
+
 var c = document.createElement("input");
 c.setAttribute("type", "file");
 c.setAttribute("accept", "*/*");
 c.setAttribute("style", "position:absolute;width:1px;height:1px;left:-200px;top:-200px;");
+if (sender.multiSelect == "true") {
+    c.setAttribute("multiple", "multiple");
+} else {
+    c.removeAttribute("multiple");
+}
 c.value = null;
 sender.insertBefore(c, sender.childNodes[0]);
 sender.c_file = c;
 
 c.addEventListener("change", function() {
     if (window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob) {
-        var file = sender.c_file.files[0];
-        var pos = file.name.lastIndexOf(".");
-        var fileExt = pos<0 ? "" : file.name.substring(pos);
-        
-        //onUserSelectedFile(file.name,fileExt)
-        fileExt = fileExt.toLowerCase();
-        if ((fileExt != ".bmp") &amp;&amp;
-            (fileExt != ".jpg") &amp;&amp;
-            (fileExt != ".jpeg") &amp;&amp;
-            (fileExt != ".png") &amp;&amp;
-            (fileExt != ".tif") &amp;&amp;
-            (fileExt != ".tiff")) ;
-        
-        var reader = new FileReader();
-        reader.onload = function (event) {
-            uploadImage.data = event.target.result;
-            uploadImage.controlName = sender.id;
-            uploadImage.fileName = file.name;
-            uploadImage.onComplete = function() {
-                g5.root.c_status.show("");
-                ee.getControl("divRoot").popBlack.a7.show(
-                    "HINT", "File upload success, " + file.name,
-                    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","OK","OK","OK","#ffffff","#ffffff","#ffffff","")],
-                    //[new g5.BStyle("","#e8f5fe","#d2ecfc","确定","确定","确定","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                    function() {}
-                );
-            }
-            uploadImage();
+        for (var i = 0; i < sender.c_file.files.length; i++) {
+            var w = new sender.TWorker();
+            w.fileBlob = sender.c_file.files[i];
+            sender.workers.push(w);
+            sender.f_start();
         }
-        reader.readAsDataURL(file);
-        g5.root.c_status.show("Uploading please wait ...");
+        sender.c_file.value = null;
     } else {
-        g5.alert1("提示", "此浏览器不完全支持压缩上传图片");
+        if (sender.onNotSupportUpload) sender.onNotSupportUpload(sender);
     }
 });
 
-sender.resize = function (img) {
-    var canvas = document.createElement("canvas");
-    var imgW = img.width;
-    var imgH = img.height;
-    var dw,dh;
-    if (imgW*imgH>this.maxSqr) {
-        var ratio = imgW / imgH;
-        var y = Math.sqrt(this.maxSqr/ratio);
-        canvas.width = parseInt(ratio*y);
-        canvas.height = parseInt(y);
-    } else {
-        canvas.width = imgW;
-        canvas.height = imgH;
-    }
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL("image/jpeg", sender.compressRatio); 
-}
 ]]></onCreate>
-      <sizeRatio>1</sizeRatio>
-      <text>图片</text>
-      <top>229</top>
-      <topRatio>0.298955613577023</topRatio>
-      <width>36</width>
-      <widthRatio>0.0396039603960396</widthRatio>
+      <sizeRatio>0.476923076923077</sizeRatio>
+      <taskSet><![CDATA[//status(s),fileSize,fileName >> id,url
+//status(p),id,data
+eio.appendString8(sender.taskSet.status);
+if (sender.taskSet.status == "s") {
+    eio.appendString8(sender.taskSet.fileSize + "");
+    eio.appendString8(sender.taskSet.fileName);
+} else if (sender.taskSet.status == "p") {
+    eio.appendString8(sender.taskSet.id);
+    eio.appendString32(sender.taskSet.data);
+}
+]]></taskSet>
+      <taskSetReturn>var w = sender.workers[sender.v_currentIndex];
+if (sender.taskSet.status == "s") {
+    w.id = eio.readString8();
+    w.url = eio.readString8();
+    w.status = "idle";
+} else if (sender.taskSet.status == "p") {
+    w.bytesSent += w.currentBlockSize;
+    w.status = "idle";
+}
+
+sender.f_setStatus("idle");
+
+</taskSetReturn>
+      <taskSetServer><![CDATA[var status = eio.readString8();
+if (status == "s") {
+    var fileSize = parseInt(eio.readString8());
+    var fileName = eio.readString8();
+    var newFileName = "c:\\www\\incoming\\" + fileName;
+    var id = es.getGuid();
+    es.globalMemory.set(id + "fileName", newFileName);
+    es.globalMemory.set(id + "fileSize", fileSize + "");
+    eio.appendString8(id);
+    eio.appendString8(newFileName);
+    es.fileDelete(newFileName);
+} else if (status == "p") {
+    var id = eio.readString8();
+    var newFileName = es.globalMemory.get(id + "fileName");
+    var fileSize = parseInt(es.globalMemory.get(id + "fileSize"));
+    var buff = eio.readString32();
+    var pos = buff.indexOf("base64,",0);
+    if (pos<0) return;
+    pos += "base64,".length;
+    buff = buff.substr(pos, buff.length - pos);
+    var size = es.saveBase64AsFileEx(newFileName, buff, true);
+    if (size >= fileSize) {
+        es.globalMemory.set(id + "fileName", "");
+        es.globalMemory.set(id + "fileSize", "");
+    }
+}
+return;
+
+
+
+var sql,sqlResult;  
+var getFileName = function(sn, sep) {
+    sn = parseInt(sn);
+    var f1 = (sn &amp; 0xFF000000) >> 24;
+    var f2 = (sn &amp; 0x00fff000) >> 12;
+    f1 = f1 ^ 0x59AE;
+    f2 = f2 ^ 0xA93;
+    sn = ((sn >> 7) | ((sn &amp; 0x7f)<<24)) ^ 0x5BC3A96A;
+    return "usrb" + sep + "usr" + f1 + sep + f2 + sep + "p" + sn + ".jpg";
+}
+
+//onUploadStart(): newFilePathName,newFileName
+var newFilePathName, newFileName;
+sql = "select next value for dbo.SEQImageSn as Sn";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    return;
+}
+db.read(sqlResult);
+var sn = db.getInt32(sqlResult, "Sn");
+newFileName = getFileName(sn, "/");
+newFilePathName = "c:\\www\\incoming\\"+ getFileName(sn, "\\");
+es.logCommon("upload test 1 file:" + newFilePathName);
+
+//implementation
+var buff = eio.readString32();
+var pos = buff.indexOf("base64,",0);
+if (pos<0) return;
+pos += "base64,".length;
+buff = buff.substr(pos, buff.length - pos);
+es.saveBase64AsFile(newFilePathName, buff);
+es.logCommon("upload test file:" + newFilePathName);
+
+
+eio.appendString8("T");
+eio.appendString16(newFileName);
+
+]]></taskSetServer>
+      <text>文件</text>
+      <top>71</top>
+      <topRatio>0.0926892950391645</topRatio>
+      <userProperty>//#P:blockSize|文件分段上传|1024|int||上传文件的分块大小，单位KB(1024bytes)
+//#P:multiSelect|文件分段上传|true|enum|true,false|是否允许一次选择多个文件
+//#P:onNotSupportUpload(sender)|文件分段上传||jsMix||不支持文件上传,参数sender:控件自身
+//#P:onStatusChange(sender)|文件分段上传||jsMix||状态发生了变化,参数sender:控件自身
+//#P:onComplete(sender,worker)|文件分段上传||jsMix||完成了一个任务，sender:控件自身,worker:任务
+
+//#P1:editFontColor|多行文字录入V2|404040|color||用户输入文字的字体颜色
+//#P1:editFontSize|多行文字录入V2|12pt|string||用户输入文字的大小
+//#P1:editMaxY|多行文字录入V2|300px|string||编辑框最大高度
+//#P1:onHeightChange(sender,oldH,newH)|多行文字录入V2||jsMix||由于用户的输入导致编辑框产生的高度变化。sender:触发事件的控件，oldH:旧的高度，newH:新的高度
+//#P1:onInputChange(sender,key,oldText,newText,oldHtml,newHtml)|多行文字录入V2||jsMix||由于用户的输入导致内容改变，返回false表示取消本次修改。sender:触发事件的控件，key:用户按键，oldText:旧的内容，newText:新的内容，oldHtml:旧内容html形式，newHtml:新内容html形式
+//#P1:onFocusChange(sender,isFocus)|多行文字录入V2||jsMix||焦点发生变化。sender:触发事件的控件，isFocus:是否触发了焦点
+//#P1:onCurPosChange(sender,oldPos,newPos)|多行文字录入V2||jsMix||光标位置发生变化。sender:触发事件的控件，oldPos:原来的光标位置；newPos:新的光标位置；
+
+</userProperty>
+      <width>65</width>
+      <widthRatio>0.0715071507150715</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel1">
-      <backgroundColor>8ED0F9</backgroundColor>
-      <cursor>pointer</cursor>
+    <control type="Panel" pathname="/divRoot/panel5">
+      <backgroundColor>E0E0E0</backgroundColor>
       <dockX>center</dockX>
       <ee_LocalName>c_status</ee_LocalName>
-      <fontBold>true</fontBold>
-      <fontColor>C00000</fontColor>
-      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
-      <fontSize>12</fontSize>
-      <height>75</height>
-      <heightRatio>0.097911227154047</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>299</left>
-      <leftRatio>0.328932893289329</leftRatio>
-      <onClick>g5.root.c_upload.c_file.blur();
-g5.root.c_upload.c_file.click();
+      <height>189</height>
+      <heightRatio>0.246736292428198</heightRatio>
+      <left>277</left>
+      <leftRatio>0.304730473047305</leftRatio>
+      <onCreate><![CDATA[sender.v_items = new Array();
 
-return;
-ee.getControl("divRoot").popBlack.a7.show(
-    "提示", "修改您的用户信息完成",
-    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
-    //[new g5.BStyle("","#e8f5fe","#d2ecfc","确定","确定","确定","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-    function() {}
-);</onClick>
-      <onCreate><![CDATA[sender.style.boxSizing="border-box";
-sender.style.borderWidth = "1px";
-sender.style.borderColor = "#a0a0a0";
-sender.style.borderStyle = "solid";
-sender.style.borderRadius = "10px";
-sender.style.boxShadow = "5px 5px 15px #808080";
-
-sender.show = function(text) {
-    if (text.length<=0) {
-        ee.setVisible(sender, false);
-        return;
+sender.showBytes = function(bytes) {
+    bytes = parseInt(bytes);
+    var len = (bytes+"").length;
+    if (len<=3) {
+        return bytes + "B";
     }
-    ee.setText(sender, text);
-    ee.setVisible(sender, true);
+    var b = ""; bytes = bytes + "";
+    for (var i=0; i<bytes.length; i++) {
+        if (i<3) {
+            b += bytes.charAt(i);
+        } else {
+            b += "0";
+        }
+    }
+    b = parseInt(b);
+    if (len<=6) {
+        return (b/1000) + "K";
+    } else if (len<=9) {
+        return (b/1000000) + "M";
+    } else if (len<=12) {
+        return (b/1000000000) + "G";
+    } else return (b/1000000000000) + "T";
 }
 
-sender.show("");
+
+sender.refresh = function(workers) {
+    while (sender.v_items.length<workers.length) {
+        sender.appendItem();
+    }
+    while (sender.v_items.length>workers.length) {
+        ee.removeControl(sender.v_items[sender.v_items.length-1]);
+        sender.v_items.splice(sender.v_items.length-1, 1);
+    }
+    for (var i=0; i<workers.length; i++) {
+        var w = workers[i];
+        w.percent = w.bytesSent/w.fileBlob.size;
+        eb.setDivRect(sender.v_items[i].c_p1,null,null,parseInt(sender.v_items[i].c_p1.v_w*w.percent),null);
+        var s =
+            parseInt(w.percent * 1000)/10 + "%" +
+            "(" + sender.showBytes(w.bytesSent) + "/" + sender.showBytes(w.fileBlob.size) + ")" +
+            " " + w.fileBlob.name;
+        sender.v_items[i].c_text.innerText = s;
+    }
+    ee.tiledV(sender, 5, 0, 0);
+    ee.tiledResizeV(sender,1);
+}
+
+sender.appendItem = function() {
+    var w = eb.getDivRectSetting(sender).w;
+    var c,root,cx=0;
+
+    //root
+    root = createPanel(sender, sender.id+"_root"+sender.v_items.length, "f0f3f8", 0, 0, w, 39);
+    root.style.borderRadius = "5px";
+    root.style.borderWidth = "1px";
+    root.style.borderColor = "rgb(100,180,190)";
+    root.style.borderStyle = "solid";
+    root.style.boxSizing = "border-box";
+    sender.v_items.push(root);
+    
+    //progress letter
+    cx+=5;
+    c = createPanel(root, root.id+"_txt1", "", 10, 5, w-20, 32);
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.color = "#000000";
+    c.style.whiteSpace = "nowrap";
+    c.style.cursor="pointer";
+    c.innerHTML = "<div style='vertical-align:text-top;text-overflow:ellipsis;overflow:hidden;display:inline-block;max-width:"+(w-20)+"px'>...</div>";
+    root.c_text = c.childNodes[0];
+
+    //progress bar
+    c = createPanel(root, root.id+"_p1", "#e0e0f0", 0, 32, w, 7);
+    c = createPanel(c, root.id+"_p2", "rgb(29,161,242)", 0, 0, 1, 7);
+    root.c_p1 = c;
+    root.c_p1.v_w = w;
+}
+
+
 ]]></onCreate>
-      <sizeRatio>0.241935483870968</sizeRatio>
-      <text>Status</text>
-      <top>91</top>
-      <topRatio>0.118798955613577</topRatio>
-      <width>310</width>
-      <widthRatio>0.341034103410341</widthRatio>
+      <sizeRatio>0.532394366197183</sizeRatio>
+      <top>108</top>
+      <topRatio>0.140992167101828</topRatio>
+      <width>355</width>
+      <widthRatio>0.390539053905391</widthRatio>
     </control>
   </controls>
   <taskSet count="1">
