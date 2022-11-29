@@ -1,5 +1,5 @@
 <page>
-  <controls count="784">
+  <controls count="808">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -33,7 +33,11 @@ if (g5.isIOS()) {
 
 if (g5.isMobile) {
     var cs = eb.getClientSize();
-    g5.p1.changePage("p3");
+    if (g5.guestMode) {
+        g5.p1.changePage("p4");
+    } else {
+        g5.p1.changePage("p3");
+    }
     ee.setRect(g5.p2,0,0,cs.w,null);
     ee.setRect(g5.p4,0,0,cs.w,null);
     ee.setVisible(g5.pLine1, false);
@@ -93,6 +97,8 @@ if (tk.length<=0) {
     eb.setCookie("twitterGToken", "067B6CF3-D2EE-4712-8D3D-FC5AF89FA535");
     //window.location.href = "https://fistalk.com/login";
 }
+g5.guestMode = eb.getCookie("twitterGToken") == "067B6CF3-D2EE-4712-8D3D-FC5AF89FA535";
+
 if (window.location.href.toLowerCase().indexOf("http:")==0) {
     var url = new URL(window.location.href);
     window.location.href = "https://fistalk.com" + url.pathname;
@@ -1840,13 +1846,13 @@ sender.resize = function (img) {
       <widthRatio>0.06</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel577">
-      <__U_editFontColor type="string">000000</__U_editFontColor>
+      <__U_editFontColor type="color">000000</__U_editFontColor>
       <__U_editFontFamily type="string">'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
       <__U_editFontSize type="string">16pt</__U_editFontSize>
       <__U_editMaxY type="string">300px</__U_editMaxY>
-      <__U_onCurPosChange-sender-oldPos-newPos type="string">sender.processUserName();</__U_onCurPosChange-sender-oldPos-newPos>
-      <__U_onFocusChange-sender-isFocus type="string" />
-      <__U_onHeightChange-sender-oldH-newH type="string">var dy = newH - oldH;
+      <__U_onCurPosChange-sender-oldPos-newPos type="jsMix">sender.processUserName();</__U_onCurPosChange-sender-oldPos-newPos>
+      <__U_onFocusChange-sender-isFocus type="jsMix" />
+      <__U_onHeightChange-sender-oldH-newH type="jsMix">var dy = newH - oldH;
 if (dy == 0) return;
 ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
 g5.batchMoveY(g5.p2.p1.v_items,0,dy);
@@ -1856,7 +1862,7 @@ g5.p2.p1.c_bottom.adjustP1();
 eb.processDock();
 
 </__U_onHeightChange-sender-oldH-newH>
-      <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml type="string"><![CDATA[var text = ee.getEditText(sender.c_edit);
+      <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml type="jsMix"><![CDATA[var text = ee.getEditText(sender.c_edit);
 
 if (newText.split("\n").length-1>20) {
     return false;
@@ -24228,7 +24234,11 @@ sender.style.borderRadius = "10px";
       <left>15</left>
       <leftRatio>0.227272727272727</leftRatio>
       <note>c_userPhoto</note>
-      <onClick>g5.popBlack.a9.show();
+      <onClick>if (g5.guestMode) {
+    g5.popBlack.a11.show();
+} else {
+    g5.popBlack.a9.show();
+}
 return false;</onClick>
       <onCreate>sender.style.borderRadius = "50%";
 g5.initImgButtonV1(sender,"100%","80%","70%");
@@ -25760,8 +25770,7 @@ sender.setEnabled = function(enabled) {
       <heightRatio>0.745430809399478</heightRatio>
       <layerName>===P1===</layerName>
       <left>0</left>
-      <onCreate>sender.line1 = ee.getControl("panel555");
-ee.setVisible(sender, true);
+      <onCreate>ee.setVisible(sender, true);
 
 sender.currentPageName = "";
 sender.v_fitInner = true;
@@ -25781,6 +25790,8 @@ sender.changePage = function(pageName) {
         ee.setVisible(this.p2, false);
     } else if (this.currentPageName == "p3") {
         ee.setVisible(this.p3, false);
+    } else if (this.currentPageName == "p4") {
+        ee.setVisible(this.p4, false);
     }
     if (pageName == "p1") {
         ee.setVisible(this.p1, true);
@@ -25795,9 +25806,16 @@ sender.changePage = function(pageName) {
         this.style.width = "100%";
         this.style.height = h;
         this.style.bottom = "0px";
-        this.line1.style.top = "";
-        this.line1.style.width = "100%";
-        this.line1.style.bottom = h;
+        this.p3.line1.style.top = "";
+        this.p3.line1.style.width = "100%";
+        this.p3.line1.style.bottom = h;
+    } else if (pageName == "p4") {
+        var h = "60px";
+        ee.setVisible(this.p4, true);
+        this.style.top = "";
+        this.style.width = "100%";
+        this.style.height = h;
+        this.style.bottom = "0px";
     }
     this.currentPageName = pageName;
 }
@@ -26281,6 +26299,7 @@ sender.style.borderRadius = "24px";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName>收窄菜单</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_buttons = new Array();
 sender.c_buttons.push(sender.c_p1.c_button1);
@@ -27106,12 +27125,198 @@ eb.initMouseEvent(sender);
       <backgroundColor>E6ECF0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
+      <ee_LocalName>line1</ee_LocalName>
       <height>2</height>
       <heightRatio>0.00350262697022767</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>line1</note>
       <onCreate>sender.style.position="fixed";</onCreate>
+      <sizeRatio>0.0036231884057971</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel660">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <ee_LocalName>p4</ee_LocalName>
+      <height>571</height>
+      <heightRatio>1</heightRatio>
+      <layerName>手机Guest底部菜单</layerName>
+      <left>0</left>
+      <onCreate><![CDATA[sender.c_buttons = new Array();
+sender.c_buttons.push(ee.getControl("panel556"));
+sender.c_buttons.push(ee.getControl("panel558"));
+sender.c_buttons.push(ee.getControl("panel563"));
+sender.c_buttons.push(ee.getControl("panel557"));
+
+sender.f_click = function(btn) {
+    var items = this.c_buttons;
+    for (var i=0; i<items.length; i++) {
+        if (eb.isEmpty(items[i].baseColor)) continue;
+        if (items[i]==btn) {
+            items[i].baseColor="#1fa2f2";
+        } else {
+            items[i].baseColor="#14171a";
+        }
+        ee.setTextColor(items[i], items[i].baseColor);
+    }
+}
+
+sender.refresh = function() {
+    if (g5.currentPageIndex == 0) {
+        this.f_click(this.c_buttons[0]);
+    } else if (g5.currentPageIndex == 12) {
+        this.f_click(this.c_buttons[1]);
+    } else if (g5.currentPageIndex == 11) {
+        this.f_click(this.c_buttons[2]);
+    } else if (g5.currentPageIndex == 1) {
+        this.f_click(this.c_buttons[3]);
+    } else {
+        this.f_click(null);
+    }
+}
+
+
+]]></onCreate>
+      <sizeRatio>1.03442028985507</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel660/panel661">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>571</height>
+      <heightRatio>0.998248686514886</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.03260869565217</sizeRatio>
+      <top>0</top>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel134/panel136/panel660/panel661/layoutx18">
+      <dockX>fill</dockX>
+      <dockY>center</dockY>
+      <fieldCount>2</fieldCount>
+      <height>60</height>
+      <heightRatio>0.10507880910683</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.108695652173913</sizeRatio>
+      <top>255</top>
+      <topRatio>0.446584938704028</topRatio>
+      <width>552</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel136/panel660/panel661/layoutx18/layoutxitem47">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.434782608695652</sizeRatio>
+      <top>0</top>
+      <width>276</width>
+      <widthRatio>0.25</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel660/panel661/layoutx18/layoutxitem47/panel662">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <ee_LocalName>c_btnOK</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.566666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>65</left>
+      <leftRatio>0.235507246376812</leftRatio>
+      <onClick>eb.setCookie("twitterGToken", "");
+window.location.href = "https://fistalk.com/login"</onClick>
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("","#e8f5fe","#d2ecfc","","","","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.232876712328767</sizeRatio>
+      <text>登 录</text>
+      <top>13</top>
+      <topRatio>0.1</topRatio>
+      <width>146</width>
+      <widthRatio>0.528985507246377</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel136/panel660/panel661/layoutx18/layoutxitem48">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>276</left>
+      <leftRatio>0.25</leftRatio>
+      <sizeRatio>0.434782608695652</sizeRatio>
+      <top>0</top>
+      <width>276</width>
+      <widthRatio>0.25</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel660/panel661/layoutx18/layoutxitem48/panel663">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <ee_LocalName>c_btnCancel</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>34</height>
+      <heightRatio>0.566666666666667</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>65</left>
+      <leftRatio>0.235507246376812</leftRatio>
+      <onClick>eb.setCookie("twitterGToken", "");
+window.location.href = "https://fistalk.com/login"</onClick>
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","#ffffff","#ffffff","#ffffff","")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.232876712328767</sizeRatio>
+      <text>注 册</text>
+      <top>13</top>
+      <topRatio>0.1</topRatio>
+      <width>146</width>
+      <widthRatio>0.528985507246377</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel136/panel660/panel666">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <ee_LocalName>line1</ee_LocalName>
+      <height>2</height>
+      <heightRatio>0.00350262697022767</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
       <sizeRatio>0.0036231884057971</sizeRatio>
       <top>0</top>
       <width>552</width>
@@ -31903,13 +32108,7 @@ eb.initMouseEvent(sender);
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
-      <onCreate><![CDATA[sender.c_titleBg = ee.getControl("panel562");
-sender.c_userPhoto = ee.getControl("panel573");
-sender.c_nickName = ee.getControl("panel574");
-sender.c_userName = ee.getControl("panel575");
-sender.c_followInfo = ee.getControl("panel576");
-
-sender.show = function() {
+      <onCreate><![CDATA[sender.show = function() {
     this.refresh();
     ee.setVisible(sender, true);
     ee.setVisible(sender.parentNode, true);
@@ -32017,8 +32216,9 @@ sender.refreshFansFollowCount = function() {
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>top</dockY>
+      <ee_LocalName>c_titleBg</ee_LocalName>
       <height>166</height>
-      <heightRatio>0.216710182767624</heightRatio>
+      <heightRatio>0.219867549668874</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.init = function(photoString) {
@@ -32381,8 +32581,9 @@ g5.initButtonV3(sender,[
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel573">
       <backgroundImg>user.png</backgroundImg>
       <cursor>pointer</cursor>
+      <ee_LocalName>c_userPhoto</ee_LocalName>
       <height>60</height>
-      <heightRatio>0.0783289817232376</heightRatio>
+      <heightRatio>0.0794701986754967</heightRatio>
       <layerVisible>false</layerVisible>
       <left>19</left>
       <leftRatio>0.0652920962199313</leftRatio>
@@ -32406,17 +32607,18 @@ sender.init = function(photoString) {
       <outerTop>1</outerTop>
       <sizeRatio>1</sizeRatio>
       <top>17</top>
-      <topRatio>0.0221932114882507</topRatio>
+      <topRatio>0.0225165562913907</topRatio>
       <width>60</width>
       <widthRatio>0.206185567010309</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel574">
+      <ee_LocalName>c_nickName</ee_LocalName>
       <fontBold>true</fontBold>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <hAlign>left</hAlign>
       <height>34</height>
-      <heightRatio>0.0443864229765013</heightRatio>
+      <heightRatio>0.0450331125827815</heightRatio>
       <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.0687285223367698</leftRatio>
@@ -32429,17 +32631,18 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <sizeRatio>0.142259414225941</sizeRatio>
       <text>昵称nicheng</text>
       <top>79</top>
-      <topRatio>0.10313315926893</topRatio>
+      <topRatio>0.104635761589404</topRatio>
       <width>239</width>
       <widthRatio>0.821305841924399</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel575">
+      <ee_LocalName>c_userName</ee_LocalName>
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>14</fontSize>
       <hAlign>left</hAlign>
       <height>34</height>
-      <heightRatio>0.0443864229765013</heightRatio>
+      <heightRatio>0.0450331125827815</heightRatio>
       <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.0687285223367698</leftRatio>
@@ -32451,24 +32654,25 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <sizeRatio>0.142259414225941</sizeRatio>
       <text>@用户名</text>
       <top>104</top>
-      <topRatio>0.135770234986945</topRatio>
+      <topRatio>0.137748344370861</topRatio>
       <width>239</width>
       <widthRatio>0.821305841924399</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel560/panel576">
+      <ee_LocalName>c_followInfo</ee_LocalName>
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>39</height>
-      <heightRatio>0.0509138381201044</heightRatio>
+      <heightRatio>0.0516556291390728</heightRatio>
       <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.0687285223367698</leftRatio>
       <sizeRatio>0.163179916317992</sizeRatio>
       <text>48正在关注     200关注者</text>
       <top>129</top>
-      <topRatio>0.168407310704961</topRatio>
+      <topRatio>0.170860927152318</topRatio>
       <width>239</width>
       <widthRatio>0.821305841924399</widthRatio>
     </control>
@@ -32481,7 +32685,7 @@ sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
       <layerVisible>false</layerVisible>
       <left>235</left>
       <leftRatio>0.807560137457045</leftRatio>
-      <onClick>g5.popBlack.a9.close();</onClick>
+      <onClick>sender.parentNode.close();</onClick>
       <onCreate><![CDATA[ee.setText(sender,
     "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.icon.close + "</svg>"
 );
@@ -32902,6 +33106,456 @@ g5.initButtonV3(sender,[
       <top>0</top>
       <width>305</width>
       <widthRatio>0.902366863905325</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
+      <ee_LocalName>a11</ee_LocalName>
+      <height>755</height>
+      <heightRatio>1</heightRatio>
+      <layerName>手机左侧弹出菜单Guest</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
+      <onCreate><![CDATA[sender.show = function() {
+    this.refresh();
+    ee.setVisible(sender, true);
+    ee.setVisible(sender.parentNode, true);
+    ee.setRect(sender, 0,null,null,null);
+    return;
+    ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
+    sender.className = "";
+    this.refresh();
+    var r = eb.getDivRectSetting(this);
+    ee.setRect(this, -r.w,null,null,null);
+    setTimeout(function() {
+        sender.className = "aniMove3";
+        ee.setVisible(sender, true);
+        ee.setVisible(sender.parentNode, true);
+        ee.setRect(sender, 0,null,null,null);
+    }, 50);
+    //ee.showAni(this, 0);
+}
+
+sender.close = function() {
+    ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
+    return;
+
+    sender.className = "";
+    ee.setRect(this, 0,null,null,null);
+    var r = eb.getDivRectSetting(this);
+    ee.setVisible(this, true);
+    ee.setVisible(this.parentNode, true);
+    setTimeout(function() {
+        sender.className = "aniMove3";
+        ee.setRect(sender, -r.w,null,null,null);
+        sender.addEventListener("transitionend", sender.onAniEnd);    
+    }, 50);
+}
+
+sender.onAniEnd = function() {
+    ee.setVisible(sender, false);
+    ee.setVisible(sender.parentNode, false);
+    sender.removeEventListener("transitionend", sender.onAniEnd);
+}
+
+
+
+sender.aniClose = function() {
+    //ee.showAni(this,1);
+}
+
+sender.refresh = function() {
+    //titleBg
+    //this.c_titleBg.init(g5.myUserInfo.titleBg);
+    ee.setVisible(this.c_titleBg, false);
+    this.c_userPhoto.init(g5.myUserInfo.photo);
+    ee.setText(this.c_nickName, g5.myUserInfo.nickName);
+    ee.setText(this.c_userName, "@" + g5.myUserInfo.userName);
+    this.refreshFansFollowCount();
+}
+
+sender.refreshFansFollowCount = function() {
+    var s = 
+        "<div id='mobileMenu01' style='display:inline;'>" + g5.myUserInfo.followCount + "个关注</div>" +
+        "     <div id='mobileMenu02' style='display:inline;'>" + g5.myUserInfo.fansCount +"个粉丝</div>";
+    if (g5.myUserInfo.fansReqCount &amp;&amp; (g5.myUserInfo.fansReqCount>0)) {
+        s += "     <div id='mobileMenu03' style='display:inline;'>" + g5.myUserInfo.fansReqCount +"个加粉请求</div>";
+    }
+    ee.setText(this.c_followInfo, s);
+    var c = this.c_followInfo; 
+    c.link01=$g("mobileMenu01");
+    c.link02=$g("mobileMenu02");
+    c.link03=$g("mobileMenu03");
+    if (g5.myUserInfo.followCount>0) {
+        c.link01.style.cursor = "pointer";
+        ee.setOnClick(c.link01, function(senderLink, event) {
+            g5.popBlack.a9.close();
+            g5.p2.p16.show(g5.myUserInfo);
+        });
+        g5.initLinkV1(c.link01);
+    }
+    if (g5.myUserInfo.fansCount>0) {
+        c.link02.style.cursor = "pointer";
+        g5.initLinkV1(c.link02);
+        ee.setOnClick(c.link02, function(senderLink, event) {
+            g5.popBlack.a9.close();
+            g5.p2.p15.show(g5.myUserInfo);
+        });
+    }
+    if (!eb.isEmpty(c.link03)) {
+        c.link03.style.cursor = "pointer";
+        g5.initLinkV1(c.link03);
+        ee.setOnClick(c.link03, function(senderLink, event) {
+            g5.popBlack.a9.close();
+            g5.p2.p29.show();
+        });
+    }
+}
+]]></onCreate>
+      <sizeRatio>2.59450171821306</sizeRatio>
+      <top>0</top>
+      <width>291</width>
+      <widthRatio>0.321546961325967</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel668">
+      <backgroundColor>C0C0FF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <ee_LocalName>c_titleBg</ee_LocalName>
+      <height>166</height>
+      <heightRatio>0.219867549668874</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>sender.init = function(photoString) {
+    ee.setImage(this, "");
+    ee.setImage(this, g5.getUserTitleBgUrl(photoString)[1]);
+    this.v_photo = photoString;
+}
+
+ee.setVisible(sender, false);
+</onCreate>
+      <sizeRatio>0.570446735395189</sizeRatio>
+      <top>0</top>
+      <width>291</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel669">
+      <ani2Pos>leftFlyOut:左侧飞出</ani2Pos>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>570</height>
+      <heightRatio>0.758485639686684</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <outerTop>185</outerTop>
+      <sizeRatio>1.99656357388316</sizeRatio>
+      <top>185</top>
+      <topRatio>0.241514360313316</topRatio>
+      <width>291</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/panel112/panel667/panel669/layouty5">
+      <dockX>fill</dockX>
+      <height>221</height>
+      <heightRatio>0.387719298245614</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>25</left>
+      <leftRatio>0.0859106529209622</leftRatio>
+      <outerLeft>25</outerLeft>
+      <outerRight>20</outerRight>
+      <sizeRatio>0.898373983739837</sizeRatio>
+      <top>0</top>
+      <width>246</width>
+      <widthRatio>0.845360824742268</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel112/panel667/panel669/layouty5/layoutyitem17">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>74</height>
+      <heightRatio>0.142329020332717</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.313008130081301</sizeRatio>
+      <top>0</top>
+      <width>246</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel669/layouty5/layoutyitem17/panel670">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>18</fontSize>
+      <hAlign>left</hAlign>
+      <height>74</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>g5.popBlack.a9.close();
+g5.p2.p1.show();</onClick>
+      <onCreate><![CDATA[ee.setText(sender,"<svg viewBox=\"0 0 24 24\" style=\"display:inline;font-size: 13px;height:1.9em;width:1.9em;margin:8px 8px 12px 8px;fill: currentcolor;vertical-align:middle;\">"+g5.icon.homePage+"</svg>"+
+    " " + ee.getText(sender));
+sender.style.borderRadius = "24px";
+
+g5.initButtonV3(sender,[
+    new g5.BStyle("","#e5f5ff","#dfeffa","","","","","","","")
+]);
+
+
+
+
+
+
+]]></onCreate>
+      <sizeRatio>0.313008130081301</sizeRatio>
+      <text>新鲜事</text>
+      <top>0</top>
+      <width>246</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel112/panel667/panel669/layouty5/layoutyitem18">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>73</height>
+      <heightRatio>0.144177449168207</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.317073170731707</sizeRatio>
+      <top>74</top>
+      <topRatio>0.142329020332717</topRatio>
+      <width>246</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel112/panel667/panel669/layouty5/layoutyitem20">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>74</height>
+      <heightRatio>0.142329020332717</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.313008130081301</sizeRatio>
+      <top>147</top>
+      <topRatio>0.286506469500924</topRatio>
+      <width>246</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel669/panel671">
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <ee_LocalName>c_nickName</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>185</height>
+      <heightRatio>0.324561403508772</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.63573883161512</sizeRatio>
+      <top>385</top>
+      <topRatio>0.675438596491228</topRatio>
+      <width>291</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel669/panel671/panel672">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <ee_LocalName>c_btnOK</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.216216216216216</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>40</left>
+      <leftRatio>0.13745704467354</leftRatio>
+      <onClick>eb.setCookie("twitterGToken", "");
+window.location.href = "https://fistalk.com/login"</onClick>
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("","#e8f5fe","#d2ecfc","","","","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.18957345971564</sizeRatio>
+      <text>登 录</text>
+      <top>38</top>
+      <topRatio>0.205405405405405</topRatio>
+      <width>211</width>
+      <widthRatio>0.725085910652921</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel669/panel671/panel673">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <ee_LocalName>c_btnCancel</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>40</height>
+      <heightRatio>0.216216216216216</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>40</left>
+      <leftRatio>0.13745704467354</leftRatio>
+      <onClick>eb.setCookie("twitterGToken", "");
+window.location.href = "https://fistalk.com/login"</onClick>
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","#ffffff","#ffffff","#ffffff","")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.18957345971564</sizeRatio>
+      <text>注 册</text>
+      <top>98</top>
+      <topRatio>0.52972972972973</topRatio>
+      <width>211</width>
+      <widthRatio>0.725085910652921</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel677">
+      <backgroundImg>user.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <ee_LocalName>c_userPhoto</ee_LocalName>
+      <height>60</height>
+      <heightRatio>0.0794701986754967</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>19</left>
+      <leftRatio>0.0652920962199313</leftRatio>
+      <onClick>g5.popBlack.a9.close();
+//g5.popBlack.a2.show([sender.v_photo], sender.v_photo);</onClick>
+      <onCreate>sender.style.borderRadius = "50%";
+sender.style.borderWidth = "4px";
+sender.style.borderColor = "#ffffff";
+sender.style.borderStyle = "solid";
+sender.init = function(photoString) {
+    ee.setImage(this, "");
+    ee.setVisible(this, false);
+    ee.setImage(this, g5.getUserPhotoUrl(photoString)[1], "trim","","");
+    this.v_photo = photoString;
+}
+</onCreate>
+      <onImageLoad>ee.setVisible(sender, true);</onImageLoad>
+      <outerBottom>1</outerBottom>
+      <outerLeft>1</outerLeft>
+      <outerRight>1</outerRight>
+      <outerTop>1</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>17</top>
+      <topRatio>0.0225165562913907</topRatio>
+      <width>60</width>
+      <widthRatio>0.206185567010309</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel678">
+      <ee_LocalName>c_nickName</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>34</height>
+      <heightRatio>0.0450331125827815</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>20</left>
+      <leftRatio>0.0687285223367698</leftRatio>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+
+</onCreate>
+      <sizeRatio>0.142259414225941</sizeRatio>
+      <text>昵称nicheng</text>
+      <top>79</top>
+      <topRatio>0.104635761589404</topRatio>
+      <width>239</width>
+      <widthRatio>0.821305841924399</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel679">
+      <ee_LocalName>c_userName</ee_LocalName>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>34</height>
+      <heightRatio>0.0450331125827815</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>20</left>
+      <leftRatio>0.0687285223367698</leftRatio>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+</onCreate>
+      <sizeRatio>0.142259414225941</sizeRatio>
+      <text>@用户名</text>
+      <top>104</top>
+      <topRatio>0.137748344370861</topRatio>
+      <width>239</width>
+      <widthRatio>0.821305841924399</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel680">
+      <ee_LocalName>c_followInfo</ee_LocalName>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>39</height>
+      <heightRatio>0.0516556291390728</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>20</left>
+      <leftRatio>0.0687285223367698</leftRatio>
+      <sizeRatio>0.163179916317992</sizeRatio>
+      <text>48正在关注     200关注者</text>
+      <top>129</top>
+      <topRatio>0.170860927152318</topRatio>
+      <width>239</width>
+      <widthRatio>0.821305841924399</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel667/panel681">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>right</dockX>
+      <height>36</height>
+      <heightRatio>0.0469973890339426</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>235</left>
+      <leftRatio>0.807560137457045</leftRatio>
+      <onClick>sender.parentNode.close();</onClick>
+      <onCreate><![CDATA[ee.setText(sender,
+    "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:5px 8px 8px 5px;fill:rgba(80,80,80,1);vertical-align:middle;\">" + g5.icon.close + "</svg>"
+);
+sender.style.borderRadius = "50%";
+g5.initButtonV3(sender,[
+    new g5.BStyle("","#dfeffa","#cfdfea","","","","","","","")
+]);
+]]></onCreate>
+      <outerRight>20</outerRight>
+      <sizeRatio>1</sizeRatio>
+      <text>X</text>
+      <top>17</top>
+      <topRatio>0.0221932114882507</topRatio>
+      <width>36</width>
+      <widthRatio>0.123711340206186</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268">
       <backgroundColor>FFFFFF</backgroundColor>
