@@ -922,7 +922,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.01827676240209</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.33003300330033</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -946,7 +945,6 @@ ee.setVisible(sender, true);
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
-sender.a1 = ee.getControl("panel1");
 sender.c_bottom = ee.getControl("panel648");
 sender.v_items = new Array();
 sender.v_lastScrollTop = 0;
@@ -954,6 +952,9 @@ sender.v_needRefresh = true;
 sender.v_status = "";
 
 sender.show = function() {
+    if (g5.guestMode) {
+        ee.setVisible(sender.c_new, false);
+    }
     if (updateMain.clearNewContentCount) updateMain.clearNewContentCount();
     if (g5.currentPageIndex==0) {
         document.documentElement.scrollTop = 0;
@@ -1052,7 +1053,7 @@ sender.insert = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     var root = sender;
     var itemWidth = eb.getDivRect(root).w;
     var cy = eb.getDivRectSetting(g5.p4.a1).h;
-    cy+=eb.getDivRect(g5.p2.p1.a1).h;
+    if (!g5.guestMode) cy+=eb.getDivRect(sender.c_new).h;
     if (this.v_items.length>0) {
         cy = eb.getDivRect(this.v_items[0]).y;
     }
@@ -1080,8 +1081,8 @@ sender.loadFromServer = function() {
         var cy = eb.getDivRectSetting(g5.p4.a1).h;
         g5.loading.close();
         //g5.p2.p33.close();
-        eb.setDivRect(g5.p2.p1.a1, null, cy, null,null);
-        cy+=eb.getDivRectSetting(g5.p2.p1.a1).h;
+        eb.setDivRect(sender.c_new, null, cy, null,null);
+        if (!g5.guestMode) cy+=eb.getDivRectSetting(sender.c_new).h;
         if (updateHomepage.contentId == 0) {
             for (i=0; i<root.v_items.length; i++) ee.removeControl(root.v_items[i]);
             root.v_items = new Array();
@@ -1315,13 +1316,14 @@ sender.showAlert = function(value) {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1">
       <backgroundColor>FFFFFF</backgroundColor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_new</ee_LocalName>
       <fontColor>FFFFFF</fontColor>
       <fontSize>20</fontSize>
       <height>429</height>
       <heightRatio>0.55</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>主页顶部发帖a1</note>
+      <note>主页顶部发帖</note>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel7");
 sender.c_edit = ee.getControl("panel577");
 sender.c_button = ee.getControl("panel251");
@@ -2636,7 +2638,6 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -3652,6 +3653,7 @@ sender.init = function(photoString) {
       <left>429</left>
       <leftRatio>0.715</leftRatio>
       <onClick><![CDATA[if (sender.v_style.length<=0) return;
+if (g5.checkGuest("使用高级功能")) return;
 g5.popup1.p4.show(sender, 200, sender.v_style, sender.v_onClick); 
 
 
@@ -7499,12 +7501,14 @@ eb.initMouseEvent(sender);
     g5.setBlock1(g5.p2.p2.v_userInfo, null);
 } else if (sender.v_index==1) {
     //follow
+    if (g5.checkGuest("关注某用户")) return;
     g5.setFollow(showUserPage.v_userInfo, function(v_userInfo) {
         ee.getControl("panel256").init(2);
         showUserPage.v_userInfo = v_userInfo.clone();
     });
 } else if (sender.v_index==2) {
     //cancel follow
+    if (g5.checkGuest("取消关注某用户")) return;
     g5.setFollow(showUserPage.v_userInfo,function(v_userInfo) {
         ee.getControl("panel256").init(1);
         showUserPage.v_userInfo = v_userInfo.clone();
@@ -23841,6 +23845,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.127937336814621</heightRatio>
       <layerName>===P4===</layerName>
+      <layerVisible>false</layerVisible>
       <left>302</left>
       <leftRatio>0.332233223322332</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -24454,6 +24459,7 @@ g5.initButtonV3(sender,[
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName>个人主页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -28395,7 +28401,8 @@ sender.show = function(refDiv, content, userInfo) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button1</note>
-      <onClick>if (sender.parentNode.v_userInfo.isBlock1) {
+      <onClick>if (g5.checkGuest("取消关注某用户")) return;
+if (sender.parentNode.v_userInfo.isBlock1) {
     g5.setBlock1(sender.parentNode.v_userInfo, null);
 } else {
     g5.setFollow(sender.parentNode.v_userInfo, null);
@@ -28429,7 +28436,8 @@ g5.initButtonV3(sender,[
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button2</note>
-      <onClick>g5.setBlock1(sender.parentNode.v_userInfo, null);
+      <onClick>if (g5.checkGuest("屏蔽某用户")) return;
+g5.setBlock1(sender.parentNode.v_userInfo, null);
 </onClick>
       <onCreate>sender.label.style.tableLayout = "fixed";
 sender.label.rows[0].cells[0].style.overflow = "hidden";
@@ -28460,7 +28468,8 @@ g5.initButtonV3(sender,[
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button3</note>
-      <onClick>var cid = sender.parentNode.v_content.id;
+      <onClick>if (g5.checkGuest("收藏发言")) return;
+var cid = sender.parentNode.v_content.id;
 if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
 if (sender.parentNode.v_isBookMark) {
     setBookMark.operation = "del";
@@ -28548,7 +28557,8 @@ g5.initButtonV3(sender,[
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_button4</note>
-      <onClick>g5.setHide(sender.parentNode.v_userInfo.clone(), function(v_userInfo) {
+      <onClick>if (g5.checkGuest("使用隐藏功能")) return;
+g5.setHide(sender.parentNode.v_userInfo.clone(), function(v_userInfo) {
 });
 
 </onClick>
@@ -33990,11 +34000,11 @@ if (currentDist>100) {
       <backgroundImgMode>fill</backgroundImgMode>
       <backgroundSkin>body5</backgroundSkin>
       <height>300</height>
-      <heightRatio>0.391644908616188</heightRatio>
+      <heightRatio>0.397350993377483</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
       <layerVisible>false</layerVisible>
       <left>255</left>
-      <leftRatio>0.280528052805281</leftRatio>
+      <leftRatio>0.281767955801105</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
 </onClick>
       <onCreate><![CDATA[sender.v_noAni = true;
@@ -34097,10 +34107,10 @@ sender.refresh = function() {
 }
 ]]></onCreate>
       <sizeRatio>0.813008130081301</sizeRatio>
-      <top>167</top>
-      <topRatio>0.218015665796345</topRatio>
+      <top>166</top>
+      <topRatio>0.219867549668874</topRatio>
       <width>369</width>
-      <widthRatio>0.405940594059406</widthRatio>
+      <widthRatio>0.407734806629834</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268/panel280/panel267">
       <backgroundColor>E0E0E0</backgroundColor>
@@ -34138,6 +34148,11 @@ sender.style.borderRadius = "50%";
     g5.setBlock1(sender.parentNode.v_userInfo, null);
 } else if (sender.v_index==1) {
     //follow
+    if (g5.checkGuest("关注某用户")) {
+        ee.setVisible(sender.parentNode, false);
+        ee.setVisible(sender.parentNode.parentNode, false);
+        return;
+    }
     g5.setFollow(sender.parentNode.v_userInfo,function(v_userInfo) {
         sender.init(2);
         sender.parentNode.v_userInfo = v_userInfo.clone();
@@ -34145,6 +34160,7 @@ sender.style.borderRadius = "50%";
 } else if (sender.v_index==2) {
     ee.setVisible(sender.parentNode, false);
     ee.setVisible(sender.parentNode.parentNode, false);
+    if (g5.checkGuest("取消关注某用户")) return;
     g5.setFollow(sender.parentNode.v_userInfo,function(v_userInfo) {
         sender.init(1);
         sender.parentNode.v_userInfo = v_userInfo.clone();
@@ -37999,6 +38015,11 @@ var token = eio.readString16();
 var userId = eio.readString16();
 var sql,sqlResult; 
 
+if (parseInt(userId) == 10877) {
+    eio.appendString8("F");
+    eio.appendString8("该账号不能被关注。");
+    return;
+}
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -38025,7 +38046,7 @@ if (db.getString(sqlResult,"userName")=="guest") {
     return;
 }
 
-sql = "exec followUser " + myUserId + "," + userId + "," + (follow=="T"?"1":"0");
+sql = "exec followUser " + myUserId + "," + parseInt(userId) + "," + (follow=="T"?"1":"0");
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
@@ -38187,6 +38208,12 @@ var userId = parseInt(eio.readString16());
 var operation = parseInt(eio.readString16());
 var sql,sqlResult; 
 
+if (parseInt(userId) == 10877) {
+    eio.appendString8("F");
+    eio.appendString8("该账号不能被隐藏。");
+    return;
+}
+
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -38213,7 +38240,7 @@ if (db.getString(sqlResult,"userName")=="guest") {
     return;
 }
 
-sql = "exec followUserHide " + myUserId + "," + userId + "," + operation;
+sql = "exec followUserHide " + myUserId + "," + parseInt(userId) + "," + operation;
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
@@ -38331,6 +38358,12 @@ var chatUserId = parseInt(eio.readString16());
 var content = eio.readString16();
 var sql,sqlResult;  
 
+if (parseInt(chatUserId) == 10877) {
+    eio.appendString8("F");
+    eio.appendString8("您不能与该账号私信。");
+    return;
+}
+
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -38349,7 +38382,7 @@ var myUserId = parseInt(db.getString(sqlResult,"id"));
 
 sql = "exec [chat1v1Send] " +
     myUserId +
-    "," + chatUserId + 
+    "," + parseInt(chatUserId) + 
     ",N'" + db.encode(content) + "'" +
     ",'';";
 if (!db.executeNoneQuery("DB", sql)) {
@@ -38759,6 +38792,13 @@ eio.appendString16(blockUser.isBlock + "");
 var blockUserId = parseInt(eio.readString16());
 var isBlock = parseInt(eio.readString16());
 
+
+if (parseInt(blockUserId) == 10877) {
+    eio.appendString8("F");
+    eio.appendString8("该账号不能被屏蔽。");
+    return;
+}
+
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("DB", sql);
@@ -38784,7 +38824,7 @@ if (db.getString(sqlResult,"userName")=="guest") {
 
 sql = "exec blockUser " +
     myUserId + 
-    "," + blockUserId +
+    "," + parseInt(blockUserId) +
     "," + isBlock;
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
@@ -41787,7 +41827,7 @@ updateMain.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="115">
+  <g5Items count="116">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -43307,7 +43347,8 @@ ee.setOnMouseLeave(c, function(sender,event) {
 });
 root.c_button1 = c;
 ee.setOnClick(c,function(sender,event) {
-    if (g5.isMobile) {
+    if (g5.checkGuest("回复短文")) {
+    } else if (g5.isMobile) {
         g5.p2.p31.showRe(root.v_content.clone(),root.v_reContent.clone(),root.v_userInfo,root.v_reUserInfo);
     } else {
         g5.popBlack.a3.showRe(root.v_content.clone(),root.v_reContent.clone(),root.v_userInfo,root.v_reUserInfo);
@@ -43344,6 +43385,7 @@ c.refreshBtn = function(styleIndex) {
     }
 }
 ee.setOnClick(c,function(sender,event) {
+    if (g5.checkGuest("转发短文")) return false;
     while(1) {
         if (!sender.v_enabled) break;
         g5.popup1.p2.show(sender, root.v_content, root.v_reContent, root.v_userInfo, root.v_reUserInfo);
@@ -43378,6 +43420,7 @@ c.refreshBtn = function(styleIndex) {
     }
 }
 ee.setOnClick(c,function(sender,event) {
+    if (g5.checkGuest("点赞")) return false;
     g5.setLike(root);
     return false;
 });
@@ -43407,6 +43450,7 @@ c.refreshBtn = function(styleIndex) {
     }
 }
 ee.setOnClick(c,function(sender,event) {
+    if (g5.checkGuest("点踩")) return false;
     g5.setUnlike(root);
     return false;
 });
@@ -44451,19 +44495,28 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
             g5.setBlock1(root.v_userInfo,null);
         } else if (sender.v_index==1) {
             //follow
-            g5.setFollow(root.v_userInfo, function(v_userInfo) {
-                sender.refreshStatus(2);
-                root.v_userInfo = v_userInfo.clone();
-            });
+            if (g5.checkGuest("关注某用户")) {
+            } else {
+                g5.setFollow(root.v_userInfo, function(v_userInfo) {
+                    sender.refreshStatus(2);
+                    root.v_userInfo = v_userInfo.clone();
+                });
+            }
         } else if (sender.v_index==2) {
             //unfollow
-            g5.setFollow(root.v_userInfo, function(v_userInfo) {
-                sender.refreshStatus(1);
-                root.v_userInfo = v_userInfo.clone();
-            });
+            if (g5.checkGuest("取消关注某用户")) {
+            } else {
+                g5.setFollow(root.v_userInfo, function(v_userInfo) {
+                    sender.refreshStatus(1);
+                    root.v_userInfo = v_userInfo.clone();
+                });
+            }
         } else if (sender.v_index==3) {
             //编辑个人资料
-            g5.p2.p17.show();
+            if (g5.checkGuest("编辑个人资料")) {
+            } else {
+                g5.p2.p17.show();
+            }
         }
         window.event? window.event.cancelBubble = true : event.stopPropagation();    
     });
@@ -44579,6 +44632,7 @@ if (g5.isMobile) {
     } else if (g5.currentPageIndex == 10) {
         //pButton = true;
     }
+    if (g5.guestMode) pButton = false;
     ee.setVisible(g5.pButton, pButton);
 
     return;
@@ -45277,11 +45331,11 @@ ee.setEditText(ee.getControl("edit3"), g5.myUserInfo.note);
 ee.setEditText(ee.getControl("edit4"), g5.myUserInfo.homePage);
 
 if (g5.myUserInfo.photo == "") {
-    ee.setImage(g5.p2.p1.a1.c_userPhoto, "/faith/main/user.png");
+    ee.setImage(g5.p2.p1.c_new.c_userPhoto, "/faith/main/user.png");
     ee.setImage(g5.popBlack.a8.c_userPhoto, "/faith/main/user.png");
     //ee.setImage(ee.getControl("panel606"), "/faith/main/user.png");
 } else {
-    ee.setImage(g5.p2.p1.a1.c_userPhoto, "url:" + g5.imgUrl + g5.myUserInfo.photo);
+    ee.setImage(g5.p2.p1.c_new.c_userPhoto, "url:" + g5.imgUrl + g5.myUserInfo.photo);
     ee.setImage(g5.popBlack.a8.c_userPhoto, "url:" + g5.imgUrl + g5.myUserInfo.photo);
     //ee.setImage(ee.getControl("panel606"), "url:" + g5.imgUrl + g5.myUserInfo.photo);
 }
@@ -46818,6 +46872,26 @@ sender.eeOnClickCancel = function(sender,event) {
 }
 eb.initMouseEvent(sender);
 </functionCode>
+    </item>
+    <item name="checkGuest" type="20">
+      <varValue />
+      <functionParam>opName</functionParam>
+      <functionCode><![CDATA[if (!g5.guestMode) return false;
+g5.popBlack.a6.show(
+    "加入FISTALK",
+    "作为游客身份不能" + opName + 
+    "，如果您需要" + opName +
+    "请注册或登录一个账号，注册是免费的同时也不需要提供您的任何隐私信息。<br/>您是否要立即注册？",
+    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","注册","注册新账号","注册新账号","#ffffff","#ffffff","#ffffff","")],
+    function() {
+        eb.setCookie("twitterGToken", "");
+        window.location.href = "https://fistalk.com/login"
+    },
+    function() {
+    }
+);
+return true;]]></functionCode>
     </item>
   </g5Items>
 </page>
