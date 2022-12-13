@@ -734,6 +734,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>755</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -922,6 +923,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.01827676240209</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.33003300330033</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -942,6 +944,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>Home主页面</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_bottom = ee.getControl("panel648");
@@ -33922,7 +33925,6 @@ g5.initButtonV3(sender,[
       <height>755</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>sender.close();</onClick>
       <onCreate><![CDATA[sender.style.zIndex=100;
@@ -34002,7 +34004,6 @@ if (currentDist>100) {
       <height>300</height>
       <heightRatio>0.397350993377483</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.281767955801105</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -34167,6 +34168,11 @@ sender.style.borderRadius = "50%";
     });
 } else if (sender.v_index==3) {
     //edit personal information
+    if (g5.checkGuest("编辑个人信息")) {
+        ee.setVisible(sender.parentNode, false);
+        ee.setVisible(sender.parentNode.parentNode, false);
+        return;
+    }
     ee.setVisible(sender.parentNode, false);
     ee.setVisible(sender.parentNode.parentNode, false);
     g5.p2.p17.show();
@@ -46881,9 +46887,9 @@ eb.initMouseEvent(sender);
       <functionCode><![CDATA[if (!g5.guestMode) return false;
 g5.popBlack.a6.show(
     "加入FISTALK",
-    "作为游客身份不能" + opName + 
+    "<div style='text-align:left'>作为游客身份<font color=#904040><b>不能" + opName + "</b></font>" +
     "，如果您需要" + opName +
-    "请注册或登录一个账号，注册是免费的同时也不需要提供您的任何隐私信息。<br/>您是否要立即注册？",
+    "请注册或登录一个账号，注册是免费的同时也不需要提供您的任何隐私信息。<font color=#904040><b>您是否要立即注册？</b></font></div>",
     [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
     [new g5.BStyle("#1da1f2","#1a91da","#1781c2","注册","注册新账号","注册新账号","#ffffff","#ffffff","#ffffff","")],
     function() {
