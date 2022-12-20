@@ -1,5 +1,5 @@
 <page>
-  <controls count="818">
+  <controls count="822">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -734,7 +734,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>755</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -923,7 +922,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.03311258278146</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.331491712707182</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -2640,7 +2638,6 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -2992,6 +2989,9 @@ sender.refreshButton = function() {
         //visibleMail = false;
     } else if (this.v_userInfo.isBlock2) {
         //visibleMail = false;
+    } else if (this.v_userInfo.userName == "guest") {
+        ee.setVisible(this.c_button1, false);
+        ee.setVisible(this.c_buttonMore, false);
     }
     if (this.v_userInfo.userName == g5.myUserInfo.userName) {
         visibleMail = false;
@@ -3189,7 +3189,9 @@ sender.showByUserInfo = function(v_userInfo) {
         cy += vspace + eb.getDivRect(ee.getControl("layoutx6")).h;
     }
     
-    if ((v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del") || ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow))) {
+    if ((v_userInfo.status == "DISABLED") || (v_userInfo.status == "Del") ||
+        ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow)) ||
+        (v_userInfo.userName == "guest")) {
     } else {
         eb.setDivRect(ee.getControl("layoutx7"),null,cy,null,null);
         //alert(v_userInfo.regDatetime);
@@ -3204,6 +3206,8 @@ sender.showByUserInfo = function(v_userInfo) {
     } else if (v_userInfo.status == "Del") {
         ee.setVisible(ee.getControl("panel72"), false);
     } else if ((v_userInfo.status == "Private") &amp;&amp; (!v_userInfo.isFollow)) {
+        ee.setVisible(ee.getControl("panel72"), false);
+    } else if (v_userInfo.userName == "guest") {
         ee.setVisible(ee.getControl("panel72"), false);
     } else {
         ee.setVisible(ee.getControl("panel72"), true);
@@ -3222,6 +3226,7 @@ sender.showByUserInfo = function(v_userInfo) {
     ee.setVisible(this.c_freeze, false);
     ee.setVisible(this.c_del, false);
     ee.setVisible(this.c_private, false);
+    ee.setVisible(this.c_guest, false);
     if (v_userInfo.isBlock1 &amp;&amp; v_userInfo.isBlock2) {
         g5.changeP2(1);
         ee.setVisible(this.c_block12, true);
@@ -3290,6 +3295,16 @@ sender.showByUserInfo = function(v_userInfo) {
         ee.setVisible(this.c_del, true);
         ee.setRect(this.c_del, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
         var r1 = eb.getDivRectSetting(this.c_del);
+        ee.setRect(this,null,null,null,r1.y+r1.h);
+        ee.resizeV(this.parentNode, 1);
+        ee.setVisible(g5.p3, false);
+        ee.setVisible(this.p2sub, false);
+        return;
+    } else if (v_userInfo.userName == "guest") {
+        g5.changeP2(1);
+        ee.setVisible(this.c_guest, true);
+        ee.setRect(this.c_guest, null, cy, null, eb.getClientSize().h - eb.getDivRectSetting(g5.p4).h+3);
+        var r1 = eb.getDivRectSetting(this.c_guest);
         ee.setRect(this,null,null,null,r1.y+r1.h);
         ee.resizeV(this.parentNode, 1);
         ee.setVisible(g5.p3, false);
@@ -6826,6 +6841,13 @@ sender.setText = function(text) {
 
 sender._input.addEventListener("keydown", function(event) {
     if (event.keyCode==13 &amp;&amp; (!event.shiftKey)) {
+        if (g5.guestMode) {
+            event.preventDefault();
+            setTimeout(function() {
+                g5.checkGuest("在聊天室发言");
+            }, 200);
+            return false;
+        }
         if (showUserPage.isChatRoomPubBlack) {
             g5.alert1("提示", "对不起，您已经被本聊天室屏蔽，您将不能在本聊天室发言");
             event.preventDefault();
@@ -6861,12 +6883,16 @@ sender._input.addEventListener("keydown", function(event) {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel279/panel283/panel19/layouty2/layoutyitem4/panel266">
       <cursor>pointer</cursor>
       <dockX>right</dockX>
+      <ee_LocalName>c_send</ee_LocalName>
       <height>29</height>
       <heightRatio>0.568627450980392</heightRatio>
       <layerVisible>false</layerVisible>
       <left>511</left>
       <leftRatio>0.915770609318996</leftRatio>
-      <onClick><![CDATA[if (showUserPage.isChatRoomPubBlack) {
+      <onClick><![CDATA[if (g5.checkGuest("在聊天室发言")) {
+    return;
+}
+if (showUserPage.isChatRoomPubBlack) {
     g5.alert1("提示", "对不起，您已经被本聊天室屏蔽，您将不能在本聊天室发言");
     return;
 }
@@ -7482,6 +7508,71 @@ eb.initMouseEvent(sender);
       <outerRight>20</outerRight>
       <sizeRatio>0.175</sizeRatio>
       <text>该用户处于私密状态，您需要成为该用户的粉丝才可以访问该用户的主页</text>
+      <top>71</top>
+      <topRatio>0.258181818181818</topRatio>
+      <vAlign>top</vAlign>
+      <width>560</width>
+      <widthRatio>0.933333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel683">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_guest</ee_LocalName>
+      <height>275</height>
+      <heightRatio>0.352564102564103</heightRatio>
+      <layerName>游客状态</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.458333333333333</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel683/panel684">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>1</height>
+      <heightRatio>0.00363636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>PLine1</note>
+      <sizeRatio>0.00166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel683/panel685">
+      <dockX>fill</dockX>
+      <fontBold>true</fontBold>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <height>34</height>
+      <heightRatio>0.123636363636364</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0566666666666667</sizeRatio>
+      <text>提示</text>
+      <top>32</top>
+      <topRatio>0.116363636363636</topRatio>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel16/panel683/panel686">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>98</height>
+      <heightRatio>0.356363636363636</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>20</left>
+      <leftRatio>0.0333333333333333</leftRatio>
+      <outerLeft>20</outerLeft>
+      <outerRight>20</outerRight>
+      <sizeRatio>0.175</sizeRatio>
+      <text>该用户不可访问</text>
       <top>71</top>
       <topRatio>0.258181818181818</topRatio>
       <vAlign>top</vAlign>
@@ -33923,6 +34014,7 @@ g5.initButtonV3(sender,[
       <height>755</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗Top]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>sender.close();</onClick>
       <onCreate><![CDATA[sender.style.zIndex=100;
@@ -34002,6 +34094,7 @@ if (currentDist>100) {
       <height>300</height>
       <heightRatio>0.397350993377483</heightRatio>
       <layerName><![CDATA[Root->主界面弹窗->D用户信息]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>255</left>
       <leftRatio>0.281767955801105</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();
