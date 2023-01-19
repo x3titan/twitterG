@@ -3564,20 +3564,27 @@ sender.appendItem = function() {
       <layerVisible>false</layerVisible>
       <left>25</left>
       <leftRatio>0.0276243093922652</leftRatio>
-      <onClick><![CDATA[var xmltext = "<sometag><someothertag></someothertag></sometag>";
+      <onClick><![CDATA[var xml = "";
+xml += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+xml += "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+
+xml += "  <url>\n";
+xml += "    <loc>https://fistalk.com/msg/67688</loc>\n";
+xml += "    <lastmod>2023-01-13</lastmod>\n";
+xml += "  </url>\n";
+
+xml += "</urlset>\n";
 
 var filename = "file.xml";
-var pom = document.createElement("a");
-var bb = new Blob([xmltext], {type: 'text/plain'});
+var aLink = document.createElement("a");
+var bb = new Blob([xml], {type: "text/plain"});
+aLink.setAttribute("href", window.URL.createObjectURL(bb));
+aLink.setAttribute("download", filename);
+aLink.dataset.downloadurl = ["text/plain", aLink.download, aLink.href].join(":");
+aLink.draggable = true; 
+aLink.classList.add("dragout");
 
-pom.setAttribute("href", window.URL.createObjectURL(bb));
-pom.setAttribute("download", filename);
-
-pom.dataset.downloadurl = ["text/plain", pom.download, pom.href].join(":");
-pom.draggable = true; 
-pom.classList.add("dragout");
-
-pom.click();]]></onClick>
+aLink.click();]]></onClick>
       <onCreate>var text = ee.getText(sender);
 sender.v_style = [
     new g5.BStyle("#ffffff","#e8f5fe","#d2ecfc",text,text,text,"#1da1f2","#1da1f2","#1da1f2","#1da1f2"),
