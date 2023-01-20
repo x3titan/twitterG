@@ -576,6 +576,7 @@ ee.getGlobalPoint = function (control) {
        */]]></onPageCreate>
       <pageHead><![CDATA[<script src="/Scripts/hammerDecode.js" type="text/javascript"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta property="og:site_name" content="Fistalk" />
 
 <style>
 .scrollBar01::-webkit-scrollbar-track {
@@ -8660,6 +8661,41 @@ sender.refreshSearchText = function() {
             sender.v_items[i].v_content.content + "<br/><br/>";
     }
     $g("divSearchText").innerHTML = s;
+    
+    if (sender.v_items.length>0) {
+        var item = sender.v_items[sender.v_items.length-1];
+        document.title =
+            item.v_userInfo.nickName + "@" +
+            item.v_userInfo.userName + ": " +
+            item.v_content.content;
+        sender.setMetaProperty("og:site_name", "Fistalk");
+        sender.setMetaProperty("og:type", "article");
+        sender.setMetaProperty("og:url", window.location.href);
+        sender.setMetaProperty("og:title", "登录FISTALK，关注" + item.v_userInfo.nickName);
+        sender.setMetaProperty("og:description", item.v_content.content);
+        if (item.v_content.photo1.length>0) {
+            if (item.v_content.photo1.substr(0,4) == "?YTB") {
+                sender.setMetaProperty("og:video", "https://www.youtube.com/watch?v=" + sender.v_items[0].v_content.photo1.substr(4));
+            } else {
+                sender.setMetaProperty("og:image", "https://fistalk.com/incoming/" + sender.v_items[0].v_content.photo1);
+            }
+        }
+    }
+} 
+
+sender.setMetaProperty = function(property, content) {
+    var i = 0;
+    while (i<document.getElementsByTagName("meta").length) {
+        if (document.getElementsByTagName("meta")[i].getAttribute("property") == property) {
+            document.getElementsByTagName("meta")[i].remove();
+        } else i++;
+    }
+    if (content == "") return;
+    var meta = document.createElement("meta");
+    meta.setAttribute("content", content);
+    meta.setAttribute("property", property);
+    meta.setAttribute("data-rh", "true");
+    document.head.appendChild(meta);    
 }
 
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId, forceDisplay) {
@@ -8856,6 +8892,7 @@ sender.preShow = function(v_content, v_reContent, v_userInfo, v_reUserInfo) {
     
     g5.changeP2(8);
     document.documentElement.scrollTop = 0;
+    sender.refreshSearchText();
 }
 
 sender.delHis = function(cid) {
@@ -45288,7 +45325,9 @@ g5.currentP3Index = pageIndex;</functionCode>
     <item name="processUrl" type="20">
       <varValue />
       <functionParam />
-      <functionCode><![CDATA[g5.notPushHistoryCount = 1;
+      <functionCode><![CDATA[document.title = "拳头Talk";
+
+g5.notPushHistoryCount = 1;
 var p = g5.getQueryString("p");
 var url = new URL(window.location.href);
 var pn = url.pathname;
