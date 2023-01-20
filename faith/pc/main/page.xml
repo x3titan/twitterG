@@ -8628,6 +8628,7 @@ sender.load = function(cid) {
     this.v_hisItems.splice(idx,1);
     this.sync(this.v_content.id);
     document.documentElement.scrollTop = item.scrollTop;
+    this.refreshSearchText();
     return true;
 }
 
@@ -8650,7 +8651,17 @@ sender.delHisById = function(contentId) {
         } else i++;
     }
 }
-     
+
+sender.refreshSearchText = function() {
+    var s = "";
+    for (var i = sender.v_items.length - 1; i >= 0; i--) {
+        s += sender.v_items[i].v_userInfo.nickName + "@" +
+            sender.v_items[i].v_userInfo.userName + ": " +
+            sender.v_items[i].v_content.content + "<br/><br/>";
+    }
+    $g("divSearchText").innerHTML = s;
+}
+
 sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, contentId, forceDisplay) {
     if (showTopic.busy) return;
     this.v_forceDisplay = forceDisplay ? true:false;
@@ -8794,6 +8805,9 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
             }
         }
         document.documentElement.scrollTop = scrollTop;
+        setTimeout(function() {
+            document.documentElement.scrollTop = scrollTop;
+        }, 10);
         eb.processDock();
         
         sender.c_tabRoot.p1.setCount(reCount);
@@ -8806,7 +8820,8 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
         sender.loadComplete = true;
         //sender.c_tabRoot.p2.show(sender.v_content.id, true);
         sender.c_tabRoot.p3.loadFromDb(sender.v_content.id, false);  
-        sender.c_tabRoot.p4.loadFromDb(sender.v_content.id, false);  
+        sender.c_tabRoot.p4.loadFromDb(sender.v_content.id, false);
+        sender.refreshSearchText();
     }
     showTopic.disabled = false;
     this.loadComplete = false;
