@@ -41978,7 +41978,7 @@ updateMain.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="116">
+  <g5Items count="118">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -42402,6 +42402,46 @@ close: "<g><path d=\"M13.414 12l5.793-5.793c.39-.39.39-1.023 0-1.414s-1.023-.39-
 left1: "<g><path d=\"M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z\"></path></g>",
 right1: "<g><path d=\"M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z\"></path></g>",
 end:""
+}]]></varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="LangItem" type="20">
+      <varValue />
+      <functionParam>id,chinese,english</functionParam>
+      <functionCode>this.id = id?id:0;
+this.text = [
+    chinese?chinese:"",
+    english?english:"",
+]
+
+</functionCode>
+    </item>
+    <item name="lang" type="10">
+      <varValue><![CDATA[{
+currentLang: "Chinese",
+langList: ["Chinese","English"],
+langListDisplay: ["简体中文","English"],
+
+getCurrentLangIndex: function() {
+    for (var i=0; i<this.langList.length; i++) {
+        if (this.langList[i] == this.currentLang) return i;
+    }
+    return 0;
+},
+
+getByCn: function(text) {
+    for (var i=0; i<this.data.length; i++) {
+        if (this.data[i].text[0] == text) {
+            return this.data[i].text[this.getCurrentLangIndex()];
+        }
+    }
+    return text;
+},
+
+data: [
+    new g5.LangItem(0,"确定","OK"),
+]
 }]]></varValue>
       <functionParam />
       <functionCode />
