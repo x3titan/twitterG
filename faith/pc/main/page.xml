@@ -17505,6 +17505,7 @@ sender.resize = function (img, maxSize) {
       <height>774</height>
       <heightRatio>0.992307692307692</heightRatio>
       <layerName>设置-账号-注销</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.a1 = ee.getControl("panel493");
 sender.a2 = ee.getControl("panel498");
@@ -17798,6 +17799,7 @@ ee.getLabel(sender).style.fontSize = "15px";</onCreate>
       <height>676</height>
       <heightRatio>0.873385012919897</heightRatio>
       <layerName><![CDATA[a2->删除冷却期]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -18332,7 +18334,6 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>设置-隐私和安全-加粉请求者</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -18490,7 +18491,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>376</height>
       <heightRatio>0.482051282051282</heightRatio>
       <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.626666666666667</sizeRatio>
       <top>42</top>
@@ -42418,7 +42418,26 @@ getByTCn: function(id, text) {
     return this.getByCn(text);
 },
 
+getById: function(id) {
+    for (var i=0; i<this.data.length; i++) {
+        if (this.data[i].id == id) {
+            return this.data[i].text[this.getCurrentLangIndex()];
+        }
+    }
+    return "";
+},
+
 data: [
+    new g5.LangItem(1,"秒","s"),
+    new g5.LangItem(1,"分钟","m"),
+    new g5.LangItem(1,"小时","h"),
+    new g5.LangItem(1,"昨天","yesterday"),
+    new g5.LangItem(1,"天","day"),
+    new g5.LangItem(1,"年","y"),
+    new g5.LangItem(1,"月","mo"),
+    new g5.LangItem(1,"日","d"),
+    new g5.LangItem(1,"上午","AM"),
+    new g5.LangItem(1,"下午","PM"),
     new g5.LangItem(1,"确定","OK"),
     new g5.LangItem(1,"登 录","Login"),
     new g5.LangItem(1,"注 册","Sign Up"),
@@ -42553,6 +42572,22 @@ data: [
     new g5.LangItem(1,
         "您的账号处于删除冷却期，冷却期结束后账号将被永久删除，您是否要停止删除自己的账号？",
         "Your account is currently in the deletion cooling-off period, and after the cooling-off period ends, your account will be permanently deleted. Do you want to stop deleting your account?"),
+    new g5.LangItem(7001,""," "),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -45752,47 +45787,48 @@ window.history.pushState({},"",url.origin+getString);
       <functionParam>seconds,style</functionParam>
       <functionCode><![CDATA[seconds = parseInt(seconds);
 var a;
+var spt = g5.lang.getById(7001);
 if (eb.isEmpty(style)) style = 1;
 if (style == 1) {
-    if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + "秒";
+    if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + g5.lang.getByCn("秒");
     if (seconds<60*60) {
-        return parseInt(seconds/60) + "分钟";
+        return parseInt(seconds/60) + g5.lang.getByCn("分钟");
     } else if (seconds<60*60*24) {
         a = parseInt((seconds%(60*60))/60);
-        return parseInt(seconds/60/60) + "小时" + (a<10 ? "0"+a:a) + "分钟";
+        return parseInt(seconds/60/60) + g5.lang.getByCn("小时") + spt + (a<10 ? "0"+a:a) + g5.lang.getByCn("分钟");
     } else if (seconds<60*60*24*2) {
-        return "昨天";
+        return g5.lang.getByCn("昨天");
     } else if (seconds<60*60*24*3) {
-        return "2天";
+        return "2" + g5.lang.getByCn("天");
     } else if (seconds<60*60*24*4) {
-        return "3天";
+        return "3" + g5.lang.getByCn("天");
     } else if (seconds<60*60*24*5) {
-        return "4天";
+        return "4" + g5.lang.getByCn("天");
     } else if (seconds<60*60*24*6) {
-        return "5天";
+        return "5" + g5.lang.getByCn("天");
     } else if (seconds<60*60*24*7) {
-        return "6天";
+        return "6" + g5.lang.getByCn("天");
     } else {
         var time = new Date((new Date()).getTime()-seconds*1000);
         if ((new Date()).getYear() != time.getYear()) {
-            return (time.getYear() + 1900) + "年" + (time.getMonth()+1) + "月" + time.getDate() + "日";
+            return (time.getYear() + 1900) + g5.lang.getByCn("年") + spt + (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
         } else {
-            return (time.getMonth()+1) + "月" + time.getDate() + "日";
+            return (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
         }
     }
 } else {
-    if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + "秒";
+    if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + g5.lang.getByCn("秒");
     if (seconds<60*60) {
         a = seconds%60;
-        return parseInt(seconds/60) + "分" + (a<10 ? "0"+a:a) + "秒";
+        return parseInt(seconds/60) + g5.lang.getByCn("分") + spt + (a<10 ? "0"+a:a) + g5.lang.getByCn("秒");
     } else if (seconds<60*60*24) {
         a = parseInt((seconds%(60*60))/60);
-        return parseInt(seconds/60/60) + "小时" + (a<10 ? "0"+a:a) + "分钟";
+        return parseInt(seconds/60/60) + g5.lang.getByCn("小时") + spt + (a<10 ? "0"+a:a) + g5.lang.getByCn("分钟");
     } else {
         var time = new Date((new Date()).getTime()-seconds*1000);
-        return (time.getHours()<=12 ? "上午"+time.getHours() : "下午"+(time.getHours()-12)) + ":" +
+        return (time.getHours()<=12 ? g5.lang.getByCn("上午") + spt + time.getHours() : g5.lang.getByCn("下午") + spt + (time.getHours()-12)) + ":" +
             (time.getMinutes()>=10 ? time.getMinutes() : "0" + time.getMinutes()) + " · " +
-            (time.getYear() + 1900) + "年" + (time.getMonth()+1) + "月" + time.getDate() + "日";
+            (time.getYear() + 1900) + g5.lang.getByCn("年") + spt + (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
     }
 }]]></functionCode>
     </item>
