@@ -17517,19 +17517,19 @@ sender.show = function() {
             var s = "";
             var t = "";
             if (timeRemain>3600*24) {
-                t+=parseInt(timeRemain/3600/24) + "天";
+                t+=parseInt(timeRemain/3600/24) + g5.lang.getByTCn(500,"天");
             }
             if (timeRemain>3600) {
-                t+=parseInt((timeRemain%(3600*24))/3600) + "小时";
+                t+=parseInt((timeRemain%(3600*24))/3600) + g5.lang.getByTCn(500,"小时");
             }
-            t+=parseInt((timeRemain%(3600))/60) + "分钟";
-            s += "您目前处于账号冷却期，距离账号永久删除还剩";
+            t+=parseInt((timeRemain%(3600))/60) + g5.lang.getByTCn(500,"分钟");
+            s += g5.lang.getByCn("您目前处于账号冷却期，距离账号永久删除还剩");
             if (g5.isMobile) {
-                s += "\n<spawn style='color:#a06060;font-size:30px'><b>" + t + "</b></spawn>";
+                s += "\n<spawn style='color:#a06060;font-size:25px'><b>" + t + "</b></spawn>";
             } else {
-                s += "\n<spawn style='color:#a06060;font-size:40px'><b>" + t + "</b></spawn>";
+                s += "\n<spawn style='color:#a06060;font-size:35px'><b>" + t + "</b></spawn>";
             }
-            s += "\n您可以随时停止删除。";
+            s += "\n" + g5.lang.getByCn("您可以随时停止删除。");
             ee.setText(sender.a2.c_label, s);
         }
         getDelInTime();
@@ -17927,7 +17927,8 @@ sender.setEnabled(true);</onCreate>
       <layerVisible>false</layerVisible>
       <left>10</left>
       <leftRatio>0.0178571428571429</leftRatio>
-      <onCreate>ee.getLabel(sender).style.fontSize = "15px";</onCreate>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+ee.getLabel(sender).style.fontSize = "15px";</onCreate>
       <outerBottom>10</outerBottom>
       <outerLeft>10</outerLeft>
       <outerRight>10</outerRight>
@@ -35077,8 +35078,8 @@ sender.style.borderRadius = "10px";
 sender.style.boxShadow = "5px 5px 15px #808080";
 
 sender.show = function(title,text,bStyle1,bStyle2,onComplete,onButton1) {
-    ee.setText(this.c_title,title);
-    ee.setText(this.c_text,text);
+    ee.setText(this.c_title,g5.lang.getByCn(title));
+    ee.setText(this.c_text,g5.lang.getByCn(text));
     this.c_btnCancel.v_style = bStyle1;
     this.c_btnCancel.init(0);
     this.c_btnOK.v_style = bStyle2;
@@ -42518,18 +42519,40 @@ data: [
     new g5.LangItem(1,"头像和主题背景","Profile picture &amp; background"),
     new g5.LangItem(1,"删除本账号","Delete Account"),
     new g5.LangItem(1,"确定删除","Delete"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,
+        "· 账号被删除后，您将不能登录本系统，同时您以前发的短文都将不可见，别的用户也无法查看您的个人信息。<br><br>" +
+        "· 您确定要删除您的账号后，我们会给您提供3天的冷却期，在这期间，您可以撤销您的删除账号请求。<br><br>" +
+        "· 冷却期过后，您的账号将被永久删除。如果需要恢复，需要和客服人员联系。",
+        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After your account is deleted, you will not be able to log in to this system, and your previous posts will not be visible to other users, who will also not be able to view your personal information.</li>" +
+        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>If you are sure you want to delete your account, we will provide you with a 3-day cooling-off period during which you can cancel your account deletion request.</li>" +
+        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 0px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After the cooling-off period, your account will be permanently deleted. If you want to restore your account, you need to contact customer service.</li>"
+        ),
+    new g5.LangItem(1,"删除账号","Delete Account"),
+    new g5.LangItem(1,
+        "您的账号将进入删除冷却期，冷却期结束后账号将被永久删除，您是否要继续删除自己的账号？",
+        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'>Your account will enter a deletion cooling-off period, and after the cooling-off period ends, your account will be permanently deleted. Are you sure you want to continue deleting your account?</li>"),
+    new g5.LangItem(1,"停止删除","Undelete"),
+    new g5.LangItem(1,
+        "· 账号被删除后，您将不能登录本系统，同时您以前发的短文都将不可见，别的用户也无法查看您的个人信息。<br><br>" +
+        "· 您确定要删除您的账号后，我们会给您提供3天的冷却期，在这期间，您可以撤销您的删除账号请求。<br><br>" +
+        "· 冷却期过后，您的账号将被永久删除。如果需要恢复，需要和客服人员联系。",
+        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After deleting your account, you will no longer be able to log in to the system, and your previously posted content will be invisible, and other users will not be able to view your personal information.</li>" +
+        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>If you are sure you want to delete your account, we will provide you with a 3-day cooling-off period during which you can cancel your account deletion request.</li>" +
+        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After the cooling-off period, your account will be permanently deleted. If you need to restore it, please contact customer service.</li>"
+        ),
+    new g5.LangItem(500,"天"," days, "),
+    new g5.LangItem(500,"小时"," hours, and "),
+    new g5.LangItem(500,"分钟"," minutes left"),
+    new g5.LangItem(1,
+        "您目前处于账号冷却期，距离账号永久删除还剩",
+        "<spawn style='font-size: 0.8em; text-align: left'>Your account is currently in the cooling-off period,<br>and there are</spawn>"),
+    new g5.LangItem(1,
+        "您可以随时停止删除。",
+        "<spawn style='font-size: 0.8em; text-align: left'>until your account is permanently deleted. You can stop the deletion at any time.</spawn>"),
+    new g5.LangItem(1,"停止删除账号","Undelete Account"),
+    new g5.LangItem(1,
+        "您的账号处于删除冷却期，冷却期结束后账号将被永久删除，您是否要停止删除自己的账号？",
+        "Your account is currently in the deletion cooling-off period, and after the cooling-off period ends, your account will be permanently deleted. Do you want to stop deleting your account?"),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
