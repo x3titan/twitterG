@@ -45890,10 +45890,19 @@ if (style == 1) {
         return "6" + g5.lang.getByCn("天");
     } else {
         var time = new Date((new Date()).getTime()-seconds*1000);
+        var moEnglish = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         if ((new Date()).getYear() != time.getYear()) {
-            return (time.getYear() + 1900) + g5.lang.getByCn("年") + spt + (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
+            if (g5.lang.getCurrentLangIndex == 0) {
+                return (time.getYear() + 1900) + g5.lang.getByCn("年") + spt + (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
+            } else {
+                return moEnglish[time.getMonth()] + " " + time.getDate() + ", " + (time.getYear() + 1900);
+            }
         } else {
-            return (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
+            if (g5.lang.getCurrentLangIndex == 0) {
+                return (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
+            } else {
+                return moEnglish[time.getMonth()] + " " + time.getDate();
+            }
         }
     }
 } else {
