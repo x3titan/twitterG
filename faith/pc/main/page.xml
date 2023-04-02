@@ -45923,9 +45923,15 @@ if (style == 1) {
         return parseInt(seconds/60/60) + g5.lang.getByCn("小时") + spt + (a<10 ? "0"+a:a) + g5.lang.getByCn("分钟");
     } else {
         var time = new Date((new Date()).getTime()-seconds*1000);
-        return (time.getHours()<=12 ? g5.lang.getByCn("上午") + spt + time.getHours() : g5.lang.getByCn("下午") + spt + (time.getHours()-12)) + ":" +
-            (time.getMinutes()>=10 ? time.getMinutes() : "0" + time.getMinutes()) + " · " +
-            (time.getYear() + 1900) + g5.lang.getByCn("年") + spt + (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
+        if (g5.lang.getCurrentLangIndex() == 0) {
+            return (time.getHours()<=12 ? g5.lang.getByCn("上午") + spt + time.getHours() : g5.lang.getByCn("下午") + spt + (time.getHours()-12)) + ":" +
+                (time.getMinutes()>=10 ? time.getMinutes() : "0" + time.getMinutes()) + " · " +
+                (time.getYear() + 1900) + g5.lang.getByCn("年") + spt + (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
+        } else {
+            return (time.getHours()<=12 ? g5.lang.getByCn("上午") + spt + time.getHours() : g5.lang.getByCn("下午") + spt + (time.getHours()-12)) + ":" +
+                (time.getMinutes()>=10 ? time.getMinutes() : "0" + time.getMinutes()) + " · " +
+                g5.lang.moEnglish[time.getMonth()] + " " + time.getDate() + ", " + (time.getYear() + 1900);
+        }
     }
 }]]></functionCode>
     </item>
