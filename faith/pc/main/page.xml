@@ -3199,9 +3199,13 @@ sender.showByUserInfo = function(v_userInfo) {
         (v_userInfo.userName == "guest")) {
     } else {
         eb.setDivRect(ee.getControl("layoutx7"),null,cy,null,null);
-        //alert(v_userInfo.regDatetime);
-        ee.setText(ee.getControl("layoutxitem14"), 
-            v_userInfo.regDatetime.substr(0,4) + "年" + parseInt(v_userInfo.regDatetime.substr(5,2)) + "月" + parseInt(v_userInfo.regDatetime.substr(8,2)) + "日" + "加入");
+        if (g5.lang.getCurrentLangIndex() == 0) {
+            ee.setText(ee.getControl("layoutxitem14"), 
+                v_userInfo.regDatetime.substr(0,4) + "年" + parseInt(v_userInfo.regDatetime.substr(5,2)) + "月" + parseInt(v_userInfo.regDatetime.substr(8,2)) + "日" + "加入");
+        } else {
+            ee.setText(ee.getControl("layoutxitem14"), 
+                "Joined on " + g5.lang.moEnglish[parseInt(v_userInfo.regDatetime.substr(5,2))-1] + " " + parseInt(v_userInfo.regDatetime.substr(8,2)) + ", " + v_userInfo.regDatetime.substr(0,4));
+        }
         ee.setVisible(ee.getControl("layoutx7"), true);
         cy += vspace + eb.getDivRect(ee.getControl("layoutx7")).h;
     }
@@ -8467,7 +8471,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>推文页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -9107,7 +9110,6 @@ sender.setUnlike = function(contentId, isUnlike) {
       <dockX>fill</dockX>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_tabRoot</note>
       <onCreate><![CDATA[sender.currentPageIndex = -1;
@@ -9594,16 +9596,15 @@ sender.init(0);
       <height>304</height>
       <heightRatio>0.812834224598931</heightRatio>
       <layerName><![CDATA[  p1->回复]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.c_title = sender.parentNode.button1;
 
 sender.setCount = function(value) {
     if (value>0) {
-        ee.setText(this.c_title, value + " 回复");
+        ee.setText(this.c_title, value + " " + g5.lang.getByTCn(501,"回复"));
     } else {
-        ee.setText(this.c_title, "回复");
+        ee.setText(this.c_title, g5.lang.getByTCn(502,"回复"));
     }
 }
 ]]></onCreate>
@@ -9682,9 +9683,9 @@ sender.loadRecord = function(panel, dataset, index) {
 
 sender.setCount = function(value) {
     if (value>0) {
-        ee.setText(this.c_title, value + " 转发");
+        ee.setText(this.c_title, value + " " + g5.lang.getByTCn(501, "转发"));
     } else {
-        ee.setText(this.c_title, "转发");
+        ee.setText(this.c_title, g5.lang.getByTCn(502, "转发"));
     }
 }
 ]]></onCreate>
@@ -9784,9 +9785,9 @@ sender.refresh = function() {
 
 sender.setCount = function(value) {
     if (value>0) {
-        ee.setText(this.c_title, value + " 点赞");
+        ee.setText(this.c_title, value + " " + g5.lang.getByTCn(501, "点赞"));
     } else {
-        ee.setText(this.c_title, "点赞");
+        ee.setText(this.c_title, g5.lang.getByTCn(502, "点赞"));
     }
 }
 
@@ -9885,9 +9886,9 @@ sender.refresh = function() {
 
 sender.setCount = function(value) {
     if (value>0) {
-        ee.setText(this.c_title, value + " 点踩");
+        ee.setText(this.c_title, value + " " + g5.lang.getByTCn(501, "点踩"));
     } else {
-        ee.setText(this.c_title, "点踩");
+        ee.setText(this.c_title, g5.lang.getByTCn(502, "点踩"));
     }
 }
 
@@ -10958,6 +10959,7 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>通知</layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -28139,16 +28141,16 @@ sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo)
     } else {
         ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y+rect.h+10, null, null);
     }
-    ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> 删除");
+    ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> " + g5.lang.getByCn("删除"));
     if (this.v_content.forceTopSn == "0") {
-        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> 在个人主页中置顶");
+        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> " + g5.lang.getByCn("在个人主页中置顶"));
     } else {    
-        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> 在个人主页中取消置顶");
+        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> " + g5.lang.getByCn("在个人主页中取消置顶"));
     }
     if (this.v_isBookMark) {
-        this.c_button3.replaceText("移除此收藏");
+        this.c_button3.replaceText(g5.lang.getByCn("移除此收藏"));
     } else {
-        this.c_button3.replaceText("收藏此发言");
+        this.c_button3.replaceText(g5.lang.getByCn("收藏此发言"));
     }
 
     ee.tiledV(this, 0, 0, 0);
@@ -28225,6 +28227,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <heightRatio>0.32258064516129</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <leftRatio>-0.00408163265306122</leftRatio>
       <note>c_button2</note>
       <onCreate>g5.initButtonV3(sender,[
     new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
@@ -42426,6 +42429,7 @@ this.text = [
 current: eb.getCookie("lang") ? eb.getCookie("lang"):"Chinese",
 langList: ["chinese","english"],
 langListDisplay: ["简体中文","English"],
+moEnglish: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 
 getCurrentLangIndex: function() {
     for (var i=0; i<this.langList.length; i++) {
@@ -42490,6 +42494,7 @@ data: [
     new g5.LangItem(1,"隐藏","Hide"),
     new g5.LangItem(1,"取消隐藏","Unhide"),
     new g5.LangItem(1,"收藏此发言","Add Bookmark"),
+    new g5.LangItem(1,"移除此收藏","Remove this bookmark"),
     new g5.LangItem(1,"复制发言链接","Copy Hyperlink"),
     new g5.LangItem(1,"加入FISTALK","Join FISTALK"),
     new g5.LangItem(1,"作为游客身份","As a guest user, "),
@@ -42611,8 +42616,8 @@ data: [
         "您的账号处于删除冷却期，冷却期结束后账号将被永久删除，您是否要停止删除自己的账号？",
         "Your account is currently in the deletion cooling-off period, and after the cooling-off period ends, your account will be permanently deleted. Do you want to stop deleting your account?"),
     new g5.LangItem(7001,""," "),
-    new g5.LangItem(1,"回复","reply"),
-    new g5.LangItem(1,"转发","retweet"),
+    new g5.LangItem(1,"回复","Reply"),
+    new g5.LangItem(1,"转发","Retweet"),
     new g5.LangItem(1,"在这里输入您的发言内容","Enter your message here."),
     new g5.LangItem(1,
         "您还没有分享图片或者视频<br>" +
@@ -42631,12 +42636,16 @@ data: [
     new g5.LangItem(1,"<font color='#0bc035'><b> 转发</b></font>了您的发言","<font color='#0bc035'><b> retweeted</b></font> your post"),
     new g5.LangItem(1,"<font color='#1b95e0'><b> 提到</b></font>了您","<font color='#1b95e0'><b> mentioned</b></font> you"),
     new g5.LangItem(1,"<该用户没有留下文字内容>","<The user did not leave any text content>"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"删除","Delete"),
+    new g5.LangItem(1,"在个人主页中置顶","Pin to profile"),
+    new g5.LangItem(501,"回复","replies"),
+    new g5.LangItem(501,"转发","retweets"),
+    new g5.LangItem(501,"点赞","likes"),
+    new g5.LangItem(501,"点踩","dislikes"),
+    new g5.LangItem(502,"回复","Reply"),
+    new g5.LangItem(502,"转发","Retweet"),
+    new g5.LangItem(502,"点赞","Like"),
+    new g5.LangItem(502,"点踩","Dislike"),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -45890,18 +45899,17 @@ if (style == 1) {
         return "6" + g5.lang.getByCn("天");
     } else {
         var time = new Date((new Date()).getTime()-seconds*1000);
-        var moEnglish = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         if ((new Date()).getYear() != time.getYear()) {
-            if (g5.lang.getCurrentLangIndex == 0) {
+            if (g5.lang.getCurrentLangIndex() == 0) {
                 return (time.getYear() + 1900) + g5.lang.getByCn("年") + spt + (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
             } else {
-                return moEnglish[time.getMonth()] + " " + time.getDate() + ", " + (time.getYear() + 1900);
+                return g5.lang.moEnglish[time.getMonth()] + " " + time.getDate() + ", " + (time.getYear() + 1900);
             }
         } else {
-            if (g5.lang.getCurrentLangIndex == 0) {
+            if (g5.lang.getCurrentLangIndex() == 0) {
                 return (time.getMonth()+1) + g5.lang.getByCn("月") + spt + time.getDate() + g5.lang.getByCn("日");
             } else {
-                return moEnglish[time.getMonth()] + " " + time.getDate();
+                return g5.lang.moEnglish[time.getMonth()] + " " + time.getDate();
             }
         }
     }
