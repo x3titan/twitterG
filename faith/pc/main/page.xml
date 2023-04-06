@@ -944,6 +944,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>Home主页面</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_bottom = ee.getControl("panel648");
@@ -11918,7 +11919,6 @@ sender.showAlert = function(value) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -12036,7 +12036,6 @@ sender.refreshContent = function(userId, msgContent) {
       <dockY>fill</dockY>
       <height>780</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -12382,13 +12381,24 @@ sender.loadData = function(panel,dataset,index) {
 
 sender.displayTime = function(time) {
     var now = new Date();
-    var r = 
-        (time.getMonth()+1) + "月" +
-        time.getDate() + "日 " +
-        (time.getHours()<10?"0":"") + time.getHours() + ":" +
-        (time.getMinutes()<10?"0":"") + time.getMinutes();
-    if (now.getYear() != time.getYear()) {
-        r =  (time.getYear() + 1900) + "年" + r;
+    var r = "";
+    if (g5.lang.getCurrentLangIndex() == 0) {
+        r = 
+            (time.getMonth()+1) + "月" +
+            time.getDate() + "日 " +
+            (time.getHours()<10?"0":"") + time.getHours() + ":" +
+            (time.getMinutes()<10?"0":"") + time.getMinutes();
+        if (now.getYear() != time.getYear()) {
+            r =  (time.getYear() + 1900) + "年" + r;
+        }
+    } else {
+        r = g5.lang.moEnglish[time.getMonth()] + " " + time.getDate();
+        if (now.getYear() != time.getYear()) {
+            r += ", " + (time.getYear() + 1900);
+        }
+        r += ", " +
+            (time.getHours()<10?"0":"") + time.getHours() + ":" +
+            (time.getMinutes()<10?"0":"") + time.getMinutes();
     }
     return r;
 }
@@ -12520,7 +12530,6 @@ sender.onpointerup = function(event) {
       <heavyEnabled>false</heavyEnabled>
       <height>62</height>
       <heightRatio>0.0794871794871795</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>功能按钮区</note>
       <sizeRatio>0.103333333333333</sizeRatio>
@@ -12564,7 +12573,10 @@ if (text.split("\n").length-1>10) {
 }
 edit.setText(text);
 ]]></onChange>
-      <onCreate><![CDATA[sender.onHeightChange = function(sender, oldHeight, newHeight) {
+      <onCreate><![CDATA[sender._inputHint = g5.lang.getByCn(ee.getText(sender));
+ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+
+sender.onHeightChange = function(sender, oldHeight, newHeight) {
     var dy = newHeight - oldHeight;
     if (dy==0) return;
     var rect = eb.getDivRect(ee.getControl("layoutyitem13"));
@@ -12628,7 +12640,6 @@ sender._input.addEventListener("keydown", function(event) {
       <dockX>right</dockX>
       <height>32</height>
       <heightRatio>0.516129032258065</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>556</left>
       <leftRatio>0.926666666666667</leftRatio>
       <onClick><![CDATA[var msgContent = ee.getEditText(ee.getControl("edit6")).trim();
@@ -12640,7 +12651,8 @@ g5.p2.p14.sendChat(msgContent);
 
 window.event? window.event.cancelBubble = true : event.stopPropagation();
 ]]></onClick>
-      <onCreate>sender.style.borderRadius = "10px";
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+sender.style.borderRadius = "10px";
 g5.initButtonV3(c,[
     new g5.BStyle("","#dfeffa","#cfdfea","","","","rgb(101,119,134)","rgb(29,161,242)","rgb(29,161,242)","")
 ]);</onCreate>
@@ -28229,7 +28241,6 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <heightRatio>0.32258064516129</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <leftRatio>-0.00408163265306122</leftRatio>
       <note>c_button2</note>
       <onCreate>g5.initButtonV3(sender,[
     new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
@@ -28412,7 +28423,7 @@ sender.close = function() {
 g5.initButtonV3(sender,[
     new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
 ]);]]></onCreate>
-      <sizeRatio>0.294117647058824</sizeRatio>
+      <sizeRatio>0.232558139534884</sizeRatio>
       <text>   X   转发</text>
       <top>0</top>
       <width>215</width>
@@ -28435,7 +28446,7 @@ g5.initButtonV3(sender,[
 g5.initButtonV3(sender,[
     new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
 ]);]]></onCreate>
-      <sizeRatio>0.294117647058824</sizeRatio>
+      <sizeRatio>0.232558139534884</sizeRatio>
       <text>   X   带评论转发</text>
       <top>52</top>
       <topRatio>0.504854368932039</topRatio>
@@ -42661,16 +42672,16 @@ data: [
     new g5.LangItem(1,"取消关注@","Unfollow @"),
     new g5.LangItem(1,"他们的发言将不再出现在你的主页时间线上。你仍然可以查看他们的个人资料，除非他们的发言是受保护的。","Their posts will no longer appear on your homepage timeline. You can still view their profile unless their posts are protected."),
     new g5.LangItem(1,"原文已被作者删除。","<spawn style='font-size: 0.9em;'>The original post has been deleted by the author.</spawn>"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"用户被封号，无法查看原文。","<spawn style='font-size: 0.9em;'>The user has been banned, and the original post cannot be viewed.</spawn>"),
+    new g5.LangItem(1,"用户已经销号，无法查看原文。","<spawn style='font-size: 0.9em;'>The user has deleted their account, and the original post cannot be viewed.</spawn>"),
+    new g5.LangItem(1,"用户被冻结，无法查看原文。","<spawn style='font-size: 0.9em;'>The user has been suspended, and the original post cannot be viewed.</spawn>"),
+    new g5.LangItem(1,"私密状态无法查看原文。","<spawn style='font-size: 0.9em;'>The original post is in private mode and cannot be viewed.</spawn>"),
+    new g5.LangItem(1,"该用户已被您隐藏","<spawn style='font-size: 0.9em;'>You have hidden this user.</spawn>"),
+    new g5.LangItem(1,"您已被该用户屏蔽，无法查看原文。","<spawn style='font-size: 0.9em;'>This user has blocked you, and you cannot view the original post.</spawn>"),
+    new g5.LangItem(1,"该用户已被您屏蔽","<spawn style='font-size: 0.9em;'></spawn>"),
+    new g5.LangItem(1,"点击显示","Click to show"),
+    new g5.LangItem(1,"发送","Send"),
+    new g5.LangItem(1,"有什么想说的？","Do you have anything to say?"),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -42881,7 +42892,7 @@ if (root.v_content.status=="DEL") {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "  用户被封号，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "  " + g5.lang.getByCn("用户被封号，无法查看原文。"), "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if (root.v_userInfo.status == "Del") {
@@ -42894,7 +42905,7 @@ if (root.v_content.status=="DEL") {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "  用户已经销号，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "  " + g5.lang.getByCn("用户已经销号，无法查看原文。"), "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if (root.v_userInfo.status == "FREEZE") {
@@ -42907,7 +42918,7 @@ if (root.v_content.status=="DEL") {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "  用户被冻结，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "  " + g5.lang.getByCn("用户被冻结，无法查看原文。"), "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if ((root.v_userInfo.status == "Private") &amp;&amp; (!root.v_userInfo.isFollow)) {
@@ -42920,7 +42931,7 @@ if (root.v_content.status=="DEL") {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "  私密状态无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "  " + g5.lang.getByCn("私密状态无法查看原文。"), "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if ((root.v_userInfo.isHide) &amp;&amp; (!root.v_forceDisplay)) {
@@ -42929,7 +42940,7 @@ if (root.v_content.status=="DEL") {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "  该用户已被您隐藏 <font id='"+root.id+"_blockF02' color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "  " + g5.lang.getByCn("该用户已被您隐藏") + " <font id='"+root.id+"_blockF02' color='#1DA1F2'>[" + g5.lang.getByCn("点击显示") + "]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     cy+=20;
     c.c_button1 = c.label.rows[0].cells[0].childNodes[1];
@@ -42955,7 +42966,7 @@ if (root.v_content.status=="DEL") {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "  您已被该用户屏蔽，无法查看原文。", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "  " + g5.lang.getByCn("您已被该用户屏蔽，无法查看原文。"), "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     return root;
 } else if ((root.v_userInfo.isBlock1) &amp;&amp; (root.v_mode.charAt(2) != "x") &amp;&amp; (!root.v_forceDisplay)) {
@@ -42968,7 +42979,7 @@ if (root.v_content.status=="DEL") {
     c.style.borderColor = "rgb(230,236,240)";
     c.style.borderStyle = "solid";
     c.style.borderRadius = "12px";
-    addText(c, "　该用户已被您屏蔽 <font color='#1DA1F2'>[点击显示]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
+    addText(c, "　" + g5.lang.getByCn("该用户已被您屏蔽") + " <font color='#1DA1F2'>[" + g5.lang.getByCn("点击显示") + "]</font>", "left", "center", "微软雅黑", 12, "657786" ,"");
     eb.setDivRect(root, null, null, null, cy+9);
     cy+=20;
     c.c_button1 = c.label.rows[0].cells[0].childNodes[1];
