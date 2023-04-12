@@ -5997,7 +5997,7 @@ sender.refreshContent = function(root, resize) {
     if (root.v_chatStatus == "SYS") {
         ee.setRect(c,null,null,null,10);
         ee.setText(c, "<font color='#6e6e6e' style='font-family:Consolas,Monaco,monospace;text-indent:-1ch;'>" + root.parentNode.displayTime(root.v_regDatetime) + "</font> " + user +
-            " <font color='#a0a0a0'>" + g5.showCommonText(root.v_msgContent) + "</font>");
+            " <font color='#a0a0a0'>" + g5.showCommonText(g5.lang.trans1(root.v_msgContent)) + "</font>");
         eb.processDock();
         var rect = eb.getDivRect(c.label);
         ee.setRect(c, null, null, null, rect.h);
@@ -42318,6 +42318,29 @@ getById: function(id) {
     return "";
 },
 
+trans1: function(str) {
+    var p = new Array();
+    var i=0, iTemp;
+    var fStr = "";
+    while (i<str.length) {
+        if (str.charAt(i) == "<") {
+            iTemp = str.indexOf(">", i);
+            if (iTemp<0) break;
+            p.push(str.substr(i,iTemp-i+1));
+            i = iTemp + 1;
+            fStr += "%" + p.length + ";";
+        } else {
+            fStr += str.charAt(i);
+            i++;
+        }
+    }
+    fStr = this.getByCn(fStr);
+    for (i=0; i<p.length; i++) {
+        fStr = fStr.replace("%" + (i+1) + ";", p[i]);
+    }
+    return fStr;
+},
+
 data: [
     new g5.LangItem(1,"秒","s"),
     new g5.LangItem(1,"分钟","m"),
@@ -42516,11 +42539,10 @@ data: [
     new g5.LangItem(1,"删除视频","Delete Video"),
     new g5.LangItem(1,"该操作将会使所有的用户无法看到您的置顶视频，您是否确定删除？","This action will make your pinned video invisible to all users. Are you sure you want to delete it?"),
     new g5.LangItem(1,"系统提示","System notification"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"恭喜%1;已被房主升级为管理员","Congratulations, %1; has been promoted to admin by the room owner."),
+    new g5.LangItem(1,"%1;已被%2;放入黑名单","%1; has been added to the blacklist by %2;."),
+    new g5.LangItem(1,"%1;已被%2;移出黑名单","%1; has been removed from the blacklist by %2;."),
+    new g5.LangItem(1,"%1;已被房主降级为普通用户","%1; has been demoted to a regular user by the host."),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
