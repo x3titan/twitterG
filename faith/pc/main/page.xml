@@ -28611,16 +28611,28 @@ sender.showPos = function(x, y, width, v_style, v_function) {
     ee.setRect(root,null,null,width,null);
     var itemWidth = eb.getDivRectSetting(root).w;
     for (i=0; i < v_style.length; i++) {
-        v_style[i].text1 = "    " + g5.lang.getByCn(v_style[i].text1.trim());
-        v_style[i].text2 = "    " + g5.lang.getByCn(v_style[i].text2.trim());
-        v_style[i].text3 = "    " + g5.lang.getByCn(v_style[i].text3.trim());
+        v_style[i].text1 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text1.trim());
+        v_style[i].text2 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text2.trim());
+        v_style[i].text3 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text3.trim());
     }
     this.v_style = v_style;
     this.v_function = v_function;
-    for (i=0; i < v_style.length; i++) {
+    var maxLen = 0;
+    var currentLen;
+    for (i=0; i<v_style.length; i++) {
         var item = createPanel(root, "popup1_" + i, "", 0, cy, itemWidth, 50);
         item.v_index = i;
-        this.renderItem(item);
+        currentLen = this.renderItem(item);
+        maxLen = Math.max(currentLen, maxLen);
+        ee.removeControl(item);
+    }
+    maxLen += 30;
+    ee.setRect(root,null,null,maxLen,null);
+    for (i=0; i<v_style.length; i++) {
+        var item = createPanel(root, "popup1_" + i, "", 0, cy, maxLen, 50);
+        item.v_index = i;
+        currentLen = this.renderItem(item);
+        maxLen = Math.max(currentLen, maxLen);
         this.v_items.push(item);
         cy += 0 + eb.getDivRect(item).h;
     }
@@ -28654,8 +28666,12 @@ sender.renderItem = function(root) {
     g5.initButtonV3(c,[
         c.v_style
     ]);
-
-    return root; 
+    c.label.style.width = "";
+    c.label.rows[0].cells[0].style.whiteSpace="nowrap";
+    var r = c.label.offsetWidth;
+    ee.setRect(c,null,null,w,null);
+    c.label.rows[0].cells[0].style.whiteSpace="normal";
+    return r; 
 }
 
 ]]></onCreate>
@@ -42600,7 +42616,7 @@ data: [
     new g5.LangItem(1,"解除屏蔽","Unblock"),
     new g5.LangItem(1,"屏蔽用户","Block User"),
     new g5.LangItem(1,"禁言5分钟","Mute for 5 minutes"),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"禁言1小时","Mute for 1 hour"),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
