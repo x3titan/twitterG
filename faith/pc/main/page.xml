@@ -736,6 +736,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>755</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -924,6 +925,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.03311258278146</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.331491712707182</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -2642,6 +2644,7 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -3714,6 +3717,7 @@ g5.initButtonV3(sender,[
       <ee_LocalName>p2sub</ee_LocalName>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p2PersonSub</note>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -4116,6 +4120,7 @@ sender.resize = function() {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[  p2->聊天室]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.v_fitInner = true;
 </onCreate>
@@ -4130,6 +4135,7 @@ sender.resize = function() {
       <dockX>fill</dockX>
       <height>241</height>
       <heightRatio>0.87956204379562</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>20</left>
       <leftRatio>0.0333333333333333</leftRatio>
       <note><![CDATA[c_chat->个人页聊天]]></note>
@@ -4548,6 +4554,7 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
       <dockX>fill</dockX>
       <height>59</height>
       <heightRatio>0.244813278008299</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note><![CDATA[c_video->推荐视频]]></note>
       <onCreate><![CDATA[sender.c_button = ee.getControl("panel286");
@@ -27862,7 +27869,6 @@ return false;</onClick>
       <height>755</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -28290,7 +28296,6 @@ g5.initButtonV3(sender,[
       <height>281</height>
       <heightRatio>0.372185430463576</heightRatio>
       <layerName>p3.C其他人选项</layerName>
-      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.335911602209945</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -42656,10 +42661,14 @@ data: [
         "是否立即屏蔽（加入黑名单） %1; ？屏蔽完成后，该用户将不能发言，同时历史发言也会被屏蔽。",
         "Whether to immediately block (add to blacklist) %1;? After the blocking is completed, the user will not be able to speak, and the chat history will also be blocked."),
     new g5.LangItem(1,"确定解除","Confirm"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"屏蔽%1;？","Block %1;?"),
+    new g5.LangItem(1,"取消屏蔽%1;？","Unblock %1;?"),
+    new g5.LangItem(1,
+        "该用户将能关注并查看你的发言",
+        "The user will be able to follow and view your posts."),
+    new g5.LangItem(1,
+        "他们将无法关注你或者无法查看你发送的短文，您也不会看到来自%1;的短文或者通知。",
+        "They will not be able to follow you or view your posts, and you will not see any posts or notifications from %1;."),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -46107,7 +46116,7 @@ v_userInfo = v_userInfo.clone();
 
 if (v_userInfo.isBlock1) {
     g5.popBlack.a6.show(
-        "取消屏蔽@"+v_userInfo.userName+"？",
+        "取消屏蔽/%@"+v_userInfo.userName+"%/？",
         "该用户将能关注并查看你的发言",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","取消屏蔽","取消屏蔽","取消屏蔽","#ffffff","#ffffff","#ffffff","")],
@@ -46126,8 +46135,8 @@ if (v_userInfo.isBlock1) {
     );
 } else {
     g5.popBlack.a6.show(
-        "屏蔽@"+v_userInfo.userName+"？",
-        "他们将无法关注你或者无法查看你发送的短文，您也不会看到来自@"+v_userInfo.userName+"的短文或者通知。",
+        "屏蔽/%@"+v_userInfo.userName+"%/？",
+        "他们将无法关注你或者无法查看你发送的短文，您也不会看到来自/%@"+v_userInfo.userName+"%/的短文或者通知。",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","屏蔽","屏蔽","屏蔽","#ffffff","#ffffff","#ffffff","")],
         function() {
