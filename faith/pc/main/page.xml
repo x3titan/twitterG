@@ -28513,10 +28513,10 @@ if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_c
 var value = window.location.origin + "/msg/" + cid;
 g5.copyClipboard(sender, value,
     function() {
-        g5.alert1("复制成功", value + "<br/>已经成功复制到您的剪贴板");
+        g5.alert1("复制成功", "/%" + value + "%/<br/>已经成功复制到您的剪贴板");
     },
     function() {
-        g5.alert1("复制失败", "您的浏览器或许不支持或者没有权限复制剪贴板，请手工复制以下链接：<br/>" + value);
+        g5.alert1("复制失败", "您的浏览器或许不支持或者没有权限复制剪贴板，请手工复制以下链接：<br/>/%" + value + "%/");
     }
 );]]></onClick>
       <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
@@ -31295,8 +31295,8 @@ sender.style.boxShadow = "5px 5px 15px #808080";
 //implementation
 sender.show = function(title,text,bStyle,onComplete) {
     if (g5.lang) {
-        title = g5.lang.getByCn(title);
-        text = g5.lang.getByCn(text);
+        title = g5.lang.trans2(title);
+        text = g5.lang.trans2(text);
     }
     ee.setText(this.c_title,title);
     ee.setText(this.c_text,text);
@@ -42671,11 +42671,34 @@ data: [
         "They will not be able to follow you or view your posts, and you will not see any posts or notifications from %1;."),
     new g5.LangItem(1,"发言已收藏","Bookmarked"),
     new g5.LangItem(1,"可点击菜单栏“收藏”按钮进行查看。","You can click on the \"Bookmarks\" button in the menu bar to view your saved items."),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"复制成功","Copy Succeeded"),
+    new g5.LangItem(1,"复制失败","Copy Failed"),
+    new g5.LangItem(1,
+        "%1;<br/>已经成功复制到您的剪贴板",
+        "%1;<br/>has been successfully copied to your clipboard."),
+    new g5.LangItem(1,
+        "您的浏览器或许不支持或者没有权限复制剪贴板，请手工复制以下链接：<br/>%1;",
+        "Your browser may not support or have permission to copy to clipboard. Please manually copy the following link:<br/>%1;"),
+    new g5.LangItem(1,"取消隐藏","Unhide"),
+    new g5.LangItem(1,"确定隐藏","Hide"),
+    new g5.LangItem(1,"取消隐藏%1;？","Unhide %1;?"),
+    new g5.LangItem(1,"隐藏%1;？","Hide %1;?"),
+    new g5.LangItem(1,
+        "该用户的发言将会重新出现在您的新鲜事，本操作不影响您对该用户的关注状态。",
+        "The user's messages will reappear on your feed. This action does not affect your following status of the user."),
+    new g5.LangItem(1,
+        "该用户的发言将不会出现在您的新鲜事，本操作不影响您对该用户的关注状态。",
+        "The user's posts will not appear in your feed, but this action won't affect your following status of the user."),
+    new g5.LangItem(1,"提交","Submit"),
+    new g5.LangItem(1,"提交申请","Apply"),
+    new g5.LangItem(1,"私密状态","Private Mode"),
+    new g5.LangItem(1,"递交确认","Submit"),
+    new g5.LangItem(1,
+        "该用户处于私密状态，任何对该用户的关注需要经过该用户的认可，认可后您才可以查看该用户的个人资料和短文。您希望现在就提交<b>成为该用户粉丝</b>的申请吗？",
+        "The user is currently in private mode, which means any attempt to follow them requires their approval. Once approved, you will be able to view the user's profile and posts. Would you like to submit a request to <b>become their fan</b> now?"),
+    new g5.LangItem(1,
+        "您的关注申请已经递交，请耐心等待 %1; 的许可",
+        "Your follow request has been submitted. Please wait patiently for %1;'s approval."),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -45991,7 +46014,7 @@ if (v_userInfo.isFollow) {
             followReq.userId = v_userInfo.id;
             followReq.operation = 1;
             followReq.onComplete = function() {
-                g5.alert1("递交确认", "您的关注申请已经递交，请耐心等待 @" + v_userInfo.userName + " 的许可");
+                g5.alert1("递交确认", "您的关注申请已经递交，请耐心等待 /%@" + v_userInfo.userName + "%/ 的许可");
                 if (onComplete) {
                     onComplete(v_userInfo);
                 }
@@ -46261,7 +46284,7 @@ if (enabled) {
       <functionCode>v_userInfo = v_userInfo.clone();
 if (v_userInfo.isHide) {
     g5.popBlack.a6.show(
-        "取消隐藏@"+v_userInfo.userName+"？",
+        "取消隐藏/%@"+v_userInfo.userName+"%/？",
         "该用户的发言将会重新出现在您的新鲜事，本操作不影响您对该用户的关注状态。",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","取消隐藏","取消隐藏","#ffffff","#ffffff","#ffffff","")],
@@ -46279,7 +46302,7 @@ if (v_userInfo.isHide) {
     );
 } else {
     g5.popBlack.a6.show(
-        "隐藏@"+v_userInfo.userName+"？",
+        "隐藏/%@"+v_userInfo.userName+"%/？",
         "该用户的发言将不会出现在您的新鲜事，本操作不影响您对该用户的关注状态。",
         [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
         [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定隐藏","确定隐藏","#ffffff","#ffffff","#ffffff","")],
