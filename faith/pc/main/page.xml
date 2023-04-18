@@ -736,6 +736,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>755</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -924,6 +925,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.03311258278146</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.331491712707182</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -10791,6 +10793,7 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>通知</layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -11181,6 +11184,7 @@ sender.fLoad = function() {
       <height>376</height>
       <heightRatio>0.482051282051282</heightRatio>
       <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.62876254180602</sizeRatio>
       <top>0</top>
@@ -19879,6 +19883,7 @@ sender.show = function(onComplete) {
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.421052631578947</sizeRatio>
       <text>YouTube
 视频地址</text>
@@ -19941,6 +19946,8 @@ videoPanel.v_photo = ytbVideo;
 g5.addPhoto(videoPanel);
 edit.parentNode.parentNode.parentNode.v_ytbVideo = ytbVideo;
 ]]></onChange>
+      <onCreate>sender._inputHint = g5.lang.getByCn(ee.getText(sender));
+ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <outerLeft>10</outerLeft>
       <outerRight>10</outerRight>
       <sizeRatio>0.112676056338028</sizeRatio>
@@ -20018,6 +20025,7 @@ sender.v_mode = "-";
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.519642857142857</sizeRatio>
       <text>复制YouTube链接
 并且您的链接是正确的
@@ -20094,6 +20102,7 @@ g5.initButtonV3(sender,[
       <layerVisible>false</layerVisible>
       <left>63</left>
       <leftRatio>0.105</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.134453781512605</sizeRatio>
       <text>加入YouTube视频</text>
       <top>1</top>
@@ -29651,7 +29660,7 @@ sender.check = function() {
 }
 
 sender.showNew = function() {
-    this.init("发言", this.v_lastOp == "new");
+    this.init(g5.lang.getByCn("发言"), this.v_lastOp == "new");
     this.v_lastOp = "new";
     this.onComplete = function() {
         if (newTwitter.busy) return;
@@ -29693,7 +29702,7 @@ sender.showNew = function() {
 }
 
 sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
-    this.init("回复发言", this.v_lastOp == "re" &amp;&amp; this.v_lastId == v_content.id);
+    this.init(g5.lang.getByCn("回复发言"), this.v_lastOp == "re" &amp;&amp; this.v_lastId == v_content.id);
     this.v_lastOp = "re";
     this.v_lastId = v_content.id;
     this.onComplete = function() {
@@ -29743,7 +29752,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
 }
 
 sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
-    this.init("带评论转发", this.v_lastOp == "fw" &amp;&amp; this.v_lastId == v_content.id);
+    this.init(g5.lang.getByCn("带评论转发"), this.v_lastOp == "fw" &amp;&amp; this.v_lastId == v_content.id);
     this.v_lastOp = "fw";
     this.v_lastId = v_content.id;
     this.onComplete = function() {
@@ -29960,6 +29969,7 @@ sender.style.borderRadius = "15px";
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.617336152219873</sizeRatio>
       <text>您还没有分享图片或者视频
 分享图片或视频后会出现在这里
@@ -30237,35 +30247,19 @@ if ((content.length<=0) &amp;&amp; (photos.length<=0)) {
 if (sender.parentNode.onComplete) {
     sender.parentNode.onComplete();
 }]]></onClick>
-      <onCreate>sender.bgColorDisabled = "#8ed0f9";
-sender.bgColorEnabled = "#1da1f2";
-sender.bgColorHot = "#1a91da";
-sender.bgColorDown = "#1781c2";
+      <onCreate>ee.setText(sender, g5.lang.getByTCn(500,ee.getText(sender)));
+g5.initButtonV3(sender,[
+    new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","","","",""),
+    new g5.BStyle("#8ed0f9","#8ed0f9","#8ed0f9","","","","","","","")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
 sender.v_enabled = true;
 sender.setEnabled = function(enabled) {
     this.v_enabled = enabled;
-    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+    this.init(enabled?0:1);
 }
 sender.setEnabled(false);
-
-sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorEnabled;
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorDown;
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-}
-eb.initMouseEvent(sender);
 
 
 
@@ -30728,6 +30722,8 @@ sender.processUserName = function() {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <note>c_label</note>
+      <onCreate>sender._inputHint = g5.lang.getByCn(ee.getText(sender));
+ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.282377919320594</sizeRatio>
       <text>在这里输入您的发言内容</text>
       <top>0</top>
@@ -34463,7 +34459,6 @@ if ("ontouchstart" in window) {
       <height>755</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack2->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>ee.setVisible(this, false);
   
@@ -34492,7 +34487,6 @@ sender.addEventListener("mousewheel", function(e) {
       <height>569</height>
       <heightRatio>0.75364238410596</heightRatio>
       <layerName><![CDATA[  a1->youtube视频链接]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>131</left>
       <leftRatio>0.14475138121547</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -34647,6 +34641,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.225806451612903</sizeRatio>
       <text>YouTube视频地址</text>
       <top>0</top>
@@ -34709,10 +34704,12 @@ videoPanel.v_photo = ytbVideo;
 g5.addPhoto(videoPanel);
 edit.parentNode.parentNode.parentNode.v_ytbVideo = ytbVideo;
 ]]></onChange>
+      <onCreate>sender._inputHint = g5.lang.getByCn(ee.getText(sender));
+ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <outerLeft>10</outerLeft>
       <outerRight>10</outerRight>
       <sizeRatio>0.085995085995086</sizeRatio>
-      <text>  在这里黏贴YouTube视频地址</text>
+      <text>  在这里粘贴YouTube视频地址</text>
       <top>0</top>
       <width>407</width>
       <widthRatio>0.953161592505855</widthRatio>
@@ -34732,54 +34729,11 @@ edit.parentNode.parentNode.parentNode.v_ytbVideo = ytbVideo;
       <onClick>ee.setVisible(sender.parentNode.parentNode, false);
 
 </onClick>
-      <onCreate>sender.v_style = [
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+g5.initButtonV3(sender,[
     new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
-];
-
-sender.init = function(index) {
-    this.v_index = index;
-    this.style.backgroundColor = this.v_style[index].color1;
-    ee.setText(this, this.v_style[index].text1);
-    ee.setTextColor(this, this.v_style[index].tColor1);
-    if (this.v_style[index].bdColor=="") {
-        this.style.borderWidth = "0px";
-    } else {
-        this.style.boxSizing="border-box";
-        this.style.borderWidth = "1px";
-        this.style.borderColor = this.v_style[index].bdColor;
-        this.style.borderStyle = "solid";
-    }
-    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-}
-
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color1;
-    ee.setText(sender, s.text1);
-    ee.setTextColor(sender, s.tColor1);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color3;
-    ee.setText(sender, s.text3);
-    ee.setTextColor(sender, s.tColor3);
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-}
-eb.initMouseEvent(sender);
-
-sender.init(0);
-
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
 
 
 
@@ -34810,53 +34764,12 @@ sender.init(0);
 if (sender.parentNode.v_ytbVideo.length>0) {
     sender.parentNode.onComplete(sender.parentNode.v_ytbVideo);             
 }]]></onClick>
-      <onCreate>sender.v_style = [
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+g5.initButtonV3(sender,[
     new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff",""),
-];
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
 
-sender.init = function(index) {
-    this.v_index = index;
-    this.style.backgroundColor = this.v_style[index].color1;
-    ee.setText(this, this.v_style[index].text1);
-    ee.setTextColor(this, this.v_style[index].tColor1);
-    if (this.v_style[index].bdColor=="") {
-        this.style.borderWidth = "0px";
-    } else {
-        this.style.boxSizing="border-box";
-        this.style.borderWidth = "1px";
-        this.style.borderColor = this.v_style[index].bdColor;
-        this.style.borderStyle = "solid";
-    }
-    this.style.borderRadius = parseInt(eb.getDivRect(this).h/2) + "px";
-}
-
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color1;
-    ee.setText(sender, s.text1);
-    ee.setTextColor(sender, s.tColor1);
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color3;
-    ee.setText(sender, s.text3);
-    ee.setTextColor(sender, s.tColor3);
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    var s =sender.v_style[sender.v_index];
-    sender.style.backgroundColor = s.color2;
-    ee.setText(sender, s.text2);
-    ee.setTextColor(sender, s.tColor2);
-}
-eb.initMouseEvent(sender);
-
-sender.init(0);
 
 
 
@@ -34878,7 +34791,6 @@ sender.init(0);
       <dockX>fill</dockX>
       <height>327</height>
       <heightRatio>0.57469244288225</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>30</left>
       <leftRatio>0.0467289719626168</leftRatio>
       <onCreate>sender.style.borderRadius = "15px";
@@ -34902,6 +34814,7 @@ sender.v_mode = "-";
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.561855670103093</sizeRatio>
       <text>复制YouTube链接
 并且您的链接是正确的
@@ -34915,7 +34828,6 @@ sender.v_mode = "-";
       <dockY>fill</dockY>
       <height>327</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>video</note>
       <sizeRatio>0.561855670103093</sizeRatio>
@@ -42750,31 +42662,31 @@ data: [
         "取消置顶后，此短文将不会在您的个人主页中处于顶部位置，但其他人仍能够看到此短文。您是否要取消置顶？",
         "After canceling the top position, this post will no longer be at the top of your profile page, but others can still see it. Are you sure you want to cancel the top position?"),
     new g5.LangItem(1,"在个人主页中取消置顶","Unpin"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"  在这里粘贴YouTube视频地址","  Paste the YouTube video URL here."),
+    new g5.LangItem(1,"加入YouTube视频","Add a YouTube video"),
+    new g5.LangItem(1,"YouTube<br>视频地址","YouTube<br>Video URL"),
+    new g5.LangItem(1,"YouTube视频地址","YouTube video URL"),
     new g5.LangItem(1,
-        "",
-        ""),
+        "复制YouTube链接<br>并且您的链接是正确的<br>视频将会出现在这里",
+        "Copy your YouTube link<br>and make sure it's correct.<br>The video will appear here."),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
     new g5.LangItem(1,
         "",
         ""),
