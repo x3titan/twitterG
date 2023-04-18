@@ -736,7 +736,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>755</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -925,7 +924,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.03311258278146</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.331491712707182</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -10793,7 +10791,6 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>通知</layerName>
-      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -11184,7 +11181,6 @@ sender.fLoad = function() {
       <height>376</height>
       <heightRatio>0.482051282051282</heightRatio>
       <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.62876254180602</sizeRatio>
       <top>0</top>
@@ -11268,10 +11264,8 @@ sender.fLoad = function() {
 sender.v_items = new Array();
 sender.v_needRefresh = true;
 sender.v_lastScrollTop = 0;
-sender.c_noResult = ee.getControl("panel357");
 
 sender.activePage = function() {
-    //g5.pushHistory("p=12");
     g5.pushHistory2("/messages");
     g5.pageMode = 0;
     g5.refreshMain(true);
@@ -11434,11 +11428,16 @@ sender.render = function(root) {
     //title
     c = createPanel(root, root.id + "panel3", "", 75, 6, dw-140, 29);
     s = root.v_regDatetime;
-    s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
+    if (g5.lang.getCurrentLangIndex() == 0) {
+        s = parseInt(s.substr(5,2)) + "月" + parseInt(s.substr(8,2)) + "日";
+    } else {
+        s = g5.lang.moEnglish[parseInt(s.substr(5,2))-1] + " " + parseInt(s.substr(8,2));
+    }
+
     addText(c, "<div style='display:inline'><b>" + root.v_userInfo.nickName + "</b>" +
         "<font color = '#A0A0A0'> @" + root.v_userInfo.userName + "</font></div>" +
         "<font> · </font><font>" + s + "</font>",
-        "left", "middle", "微软雅黑", 12, "000000", "normal");
+        "left", "middle", g5.fonts.n1, 12, "000000", "normal");
     c.label.rows[0].cells[0].style.whiteSpace = "nowrap";
     root.v_timeLabel = c.label.rows[0].cells[0].childNodes[2]; 
     root.c_username = c.label.rows[0].cells[0].childNodes[0]; 
@@ -11506,11 +11505,11 @@ sender.render = function(root) {
     s = root.v_content;
     var ph = "/photo ";
     if (root.v_userInfo.status == "DISABLED") {
-        s = "账户被禁封";
+        s = g5.lang.getByCn("账户被禁封");
     } else if (root.v_userInfo.status == "Del") {
-        s = "账户已销号";
+        s = g5.lang.getByCn("账户已销号");
     } else if (s.substr(0, ph.length) == ph) {
-        s = "图片";
+        s = g5.lang.getByCn("图片");
     }
     c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     c.style.fontSize = "12pt";
@@ -11521,7 +11520,7 @@ sender.render = function(root) {
     root.c_content = c;
     root.setContent = function(content) {
         if (content.substr(0, ph.length) == ph) {
-            content = "图片";
+            content = g5.lang.getByCn("图片");
         }
         this.c_content.childNodes[0].innerHTML = content;
         var now = new Date();
@@ -11578,7 +11577,7 @@ sender.loadDataset = function(dataset) {
             } else {
                 this.v_status = "noResult";
                 var item = createPanel(this, "prvPanelEnd", "", 0, y, rect.w, 60);
-                addText(item, "没有更多了", "center", "center", "微软雅黑", 12, "a0a0a0" ,"bold");
+                addText(item, g5.lang.getByCn("没有更多了"), "center", "center", g5.fonts.n1, 12, "a0a0a0" ,"bold");
                 this.v_items.push(item);
             }
         } else {
@@ -11668,9 +11667,10 @@ sender.showAlert = function(value) {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel33/panel357">
       <backgroundColor>EDF1FA</backgroundColor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_noResult</ee_LocalName>
       <height>376</height>
       <heightRatio>0.482051282051282</heightRatio>
-      <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
+      <layerName>无内容提示</layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.626666666666667</sizeRatio>
@@ -11690,6 +11690,7 @@ sender.showAlert = function(value) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.0716666666666667</sizeRatio>
       <text>目前没有您的任何私信</text>
       <top>246</top>
@@ -11709,6 +11710,7 @@ sender.showAlert = function(value) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.0716666666666667</sizeRatio>
       <text>如有私信聊天则会出现在这里</text>
       <top>284</top>
@@ -27869,6 +27871,7 @@ return false;</onClick>
       <height>755</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -27965,10 +27968,7 @@ if (sender.v_closeCount>=4) {
       <left>381</left>
       <leftRatio>0.420994475138122</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
-      <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel110");
-sender.c_button2 = ee.getControl("panel111");
-sender.c_button3 = ee.getControl("panel28");
-sender.v_isBookMark = false;
+      <onCreate><![CDATA[sender.v_isBookMark = false;
 
 sender.style.borderRadius = "6px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
@@ -28046,6 +28046,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
     <control type="Panel" pathname="/divRoot/panel40/panel149/panel110">
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_button1</ee_LocalName>
       <fontColor>E0245E</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
@@ -28054,7 +28055,6 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <heightRatio>0.32258064516129</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>c_button1</note>
       <onCreate>g5.initButtonV3(sender,[
     new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
 ]);</onCreate>
@@ -28067,6 +28067,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
     <control type="Panel" pathname="/divRoot/panel40/panel149/panel111">
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_button2</ee_LocalName>
       <fontColor>14171A</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
@@ -28075,7 +28076,6 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <heightRatio>0.32258064516129</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>c_button2</note>
       <onCreate>g5.initButtonV3(sender,[
     new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
 ]);</onCreate>
@@ -28089,6 +28089,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
     <control type="Panel" pathname="/divRoot/panel40/panel149/panel28">
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_button3</ee_LocalName>
       <fontColor>14171A</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
@@ -28097,7 +28098,6 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <heightRatio>0.32258064516129</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>c_button3</note>
       <onClick>if (sender.parentNode.v_isBookMark) {
     setBookMark.operation = "del";
     setBookMark.contentId = sender.parentNode.v_content.id;
@@ -28296,6 +28296,7 @@ g5.initButtonV3(sender,[
       <height>281</height>
       <heightRatio>0.372185430463576</heightRatio>
       <layerName>p3.C其他人选项</layerName>
+      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.335911602209945</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -28611,6 +28612,7 @@ sender.showPos = function(x, y, width, v_style, v_function) {
     ee.setRect(root,null,null,width,null);
     var itemWidth = eb.getDivRectSetting(root).w;
     for (i=0; i < v_style.length; i++) {
+        if (v_style[i].text1.search("&amp;nbsp;&amp;nbsp;&amp;nbsp;") == 0) break;
         v_style[i].text1 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text1.trim());
         v_style[i].text2 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text2.trim());
         v_style[i].text3 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text3.trim());
@@ -31299,7 +31301,18 @@ sender.show = function(title,text,bStyle,onComplete) {
         text = g5.lang.trans2(text);
     }
     ee.setText(this.c_title,title);
+
+    this.c_text.label.style.height = "";
+    this.c_text.label.rows[0].cells[0].style.textAlign = "left";
     ee.setText(this.c_text,text);
+    var cy = this.c_text.label.offsetHeight + 5;
+    ee.setRect(this.c_text, null, null, null, cy);
+    cy += eb.getDivRectSetting(this.c_text).y + 30;
+    ee.setRect(this.c_btnOk, null, cy, null, null);
+    cy += eb.getDivRectSetting(this.c_btnOk).h;
+    cy += 28;
+    ee.setRect(this, null, null, null, cy);
+        
     this.c_btnOk.v_style = bStyle;
     this.c_btnOk.init(0);
     this.onComplete = onComplete;
@@ -34974,7 +34987,7 @@ if ("ontouchstart" in window) {
       <layerName>通用确认窗口</layerName>
       <layerVisible>false</layerVisible>
       <left>267</left>
-      <leftRatio>0.295027624309392</leftRatio>
+      <leftRatio>0.296132596685083</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -34988,7 +35001,19 @@ sender.style.boxShadow = "5px 5px 15px #808080";
 
 sender.show = function(title,text,bStyle1,bStyle2,onComplete,onButton1) {
     ee.setText(this.c_title,g5.lang.trans2(title));
+    
+    this.c_text.label.style.height = "";
+    this.c_text.label.rows[0].cells[0].style.textAlign = "left";
     ee.setText(this.c_text,g5.lang.trans2(text));
+    var cy = this.c_text.label.offsetHeight + 5;
+    ee.setRect(this.c_text, null, null, null, cy);
+    cy += eb.getDivRectSetting(this.c_text).y + 30;
+    ee.setRect(this.c_btnCancel, null, cy, null, null);
+    ee.setRect(this.c_btnOK, null, cy, null, null);
+    cy += eb.getDivRectSetting(this.c_btnCancel).h;
+    cy += 28;
+    ee.setRect(this, null, null, null, cy);
+
     this.c_btnCancel.v_style = bStyle1;
     this.c_btnCancel.init(0);
     this.c_btnOK.v_style = bStyle2;
@@ -35044,7 +35069,7 @@ if ("ontouchstart" in window) {
 </onCreate>
       <sizeRatio>0.824324324324324</sizeRatio>
       <top>225</top>
-      <topRatio>0.298013245033113</topRatio>
+      <topRatio>0.299337748344371</topRatio>
       <width>370</width>
       <widthRatio>0.408839779005525</widthRatio>
     </control>
@@ -35056,14 +35081,14 @@ if ("ontouchstart" in window) {
       <height>169</height>
       <heightRatio>0.554098360655738</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>26</left>
-      <leftRatio>0.0702702702702703</leftRatio>
-      <sizeRatio>0.526479750778816</sizeRatio>
+      <left>44</left>
+      <leftRatio>0.118918918918919</leftRatio>
+      <sizeRatio>0.578767123287671</sizeRatio>
       <text>此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及 GET搜索结果中移除。</text>
       <top>58</top>
       <topRatio>0.19016393442623</topRatio>
-      <width>321</width>
-      <widthRatio>0.867567567567568</widthRatio>
+      <width>292</width>
+      <widthRatio>0.789189189189189</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel73/panel257/panel259">
       <dockX>center</dockX>
@@ -42699,6 +42724,32 @@ data: [
     new g5.LangItem(1,
         "您的关注申请已经递交，请耐心等待 %1; 的许可",
         "Your follow request has been submitted. Please wait patiently for %1;'s approval."),
+    new g5.LangItem(1,"没有更多了","No more results found."),
+    new g5.LangItem(1,"该用户处于禁封状态，目前无法查看该用户的信息","The user is currently blocked and their information cannot be accessed."),
+    new g5.LangItem(1,"该用户已销号，目前无法查看该用户的信息","The user has been deleted and their information is no longer available."),
+    new g5.LangItem(1,"删除确认","Delete"),
+    new g5.LangItem(1,"本操作将删除您与该用户的所有私信记录，您是否继续？","Are you sure you want to delete all your private message history with this user?"),
+    new g5.LangItem(1,"确认删除","Confirm Del"),
+    new g5.LangItem(1,"账户被禁封","Account has been banned"),
+    new g5.LangItem(1,"账户已销号","Account has been deleted"),
+    new g5.LangItem(1,"图片","Image"),
+    new g5.LangItem(1,"目前没有您的任何私信","You currently have no private messages."),
+    new g5.LangItem(1,"如有私信聊天则会出现在这里","Private messages will appear here if you have any conversation."),
+    new g5.LangItem(1,
+        "此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。",
+        "This action is irreversible and will remove it from your profile, timelines of any accounts following you, and search results."),
+    new g5.LangItem(1,"增加（标记）书签","Add bookmark"),
+    new g5.LangItem(1,"您已经将此发言标记为书签，点击书签可以随时查看。","You have bookmarked this message, click on the bookmark to view it anytime."),
+    new g5.LangItem(1,"短文置顶？","Pin post?"),
+    new g5.LangItem(1,"取消短文置顶？","Unpin post?"),
+    new g5.LangItem(1,"置顶","Pin"),
+    new g5.LangItem(1,
+        "置顶后，所有访问您个人主页的用户都会看到这条置顶短文。您是否确定要将此短文在您的个人主页置顶？",
+        "Once this post is pinned, it will appear at the top of your profile page for all visitors to see. Are you sure you want to pin this post to your profile?"),
+    new g5.LangItem(1,
+        "取消置顶后，此短文将不会在您的个人主页中处于顶部位置，但其他人仍能够看到此短文。您是否要取消置顶？",
+        "After canceling the top position, this post will no longer be at the top of your profile page, but others can still see it. Are you sure you want to cancel the top position?"),
+    new g5.LangItem(1,"在个人主页中取消置顶","Unpin"),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -42716,6 +42767,26 @@ data: [
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,
+        "",
+        ""),
+    new g5.LangItem(1,
+        "",
+        ""),
+    new g5.LangItem(1,
+        "",
+        ""),
+    new g5.LangItem(1,
+        "",
+        ""),
+    new g5.LangItem(1,
+        "",
+        ""),
     new g5.LangItem(1,
         "",
         ""),
