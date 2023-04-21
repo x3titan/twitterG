@@ -924,7 +924,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>1.03311258278146</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.331491712707182</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -18426,7 +18425,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>设置-隐私和安全-已隐藏</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -18481,11 +18479,11 @@ sender.refresh = function(userId) {
 sender.refreshTitle = function() {
     var s = "";
     if (this.v_items.length>0) {
-        s = "已隐藏的用户(" + this.v_items.length+ "人)";
+        s = "已隐藏的用户(/%" + this.v_items.length+ "%/人)";
     } else {
         s = "已隐藏的用户";
     }
-    ee.setText(this.c_title, s);
+    ee.setText(this.c_title, g5.lang.trans2(s));
     if (this.v_items.length>0) {
         ee.setVisible(this.c_noResult, false);
     } else {
@@ -18568,7 +18566,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>376</height>
       <heightRatio>0.482051282051282</heightRatio>
       <layerName><![CDATA[  c_noResult->无内容提示]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.626666666666667</sizeRatio>
       <top>0</top>
@@ -18584,9 +18581,9 @@ sender.loadRecord = function(panel, dataset, index) {
       <fontSize>14</fontSize>
       <height>43</height>
       <heightRatio>0.11436170212766</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.0716666666666667</sizeRatio>
       <text>您没有隐藏任何用户</text>
       <top>246</top>
@@ -18606,6 +18603,7 @@ sender.loadRecord = function(panel, dataset, index) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>ee.showAni(ee.getControl("panel54"), 1);</onClick>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.0716666666666667</sizeRatio>
       <text>有了之后就会出现在这里</text>
       <top>284</top>
@@ -23795,6 +23793,7 @@ sender.c_chatRoot = ee.getControl("layoutxitem6");
       <height>98</height>
       <heightRatio>0.129801324503311</heightRatio>
       <layerName>===P4===</layerName>
+      <layerVisible>false</layerVisible>
       <left>302</left>
       <leftRatio>0.333701657458564</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -24970,6 +24969,7 @@ g5.initButtonV3(sender,[
       <height>53</height>
       <heightRatio>0.540816326530612</heightRatio>
       <layerName>关注列表</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -42683,10 +42683,10 @@ data: [
     new g5.LangItem(1,
         "<div style='display:inline'>%1;<font color=#a0a0a0>@%2;</font></div><font>的粉丝(%3;人)</font>",
         "<div style='display:inline'>%1;<font color=#a0a0a0>@%2;'s</font></div><font> followers(%3;)</font>"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"已隐藏的用户(%1;人)","Hidden Users(%1;)"),
+    new g5.LangItem(1,"已隐藏的用户","Hidden Users"),
+    new g5.LangItem(1,"您没有隐藏任何用户","You have not hidden any users."),
+    new g5.LangItem(1,"有了之后就会出现在这里","It will appear here once you have any."),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -44951,16 +44951,6 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         this.init(index);
         this.label.style.width = "";
         var w = this.label.offsetWidth + 20;
-        //var w = 100;
-        //if (index == 0) {
-        //    w = 90;
-        //} else if (index == 1) {
-        //    w = 55;
-        //} else if (index == 2) {
-        //    w = 90;
-        //} else if (index == 3) {
-        //    w = 120;
-        //}
         ee.setRect(this, this.v_right-w,null,w,null);
     }
     root.refreshButton = function() {
