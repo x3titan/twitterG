@@ -1,5 +1,5 @@
 <page>
-  <controls count="822">
+  <controls count="821">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -17858,44 +17858,29 @@ ee.getLabel(sender).style.fontSize = "15px";</onCreate>
       <height>781</height>
       <heightRatio>1.00128205128205</heightRatio>
       <layerName>设置-隐私和安全-私密状态</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_imgBase = ee.getControl("panel522");
-sender.c_img1 = ee.getControl("panel647");
-sender.c_img2 = ee.getControl("panel523");
+sender.c_text = sender.c_body.c_textBase.c_text;
 
 sender.show = function() {
-    /*
-    var s = "";
-    if (g5.myUserInfo.status == "Private") {
-        s = "您的账号处于<font style='font-size:16pt' color='#a06060'><b>私密模式</b></font>\n" +
-            "◼ 在私密模式下，您发布的短文只能被您的粉丝看到，您的个人主页也只能被您的粉丝访问。\n" +
-            "◼ 任何人想加入您的粉丝必须得到您的确认。\n" +
-            "\n◼ 您也可以把您的账号切换为<font color='#a06060'><b>正常模式</b></font>。\n" +
-            "◼ 在正常模式下，您发布的短文可以被其他用户搜索到。您的个人主页也可以被其他用户访问。";
-        ee.setText(this.c_label, s);
+   if (g5.myUserInfo.status == "Private") {
+        sender.setText(
+            "您的账号处于<font style='font-size:16pt' color='#a06060'><b>私密模式</b></font><br\><br\>" +
+            "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>在私密模式下，您发布的短文只能被您的粉丝看到，您的个人主页也只能被您的粉丝访问。</li>" +
+            "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>任何人想加入您的粉丝必须得到您的确认。</li>" +
+            "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>您也可以把您的账号切换为<font color='#a06060'><b>正常模式</b></font>。</li>" +
+            "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>在正常模式下，您发布的短文可以被其他用户搜索到。您的个人主页也可以被其他用户访问。</li>"
+        );
     } else {
-        s = "您的账号处于<font style='font-size:16pt' color='#a06060'><b>正常模式</b></font>\n" +
-            "◼ 在正常模式下，您发布的短文可以被其他用户搜索到。您的个人主页也可以被其他用户访问。\n" +
-            "\n◼ 您也可以把您的账号切换为<font color='#a06060'><b>私密模式</b></font>。\n" +
-            "◼ 在私密模式下，您发布的短文只能被您的粉丝看到，您的个人主页也只能被您的粉丝访问。\n" +
-            "◼ 任何人想加入您的粉丝必须得到您的确认。";
-        ee.setText(this.c_label, s);
-    }
-    */
-    if (g5.myUserInfo.status == "Private") {
-        ee.setVisible(this.c_img1, false);
-        ee.setVisible(this.c_img2, true);
-    } else {
-        ee.setVisible(this.c_img1, true);
-        ee.setVisible(this.c_img2, false);
+        sender.setText(
+            "您的账号处于<font style='font-size:16pt' color='#a06060'><b>正常模式</b></font><br\><br\>" +
+            "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>在正常模式下，您发布的短文可以被其他用户搜索到。您的个人主页也可以被其他用户访问。</li>" +
+            "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>您也可以把您的账号切换为<font color='#a06060'><b>私密模式</b></font>。</li>" +
+            "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>在私密模式下，您发布的短文只能被您的粉丝看到，您的个人主页也只能被您的粉丝访问。</li>" +
+            "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>任何人想加入您的粉丝必须得到您的确认。</li>"
+        );
     }
     
-    var dw = eb.getDivRect(this.c_imgBase).w;
-    ee.setRect(this.c_imgBase, null,null,null,dw);
-    eb.processDock();
-    
-
     if (g5.currentPageIndex == 27) {
         g5.notPushHistoryCount++;
     }
@@ -17915,6 +17900,16 @@ sender.close = function() {
     ee.setVisible(this, false);
 }
 
+sender.setText = function(text) {
+    text = g5.lang.getByCn(text);
+    ee.setText(sender.c_text, text);
+    sender.c_text.label.style.height = "";
+    var h = sender.c_text.label.offsetHeight;
+    ee.setRect(sender.c_body.c_textBase,null,null,null,h+20);
+    eb.processDock();
+}
+
+
 ]]></onCreate>
       <sizeRatio>1.30166666666667</sizeRatio>
       <top>0</top>
@@ -17925,6 +17920,7 @@ sender.close = function() {
       <backgroundColor>FFC080</backgroundColor>
       <dockX>fill</dockX>
       <dockY>top</dockY>
+      <ee_LocalName>c_title</ee_LocalName>
       <height>51</height>
       <heightRatio>0.0653008962868118</heightRatio>
       <layerVisible>false</layerVisible>
@@ -17955,11 +17951,12 @@ sender.style.borderRight = "";
       <left>60</left>
       <leftRatio>0.1</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.244019138755981</sizeRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <sizeRatio>0.173469387755102</sizeRatio>
       <text>正常/私密模式</text>
       <top>0</top>
-      <width>209</width>
-      <widthRatio>0.348333333333333</widthRatio>
+      <width>294</width>
+      <widthRatio>0.49</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel514/panel515/panel517">
       <cursor>pointer</cursor>
@@ -17988,9 +17985,9 @@ g5.initButtonV3(sender,[
       <bindTop>bottom</bindTop>
       <dockX>fill</dockX>
       <dockY>top</dockY>
+      <ee_LocalName>c_body</ee_LocalName>
       <height>717</height>
       <heightRatio>0.918053777208707</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -18050,8 +18047,8 @@ sender.style.borderRight = "";</onCreate>
       <height>40</height>
       <heightRatio>0.0557880055788006</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>464</left>
-      <leftRatio>0.773333333333333</leftRatio>
+      <left>413</left>
+      <leftRatio>0.688333333333333</leftRatio>
       <note>c_button</note>
       <onClick><![CDATA[if (g5.myUserInfo.status == "Private") {
     g5.popBlack.a6.show(
@@ -18090,35 +18087,19 @@ sender.style.borderRight = "";</onCreate>
     );
 }
 ]]></onClick>
-      <onCreate>sender.bgColorDisabled = "#8ed0f9";
-sender.bgColorEnabled = "#1da1f2";
-sender.bgColorHot = "#1a91da";
-sender.bgColorDown = "#1781c2";
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+g5.initButtonV3(sender,[
+    new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","","","",""),
+    new g5.BStyle("#8ed0f9","#8ed0f9","#8ed0f9","","","","","","","")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
 sender.v_enabled = true;
 sender.setEnabled = function(enabled) {
     this.v_enabled = enabled;
-    this.style.backgroundColor = enabled ? this.bgColorEnabled : this.bgColorDisabled;
+    this.init(enabled?0:1);
 }
 sender.setEnabled(true);
-
-sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
-ee.setOnMouseEnter(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-});
-ee.setOnMouseLeave(sender, function(sender,event) { 
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorEnabled;
-});
-sender.eeMouseDown = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorDown;
-}
-sender.eeMouseUp = function(sender,event,x,y) {
-    if (!sender.v_enabled) return;
-    sender.style.backgroundColor = sender.bgColorHot;
-}
-eb.initMouseEvent(sender);
 
 
 
@@ -18128,19 +18109,19 @@ eb.initMouseEvent(sender);
 </onCreate>
       <outerRight>15</outerRight>
       <outerTop>60</outerTop>
-      <sizeRatio>0.330578512396694</sizeRatio>
+      <sizeRatio>0.232558139534884</sizeRatio>
       <text>切换模式</text>
       <top>369</top>
       <topRatio>0.514644351464435</topRatio>
-      <width>121</width>
-      <widthRatio>0.201666666666667</widthRatio>
+      <width>172</width>
+      <widthRatio>0.286666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel514/panel518/panel522">
       <backgroundColor>EBEEFA</backgroundColor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_textBase</ee_LocalName>
       <height>289</height>
       <heightRatio>0.403068340306834</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>10</left>
       <leftRatio>0.0166666666666667</leftRatio>
       <outerLeft>10</outerLeft>
@@ -18152,32 +18133,30 @@ eb.initMouseEvent(sender);
       <widthRatio>0.966666666666667</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel514/panel518/panel522/panel523">
-      <backgroundImg>privateMode1.jpg</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>289</height>
-      <heightRatio>1</heightRatio>
+      <ee_LocalName>c_text</ee_LocalName>
+      <fontColor>404040</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>269</height>
+      <heightRatio>0.930795847750865</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>0.498275862068966</sizeRatio>
-      <top>0</top>
-      <width>580</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel514/panel518/panel522/panel647">
-      <backgroundImg>privateMode2.jpg</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>289</height>
-      <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>0.498275862068966</sizeRatio>
-      <top>0</top>
-      <width>580</width>
-      <widthRatio>1</widthRatio>
+      <left>10</left>
+      <leftRatio>0.0172413793103448</leftRatio>
+      <outerBottom>10</outerBottom>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>0.480357142857143</sizeRatio>
+      <text>.</text>
+      <top>10</top>
+      <topRatio>0.0346020761245675</topRatio>
+      <vAlign>top</vAlign>
+      <width>560</width>
+      <widthRatio>0.96551724137931</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel531">
       <ani2Pos>rightFlyOut:右侧飞出</ani2Pos>
@@ -18190,6 +18169,7 @@ eb.initMouseEvent(sender);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>设置-隐私和安全-加粉请求者</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -18347,6 +18327,7 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>376</height>
       <heightRatio>0.482051282051282</heightRatio>
       <layerName>无内容提示</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.626666666666667</sizeRatio>
       <top>42</top>
@@ -42428,6 +42409,7 @@ data: [
     new g5.LangItem(1,"    已隐藏账号","    Hidden account"),
     new g5.LangItem(1,"    已屏蔽账号","    Blocked account"),
     new g5.LangItem(1,"    正常/私密模式","    Normal/Privacy mode"),
+    new g5.LangItem(1,"正常/私密模式","Normal/Privacy mode"),
     new g5.LangItem(1,"    加粉请求者","    Follower request sender"),
     new g5.LangItem(1,"修改用户名","Modify user name"),
     new g5.LangItem(1,"当前用户名：","User name"),
@@ -42701,8 +42683,23 @@ data: [
     new g5.LangItem(1,"加粉请求者","Follower Request Sender"),
     new g5.LangItem(1,"加粉请求者(%1;人)","Follower Request Sender(%1;)"),
     new g5.LangItem(1,"目前没有加粉请求者","There are no follower request senders."),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"切换模式","Switch Mode"),
+    new g5.LangItem(1,"确定切换","Confirm"),
+    new g5.LangItem(1,
+        "您的账号处于<font color='#a06060'><b>私密模式</b></font>，" +
+        "切换为<font color='#a06060'><b>正常模式</b></font>后，您发布的短文可以被其他用户搜索到。您的个人主页也可以被其他用户访问。\n您是否确定切换？",
+        "Your account is in <font color='#a06060'><b>Private Mode</b></font>, " +
+        "Switching to <font color='#a06060'><b>normal mode</b></font> means that the short messages you publish can be searched by other users, and your personal page can be accessed by other users as well.\nAre you sure you want to switch?"),
+    new g5.LangItem(1,
+        "您的账号处于<font color='#a06060'><b>正常模式</b></font>，" +
+        "切换为<font color='#a06060'><b>私密模式</b></font>后" +
+        "您发布的短文只能被您的粉丝看到，您的个人主页也只能被您的粉丝访问。任何人想加入您的粉丝必须得到您的确认。\n您是否确定切换？",
+        "Your account is currently in <font color='#a06060'><b>Normal Mode</b></font>. " +
+        "After switching to <font color='#a06060'><b>Private Mode</b></font>, " +
+        "the short posts you publish can only be seen by your followers, " +
+        "and your personal page can only be accessed by your followers. " +
+        "Anyone who wants to become your follower must get your approval.\n" +
+        "Are you sure you want to switch?"),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -42718,17 +42715,27 @@ data: [
         "",
         ""),
     new g5.LangItem(1,
-        "",
-        ""),
+        "您的账号处于<font style='font-size:16pt' color='#a06060'><b>私密模式</b></font><br\><br\>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>在私密模式下，您发布的短文只能被您的粉丝看到，您的个人主页也只能被您的粉丝访问。</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>任何人想加入您的粉丝必须得到您的确认。</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>您也可以把您的账号切换为<font color='#a06060'><b>正常模式</b></font>。</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>在正常模式下，您发布的短文可以被其他用户搜索到。您的个人主页也可以被其他用户访问。</li>",
+        "Your account is currently in <font style='font-size:16pt' color='#a06060'><b>Private Mode</b></font><br/><br/>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>•</span> In Private Mode, your posted messages can only be seen by your followers, and your profile page can only be accessed by your followers.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>•</span> Anyone who wants to become your follower must obtain your approval.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>•</span> You can switch your account to <font color='#a06060'><b>Normal Mode</b></font>.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>•</span> In Normal Mode, your posted messages can be searched and accessed by other users, and your profile page can also be accessed by other users.</li>"),
     new g5.LangItem(1,
-        "",
-        ""),
-    new g5.LangItem(1,
-        "",
-        ""),
-    new g5.LangItem(1,
-        "",
-        ""),
+        "您的账号处于<font style='font-size:16pt' color='#a06060'><b>正常模式</b></font><br\><br\>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>在正常模式下，您发布的短文可以被其他用户搜索到。您的个人主页也可以被其他用户访问。</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>您也可以把您的账号切换为<font color='#a06060'><b>私密模式</b></font>。</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>在私密模式下，您发布的短文只能被您的粉丝看到，您的个人主页也只能被您的粉丝访问。</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>&amp;#8226;</span>任何人想加入您的粉丝必须得到您的确认。</li>",
+        "Your account is in <font style='font-size:16pt' color='#a06060'><b>Normal Mode</b></font><br><br>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>•</span>In Normal Mode, your posts can be searched and your profile can be accessed by other users.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>•</span>You can switch your account to <font color='#a06060'><b>Private Mode</b></font>.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>•</span>In Private Mode, your posts can only be seen by your followers and your profile can only be accessed by your followers. Anyone who wants to follow you needs to be approved by you.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; margin-bottom: 6px; text-align: left'><span style='margin-right: 10px;'>•</span>Any follow requests will be sent to you for approval.</li>"),
     new g5.LangItem(1,
         "",
         ""),
