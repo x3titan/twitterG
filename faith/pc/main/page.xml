@@ -21156,6 +21156,20 @@ sender.refresh = function() {
     );
 }
 
+sender.changeLang = function(langIndex) {
+    if (langIndex == g5.lang.getCurrentLangIndex()) return;
+    g5.popBlack.a6.show(
+        "修改语言",
+        "显示语言将修改为/%" + g5.lang.getLangNameByIndex(langIndex) + "%/，您是否继续？",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            eb.setCookie("lang", g5.lang.langList[langIndex]);
+            location.reload();
+        }
+    );
+}
+
                                 
 ]]></onCreate>
       <sizeRatio>1.17</sizeRatio>
@@ -21339,26 +21353,22 @@ sender.style.borderLeft = "";</onCreate>
       <layerVisible>false</layerVisible>
       <left>480</left>
       <leftRatio>0.8</leftRatio>
-      <onClick><![CDATA[if (!sender.v_enabled) return;
-if (changeNickName.busy) return;
-var p1 = ee.getEditText(ee.getControl("edit19"));
-if (p1.length>20) {
-    g5.alert1("用户名错误", "您输入的用户名过长，用户名的长度不能超过20个英文或者汉字");
-    return;
-}
-if (p1.length<3) {
-    g5.alert1("用户名错误", "您输入的用户名短，用户名的长度不能少于3个英文或者汉字");
-    return;
-}
+      <onClick>var v_style = new Array();
+var v_onClick = new Array();
+v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","简体中文","简体中文","简体中文","#808080","#000000","#000000",""));
+v_onClick.push(
+    function (senderBtnC, event) {
+        g5.p2.p36.changeLang(0);
+    }
+);
+v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","英文","英文","英文","#808080","#000000","#000000",""));
+v_onClick.push(
+    function (senderBtnC, event) {
+        g5.p2.p36.changeLang(1);
+    }
+);
 
-changeNickName.nickName = p1;
-changeNickName.onComplete = function() {
-    g5.alert1("完成", "用户名修改完成，您的新用户名是：" + p1);
-    history.go(-1);
-    getUserInfo();    
-}
-changeNickName();
-]]></onClick>
+g5.popup1.p4.show(sender, 120, v_style, v_onClick);</onClick>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
 g5.initButtonV3(sender,[
     new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","","","",""),
@@ -21383,7 +21393,7 @@ sender.setEnabled(true);
 </onCreate>
       <outerRight>15</outerRight>
       <sizeRatio>0.342857142857143</sizeRatio>
-      <text>应用</text>
+      <text>更改</text>
       <top>144</top>
       <topRatio>0.466019417475728</topRatio>
       <width>105</width>
@@ -42584,13 +42594,16 @@ getCurrentLangIndex: function() {
     return 0;
 },
 
-getCurrentLangName: function() {
-    var a = this.getCurrentLangIndex();
+getLangNameByIndex: function(langIndex) {
     var s;
-    if ((a<0) || (a>=this.langListDisplay)) {
+    if ((langIndex<0) || (langIndex>=this.langListDisplay)) {
         s = this.langListDisplay[0];
-    } else s = this.langListDisplay[a];
+    } else s = this.langListDisplay[langIndex];
     return this.getByCn(s);
+},
+
+getCurrentLangName: function() {
+    return this.getLangNameByIndex(this.getCurrentLangIndex());
 },
 
 getByCn: function(text) {
@@ -43079,8 +43092,8 @@ data: [
     new g5.LangItem(1,"应用","Apply"),
     new g5.LangItem(1,"简体中文","Simplified Chinese"),
     new g5.LangItem(1,"英文","English"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"更改","Change"),
+    new g5.LangItem(1,"修改语言","Change Language"),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -43089,8 +43102,8 @@ data: [
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,
-        "",
-        ""),
+        "显示语言将修改为%1;，您是否继续？",
+        "The display language will be changed to %1;. Do you want to continue?"),
     new g5.LangItem(1,
         "",
         ""),
