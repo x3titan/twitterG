@@ -14,6 +14,8 @@ document.body.style.overflowY  = "scroll";
 document.body.style.overflowX  = "hidden";
 document.body.style.webkitTapHighlightColor = "rgba(0,0,0,0)";
 
+g5.lang.init();
+
 var c = document.getElementById("divRoot");
 c.style.overflow = "";
 var c = document.getElementById("ee_divRoot");
@@ -42582,10 +42584,22 @@ this.text = [
     </item>
     <item name="lang" type="10">
       <varValue><![CDATA[{
-current: eb.getCookie("lang") ? eb.getCookie("lang"):"Chinese",
-langList: ["chinese","english"],
+current: eb.getCookie("lang") ? eb.getCookie("lang"):"zh-CN",
+langList: ["zh-CN","en"],
 langListDisplay: ["简体中文","英文"],
 moEnglish: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+
+init: function() {
+    if (eb.getCookie("lang")) return;
+    var userLanguage = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+    switch (userLanguage) {
+        case "en": eb.setCookie("lang", "en"); break;
+        case "zh-CN": eb.setCookie("lang", "zh-CN"); break;
+        case "zh-TW": eb.setCookie("lang", "zh-CN"); break;
+        default: eb.setCookie("lang", "en");
+    }
+    this.current = eb.getCookie("lang");
+},
 
 getCurrentLangIndex: function() {
     for (var i=0; i<this.langList.length; i++) {
