@@ -11,6 +11,8 @@
       <left>0</left>
       <onControlLoad><![CDATA[document.body.style.webkitTapHighlightColor = "rgba(0,0,0,0)";
 
+g5.lang.init();
+
 //var url = new URL(window.location.href);
 //if (url.origin.toLowerCase().indexOf("//fistalk.com")>0) {
 //    window.location.href = "https://www.fistalk.com/pc/new"; // + url.pathname;
@@ -3288,16 +3290,46 @@ this.text = [
     </item>
     <item name="lang" type="10">
       <varValue><![CDATA[{
-current: eb.getCookie("lang") ? eb.getCookie("lang"):"Chinese",
-langList: ["chinese","english"],
-langListDisplay: ["简体中文","English"],
+current: eb.getCookie("lang") ? eb.getCookie("lang"):"zh-CN",
+langList: ["zh-CN","en"],
+langListDisplay: ["简体中文","英文"],
 moEnglish: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+
+init: function() {
+    if (eb.getCookie("lang")) return;
+    var userLanguage = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+    switch (userLanguage) {
+        case "en": eb.setCookie("lang", "en"); break;
+        case "zh-CN": eb.setCookie("lang", "zh-CN"); break;
+        case "zh-TW": eb.setCookie("lang", "zh-CN"); break;
+        default: eb.setCookie("lang", "en");
+    }
+    //西班牙语：es
+    //法语：fr
+    //德语：de
+    //日语：ja
+    //韩语：ko
+    //俄语：ru
+    this.current = eb.getCookie("lang");
+},
 
 getCurrentLangIndex: function() {
     for (var i=0; i<this.langList.length; i++) {
         if (this.langList[i] == this.current) return i;
     }
     return 0;
+},
+
+getLangNameByIndex: function(langIndex) {
+    var s;
+    if ((langIndex<0) || (langIndex>=this.langListDisplay)) {
+        s = this.langListDisplay[0];
+    } else s = this.langListDisplay[langIndex];
+    return this.getByCn(s);
+},
+
+getCurrentLangName: function() {
+    return this.getLangNameByIndex(this.getCurrentLangIndex());
 },
 
 getByCn: function(text) {
