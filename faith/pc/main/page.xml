@@ -738,6 +738,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -926,6 +927,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.256629597946963</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -946,6 +948,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>Home主页面</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_bottom = ee.getControl("panel648");
@@ -28221,7 +28224,6 @@ return false;</onClick>
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -28449,6 +28451,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (sender.parentNode.v_isBookMark) {
+    g5.contentDel(sender.parentNode.v_content.id, function() { });
     setBookMark.operation = "del";
     setBookMark.contentId = sender.parentNode.v_content.id;
     setBookMark.onComplete = function() {
@@ -28462,6 +28465,7 @@ ee.setOnClick(sender.c_button2, function(c_button2, event) {
             "增加（标记）书签",
             "您已经将此发言标记为书签，点击书签可以随时查看。"
         );
+        g5.p2.p5.refresh();
     }
     setBookMark();
 }</onClick>
@@ -28646,7 +28650,6 @@ g5.initButtonV3(sender,[
       <height>281</height>
       <heightRatio>0.353015075376884</heightRatio>
       <layerName>p3.C其他人选项</layerName>
-      <layerVisible>false</layerVisible>
       <left>304</left>
       <leftRatio>0.260051325919589</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -28810,6 +28813,7 @@ g5.initButtonV3(sender,[
 var cid = sender.parentNode.v_content.id;
 if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
 if (sender.parentNode.v_isBookMark) {
+    g5.contentDel(cid, function() { });
     setBookMark.operation = "del";
     setBookMark.contentId = cid;
     setBookMark.onComplete = function() {
@@ -28823,6 +28827,7 @@ if (sender.parentNode.v_isBookMark) {
             "发言已收藏",
             "可点击菜单栏“收藏”按钮进行查看。"
         );
+        g5.p2.p5.refresh();
     }
     setBookMark();
 }
@@ -42012,9 +42017,6 @@ eio.appendString8("T");
     g5.alert1("无法设置书签", eio.readString8());
     return;
 }
-
-g5.p2.p5.refresh();
-
 if (!eb.isEmpty(setBookMark.onComplete)) {
     setBookMark.onComplete();
     setBookMark.onComplete = null;
