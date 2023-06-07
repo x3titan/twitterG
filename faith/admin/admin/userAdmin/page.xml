@@ -385,26 +385,25 @@ sender.style.borderRadius = "5px";</onCreate>
       <layerVisible>false</layerVisible>
       <left>430</left>
       <leftRatio>0.395584176632935</leftRatio>
-      <onClick><![CDATA[if (!g5.tableClick.valid) {
+      <onClick>if (!g5.tableClick.valid) {
     alert("请选择有效的记录进行操作");
     return;
 }
 
 var userId = query.dataset.getData(0,g5.tableClick.y);
 
-g5.p1.a1.show(sender, "<font color='#00A000'>正常状态</font>,IDL;销号状态,Del;封号状态,DISABLED;冻结状态,FREEZE;私密状态,Private;", function(index, results) {
-    if (index<0) return;
-    if (!confirm("本操作属于危险操作，用户会强制进入新的状态而忽略当前的状态。您是否继续进行本操作？")) {
-        return;
-    }
-    if (setUserStatus.busy) return;
-    setUserStatus.userId = userId;
-    setUserStatus.newStatus = results[1];
-    setUserStatus.onComplete = function() {
-        query();
-    }
-    setUserStatus();
-});]]></onClick>
+var password = prompt("请输入需要强制设置的密码：");
+if (!password) return;
+
+//userId,newPassword,onComplete()
+if (changePassword.busy) return;
+changePassword.userId = userId;
+changePassword.newPassword = password;
+changePassword.onComplete = function() {
+    alert("修改完成");
+}
+changePassword();
+</onClick>
       <onCreate>sender.className = "buttonGray";
 sender.style.borderRadius = "5px";</onCreate>
       <outerBottom>5</outerBottom>
@@ -5614,28 +5613,25 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserId = db.getString(sqlResult, "id");
 var myUserName = db.getString(sqlResult, "userName");
 
-sql = "select * from userInfo where userName = '"+db.encode(userName)+"' and password = '"+es.getMd5(p1)+"'";
-sqlResult = db.executeQuery("DB", sql);
+sql = "exec userSetPassword " +
+    myUserId + "," +
+    userId + "," +
+    "'" + db.encode(es.getMd5(newPassword)) + "'";
+sqlResult = db.executeQuery("DB", sql); 
 if (sqlResult == null) {
     eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
+    es.logWarning("数据库执行错误, sql=" + sql);
     return;
 }
-if (!db.read(sqlResult)) {
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "errorCode") != 0) {
     eio.appendString8("F");
-    eio.appendString8("对不起，您输入的原密码不正确，密码修改失败");
-    es.logCommon("用户修改密码失败,passwordWrong=" + p1);
+    eio.appendString8(db.getString(sqlResult, "errorString"));
     return;
-} 
+}
 
-sql = "update userInfo set password = '" + es.getMd5(p2) + "'" +
-    " where userName = '" + db.encode(userName) + "'";
-if (!db.executeNoneQuery("DB", sql)) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-} else {
-    eio.appendString8("T");
-}    
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
 
 
 
