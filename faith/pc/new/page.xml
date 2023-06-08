@@ -1,5 +1,5 @@
 <page>
-  <controls count="104">
+  <controls count="105">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <backgroundImg>login.jpg</backgroundImg>
@@ -56,6 +56,10 @@ if (window.location.href.toLowerCase().indexOf("http:")==0) {
     var url = new URL(window.location.href);
     window.location.href = "https://fistalk.com" + url.pathname;
 }
+
+window.addEventListener("popstate", function (a) {
+    g5.processUrl();
+})
 
 ee.setRect = function (panel, x, y, w, h, refresh) {
     var i, j, lastp, currentp, pos, rect = eb.getDivRectSetting(panel);
@@ -270,7 +274,7 @@ eb.addEdit = function (div, font, fontSize, fontColor, fontBold, password, multi
       <height>651</height>
       <heightRatio>0.8178391959799</heightRatio>
       <left>340</left>
-      <leftRatio>0.322889469103568</leftRatio>
+      <leftRatio>0.31278748850046</leftRatio>
       <note>p1</note>
       <onCreate>sender.currentPageName = "";
 sender.changePage = function(pageName) {
@@ -289,8 +293,10 @@ sender.changePage = function(pageName) {
     if (this.currentPageName == "a2") {
         ee.setVisible(this.a2, true);
     } else if (this.currentPageName == "a3") {
+        g5.pushHistory2("/login");
         ee.setVisible(this.a3, true);
     } else if (this.currentPageName == "a4") {
+        g5.pushHistory2("/reg");
         ee.setVisible(this.a4, true);
     } else if (this.currentPageName == "a5") {
         ee.setVisible(this.a5, true);
@@ -304,7 +310,7 @@ sender.changePage = function(pageName) {
       <top>72</top>
       <topRatio>0.0904522613065327</topRatio>
       <width>407</width>
-      <widthRatio>0.354221061792863</widthRatio>
+      <widthRatio>0.37442502299908</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel9/panel1">
       <dockX>fill</dockX>
@@ -461,6 +467,7 @@ ee.showAni(ee.getControl("panel21"), 0);
       <height>397</height>
       <heightRatio>0.609831029185868</heightRatio>
       <layerName>主登录</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.975429975429975</sizeRatio>
       <top>226</top>
@@ -859,7 +866,6 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
       <height>409</height>
       <heightRatio>0.62826420890937</heightRatio>
       <layerName>注册第一页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.004914004914</sizeRatio>
       <top>234</top>
@@ -930,6 +936,7 @@ sender._input.addEventListener("keydown", function(event) {
       <fontColor>404040</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
       <height>40</height>
       <heightRatio>0.097799511002445</heightRatio>
       <layerVisible>false</layerVisible>
@@ -1068,6 +1075,52 @@ ee.setRect(sender.parentNode.c_button2,null,h,null,null);</onCreate>
       <vAlign>top</vAlign>
       <width>272</width>
       <widthRatio>0.668304668304668</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel9/panel43/panel69">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <ee_LocalName>c_btnSave</ee_LocalName>
+      <fontColor>404040</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <height>36</height>
+      <heightRatio>0.0880195599022005</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>256</left>
+      <leftRatio>0.628992628992629</leftRatio>
+      <onClick>var v_style = new Array();
+var v_onClick = new Array();
+v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","简体中文","简体中文","简体中文","#808080","#000000","#000000",""));
+v_onClick.push(
+    function (senderBtnC, event) {
+        g5.lang.changeLang(0);
+    }
+);
+v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","英文","英文","英文","#808080","#000000","#000000",""));
+v_onClick.push(
+    function (senderBtnC, event) {
+        g5.lang.changeLang(1);
+    }
+);
+
+g5.divRoot.popup1.p4.show(sender, 120, v_style, v_onClick);</onClick>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+g5.initButtonV3(sender,[
+    new g5.BStyle("","rgba(0,0,0,0.05)","rgba(0,0,0,0.1)","","","","#404040","#404040","#404040","")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
+
+
+
+
+
+</onCreate>
+      <sizeRatio>0.418604651162791</sizeRatio>
+      <text>Language</text>
+      <top>5</top>
+      <topRatio>0.0122249388753056</topRatio>
+      <width>86</width>
+      <widthRatio>0.211302211302211</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel9/panel51">
       <dockX>fill</dockX>
@@ -1538,7 +1591,7 @@ sender._input.addEventListener("keydown", function(event) {
       <layerName>login</layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <sizeRatio>0.692776327241079</sizeRatio>
+      <sizeRatio>0.732290708371665</sizeRatio>
       <top>0</top>
       <width>1087</width>
       <widthRatio>1</widthRatio>
@@ -1555,12 +1608,12 @@ sender._input.addEventListener("keydown", function(event) {
       <heightRatio>0.756281407035176</heightRatio>
       <layerVisible>false</layerVisible>
       <left>353</left>
-      <leftRatio>0.33420365535248</leftRatio>
+      <leftRatio>0.324747010119595</leftRatio>
       <sizeRatio>1.58421052631579</sizeRatio>
       <top>97</top>
       <topRatio>0.121859296482412</topRatio>
       <width>380</width>
-      <widthRatio>0.330722367275892</widthRatio>
+      <widthRatio>0.349586016559338</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel26/panel2/panel3">
       <backgroundImg>i087_01001.png</backgroundImg>
@@ -1940,7 +1993,7 @@ ee.showAni(ee.getControl("panel2"), 1);
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>//</onClick>
-      <sizeRatio>0.692776327241079</sizeRatio>
+      <sizeRatio>0.732290708371665</sizeRatio>
       <top>0</top>
       <width>1087</width>
       <widthRatio>1</widthRatio>
@@ -1957,12 +2010,12 @@ ee.showAni(ee.getControl("panel2"), 1);
       <heightRatio>0.762562814070352</heightRatio>
       <layerVisible>false</layerVisible>
       <left>353</left>
-      <leftRatio>0.33420365535248</leftRatio>
+      <leftRatio>0.324747010119595</leftRatio>
       <sizeRatio>1.59736842105263</sizeRatio>
       <top>94</top>
       <topRatio>0.118090452261307</topRatio>
       <width>380</width>
-      <widthRatio>0.330722367275892</widthRatio>
+      <widthRatio>0.349586016559338</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel21/panel22">
       <backgroundImg>i087_01001.png</backgroundImg>
@@ -2355,7 +2408,7 @@ sender.close = function() {
         }
     }
 }]]></onCreate>
-      <sizeRatio>0.692776327241079</sizeRatio>
+      <sizeRatio>0.732290708371665</sizeRatio>
       <top>0</top>
       <width>1087</width>
       <widthRatio>1</widthRatio>
@@ -2374,7 +2427,7 @@ sender.close = function() {
       <layerName>通用提示窗口</layerName>
       <layerVisible>false</layerVisible>
       <left>364</left>
-      <leftRatio>0.343777197563098</leftRatio>
+      <leftRatio>0.334866605335787</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -2462,7 +2515,7 @@ if ("ontouchstart" in window) {
       <top>292</top>
       <topRatio>0.366834170854271</topRatio>
       <width>359</width>
-      <widthRatio>0.312445604873803</widthRatio>
+      <widthRatio>0.330266789328427</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel344/panel345">
       <ee_LocalName>c_text</ee_LocalName>
@@ -2680,7 +2733,7 @@ g5.initButtonV3(sender,[
       <layerName>通用确认窗口</layerName>
       <layerVisible>false</layerVisible>
       <left>358</left>
-      <leftRatio>0.338555265448216</leftRatio>
+      <leftRatio>0.329346826126955</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -2764,7 +2817,7 @@ if ("ontouchstart" in window) {
       <top>245</top>
       <topRatio>0.307788944723618</topRatio>
       <width>370</width>
-      <widthRatio>0.322019147084421</widthRatio>
+      <widthRatio>0.340386384544618</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel258">
       <ee_LocalName>c_text</ee_LocalName>
@@ -3097,7 +3150,7 @@ if (sender.v_closeCount>=4) {
 
 ]]></onMouseMove>
       <onMouseUp>sender.close();</onMouseUp>
-      <sizeRatio>0.692776327241079</sizeRatio>
+      <sizeRatio>0.732290708371665</sizeRatio>
       <top>0</top>
       <width>1087</width>
       <widthRatio>1</widthRatio>
@@ -3114,7 +3167,7 @@ if (sender.v_closeCount>=4) {
       <layerName>通用弹出菜单</layerName>
       <layerVisible>false</layerVisible>
       <left>375</left>
-      <leftRatio>0.326370757180157</leftRatio>
+      <leftRatio>0.344986200551978</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.style.borderRadius = "10px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
@@ -3217,7 +3270,7 @@ sender.renderItem = function(root) {
       <top>18</top>
       <topRatio>0.0226130653266332</topRatio>
       <width>264</width>
-      <widthRatio>0.22976501305483</widthRatio>
+      <widthRatio>0.242870285188592</widthRatio>
     </control>
   </controls>
   <taskSet count="7">
@@ -3769,7 +3822,7 @@ if (!eb.isEmpty(regV2.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="15">
+  <g5Items count="17">
     <item name="p1" type="10">
       <varValue>ee.getControl("panel9");</varValue>
       <functionParam />
@@ -4290,6 +4343,34 @@ sender.eeOnClickCancel = function(sender,event) {
 eb.initMouseEvent(sender);
 
 sender.init(0);]]></functionCode>
+    </item>
+    <item name="processUrl" type="20">
+      <varValue />
+      <functionParam />
+      <functionCode>g5.notPushHistoryCount = 1;
+var p = g5.getQueryString("p");
+var url = new URL(window.location.href);
+var pn = url.pathname;
+var pns = url.pathname.split("/");
+pns.splice(0,1);
+
+if (pn == "" || pn == "/") pn = "/home";
+
+if (pn=="/login") {
+    g5.p1.changePage("a3");
+} else if (pn=="/reg") {
+    g5.p1.changePage("a4");
+} else {
+    g5.p1.changePage("a3");
+}
+</functionCode>
+    </item>
+    <item name="getQueryString" type="20">
+      <varValue />
+      <functionParam>paramName</functionParam>
+      <functionCode>var reg = new RegExp("(^|&amp;)"+ paramName +"=([^&amp;]*)(&amp;|$)");
+var r = window.location.search.substr(1).match(reg);
+if(r!=null)return  unescape(r[2]); return null;</functionCode>
     </item>
   </g5Items>
 </page>
