@@ -28877,8 +28877,7 @@ sender.replaceText("收藏此发言");
       <onClick><![CDATA[var cid = sender.parentNode.v_content.id;
 if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
 var value = window.location.origin + "/msg/" + cid;
-g5.copyClipboard(sender, value,
-//g5.copyClipboard(g5.p1, value,
+g5.copyClipboard(value,
     function() {
         g5.alert1("复制成功", "/%" + value + "%/<br/>已经成功复制到您的剪贴板");
     },
@@ -47435,22 +47434,20 @@ if(r!=null)return  unescape(r[2]); return null;</functionCode>
     </item>
     <item name="copyClipboard" type="20">
       <varValue />
-      <functionParam>refObj,value,onSucc,onFail</functionParam>
-      <functionCode>var input = document.createElement("input");
-input.setAttribute("readonly", "readonly");
-input.setAttribute("value", value);
-refObj.appendChild(input);
-input.focus();
-input.setSelectionRange(0, 9999);
-if (document.execCommand("copy")) {
-    document.execCommand("copy");
-    input.parentNode.removeChild(input);
+      <functionParam>value,onSucc,onFail</functionParam>
+      <functionCode>var textarea = document.createElement("textarea");
+textarea.value = value;
+textarea.style.position = "fixed";
+textarea.style.opacity = 0;
+document.body.appendChild(textarea);
+textarea.select();
+var r = document.execCommand("copy");
+document.body.removeChild(textarea);
+if (r) {
     if (onSucc) onSucc();
 } else {
-    input.parentNode.removeChild(input);
     if (onFail) onFail();
 }
-
 </functionCode>
     </item>
     <item name="getOperationSys" type="20">
