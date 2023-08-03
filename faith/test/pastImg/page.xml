@@ -2776,28 +2776,27 @@ sender.appendItem = function() {
       <left>443</left>
       <leftRatio>0.40754369825207</leftRatio>
       <onClick><![CDATA[if (navigator.clipboard &amp;&amp; navigator.clipboard.read) {
-  // 读取剪贴板中的图片数据
-  navigator.clipboard.read().then(clipboardItems => {
-    // 可能会有多个剪贴板项，我们选择包含图片的项
-    const imageItem = clipboardItems.find(item => item.types.includes('image/png') || item.types.includes('image/jpeg'));
-
-    if (imageItem) {
-      // 获取图片数据
-      imageItem.getType('image/png').then(blob => {
-        // 在这里你可以处理图片数据，比如显示图片或上传到服务器
-        const imageUrl = URL.createObjectURL(blob);
-        console.log('读取到的图片数据:', imageUrl);
-      }).catch(error => {
-        console.error('无法读取图片数据:', error);
-      });
-    } else {
-      console.log('剪贴板中没有图片');
-    }
-  }).catch(error => {
-    console.error('无法读取剪贴板数据:', error);
-  });
+    // 读取剪贴板中的图片数据
+    navigator.clipboard.read().then(clipboardItems => {
+        // 可能会有多个剪贴板项，我们选择包含图片的项
+        const imageItem = clipboardItems.find(item => item.types.includes("image/png") || item.types.includes("image/jpeg"));
+        if (imageItem) {
+            // 获取图片数据
+            imageItem.getType("image/png").then(blob => {
+                // 在这里你可以处理图片数据，比如显示图片或上传到服务器
+                const imageUrl = URL.createObjectURL(blob);
+                console.log("读取到的图片数据:", imageUrl);
+            }).catch(error => {
+                console.error("无法读取图片数据:", error);
+            });
+        } else {
+            console.log("剪贴板中没有图片");
+        }
+    }).catch(error => {
+        console.error("无法读取剪贴板数据:", error);
+    });
 } else {
-  console.log('浏览器不支持Clipboard API');
+    console.log("浏览器不支持Clipboard API");
 }]]></onClick>
       <onCreate>var text = ee.getText(sender);
 sender.v_style = [
