@@ -42077,7 +42077,7 @@ for (i=0; i<cIds.length; i++) {
 
 sql =
     "SELECT [id] ,[regDatetime],[userId],[status],[forceTopSn],[content],[photoCount],[photo1],[photo2], " +
-    "   [photo3],[photo4],[photo5],[photo6],[uplinkId],[uplinkType],[reCount],[fwCount],[likeCount],[unlikeCount], " +
+    "   [photo3],[photo4],[photo5],[photo6],[uplinkId],[uplinkType],[clickCount],[reCount],[fwCount],[likeCount],[unlikeCount], " +
     "   [exUserId],[exUplinkType],[exContentId] " +
     " FROM [twitterG].[dbo].[tContent] " +
     " WHERE " + sql1 + "; " +
@@ -42091,7 +42091,7 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-eio.appendDataSet(sqlResult,"id,reCount,fwCount,likeCount,unlikeCount",
+eio.appendDataSet(sqlResult,"id,clickCount,reCount,fwCount,likeCount,unlikeCount",
     0, 99999);
 
 db.nextResult(sqlResult);
@@ -45771,10 +45771,11 @@ updateMain.onComplete = function(dataset) {
     for (var i=0; i<dataset.rowCount; i++) {
         var v_content = new g5.ContentInfo();
         v_content.id = dataset.getData(0,i);
-        v_content.reCount = dataset.getData(1,i);
-        v_content.fwCount = dataset.getData(2,i);
-        v_content.likeCount = dataset.getData(3,i);
-        v_content.unlikeCount = dataset.getData(4,i);
+        v_content.clickCount = dataset.getData(1,i);
+        v_content.reCount = dataset.getData(2,i);
+        v_content.fwCount = dataset.getData(3,i);
+        v_content.likeCount = dataset.getData(4,i);
+        v_content.unlikeCount = dataset.getData(5,i);
         changed = g5.refreshContentCount(v_content) || changed;
     }
     if (updateMain.needRefresh) {
@@ -45823,6 +45824,7 @@ for (i=0; i<buffs.length; i++) {
         result = modify(c.c_label2, v_content.fwCount) || result;
         result = modify(c.c_label3, v_content.likeCount) || result;
         result = modify(c.c_label4, v_content.unlikeCount) || result;
+        result = modify(c.c_label5, v_content.clickCount) || result;
         c.v_content.reCount = v_content.reCount;
         c.v_content.fwCount = v_content.fwCount;
         c.v_content.likeCount = v_content.likeCount;
