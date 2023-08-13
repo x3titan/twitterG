@@ -44241,11 +44241,116 @@ if (root.v_mode.charAt(2) == "x") {
     c = createPanel(root, root.id+"_btnline01", "e6ecf0", 16, cy, w-16*2, 1); cy+=16;
 }
 
-//button1
 cy-=11;
 var btnX = new Array();
 var btnCnt = 5;
 for (var i=0; i<btnCnt; i++) btnX.push(76+parseInt((w-76*2-20)/(btnCnt-1)*i));
+
+//5 label
+if (root.v_mode.charAt(2) != "x") {
+    //label1
+    c = createPanel(root, root.id+"_label1", "", btnX[0]+35, cy+7, 40, 22);
+    root.c_label1 = c;
+    c.init = function(text) {
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
+    }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.reCount);
+    //label2
+    c = createPanel(root, root.id+"_label2", "", btnX[1]+35, cy+7, 40, 22);
+    root.c_label2 = c;
+    c.v_styleIndex = 0;
+    c.init = function(styleIndex,text) {
+        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+        this.v_styleIndex = styleIndex;
+        if (this.v_styleIndex == 0) {
+            ee.setTextColor(this, "#657786)");
+        } else {
+            ee.setTextColor(this, "#17bf63");
+        }
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
+    }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.isForward ? 1:0, root.v_content.fwCount);
+    ee.setOnClick(c, function(senderBtn, event) {
+        senderBtn.label.rows[0].cells[0].className = "";
+        setTimeout(function() {
+            senderBtn.label.rows[0].cells[0].className = "red3";
+        }, 100);
+        window.event? window.event.cancelBubble = true : event.stopPropagation();
+    });    
+    
+    //label3
+    c = createPanel(root, root.id+"_label3", "", btnX[2]+35, cy+7, 40, 22);
+    root.c_label3 = c;
+    c.v_styleIndex = 0;
+    c.init = function(styleIndex,text) {
+        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+        this.v_styleIndex = styleIndex;
+        if (this.v_styleIndex == 0) {
+            ee.setTextColor(this, "rgb(101,119,134)");
+        } else {
+            ee.setTextColor(this, "#e23c70");
+        }
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
+    }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.isLike ? 1:0, root.v_content.likeCount);
+    //label4
+    c = createPanel(root, root.id+"_label4", "", btnX[3]+35, cy+7-1, 40, 22);
+    root.c_label4 = c;
+    c.v_styleIndex = 0;
+    c.init = function(styleIndex,text) {
+        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
+        this.v_styleIndex = styleIndex;
+        if (this.v_styleIndex == 0) {
+            this.v_defaultColor = "rgb(101,119,134)";
+        } else {
+            this.v_defaultColor = "rgb(29,161,242)";
+        }
+        ee.setTextColor(this, this.v_defaultColor);
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
+    }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.isUnlike ? 1:0, root.v_content.unlikeCount);
+    //label5
+    c = createPanel(root, root.id+"_label5", "", btnX[4]+35, cy+7, 40, 22);
+    root.c_label5 = c;
+    c.init = function(text) {
+        if (!eb.isEmpty(text)) {
+            text = text + "";
+            text = text=="0" ? "":text;
+            ee.setText(this, text);
+        }
+    }
+    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
+    c.init(root.v_content.clickCount);
+    
+} else {
+    root.c_label1 = null;
+    root.c_label2 = null;
+    root.c_label3 = null;
+    root.c_label4 = null;
+    root.c_label5 = null;
+}
+
+//4 buttons, button1
 c = createPanel(root, root.id+"_sbutton01", "", btnX[0], cy, 36, 36);
 c.style.cursor="pointer";
 c.innerHTML = "<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;fill: currentcolor;vertical-align:middle;\"><g><path d=\"M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.632.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.04-3.97 3.043-6.312v-.017c-.006-4.367-3.43-7.787-7.8-7.788zm3.787 12.972c-1.134.96-4.862 3.405-6.772 4.643V16.67c0-.414-.335-.75-.75-.75h-.396c-3.66 0-6.318-2.476-6.318-5.886 0-3.534 2.768-6.302 6.3-6.302l4.147.01h.002c3.532 0 6.3 2.766 6.302 6.296-.003 1.91-.942 3.844-2.514 5.176z\"></path></g></svg>";
@@ -44383,116 +44488,23 @@ g5.initButtonV3(c,[
     new g5.BStyle("","#dfeffa","#cfdfea","","","","rgb(101,119,134)","rgb(29,161,242)","rgb(29,161,242)","")
 ]);
 
+root.c_buttons = new Array();
+root.c_buttons.push(root.c_button1,root.c_button2,root.c_button3,root.c_button4,root.c_button5);
+root.c_labels = new Array();
+root.c_labels.push(root.c_label1,root.c_label2,root.c_label3,root.c_label4,root.c_label5);
 
-//4 label
-if (root.v_mode.charAt(2) != "x") {
-    //label1
-    c = createPanel(root, root.id+"_panel3", "", btnX[0]+35, cy+7, 40, 22);
-    root.c_label1 = c;
-    c.init = function(text) {
-        if (!eb.isEmpty(text)) {
-            text = text + "";
-            text = text=="0" ? "":text;
-            ee.setText(this, text);
-        }
+
+if ((g5.isMobile) &amp;&amp; (root.c_label1!=null)) {
+    //for (var i=0; i<btnCnt; i++) btnX.push(76+parseInt((w-76*2-20)/(btnCnt-1)*i));
+    var wc = 0;
+    for (var i=0; i<btnCnt; i++) wc += 21 + ((ee.getText(root.c_labels[i]).trim().length==0)?0:(ee.getText(root.c_labels[i]).trim().length*16));
+    var sep = parseInt((w - 76 -30 - wc)/(btnCnt-1));
+    var px = 76;
+    for (var i=0; i<btnCnt; i++) {
+        ee.setRect(root.c_buttons[i],px-7,null,null,null);
+        ee.setRect(root.c_labels[i],px+21,null,null,null);
+        px += sep + 21 + ((ee.getText(root.c_labels[i]).trim().length==0)?0:(ee.getText(root.c_labels[i]).trim().length*16));
     }
-    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
-    c.init(root.v_content.reCount);
-    //label2
-    c = createPanel(root, root.id+"_panel5", "", btnX[1]+35, cy+7, 40, 22);
-    root.c_label2 = c;
-    c.v_styleIndex = 0;
-    c.init = function(styleIndex,text) {
-        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
-        this.v_styleIndex = styleIndex;
-        if (this.v_styleIndex == 0) {
-            ee.setTextColor(this, "#657786)");
-        } else {
-            ee.setTextColor(this, "#17bf63");
-        }
-        if (!eb.isEmpty(text)) {
-            text = text + "";
-            text = text=="0" ? "":text;
-            ee.setText(this, text);
-        }
-    }
-    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
-    c.init(root.v_content.isForward ? 1:0, root.v_content.fwCount);
-    ee.setOnClick(c, function(senderBtn, event) {
-        senderBtn.label.rows[0].cells[0].className = "";
-        setTimeout(function() {
-            senderBtn.label.rows[0].cells[0].className = "red3";
-        }, 100);
-        window.event? window.event.cancelBubble = true : event.stopPropagation();
-    });    
-    
-    //label3
-    c = createPanel(root, root.id+"_panel5", "", btnX[2]+35, cy+7, 40, 22);
-    root.c_label3 = c;
-    c.v_styleIndex = 0;
-    c.init = function(styleIndex,text) {
-        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
-        this.v_styleIndex = styleIndex;
-        if (this.v_styleIndex == 0) {
-            ee.setTextColor(this, "rgb(101,119,134)");
-        } else {
-            ee.setTextColor(this, "#e23c70");
-        }
-        if (!eb.isEmpty(text)) {
-            text = text + "";
-            text = text=="0" ? "":text;
-            ee.setText(this, text);
-        }
-    }
-    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
-    c.init(root.v_content.isLike ? 1:0, root.v_content.likeCount);
-    //label4
-    c = createPanel(root, root.id+"_label4", "", btnX[3]+35, cy+7-1, 40, 22);
-    root.c_label4 = c;
-    c.v_styleIndex = 0;
-    c.init = function(styleIndex,text) {
-        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
-        this.v_styleIndex = styleIndex;
-        if (this.v_styleIndex == 0) {
-            this.v_defaultColor = "rgb(101,119,134)";
-        } else {
-            this.v_defaultColor = "rgb(29,161,242)";
-        }
-        ee.setTextColor(this, this.v_defaultColor);
-        if (!eb.isEmpty(text)) {
-            text = text + "";
-            text = text=="0" ? "":text;
-            ee.setText(this, text);
-        }
-    }
-    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
-    c.init(root.v_content.isUnlike ? 1:0, root.v_content.unlikeCount);
-    //label5
-    c = createPanel(root, root.id+"_label5", "", btnX[4]+35, cy+7-1, 40, 22);
-    root.c_label5 = c;
-    c.v_styleIndex = 0;
-    c.init = function(styleIndex,text) {
-        if (eb.isEmpty(styleIndex)) styleIndex = this.v_styleIndex;
-        this.v_styleIndex = styleIndex;
-        if (this.v_styleIndex == 0) {
-            this.v_defaultColor = "rgb(101,119,134)";
-        } else {
-            this.v_defaultColor = "rgb(29,161,242)";
-        }
-        ee.setTextColor(this, this.v_defaultColor);
-        if (!eb.isEmpty(text)) {
-            text = text + "";
-            text = text=="0" ? "":text;
-            ee.setText(this, text);
-        }
-    }
-    addText(c, " ", "left", "middle", "Arial", 12, "657786", "");
-    c.init(root.v_content.isUnlike ? 1:0, root.v_content.clickCount);
-} else {
-    root.c_label1 = null;
-    root.c_label2 = null;
-    root.c_label3 = null;
-    root.c_label4 = null;
 }
 
 //set total height
@@ -45829,6 +45841,7 @@ for (i=0; i<buffs.length; i++) {
         c.v_content.fwCount = v_content.fwCount;
         c.v_content.likeCount = v_content.likeCount;
         c.v_content.unlikeCount = v_content.unlikeCount;
+        c.v_content.clickCount = v_content.clickCount;
     }
 }
 return result;
