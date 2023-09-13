@@ -42069,12 +42069,15 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserName =db.getString(sqlResult,"userName");
 var myUserId = db.getString(sqlResult,"id");
 var sql1 = "";
+var sqlCount = "";
 for (i=0; i<cIds.length; i++) {
     if (sql1.length>0) sql1 += " OR ";
     sql1 += "id=" + parseInt(cIds[i]);
+    sqlCount +=
+        "exec [twitterAddCount] " + parseInt(cIds[i]) + ",'view'," + myUserId + ",'" + es.getRemoteIPAddress() + "';\n";
 }
 
-sql =
+sql = sqlCount +
     "SELECT [id] ,[regDatetime],[userId],[status],[forceTopSn],[content],[photoCount],[photo1],[photo2], " +
     "   [photo3],[photo4],[photo5],[photo6],[uplinkId],[uplinkType],[clickCount],[reCount],[fwCount],[likeCount],[unlikeCount], " +
     "   [exUserId],[exUplinkType],[exContentId] " +
