@@ -3940,7 +3940,7 @@ changePassword.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="3">
+  <g5Items count="4">
     <item name="imgUrl" type="10">
       <varValue>"/incoming/";</varValue>
       <functionParam />
@@ -3983,6 +3983,35 @@ while (true) {
 }
 result.y -= document.documentElement.scrollTop;
 return result;</functionCode>
+    </item>
+    <item name="getUtcTime" type="20">
+      <varValue />
+      <functionParam>dbTime,returnString</functionParam>
+      <functionCode><![CDATA[//04 19 2020 10:35 UTC
+//yyyy-mm-dd hh:nn:ss
+//0123456789012345678
+if (dbTime.length!=19) return new Date();
+
+var r = new Date(Date.UTC(
+    parseInt(dbTime.substr(0,4)),
+    parseInt(dbTime.substr(5,2)) - 1,
+    parseInt(dbTime.substr(8,2)),
+    parseInt(dbTime.substr(11,2)),
+    parseInt(dbTime.substr(14,2)),
+    parseInt(dbTime.substr(17,2))
+));
+
+if (returnString) {
+    return ((r.getYear()<1000)?(r.getYear()+1900):r.getYear()) + "-" +
+        ((r.getMonth()+1)<10?"0":"") + (r.getMonth()+1) + "-" +
+        (r.getDate()<10?"0":"") + r.getDate() + " " +
+        (r.getHours()<10?"0":"") + r.getHours() + ":" +
+        (r.getMinutes()<10?"0":"") + r.getMinutes() + ":" +
+        (r.getSeconds()<10?"0":"") + r.getSeconds();
+} else {
+    return r;
+} 
+]]></functionCode>
     </item>
   </g5Items>
 </page>
