@@ -491,9 +491,28 @@ if (y >= query.dataset.rowCount) {
     ee.setText(sender, "");
     return;
 }
-var s = query.dataset.getData(0,y) + "/" +
-    query.dataset.getData(3,y) + "/" +
-    query.dataset.getData(4,y);
+var s = "";
+switch (query.dataset.getData(3,y)) {
+    case "N":
+        s = query.dataset.getData(0,y) + "/新帖";
+        break;
+    case "R":
+        s = query.dataset.getData(0,y) + "/回复/" +
+            query.dataset.getData(4,y);
+        break;
+    case "F":
+        s = query.dataset.getData(0,y) + "/带评论转发/" +
+            query.dataset.getData(4,y);
+        break;
+    case "L":
+        s = query.dataset.getData(0,y) + "/直接转发/" +
+            query.dataset.getData(4,y);
+        break;
+    default:
+        s = query.dataset.getData(0,y) + "/" +
+            query.dataset.getData(3,y) + "/" +
+            query.dataset.getData(4,y);
+}
 ee.setText(sender, s);]]></onUpdate>
       <sizeRatio>0.370689655172414</sizeRatio>
       <text>.</text>
@@ -528,14 +547,14 @@ ee.setText(sender, s);]]></onUpdate>
       <left>124</left>
       <leftRatio>0.106715731370745</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <onUpdate>if (!query.dataset) {
+      <onUpdate><![CDATA[if (!query.dataset) {
     text = "";
     return;
 }
 var y = sender.rowIndex;
-var s = query.dataset.getData(1,y);
+var s = query.dataset.getData(1,y).replace(" ","<br/>");
 ee.setText(sender, s);
-</onUpdate>
+]]></onUpdate>
       <sizeRatio>0.367521367521368</sizeRatio>
       <text>.</text>
       <top>0</top>
@@ -3959,7 +3978,7 @@ for (y = 0; y < g5.pageSize; y++) {
 }
 for (x = 0; x < 6; x++) {
     c = ee.getTableCell(ee.getControl("tablebody2"), x, sender.rowIndex);
-    c.style.backgroundColor = "#E0EEFF";
+    c.style.backgroundColor = "rgba(50, 50, 255, 0.1)"; //"#f0E0EEFF";
 }
 g5.tableClick.valid = false;
 if (eb.isEmpty(query.dataset)) return;
