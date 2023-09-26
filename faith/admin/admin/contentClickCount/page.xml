@@ -565,14 +565,18 @@ ee.setText(sender, s);]]></onUpdate>
       <left>93</left>
       <leftRatio>0.114075436982521</leftRatio>
       <onClick>g5.tableClick(sender);</onClick>
-      <onUpdate>if (!query.dataset) {
+      <onUpdate><![CDATA[if (!query.dataset) {
     text = "";
     return;
 }
 var y = sender.rowIndex;
-var s = query.dataset.getData(1,y);
+if (y >= query.dataset.rowCount) {
+    ee.setText(sender, "");
+    return;
+}
+var s = g5.getUtcTime(query.dataset.getData(1,y), true);
 ee.setText(sender, s);
-</onUpdate>
+]]></onUpdate>
       <sizeRatio>0.653061224489796</sizeRatio>
       <text>.</text>
       <top>0</top>
