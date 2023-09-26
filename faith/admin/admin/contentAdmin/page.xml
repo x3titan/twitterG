@@ -1,5 +1,5 @@
 <page>
-  <controls count="190">
+  <controls count="200">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -78,6 +78,16 @@ query();
     //text-decoration: underline;
     background-color:#e0e0ff;
     transition: background-color 0.3s;
+}
+</style>
+
+<style>
+.imgDark {
+    transition: filter 0.3s ease;
+}
+
+.imgDark:hover {
+    filter: brightness(0.8);
 }
 </style>]]></pageHead>
       <top>0</top>
@@ -685,22 +695,18 @@ ee.setText(sender,"");
 var y = sender.rowIndex;
 var img1 = query.dataset.getData(18,y);
 var img2 = query.dataset.getData(6,y);
-var c_photo = sender.eeChildren[1];
+var c_bk = sender.eeChildren[1];
+var c_photo = sender.eeChildren[2];
 if (y >= query.dataset.rowCount) {
     ee.setVisible(c_photo, false);
-    ee.setImage(sender,"","trim","","")
-    sender.style.borderRadius =  "0px";
+    ee.setVisible(c_bk, false);
     return;
 }
 ee.setVisible(c_photo, true);
 
-if (img2!="") {
-    ee.setImage(sender,"url:" + g5.imgUrl + img2,"trim","","")
-} else {
-    ee.setImage(sender,"","trim","","")
-}
-
 var rect = eb.getDivRectSetting(sender);
+var r = parseInt(rect.h/2) + "px";
+
 ee.setRect(c_photo, -1, -1, rect.h-1, rect.h-1);
 c_photo.style.borderRadius = "50%";
 c_photo.style.borderWidth = "1px";
@@ -711,14 +717,23 @@ if (img1 == "") {
 } else {
     ee.setImage(c_photo,"url:" + g5.imgUrl + img1,"trim","","")
 }
+c_photo.className = "imgDark";
+ee.setOnClick(c_photo, function(sender, event) {
+    window.parent.g5.closePageByTitle("用户信息");
+    window.parent.g5.appendPage("用户信息", "/" + query.dataset.getData(16,y));
+});
 
-var r = parseInt(rect.h/2) + "px";
-if (img2=="") {
-    sender.style.borderRadius =  "0px";
+ee.setRect(c_bk, 0, 0, rect.w, rect.h);
+if (img2!="") {
+    ee.setImage(c_bk,"url:" + g5.imgUrl + img2,"trim","","")
 } else {
-    sender.style.borderRadius =  r + " 10px 10px " + r;
+    ee.setImage(c_bk,"","trim","","")
 }
-
+if (img2=="") {
+    c_bk.style.borderRadius =  "0px";
+} else {
+    c_bk.style.borderRadius =  r + " 10px 10px " + r;
+}
 ]]></onUpdate>
       <sizeRatio>0.275641025641026</sizeRatio>
       <text>.</text>
@@ -752,6 +767,18 @@ if (img2=="") {
       <topRatio>0.0465116279069767</topRatio>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem2/panel25">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
     </control>
     <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem3">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -973,6 +1000,18 @@ ee.setText(sender, s);]]></onUpdate>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp121/temp64">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp124">
       <backgroundColor>d0d0d0</backgroundColor>
       <cursor>pointer</cursor>
@@ -1176,6 +1215,18 @@ ee.setText(sender, s);]]></onUpdate>
       <topRatio>0.0465116279069767</topRatio>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp134/temp65">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp137">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -1381,6 +1432,18 @@ ee.setText(sender, s);]]></onUpdate>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp154/temp66">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp160">
       <backgroundColor>d0d0d0</backgroundColor>
       <cursor>pointer</cursor>
@@ -1584,6 +1647,18 @@ ee.setText(sender, s);]]></onUpdate>
       <topRatio>0.0465116279069767</topRatio>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp180/temp67">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp186">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -1789,6 +1864,18 @@ ee.setText(sender, s);]]></onUpdate>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp206/temp68">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp212">
       <backgroundColor>d0d0d0</backgroundColor>
       <cursor>pointer</cursor>
@@ -1992,6 +2079,18 @@ ee.setText(sender, s);]]></onUpdate>
       <topRatio>0.0465116279069767</topRatio>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp232/temp69">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp238">
       <backgroundColor>d0d0d0</backgroundColor>
@@ -2197,6 +2296,18 @@ ee.setText(sender, s);]]></onUpdate>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp256/temp70">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp260">
       <backgroundColor>d0d0d0</backgroundColor>
       <cursor>pointer</cursor>
@@ -2401,6 +2512,18 @@ ee.setText(sender, s);]]></onUpdate>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp273/temp71">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp277">
       <backgroundColor>d0d0d0</backgroundColor>
       <cursor>pointer</cursor>
@@ -2604,6 +2727,18 @@ ee.setText(sender, s);]]></onUpdate>
       <topRatio>0.0465116279069767</topRatio>
       <width>44</width>
       <widthRatio>0.282051282051282</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp291/temp72">
+      <height>36</height>
+      <heightRatio>0.5625</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>66</left>
+      <leftRatio>0.38150289017341</leftRatio>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>7</top>
+      <topRatio>0.109375</topRatio>
+      <width>44</width>
+      <widthRatio>0.254335260115607</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp295">
       <backgroundColor>d0d0d0</backgroundColor>
