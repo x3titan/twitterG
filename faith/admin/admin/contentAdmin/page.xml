@@ -58,6 +58,27 @@ query();
     transition: background-color 0.3s;
 }
 
+</style>
+
+<style>
+.css_button1 {
+    display:inline-block;
+    padding:0.1em 0.5em 0.2em 0.5em;
+    margin:0em 0.0em -0.3em 0.0em;
+    border-radius:0.4em;
+    border: 1px solid rgba(80, 80, 250, 0.4);
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    //color:#1DA1F2;
+    text-align:left;
+    transition: background-color 1.0s;
+}
+.css_button1:hover{
+    //text-decoration: underline;
+    background-color:#e0e0ff;
+    transition: background-color 0.3s;
+}
 </style>]]></pageHead>
       <top>0</top>
       <width>1087</width>
@@ -469,29 +490,38 @@ if (y >= query.dataset.rowCount) {
     ee.setText(sender, "");
     return;
 }
-var s = "";
+var s =
+    "<spawn id='cid' class='css_button1'>" +
+    query.dataset.getData(0,y) +
+    "</spawn>";
+//css_button1
 switch (query.dataset.getData(3,y)) {
     case "N":
-        s = query.dataset.getData(0,y) + "/新帖";
+        s += "/新帖";
         break;
     case "R":
-        s = query.dataset.getData(0,y) + "/回复/" +
+        s += "/回复/" +
             query.dataset.getData(4,y);
         break;
     case "F":
-        s = query.dataset.getData(0,y) + "/带评论转发/" +
+        s += "/带评论转发/" +
             query.dataset.getData(4,y);
         break;
     case "L":
-        s = query.dataset.getData(0,y) + "/直接转发/" +
+        s += "/直接转发/" +
             query.dataset.getData(4,y);
         break;
     default:
-        s = query.dataset.getData(0,y) + "/" +
+        s += "/" +
             query.dataset.getData(3,y) + "/" +
             query.dataset.getData(4,y);
 }
-ee.setText(sender, s);]]></onUpdate>
+ee.setText(sender, s);
+var c = sender.querySelector("#cid");
+ee.setOnClick(c, function(sender, event) {
+    window.parent.g5.closePageByTitle("短文页");
+    window.parent.g5.appendPage("短文页", "/msg/" + query.dataset.getData(0,y));
+});]]></onUpdate>
       <sizeRatio>0.370689655172414</sizeRatio>
       <text>.</text>
       <top>0</top>
