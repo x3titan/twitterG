@@ -10869,12 +10869,12 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>通知</layerName>
-      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_topBlank = sender.eeChildren[0];
 sender.c_noResult = sender.eeChildren[1];
+sender.v_lastScrollTop = 0;
 
 sender.v_headerName = "prmpt_";
 sender.v_items = new Array();
@@ -10893,15 +10893,16 @@ sender.show = function() {
 
 sender.activePage = function() {
     g5.pushHistory2("/notifications");
-    g5.mainDiv.scrollTop = 0;
     g5.pageMode = 0;
     g5.refreshMain(true);
     ee.setVisible(g5.p4, true);
     g5.p4.changePage("a5");
     ee.setVisible(g5.p2.p12, true)
+    document.documentElement.scrollTop = sender.v_lastScrollTop;
 }
 
 sender.close = function() {
+    sender.v_lastScrollTop = document.documentElement.scrollTop;
     ee.setVisible(g5.p4, false);
     ee.setVisible(g5.p2.p12, false);
 }
@@ -13069,6 +13070,7 @@ sender.loadMore = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>设置-账号</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.show = function() {
     g5.changeP2(16);
@@ -42164,9 +42166,7 @@ updateMain.busy = false;
       <functionCode />
     </item>
     <item name="newUser" type="10">
-      <varValue>false;
-
-</varValue>
+      <varValue>false;</varValue>
       <functionParam />
       <functionCode />
     </item>
