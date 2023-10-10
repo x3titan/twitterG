@@ -738,6 +738,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -926,6 +927,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.2710027100271</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -19870,6 +19872,7 @@ sender.v_photos = new Array();</onCreate>
       <height>644</height>
       <heightRatio>0.825641025641026</heightRatio>
       <layerName>youtube视频链接</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 sender.c_video.innerHTML = "";
@@ -34799,7 +34802,6 @@ if ("ontouchstart" in window) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack2->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>ee.setVisible(this, false);
   
@@ -34828,7 +34830,6 @@ sender.addEventListener("mousewheel", function(e) {
       <height>569</height>
       <heightRatio>0.714824120603015</heightRatio>
       <layerName><![CDATA[  a1->youtube视频链接]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>232</left>
       <leftRatio>0.209575429087624</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
@@ -35022,30 +35023,14 @@ sender.style.borderRadius = "0px 6px 6px 0px";</onCreate>
       <layerVisible>false</layerVisible>
       <left>10</left>
       <leftRatio>0.0234192037470726</leftRatio>
-      <onChange><![CDATA[var edit = sender.parentNode;
-var url = ee.getEditText(edit);
-var ytbVideo = "";
-var pos;
-if ((pos=url.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
-    ytbVideo = url.substr(pos + "youtube.com/watch?v=".length, url.length);
-} else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
-    ytbVideo = url.substr(pos + "youtu.be/".length, url.length);
-} else {
-    return;
-}
-if ((pos=ytbVideo.toLowerCase().indexOf("&amp;",0))>0) {
-    ytbVideo = ytbVideo.substr(0, pos);
-}
-if ((ytbVideo.length<=8)||(ytbVideo.length>=20)) {
-    return;
-}
-ytbVideo = "?YTB" + ytbVideo;
+      <onChange>var edit = sender.parentNode;
+var ytbVideo = g5.getYtbIdFromStr(ee.getEditText(edit));
 
 var videoPanel = ee.getControl("panel410");
 videoPanel.v_photo = ytbVideo;
 g5.addPhoto(videoPanel);
 edit.parentNode.parentNode.parentNode.v_ytbVideo = ytbVideo;
-]]></onChange>
+</onChange>
       <onCreate>sender._inputHint = g5.lang.getByCn(ee.getText(sender));
 ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <outerLeft>10</outerLeft>
