@@ -10869,6 +10869,7 @@ sender.fSearch = function() {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>通知</layerName>
+      <layerVisible>false</layerVisible>
       <left>1</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -19869,7 +19870,6 @@ sender.v_photos = new Array();</onCreate>
       <height>644</height>
       <heightRatio>0.825641025641026</heightRatio>
       <layerName>youtube视频链接</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 sender.c_video.innerHTML = "";
@@ -19987,30 +19987,14 @@ sender.style.borderRadius = "0px 6px 6px 0px";</onCreate>
       <layerVisible>false</layerVisible>
       <left>10</left>
       <leftRatio>0.0224215246636771</leftRatio>
-      <onChange><![CDATA[var edit = sender.parentNode;
-var url = ee.getEditText(edit);
-var ytbVideo = "";
-var pos;
-if ((pos=url.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
-    ytbVideo = url.substr(pos + "youtube.com/watch?v=".length, url.length);
-} else if ((pos=url.toLowerCase().indexOf("youtu.be/",0))>0) {
-    ytbVideo = url.substr(pos + "youtu.be/".length, url.length);
-} else {
-    return;
-}
-if ((pos=ytbVideo.toLowerCase().indexOf("&amp;",0))>0) {
-    ytbVideo = ytbVideo.substr(0, pos);
-}
-if ((ytbVideo.length<=8)||(ytbVideo.length>=20)) {
-    return;
-}
-ytbVideo = "?YTB" + ytbVideo;
+      <onChange>var edit = sender.parentNode;
+var ytbVideo = g5.getYtbIdFromStr(ee.getEditText(edit));
 
 var videoPanel = ee.getControl("panel600");
 videoPanel.v_photo = ytbVideo;
 g5.addPhoto(videoPanel);
 edit.parentNode.parentNode.parentNode.v_ytbVideo = ytbVideo;
-]]></onChange>
+</onChange>
       <onCreate>sender._inputHint = g5.lang.getByCn(ee.getText(sender));
 ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <outerLeft>10</outerLeft>
@@ -42154,7 +42138,7 @@ updateMain.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="118">
+  <g5Items count="119">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -47324,6 +47308,32 @@ if (eb.isEmpty(player.player.playVideo)) {
 
 
 ]]></functionCode>
+    </item>
+    <item name="getYtbIdFromStr" type="20">
+      <varValue />
+      <functionParam>userInput</functionParam>
+      <functionCode><![CDATA[var ytbVideo = "";
+var pos;
+if ((pos=userInput.toLowerCase().indexOf("youtube.com/watch?v=",0))>0) {
+    ytbVideo = userInput.substr(pos + "youtube.com/watch?v=".length, userInput.length);
+} else if ((pos=userInput.toLowerCase().indexOf("youtu.be/",0))>0) {
+    ytbVideo = userInput.substr(pos + "youtu.be/".length, userInput.length);
+} else if ((pos=userInput.toLowerCase().indexOf("youtube.com/live/",0))>0) {
+    ytbVideo = userInput.substr(pos + "youtube.com/live/".length, userInput.length);
+} else {
+    return "";
+}
+if ((pos=ytbVideo.toLowerCase().indexOf("&amp;",0))>0) {
+    ytbVideo = ytbVideo.substr(0, pos);
+}
+if ((pos=ytbVideo.toLowerCase().indexOf("?",0))>0) {
+    ytbVideo = ytbVideo.substr(0, pos);
+}
+if ((ytbVideo.length<=8)||(ytbVideo.length>=20)) {
+    return "";
+}
+ytbVideo = "?YTB" + ytbVideo;
+return ytbVideo;]]></functionCode>
     </item>
     <item name="getVideoY" type="20">
       <varValue />
