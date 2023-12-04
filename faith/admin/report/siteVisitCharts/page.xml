@@ -27,7 +27,6 @@ g5.pageJump = function (pageNumber) {
 }
 
 query();
-g5.initCharts();
        
 ]]></onControlLoad>
       <pageHead><![CDATA[<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -1018,14 +1017,8 @@ sender.itemsAdd = function(value) {
   <taskSet count="9">
     <taskSetItem name="query">
       <script1>eio.appendString8(eb.getCookie("FAToken")); 
-eio.appendString8(ee.getEditText(ee.getControl("edit3")));
-eio.appendInt32(g5.pageSize);
-eio.appendInt32(g5.pageCurrent);
 </script1>
       <script2><![CDATA[var token = eio.readString8();
-var searchText = eio.readString8();
-var pageSize = eio.readInt32();
-var pageCurrent = eio.readInt32();
 
 var sql,sqlResult;
 sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
@@ -1046,10 +1039,7 @@ var userId = db.getString(sqlResult, "id");
 var userName = db.getString(sqlResult, "userName");
 
 sql= 
-    "exec [viewSiteFlow] " +
-    "'" + db.encode(searchText) + "'," +
-    pageCurrent + "," +
-    pageSize;
+    "exec [viewSiteFlowByDay] ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -1057,13 +1047,15 @@ if (sqlResult == null) {
     return;
 }
 eio.appendString8("T");
-db.read(sqlResult);
-eio.appendString8(db.getString(sqlResult,"count"));
-eio.appendString8(db.getString(sqlResult,"pageCount"));
+eio.appendDataSet(sqlResult,"dayNumber,count",
+    0,9999
+); 
 db.nextResult(sqlResult);
-eio.appendDataSet(sqlResult,
-    //0            1       2         3         4      5        6        7
-    "regDatetime,clickType,ipAddress,userId,userName,nickName,photo,titleBg",
+eio.appendDataSet(sqlResult,"dayNumber,count",
+    0,9999
+); 
+db.nextResult(sqlResult);
+eio.appendDataSet(sqlResult,"dayNumber,count",
     0,9999
 ); 
 ]]></script2>
@@ -1071,13 +1063,15 @@ eio.appendDataSet(sqlResult,
     alert("无法获取您需要的数据：" + eio.readString8());
     return;
 }
-query.recordCount = parseInt(eio.readString8());
-g5.pageCount = parseInt(eio.readString8());
-query.dataset = eio.readDataSet();
-ee.setTableData(ee.getControl("tablebody2"), query.dataset,0);   
-ee.setText(ee.getControl("layoutxitem45"), g5.pageCurrent + "/" + g5.pageCount);
-ee.setText(ee.getControl("panel16"), "共找到" +
-    "<font color = '#d00000'>" + query.recordCount + "条</font>记录");
+
+query.dataset1 = eio.readDataSet();
+query.dataset2 = eio.readDataSet();
+query.dataset3 = eio.readDataSet();
+g5.initCharts();
+//ee.setTableData(ee.getControl("tablebody2"), query.dataset,0);   
+//ee.setText(ee.getControl("layoutxitem45"), g5.pageCurrent + "/" + g5.pageCount);
+//ee.setText(ee.getControl("panel16"), "共找到" +
+//    "<font color = '#d00000'>" + query.recordCount + "条</font>记录");
 ]]></script3>
     </taskSetItem>
     <taskSetItem name="del">
@@ -1744,32 +1738,54 @@ fetch(apiUrl)
     <item name="drawCharts" type="20">
       <varValue />
       <functionParam />
-      <functionCode>var data = google.visualization.arrayToDataTable([
-    ['Year', "独立用户数量", "独立用户数量"],
-    [new Date(2013, 0, 1), 1251, 394],
-    [new Date(2014, 0, 1), 1442, 1229],
-    [new Date(2015, 0, 1), 628, 525],
-    [new Date(2016, 0, 1), 122, 956],
-    [new Date(2017, 0, 1), 780, 1763]
-]);
+      <functionCode><![CDATA[var rawData = new Array();
+rawData.push(
+    ["日期", "独立IP数量", "独立用户数量"]
+);
+
+for (var i = 0; i<query.dataset1.rowCount; i++) {
+    var s = query.dataset1.getData(0,i);
+    s = s.split("-");
+    if (s.length!=3) continue;
+    rawData.push([
+        new Date(parseInt(s[0]),parseInt(s[1])-1,parseInt(s[2])),
+        parseInt(query.dataset1.getData(1,i)),
+        parseInt(query.dataset2.getData(1,i))
+    ]);
+}
+
+var data = google.visualization.arrayToDataTable(rawData);
+
+//var options = {
+//    title: '全站流量统计图',
+//    hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+//    vAxis: {minValue: 0},
+//    explorer: { 
+//        actions: ['dragToZoom', 'rightClickToReset'],
+//        axis: 'horizontal',
+//        keepInBounds: true,
+//        maxZoomIn: 4.0
+//    }
+//};
 
 var options = {
-    title: 'Company Performance',
-    hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
-    vAxis: {minValue: 0},
-    explorer: { 
-        actions: ['dragToZoom', 'rightClickToReset'],
-        axis: 'horizontal',
-        keepInBounds: true,
-        maxZoomIn: 4.0
-    }
+    title: '全站流量统计图',
+    hAxis: {
+        title: 'Year',
+        titleTextStyle: {color: '#333'},
+        viewWindowMode: 'explicit',
+        viewWindow: {
+            min: new Date(2023, 9, 1),
+            max: new Date(2023, 9, 10)
+        }
+    },
+    vAxis: {minValue: 0}
 };
-
 
 var root = ee.getControl("panel21");
 var chart = new google.visualization.AreaChart(root);
 chart.draw(data, options);
-</functionCode>
+]]></functionCode>
     </item>
   </g5Items>
 </page>
