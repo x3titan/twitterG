@@ -7,275 +7,35 @@
       <customSearchText>欢迎来到Fistalk拳头聊天室！这里是一个以中文为主的社交媒体平台。可以发布文字、图片、Youtube视频。网站还包括通知、私信、收藏等功能。每个人的个人主页都附有一个聊天室，对所有用户开放。想发什么都由你决定！😁</customSearchText>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>796</height>
+      <height>785</height>
       <left>0</left>
-      <onControlLoad><![CDATA[document.body.style.webkitTapHighlightColor = "rgba(0,0,0,0)";
+      <onControlLoad>document.body.style.webkitTapHighlightColor = "rgba(0,0,0,0)";
 
 g5.lang.init();
-
-//var url = new URL(window.location.href);
-//if (url.origin.toLowerCase().indexOf("//fistalk.com")>0) {
-//    window.location.href = "https://www.fistalk.com/pc/new"; // + url.pathname;
-//    return;
-//}
-
-/*
-eb.processDock();
-ee.getControl("divRoot").dockX = "disabled";
-ee.getControl("divRoot").dockY = "disabled";
-*/
-
-var u = window.location.href.toLowerCase();
-var s = "fistalk.com/reg";
-if (u.indexOf(s) == u.length-s.length) {
-    g5.isReg = true;
-} else if (u != "https://fistalk.com/login") {
-    window.location.href = "https://fistalk.com/login";
-    return;
-}
-//g5.pushHistory2("/login");
 
 g5.imgUrl = "/incoming/";
 
 ee.getControl("panel26").style.zIndex = 100;
 ee.getControl("panel20").style.zIndex = 100;
 
-if (g5.isReg) {
-    g5.p1.changePage("a4");
-} else {
-    g5.p1.changePage("a3");
-}
-eb.processDock();
-loginToken();]]></onControlLoad>
-      <onPageCreate><![CDATA[var tk = eb.getCookie("twitterGToken");
-if (!tk) tk = "";
-if (tk.length>0) {
-    window.location.href = "https://fistalk.com/home";
-}
-if (window.location.href.toLowerCase().indexOf("http:")==0) {
-    var url = new URL(window.location.href);
-    window.location.href = "https://fistalk.com" + url.pathname;
-}
-
-window.addEventListener("popstate", function (a) {
+</onControlLoad>
+      <onPageCreate>window.addEventListener("popstate", function (a) {
     g5.processUrl();
 })
-
-ee.setRect = function (panel, x, y, w, h, refresh) {
-    var i, j, lastp, currentp, pos, rect = eb.getDivRectSetting(panel);
-    if (eb.isEmpty(refresh)) refresh = false;
-    if (!refresh) {
-        if ((w == rect.w) &amp;&amp; (h == rect.h)) {
-            eb.setDivRect(panel, x, y, w, h);
-            return;
-        }
-    }
-    if (eb.isEmpty(w)) w = rect.w;
-    if (eb.isEmpty(h)) h = rect.h;
-    eb.setDivRect(panel, x, y, w, h);
-    if (panel.onSizeChange) panel.onSizeChange(panel, rect, new Rect(x,y,w,h));
-    if (panel.skin != undefined) {
-        var imgW = panel.skinImgW;
-        var imgH = panel.skinImgH;
-        var rx = panel.skinX;
-        var ry = panel.skinY;
-        var rw = panel.skinW;
-        var rh = panel.skinH;
-        if (panel.skinClipMode == "9x") {
-            var dw = w - (imgW - rw);
-            var dh = h - (imgH - rh);
-            var cw = imgW - rx - rw;
-            var ch = imgH - ry - rh;
-            eb.restretchImg(panel.skin[0], 0, 0, 0, 0, 0, 0, 0, 0, rx, ry);
-            eb.restretchImg(panel.skin[1], 0, 0, rx + rw, 0, 0, 0, rx + dw, 0, cw, ry);
-            eb.restretchImg(panel.skin[2], 0, 0, 0, ry + rh, 0, 0, 0, ry + dh, rx, ch);
-            eb.restretchImg(panel.skin[3], 0, 0, rx + rw, ry + rh, 0, 0, rx + dw, ry + dh, cw, ch);
-            eb.restretchImg(panel.skin[4], imgW, imgH, rx, 0, rw, ry, rx, 0, dw, ry);
-            eb.restretchImg(panel.skin[5], imgW, imgH, rx, ry + rh, rw, ch, rx, ry + dh, dw, ch);
-            eb.restretchImg(panel.skin[6], imgW, imgH, 0, ry, rx, rh, 0, ry, rx, dh);
-            eb.restretchImg(panel.skin[7], imgW, imgH, rx + rw, ry, cw, rh, rx + dw, ry, cw, dh);
-            eb.restretchImg(panel.skin[8], imgW, imgH, rx, ry, rw, rh, rx, ry, dw, dh);
-        } else if (panel.skinClipMode == "LR3x") {
-            var w1 = parseInt(h * rx / rh);
-            var w3 = parseInt(h * (imgW - rx - rw) / rh);
-            var w2 = w - w1 - w3;
-            if (w2 <= 0) {
-                w2 = 1;
-                w1 = parseInt(w * w1 / (w3 + w1));
-                w3 = w - w1 - w2;
-            }
-            eb.restretchImg(panel.skin[0], imgW, imgH, 0, 0, rx, rh, 0, 0, w1, h); //left
-            eb.restretchImg(panel.skin[1], imgW, imgH, rx, ry, rw, rh, w1, 0, w2, h); //middle
-            eb.restretchImg(panel.skin[2], imgW, imgH, rx + rw, ry, imgW - rx - rw, rh, w1 + w2, 0, w3, h); //right
-        }
-        if (!eb.isEmpty(panel.label)) {
-            eb.setDivRect(panel.label.parentNode, panel.skinCX, panel.skinCY, w - panel.skinImgW + panel.skinCW, h - panel.skinImgH + panel.skinCH);
-            var cy = parseInt((h - panel.skinImgH + panel.skinCH) / 2);
-            if (panel.label.vAlign == "top") {
-                eb.setDivRect(panel.label, 0, 0, w - panel.skinImgW + panel.skinCW, h * 2);
-            } else if (panel.label.vAlign == "bottom") {
-                eb.setDivRect(panel.label, 0, h - panel.skinImgH + panel.skinCH - h * 2, w - panel.skinImgW + panel.skinCW, h * 2);
-            } else {
-                eb.setDivRect(panel.label, 0, parseInt(cy - h / 2), w - panel.skinImgW + panel.skinCW, h);
-            }
-        }
-        if (!eb.isEmpty(panel._input)) {
-            eb.setDivRect(panel._input, panel.skinCX, panel.skinCY,
-                eb.getDivRect(panel).w - panel.skinImgW + panel.skinCW,
-                eb.getDivRect(panel).h - panel.skinImgH + panel.skinCH);
-            //if (!panel._input.multiLine) panel._input.style.lineHeight = eb.getDivRect(panel._input).h + "px";
-        }
-    } else {
-        if (!eb.isEmpty(panel.label)) {
-            eb.setDivRect(panel.label.parentNode, 0, 0, w, h);
-            eb.setDivRect(panel.label, 0, 0, w, h);
-        }
-    }
-    if (panel.img != undefined) {
-        addImageOnLoad(null, panel.img);
-    }
-    if (panel.layout != undefined) {
-        var totalSize;
-        if (panel.layout == "LayoutX") {
-            totalSize = eb.getDivRect(panel).w;
-        } else {
-            totalSize = eb.getDivRect(panel).h;
-        }
-        var totalHeavy = 0;
-        for (i = 0; i < panel.eeChildren.length; i++) {
-            if (!panel.eeChildren[i].heavyEnabled) {
-                if (panel.layout == "LayoutX") {
-                    totalSize -= eb.getDivRect(panel.eeChildren[i]).w;
-                } else {
-                    totalSize -= eb.getDivRect(panel.eeChildren[i]).h;
-                }
-            } else {
-                totalHeavy += panel.eeChildren[i].heavy;
-            }
-        }
-        lastp = 0; pos = 0;
-        for (i = 0; i < panel.eeChildren.length; i++) {
-            if (panel.eeChildren[i].heavyEnabled) {
-                currentp = panel.eeChildren[i].heavy / totalHeavy * totalSize + lastp;
-                lastp = currentp - parseInt(currentp);
-                if (panel.layout == "LayoutX") {
-                    ee.setRect(panel.eeChildren[i], pos, 0, parseInt(currentp), h);
-                } else {
-                    eb.setDivRect(panel.eeChildren[i], null, null, null, parseInt(currentp));
-                }
-                pos += parseInt(currentp);
-            }
-        }
-        //最终调整位置和大小
-        var leftPos = 0;
-        for (i = 0; i < panel.eeChildren.length; i++) {
-            if (panel.layout == "LayoutX") {
-                ee.setRect(panel.eeChildren[i], leftPos, 0, eb.getDivRect(panel.eeChildren[i]).w, h);
-                leftPos += eb.getDivRect(panel.eeChildren[i]).w;
-            } else {
-                ee.setRect(panel.eeChildren[i], 0, leftPos, w, eb.getDivRect(panel.eeChildren[i]).h);
-                leftPos += eb.getDivRect(panel.eeChildren[i]).h;
-            }
-        }
-    }
-    if (!eb.isEmpty(panel.tableTitle)) {
-        var t = panel.tableTitle;
-        lastp = 0;
-        pos = 0;
-        for (j = 0; j < panel.rowCount; j++) {
-            currentp = lastp + eb.getDivRect(panel).h / panel.visibleRowCount;
-            lastp = currentp - parseInt(currentp);
-            for (i = 0; i < panel.colCount; i++) {
-                ee.setRect(this.getTableCell(panel, i, j), eb.getDivRect(t.eeChildren[i]).x, pos, eb.getDivRect(t.eeChildren[i]).w, parseInt(currentp));
-            }
-            pos += parseInt(currentp);
-        }
-    }
-}
-
-//获取一个控件的文字子组件，例如：可以对返回值进行.style.fontSize操作。
-ee.getLabel = function(panel) {
-    if (!panel.label) return null;
-    return panel.label.rows[0].cells[0];
-}
-
-eb.addEdit = function (div, font, fontSize, fontColor, fontBold, password, multiLine, inputHint) {
-        var input;
-        if (multiLine) {
-            input = document.createElement("textarea");
-        } else {
-            input = document.createElement("input");
-        }
-        if (password) {
-            input.type = "password";
-        }
-        div.appendChild(input);
-        div.style.cursor = "text";
-        input.multiLine = multiLine;
-        input.style.overflow = "hidden";
-        input.style.position = "absolute";
-        input.style.border = "0px";
-        input.style.outline = "0px";
-        input.style.backgroundColor = "transparent";
-        if (!multiLine) input.style.whiteSpace = "nowrap";
-        input.style.fontFamily = "宋体";
-        input.style.fontSize = "9pt";
-        input.style.textAlign = "left";
-        if (!eb.isEmpty(div.skin)) {
-            eb.setDivRect(input, div.skinCX, div.skinCY,
-                eb.getDivRect(div).w - div.skinImgW + div.skinCW,
-                eb.getDivRect(div).h - div.skinImgH + div.skinCH);
-        } else {
-            input.style.width = "100%";
-            input.style.height = "100%";
-            input.style.left = "0px";
-            input.style.top = "0px";
-        }
-        if (!multiLine) {
-            //input.style.lineHeight = eb.getDivRect(input).h + "px";
-        }
-        input.style.fontFamily = font;
-        input.style.fontSize = fontSize;
-        input.style.color = fontColor;
-        input.style.fontWeight = fontBold;
-        if (ee.pureServer) {
-            input.style.backgroundImage = "url(/Res/empty.png)";
-        } else {
-            input.style.backgroundImage = "url(Res/empty.png)";
-        }
-        div._input = input;
-        if (this.isEmpty(inputHint)) inputHint = false;
-        if (inputHint) {
-            div._inputHint = ee.getText(div);
-            this.addEvent(input, "focus", function (event) {
-                var sender = event.target ? event.target : (event.srcElement ? event.srcElement : null);
-                if (sender == null) return;
-                var c = sender.parentNode;
-                ee.setText(c, "");
-            }, false);
-            this.addEvent(input, "blur", function (event) {
-                var sender = event.target ? event.target : (event.srcElement ? event.srcElement : null);
-                if (sender == null) return;
-                var c = sender.parentNode;
-                if (ee.getEditText(c).length <= 0) {
-                    ee.setText(c, c._inputHint);
-                }
-            }, false);
-        }
-    }]]></onPageCreate>
+</onPageCreate>
       <pageHead><![CDATA[<meta name="viewport" content="width=450,user-scalable=no" />]]></pageHead>
       <pageTitle>拳头聊天室· 一个能自由说话的聊天网站</pageTitle>
       <top>0</top>
-      <width>1087</width>
+      <width>1083</width>
     </control>
     <control type="Panel" pathname="/divRoot/panel9">
       <dockX>center</dockX>
       <dockY>center</dockY>
       <height>651</height>
-      <heightRatio>1.01401869158878</heightRatio>
+      <heightRatio>0.8178391959799</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>340</left>
-      <leftRatio>0.126373626373626</leftRatio>
+      <left>338</left>
+      <leftRatio>0.31278748850046</leftRatio>
       <note>p1</note>
       <onCreate>sender.currentPageName = "";
 sender.changePage = function(pageName) {
@@ -308,10 +68,10 @@ sender.changePage = function(pageName) {
 }
 </onCreate>
       <sizeRatio>1.5995085995086</sizeRatio>
-      <top>72</top>
-      <topRatio>-0.00623052959501558</topRatio>
+      <top>67</top>
+      <topRatio>0.0904522613065327</topRatio>
       <width>407</width>
-      <widthRatio>0.745421245421245</widthRatio>
+      <widthRatio>0.37442502299908</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel9/panel1">
       <dockX>fill</dockX>
@@ -1588,15 +1348,15 @@ sender._input.addEventListener("keydown", function(event) {
       <backgroundImgMode>stretch</backgroundImgMode>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>796</height>
+      <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName>reg</layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>//</onClick>
-      <sizeRatio>1.17582417582418</sizeRatio>
+      <sizeRatio>0.732290708371665</sizeRatio>
       <top>0</top>
-      <width>1087</width>
+      <width>1083</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel21">
@@ -1608,15 +1368,15 @@ sender._input.addEventListener("keydown", function(event) {
       <dockX>center</dockX>
       <dockY>center</dockY>
       <height>607</height>
-      <heightRatio>0.945482866043614</heightRatio>
+      <heightRatio>0.762562814070352</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>353</left>
-      <leftRatio>0.152014652014652</leftRatio>
+      <left>351</left>
+      <leftRatio>0.324747010119595</leftRatio>
       <sizeRatio>1.59736842105263</sizeRatio>
-      <top>94</top>
-      <topRatio>0.0264797507788162</topRatio>
+      <top>89</top>
+      <topRatio>0.118090452261307</topRatio>
       <width>380</width>
-      <widthRatio>0.695970695970696</widthRatio>
+      <widthRatio>0.349586016559338</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel21/panel22">
       <backgroundImg>i087_01001.png</backgroundImg>
@@ -1973,7 +1733,7 @@ ee.showAni(ee.getControl("panel21"), 1);
       <backgroundImgMode>stretch</backgroundImgMode>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <height>796</height>
+      <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
       <layerVisible>false</layerVisible>
@@ -2009,9 +1769,9 @@ sender.close = function() {
         }
     }
 }]]></onCreate>
-      <sizeRatio>1.17582417582418</sizeRatio>
+      <sizeRatio>0.732290708371665</sizeRatio>
       <top>0</top>
-      <width>1087</width>
+      <width>1083</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel344">
@@ -2024,11 +1784,11 @@ sender.close = function() {
       <dockY>center</dockY>
       <ee_LocalName>a7</ee_LocalName>
       <height>211</height>
-      <heightRatio>0.328660436137072</heightRatio>
+      <heightRatio>0.265075376884422</heightRatio>
       <layerName>通用提示窗口</layerName>
       <layerVisible>false</layerVisible>
-      <left>364</left>
-      <leftRatio>0.17032967032967</leftRatio>
+      <left>362</left>
+      <leftRatio>0.334866605335787</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -2113,10 +1873,10 @@ if ("ontouchstart" in window) {
     });
 }</onCreate>
       <sizeRatio>0.587743732590529</sizeRatio>
-      <top>292</top>
-      <topRatio>0.334890965732087</topRatio>
+      <top>287</top>
+      <topRatio>0.366834170854271</topRatio>
       <width>359</width>
-      <widthRatio>0.657509157509158</widthRatio>
+      <widthRatio>0.330266789328427</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel344/panel345">
       <ee_LocalName>c_text</ee_LocalName>
@@ -2330,11 +2090,11 @@ g5.initButtonV3(sender,[
       <dockY>center</dockY>
       <ee_LocalName>a6</ee_LocalName>
       <height>305</height>
-      <heightRatio>0.475077881619938</heightRatio>
+      <heightRatio>0.383165829145729</heightRatio>
       <layerName>通用确认窗口</layerName>
       <layerVisible>false</layerVisible>
-      <left>358</left>
-      <leftRatio>0.161172161172161</leftRatio>
+      <left>356</left>
+      <leftRatio>0.329346826126955</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
 </onAni2End>
       <onClick>        window.event? window.event.cancelBubble = true : event.stopPropagation();
@@ -2415,10 +2175,10 @@ if ("ontouchstart" in window) {
 
 </onCreate>
       <sizeRatio>0.824324324324324</sizeRatio>
-      <top>245</top>
-      <topRatio>0.261682242990654</topRatio>
+      <top>240</top>
+      <topRatio>0.307788944723618</topRatio>
       <width>370</width>
-      <widthRatio>0.677655677655678</widthRatio>
+      <widthRatio>0.340386384544618</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel257/panel258">
       <ee_LocalName>c_text</ee_LocalName>
@@ -2669,7 +2429,7 @@ g5.initButtonV3(sender,[
       <dockX>fill</dockX>
       <dockY>fill</dockY>
       <ee_LocalName>popup1</ee_LocalName>
-      <height>796</height>
+      <height>785</height>
       <heightRatio>1</heightRatio>
       <layerName>主界面弹窗</layerName>
       <layerVisible>false</layerVisible>
@@ -2751,9 +2511,9 @@ if (sender.v_closeCount>=4) {
 
 ]]></onMouseMove>
       <onMouseUp>sender.close();</onMouseUp>
-      <sizeRatio>1.17582417582418</sizeRatio>
+      <sizeRatio>0.732290708371665</sizeRatio>
       <top>0</top>
-      <width>1087</width>
+      <width>1083</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel68/panel323">
@@ -2764,11 +2524,11 @@ if (sender.v_closeCount>=4) {
       <bgColorEnabled>true</bgColorEnabled>
       <ee_LocalName>p4</ee_LocalName>
       <height>205</height>
-      <heightRatio>0.319314641744548</heightRatio>
+      <heightRatio>0.257537688442211</heightRatio>
       <layerName>通用弹出菜单</layerName>
       <layerVisible>false</layerVisible>
       <left>375</left>
-      <leftRatio>0.686813186813187</leftRatio>
+      <leftRatio>0.344986200551978</leftRatio>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
       <onCreate><![CDATA[sender.style.borderRadius = "10px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
@@ -2869,9 +2629,9 @@ sender.renderItem = function(root) {
 ]]></onCreate>
       <sizeRatio>0.776515151515151</sizeRatio>
       <top>18</top>
-      <topRatio>0.0280373831775701</topRatio>
+      <topRatio>0.0226130653266332</topRatio>
       <width>264</width>
-      <widthRatio>0.483516483516484</widthRatio>
+      <widthRatio>0.242870285188592</widthRatio>
     </control>
   </controls>
   <taskSet count="7">
