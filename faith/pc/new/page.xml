@@ -1619,6 +1619,7 @@ sender._input.addEventListener("keydown", function(event) {
     <control type="Edit" pathname="/divRoot/panel9/panel77/edit15">
       <backgroundSkin>empty</backgroundSkin>
       <dockX>center</dockX>
+      <ee_LocalName>c_email</ee_LocalName>
       <fontColor>808080</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
@@ -1706,31 +1707,15 @@ sender._input.addEventListener("keydown", function(event) {
       <layerVisible>false</layerVisible>
       <left>209</left>
       <leftRatio>0.513513513513513</leftRatio>
-      <onClick>var p1 = ee.getEditText(ee.getControl("edit11"));
-var p2 = ee.getEditText(ee.getControl("edit12"));
-if (p1!=p2) {
-    g5.alert1("密码错误", "您两次输入的密码不一致，请重新输入");
+      <onClick>//userName, nickName, password, regEmail, onComplete
+regV3.userName = "test055";
+regV3.nickName = "test055";
+regV3.regEmail = ee.getEditText(g5.p1.a7.c_email);
+if (!g5.isValidEmail(regV3.regEmail)) {
+    g5.alert1("提示", "对不起，您输入的电子邮件地址无效，请重新输入", null, null);
     return;
 }
-
-regV2.userName = checkUserName.userName;
-regV2.nickName = checkNickName.nickName;
-regV2.password = p1;
-regV2.onComplete = function() {
-    g5.alert1("注册成功", "欢迎加入拳头聊天室！", 
-        function() {
-            login.username = regV2.userName;
-            login.password = regV2.password;
-            login();
-        },
-        function() {
-            login.username = regV2.userName;
-            login.password = regV2.password;
-            login();
-        }
-    );
-}
-regV2();
+g5.isValidEmail(email)
 
 </onClick>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
@@ -4358,7 +4343,7 @@ if (!eb.isEmpty(regV3.onComplete)) {
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="17">
+  <g5Items count="18">
     <item name="p1" type="10">
       <varValue>ee.getControl("panel9");</varValue>
       <functionParam />
@@ -4907,6 +4892,12 @@ if (pn=="/login") {
       <functionCode>var reg = new RegExp("(^|&amp;)"+ paramName +"=([^&amp;]*)(&amp;|$)");
 var r = window.location.search.substr(1).match(reg);
 if(r!=null)return  unescape(r[2]); return null;</functionCode>
+    </item>
+    <item name="isValidEmail" type="20">
+      <varValue />
+      <functionParam>email</functionParam>
+      <functionCode>var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+return regex.test(email);</functionCode>
     </item>
   </g5Items>
 </page>
