@@ -37834,61 +37834,6 @@ if ((needRefresh == "F") &amp;&amp; (lastId != 0)) {
 }
 
 sql =
-    "exec [twitterAddCount] " + topicId + ",'click'," + userId + ",'" + es.getRemoteIPAddress() + "'; " +
-    "SELECT   dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
-    "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
-    "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.clickCount, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
-    "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, dbo.tContent.forceTopSn, CASE WHEN forwardLink.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS isForward, CASE WHEN likeList.id IS NULL THEN 0 ELSE 1 END AS isLike,  " +
-    "                CASE WHEN unlikeList.id IS NULL THEN 0 ELSE 1 END AS isUnlike, tContent_1.id AS reId, DATEDIFF(second,  " +
-    "                tContent_1.regDatetime, GETDATE()) AS reSeconds, tContent_1.status AS reStatus,  " +
-    "                tContent_1.uplinkType AS reUplinkType, tContent_1.uplinkId AS reUplinkId, tContent_1.[content] AS reContent,  " +
-    "                tContent_1.photo1 AS rePhoto1, tContent_1.photo2 AS rePhoto2, tContent_1.photo3 AS rePhoto3,  " +
-    "                tContent_1.photo4 AS rePhoto4, tContent_1.clickCount AS reClickCount, tContent_1.reCount AS reReCount, tContent_1.fwCount AS reFwCount,  " +
-    "                tContent_1.likeCount AS reLikeCount, tContent_1.unlikeCount AS reUnlikeCount, tContent_1.forceTopSn as reForceTopSn, CASE WHEN forwardLink_1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS reIsForward, CASE WHEN likeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsLike,  " +
-    "                CASE WHEN unlikeList_1.id IS NULL THEN 0 ELSE 1 END AS reIsUnlike, dbo.tContent.userId AS uId,  " +
-    "                dbo.userInfo.status AS uStatus, convert(varchar, dbo.userInfo.regDatetime, 120) AS uRegDatetime,  " +
-    "                dbo.userInfo.lastAccessTime AS uLastAccessTime, dbo.userInfo.userName AS uUserName,  " +
-    "                dbo.userInfo.mobile AS uMobile, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote,  " +
-    "                dbo.userInfo.photo AS uPhoto, dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage,  " +
-    "                dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, CASE WHEN uFollow.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS uIsFollow, CASE WHEN ublockList.id IS NULL THEN 0 ELSE 1 END AS uIsBlock1,  " +
-    "                CASE WHEN ublockList1.id IS NULL THEN 0 ELSE 1 END AS uIsBlock2, dbo.userInfo.email AS uEmail,  " +
-    "                tContent_1.userId AS rId, userInfo_1.status AS rStatus, convert(varchar, userInfo_1.regDatetime, 120) AS rRegDatetime,  " +
-    "                userInfo_1.lastAccessTime AS rLastAccessTime, userInfo_1.userName AS rUserName, userInfo_1.mobile AS rMobile,  " +
-    "                userInfo_1.nickName AS rNickName, userInfo_1.note AS rNote, userInfo_1.photo AS rPhoto,  " +
-    "                userInfo_1.titleBg AS rTitleBg, userInfo_1.homePage AS rHomePage, userInfo_1.followCount AS rFollowCount,  " +
-    "                userInfo_1.fansCount AS rFansCount, CASE WHEN rFollow.id IS NULL THEN 0 ELSE 1 END AS rIsFollow, " +
-    "                CASE WHEN rBlockList.id IS NULL THEN 0 ELSE 1 END AS rIsBlock1, CASE WHEN rblockList1.id IS NULL  " +
-    "                THEN 0 ELSE 1 END AS rIsBlock2, userInfo_1.email AS rEmail, " +
-    "                CASE WHEN uHideList.id IS NULL THEN 0 ELSE 1 END AS uIsHide, " +
-    "                CASE WHEN rHideList.id IS NULL THEN 0 ELSE 1 END AS rIsHide " +
-    "FROM      dbo.blockList AS rBlockList FULL OUTER JOIN " +
-    "                dbo.blockList AS rBlockList1 RIGHT OUTER JOIN " +
-    "                dbo.userInfo AS userInfo_1 LEFT OUTER JOIN " +
-    "                dbo.follow AS rFollow ON userInfo_1.id = rFollow.followId AND rFollow.userId = " + userId + " ON  " +
-    "                rBlockList1.userId = userInfo_1.id AND rBlockList1.blockUserId = " + userId + " RIGHT OUTER JOIN " +
-    "                dbo.tContent AS tContent_1 ON userInfo_1.id = tContent_1.userId RIGHT OUTER JOIN " +
-    "                dbo.blockList AS uBlockList1 RIGHT OUTER JOIN " +
-    "                dbo.userInfo ON uBlockList1.userId = dbo.userInfo.id AND uBlockList1.blockUserId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.blockList AS uBlockList ON dbo.userInfo.id = uBlockList.blockUserId AND uBlockList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.follow AS uFollow ON dbo.userInfo.id = uFollow.followId AND uFollow.userId = " + userId + " RIGHT OUTER JOIN " +
-    "                dbo.forwardLink AS forwardLink_1 RIGHT OUTER JOIN " +
-    "                dbo.tContent LEFT OUTER JOIN " +
-    "                dbo.likeList AS likeList_1 ON dbo.tContent.uplinkId = likeList_1.contentId AND likeList_1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.likeList ON dbo.tContent.id = dbo.likeList.contentId AND dbo.likeList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.unlikeList AS unlikeList_1 ON dbo.tContent.uplinkId = unlikeList_1.contentId AND  " +
-    "                unlikeList_1.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.unlikeList ON dbo.tContent.id = dbo.unlikeList.contentId AND dbo.unlikeList.userId = " + userId + " LEFT OUTER JOIN " +
-    "                dbo.forwardLink ON dbo.tContent.id = dbo.forwardLink.contentId AND dbo.forwardLink.userId = " + userId + " ON  " +
-    "                forwardLink_1.contentId = dbo.tContent.uplinkId AND forwardLink_1.userId = " + userId + " ON  " +
-    "                dbo.userInfo.id = dbo.tContent.userId ON tContent_1.id = dbo.tContent.uplinkId ON  " +
-    "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
-    "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + userId + " " +
-    "                left outer join hideList as rHideList on tContent_1.userId = rHideList.hideId and rHideList.userId = " + userId + " " +
-    "WHERE dbo.tContent.id = " + topicId + " ; " +
-    
     "declare @contentUID as bigint; " +
     "select @contentUID = userId from tContent where id = " + topicId + "; " +
     "SELECT   dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
@@ -37945,7 +37890,7 @@ sql =
     "                rBlockList.blockUserId = userInfo_1.id AND rBlockList.userId = " + userId + " " +
     "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + userId + " " +
     "                left outer join hideList as rHideList on tContent_1.userId = rHideList.hideId and rHideList.userId = " + userId + " " +
-    "WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' " +
+    "WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' and dbo.tContent.id>" + lastId + " " +
     "ORDER BY isMe,isPoster,dbo.tContent.id DESC; ";
 
 sqlResult = db.executeQuery("DB", sql);
@@ -37961,43 +37906,16 @@ eio.appendDataSet(sqlResult,
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide",
     0, 99999);
-db.nextResult(sqlResult);
-eio.appendDataSet(sqlResult,
-    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,clickCount,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
-    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reClickCount,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide",
-    0, 99999);
 
-sql = "exec [twitterSource] " + userId + "," + topicId;
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    return;
-}
-eio.appendDataSet(sqlResult,
-    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,clickCount,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
-    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reClickCount,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide",
-    0, 99999);
-while (db.nextResult(sqlResult)) {
-eio.appendDataSet(sqlResult,
-    "id,seconds,status,uplinkType,uplinkId,content,photo1,photo2,photo3,photo4,clickCount,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
-    "reId,reSeconds,reStatus,reUplinkType,reUplinkId,reContent,rePhoto1,rePhoto2,rePhoto3,rePhoto4,reClickCount,reReCount,reFwCount,reLikeCount,reUnlikeCount,reIsForward,reIsLike,reIsUnlike,reForceTopSn," +
-    "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
-    "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide",
-    0, 99999);
-}]]></script2>
+]]></script2>
       <script3>if (eio.readString8() != "T") {
     showTopicRenew.busy = false;
     return;
 }
 var tempData;
-showTopicRenew.data = eio.readDataSet();
-tempData = eio.readDataSet();
-showTopicRenew.data.appendDataset(tempData);
+showTopicRenew.data1 = eio.readDataSet();
 if (showTopicRenew.onComplete) {
-    showTopicRenew.onComplete(showTopicRenew.data, showTopicRenew.backTrace);
+    showTopicRenew.onComplete(showTopicRenew.data1);
 }
 showTopicRenew.busy = false;
 
