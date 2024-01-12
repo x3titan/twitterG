@@ -36530,7 +36530,8 @@ eio.appendString16(updateHomepage.contentId+"");
 eio.appendString16(updateHomepage.isForward?"T":"F");
 </script1>
       <script2><![CDATA[var token = eio.readString16();
-var lastId = parseInt(eio.readString16());
+var lastIdStr = eio.readString16();
+var lastId = parseInt(lastIdStr);
 var isForward = eio.readString16()=="T"?true:false;
 var sql,sqlResult;  
 
@@ -36550,6 +36551,13 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 } 
 var userName =db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
+
+if (isNaN(lastId)) {
+    eio.appendString8("F");
+    es.logWarning("lastId is NaN(" + lastIdStr + "), userName=" + userName + ",isForward=" + isForward);
+    return;
+}
+
 var sql1 = "";
 if (lastId == 0) {
 } else if (isForward) {
