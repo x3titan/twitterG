@@ -8945,80 +8945,55 @@ sender.refreshNew = function() {
     if (g5.currentPageIndex != 8) return;
     showTopicRenew.topicId = this.v_contentId;
     showTopicRenew.lastId = 0;
-    for (var i=0; i<g5.p2.p9.c_tabRoot.p1.v_items.len; i++) {
-        if (g5.p2.p9.c_tabRoot.p1.v_items[i].v_content.id > showTopicRenew.lastId) {
-            showTopicRenew.lastId = g5.p2.p9.c_tabRoot.p1.v_items[i].v_content.id;
+    for (var i=0; i<g5.p2.p9.c_tabRoot.p1.v_items.length; i++) {
+        if (parseInt(g5.p2.p9.c_tabRoot.p1.v_items[i].v_content.id) > showTopicRenew.lastId) {
+            showTopicRenew.lastId = parseInt(g5.p2.p9.c_tabRoot.p1.v_items[i].v_content.id);
         }
     }
     showTopicRenew.onComplete = function(data1) {
         if (g5.currentPageIndex != 8) return;
-        if (showTopicRenew.topicId != this.v_contentId) return;
+        if (showTopicRenew.topicId != sender.v_contentId) return;
         if (data1.rowCount > 0) {
-            
-            return;
-            
-            //for (i=0; i<sender.c_tabRoot.p1.v_items.length; i++) ee.removeControl(sender.c_tabRoot.p1.v_items[i]);
-            //sender.c_tabRoot.p1.v_items = new Array();
-            var item = null;
-            var scrollTop = 0;
-            var reCount = 0;
-            var rootUserId = 0;
-            for (i=0; i< data1.rowCount; i++) {
-                uType = " "; dType = " ";
-                if ((i==0) &amp;&amp; (datasetBk.rowCount>0)) {
-                    uType="T"; dType = " ";
+            var root = sender.c_tabRoot.p1;
+            var cy = 0;
+            var itemWidth = eb.getDivRect(root).w;
+            var item = createPanel(root, "page8_" + data1.getData(0,0), "", 0, cy, itemWidth, 5);
+            g5.loadTwitterRecord(item, data1, 0);
+            var isPoster = item.v_userInfo.userName == sender.v_userInfo.userName;
+            var isMe = item.v_userInfo.userName == g5.myUserInfo.userName;
+            var i = 0, posterPos = -1, commonPos = root.v_items.length;
+            for (i=0; i<root.v_items.length; i++) {
+                if (posterPos == -1) {
+                    if (root.v_items[i].v_userInfo.userName == sender.v_userInfo.userName) {
+                        posterPos = i;
+                    }
                 }
-                if (sender.v_preShow &amp;&amp; i==0) {
-                    item = preShowItem;
-                    ee.setRect(item,null,cy,null,null);
-                } else {
-                    if (i==0) dType += "x";
-                    item = createPanel(root, "page8_" + data1.getData(0,i), "", 0, cy, itemWidth, 5);
-                    g5.loadTwitterRecord(item, data1, i);
-                    if (i>0) item.v_notDisplayRe = true;
-                    item.v_mode = uType + dType;
-                    item.v_forceDisplay = sender.v_forceDisplay;
-                    g5.renderTwitter(item);        
-                }
-                if (i==0) {
-                    sender.v_content = item.v_content;
-                    sender.v_reContent = item.v_reContent;
-                    sender.v_userInfo = item.v_userInfo;
-                    sender.v_reUserInfo = item.v_reUserInfo;
-                    scrollTop = cy - eb.getDivRect(g5.p4).h + 1;
-                    rootUserId = item.v_userInfo.id;
-                    sender.v_items.push(item);
-                    ee.changeParent(item, item.parentNode, sender.v_items.length-1);
-                } else {
-                    sender.c_tabRoot.p1.v_items.push(item);
-                    reCount++;
-                }
-                cy += eb.getDivRect(item).h;    
-                if (i==0) {
-                    ee.setRect(sender.c_tabRoot,null,cy,null,null);
-                    cy += eb.getDivRectSetting(sender.c_tabRoot).h;
-                    root = sender.c_tabRoot.p1;
-                    cy = 0;
+                if ((root.v_items[i].v_userInfo.userName != sender.v_userInfo.userName) &amp;&amp;
+                    (item.v_userInfo.userName != g5.myUserInfo.userName)) {
+                    commonPos = i;
+                    break;
                 }
             }
-            document.documentElement.scrollTop = scrollTop;
-            setTimeout(function() {
-                document.documentElement.scrollTop = scrollTop;
-            }, 10);
-            eb.processDock();
-            
-            sender.c_tabRoot.p1.setCount(reCount);
-            sender.c_tabRoot.p2.setCount(sender.v_content.fwCount);
-            sender.c_tabRoot.p3.setCount(parseInt(sender.v_content.likeCount));
-            sender.c_tabRoot.p4.setCount(parseInt(sender.v_content.unlikeCount));
-            sender.c_tabRoot.changePage(-1);
-            sender.c_tabRoot.changePage(1);
-            showTopic.needRefresh = false;
-            sender.loadComplete = true;
-            //sender.c_tabRoot.p2.show(sender.v_content.id, true);
-            sender.c_tabRoot.p3.loadFromDb(sender.v_content.id, false);  
-            sender.c_tabRoot.p4.loadFromDb(sender.v_content.id, false);
-            sender.refreshSearchText();        
+            if (posterPos == -1) posterPos = commonPos;
+            if (isMe) {
+                i = 0;
+            } else if (isPoster) {
+                i = posterPos;
+            } else {
+                i = commonPos;
+            }
+            item.v_notDisplayRe = true;
+            item.v_mode = "   ";
+            item.v_forceDisplay = sender.v_forceDisplay;
+            g5.renderTwitter(item);
+            if (root.v_items.length > 0) {
+                if (i<root.v_items.length) {
+                    ee.changeParent(item, root, i);
+                }
+            }
+            root.v_items.splice(i, 0, item);
+            sender.c_tabRoot.changePage(sender.c_tabRoot.currentPageIndex);
+            sender.c_tabRoot.p1.setCount(parseInt(sender.v_content.reCount) + 1);
         }
         
         
@@ -37927,7 +37902,7 @@ var userId = db.getString(sqlResult,"id");
 sql =
     "declare @contentUID as bigint; " +
     "select @contentUID = userId from tContent where id = " + topicId + "; " +
-    "SELECT   dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
+    "SELECT  TOP (1) dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
     "                dbo.tContent.status, dbo.tContent.uplinkType, dbo.tContent.uplinkId, dbo.tContent.[content], dbo.tContent.photo1,  " +
     "                dbo.tContent.photo2, dbo.tContent.photo3, dbo.tContent.photo4, dbo.tContent.clickCount, dbo.tContent.reCount, dbo.tContent.fwCount,  " +
     "                dbo.tContent.likeCount, dbo.tContent.unlikeCount, dbo.tContent.forceTopSn, CASE WHEN forwardLink.id IS NULL  " +
@@ -37982,7 +37957,7 @@ sql =
     "                left outer join hideList as uHideList on tContent.userId = uHideList.hideId and uHideList.userId = " + userId + " " +
     "                left outer join hideList as rHideList on tContent_1.userId = rHideList.hideId and rHideList.userId = " + userId + " " +
     "WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' and dbo.tContent.id>" + lastId + " " +
-    "ORDER BY isMe,isPoster,dbo.tContent.id DESC; ";
+    "ORDER BY isMe,isPoster,dbo.tContent.id; ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
