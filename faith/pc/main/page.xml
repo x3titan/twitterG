@@ -42210,6 +42210,8 @@ updateMain.busy = true;
 eio.appendString16(g5.token);
 eio.appendInt32(updateMain.cIds.length);
 for (var i=0; i<updateMain.cIds.length; i++) eio.appendString8(updateMain.cIds[i]+"");
+eio.appendString8(g5.chatAlert.lastId + "");
+
 
 ]]></script1>
       <script2><![CDATA[var token = eio.readString16();
@@ -42218,6 +42220,7 @@ var i, cIds = new Array();
 for (i=0; i<len; i++) {
     cIds.push(eio.readString8());
 }
+var chatAlertLastId = parseInt(eio.readString8());
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -43343,7 +43346,6 @@ data: [
     </item>
     <item name="chatAlert" type="10">
       <varValue>{
-langList: ["zh-CN","en"],
 lastId: "",
 
 init: function() {
