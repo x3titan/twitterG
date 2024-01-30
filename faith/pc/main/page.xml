@@ -42221,6 +42221,7 @@ for (i=0; i<len; i++) {
     cIds.push(eio.readString8());
 }
 var chatAlertLastId = parseInt(eio.readString8());
+if (isNaN(chatAlertLastId)) chatAlertLastId = 0;
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -42256,6 +42257,20 @@ sql = sqlCount +
     " WHERE " + sql1 + "; " +
     "exec getPromptCount " + myUserId + "; " +
     "exec chat1v1GetNewCount " + myUserId + "; ";
+if (chatAlertLastId==0) {
+    sql += "select 0 as c;";
+} else {
+    sql +=
+        "SELECT   COUNT(dbo.chatRoomData.id) AS c " +
+        "FROM      dbo.chatRoomData INNER JOIN " +
+        "                dbo.chatRoomInfo ON dbo.chatRoomData.roomId = dbo.chatRoomInfo.id " +
+        "WHERE   (dbo.chatRoomInfo.creatorId = " + myUserId + ") AND (dbo.chatRoomData.id > " + chatAlertLastId + "); ";
+}
+sql +=
+    "SELECT   ISNULL(MAX(dbo.chatRoomData.id), 0) AS c " +
+    "FROM      dbo.chatRoomData INNER JOIN " +
+    "                dbo.chatRoomInfo ON dbo.chatRoomData.roomId = dbo.chatRoomInfo.id " +
+    "WHERE   dbo.chatRoomInfo.creatorId = " + myUserId + "; ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -42274,6 +42289,14 @@ eio.appendString16(db.getString(sqlResult,"c"));
 db.nextResult(sqlResult);
 db.read(sqlResult);
 eio.appendString16(db.getInt32(sqlResult,"newCount") + "");
+
+db.nextResult(sqlResult);
+db.read(sqlResult);
+eio.appendString8(db.getInt32(sqlResult,"c") + "");
+
+db.nextResult(sqlResult);
+db.read(sqlResult);
+eio.appendString8(db.getInt32(sqlResult,"c") + "");
 
 
 
