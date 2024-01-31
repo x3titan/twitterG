@@ -42264,13 +42264,15 @@ if (chatAlertLastId==0) {
         "SELECT   COUNT(dbo.chatRoomData.id) AS c " +
         "FROM      dbo.chatRoomData INNER JOIN " +
         "                dbo.chatRoomInfo ON dbo.chatRoomData.roomId = dbo.chatRoomInfo.id " +
-        "WHERE   (dbo.chatRoomInfo.creatorId = " + myUserId + ") AND (dbo.chatRoomData.id > " + chatAlertLastId + "); ";
+        "WHERE   (dbo.chatRoomInfo.creatorId = " + myUserId + ") " +
+        "   AND (dbo.chatRoomInfo.roomType = 'DEF') " +
+        "   AND (dbo.chatRoomData.id > " + chatAlertLastId + "); ";
 }
 sql +=
     "SELECT   ISNULL(MAX(dbo.chatRoomData.id), 0) AS c " +
     "FROM      dbo.chatRoomData INNER JOIN " +
     "                dbo.chatRoomInfo ON dbo.chatRoomData.roomId = dbo.chatRoomInfo.id " +
-    "WHERE   dbo.chatRoomInfo.creatorId = " + myUserId + "; ";
+    "WHERE   (dbo.chatRoomInfo.creatorId = " + myUserId + ") AND (dbo.chatRoomInfo.roomType = 'DEF'); ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -42292,11 +42294,11 @@ eio.appendString16(db.getInt32(sqlResult,"newCount") + "");
 
 db.nextResult(sqlResult);
 db.read(sqlResult);
-eio.appendString8(db.getInt32(sqlResult,"c") + "");
+eio.appendString8(db.getString(sqlResult,"c"));
 
 db.nextResult(sqlResult);
 db.read(sqlResult);
-eio.appendString8(db.getInt32(sqlResult,"c") + "");
+eio.appendString8(db.getString(sqlResult,"c"));
 
 
 
@@ -42333,6 +42335,10 @@ if (updateMain.chat1v1NewCount != newCount) {
     g5.p2.p13.v_needRefresh = true;
     g5.p2.p13.showAlert(updateMain.chat1v1NewCount);
 }
+
+g5.chatAlert.newCount = parseInt(eio.readString8());
+g5.chatAlert.dbLastId = eio.readString8();
+console.log("newCount=" + g5.chatAlert.newCount + ", g5.chatAlert.dbLastId=" + g5.chatAlert.dbLastId);
 
 if (!eb.isEmpty(updateMain.onComplete)) {
     updateMain.onComplete(updateMain.dataset);
@@ -43370,6 +43376,8 @@ data: [
     <item name="chatAlert" type="10">
       <varValue>{
 lastId: "",
+dbLastId: "",
+newCount: 0,
 
 init: function() {
     var a = eb.getCookie("chatLastId");
@@ -43378,10 +43386,15 @@ init: function() {
         eb.setCookie("chatLastId", a);
     }
     this.lastId = a;
+    this.dbLastId = a;
 },
 
-getCurrentLangIndex: function() {
+clearAlert: function() {
+    this.lastId = this.dbLastId;
+    this.newCount = 0;
+    eb.setCookie("chatLastId", this.lastId);
 },
+
 }</varValue>
       <functionParam />
       <functionCode />
