@@ -926,6 +926,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.993630573248408</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.271985494106981</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -1250,9 +1251,9 @@ sender.c_alert3 = null;
 sender.c_alert4 = null;
 sender.showAlert = function(value) {
     var button1 = g5.p1.p1.c_buttons[0];
-    var button2 = ee.getControl("panel210");
-    var button3 = ee.getControl("panel556");
-    var button4 = ee.getControl("panel565");
+    var button2 = g5.p1.p2.c_buttons[0];
+    var button3 = g5.p1.p3.c_buttons[0];
+    var button4 = g5.popBlack.a9.c_buttons[0];
     var r2 = eb.getDivRectSetting(button2);
     var r3 = eb.getDivRectSetting(button3);
     var c;
@@ -2653,6 +2654,7 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -3726,6 +3728,7 @@ g5.initButtonV3(sender,[
       <ee_LocalName>p2sub</ee_LocalName>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p2PersonSub</note>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -4128,6 +4131,7 @@ sender.resize = function() {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[  p2->聊天室]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.v_fitInner = true;
 </onCreate>
@@ -26158,7 +26162,6 @@ g5.initButtonV3(sender,[
       <height>571</height>
       <heightRatio>0.727388535031847</heightRatio>
       <layerName>===P1===</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>ee.setVisible(sender, true);
 
@@ -27204,7 +27207,6 @@ sender.style.borderRadius = "50%";
       <height>571</height>
       <heightRatio>1</heightRatio>
       <layerName>手机底部菜单</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.c_buttons = new Array();
 sender.c_buttons.push(ee.getControl("panel556"));
@@ -27256,7 +27258,6 @@ sender.refresh = function() {
       <dockY>fill</dockY>
       <height>571</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.03442028985507</sizeRatio>
       <top>0</top>
@@ -27269,7 +27270,6 @@ sender.refresh = function() {
       <fieldCount>4</fieldCount>
       <height>60</height>
       <heightRatio>0.10507880910683</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.108695652173913</sizeRatio>
       <top>255</top>
@@ -27281,7 +27281,6 @@ sender.refresh = function() {
       <backgroundColor>f0f0f0</backgroundColor>
       <height>60</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.434782608695652</sizeRatio>
       <top>0</top>
@@ -27298,7 +27297,6 @@ sender.refresh = function() {
       <hAlign>left</hAlign>
       <height>52</height>
       <heightRatio>0.866666666666667</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>43</left>
       <leftRatio>0.311594202898551</leftRatio>
       <onClick>g5.p1.p3.f_click(sender);
@@ -32891,7 +32889,16 @@ eb.initMouseEvent(sender);
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
-      <onCreate><![CDATA[sender.show = function() {
+      <onCreate><![CDATA[sender.c_buttons = new Array();
+sender.c_buttons.push(ee.getControl("panel565"));
+sender.c_buttons.push(ee.getControl("panel571"));
+sender.c_buttons.push(ee.getControl("panel566"));
+sender.c_buttons.push(ee.getControl("panel567"));
+sender.c_buttons.push(ee.getControl("panel56"));
+sender.c_buttons.push(ee.getControl("panel569"));
+sender.c_buttons.push(ee.getControl("panel570"));
+
+sender.show = function() {
     this.refresh();
     ee.setVisible(sender, true);
     ee.setVisible(sender.parentNode, true);
@@ -36005,6 +36012,7 @@ g5.myUserInfo.loadFromDataset(eio.readDataSet(),0,0);
 g5.myUserInfo.follow = "1";
 g5.myUserInfo.isFollow = true;
 
+g5.chatAlert.init();
 g5.refreshUserInfo();
 g5.p2.p1.init();
 g5.processUrl();   
@@ -42337,7 +42345,7 @@ if (updateMain.chat1v1NewCount != newCount) {
 }
 
 g5.chatAlert.newCount = parseInt(eio.readString8());
-g5.chatAlert.dbLastId = eio.readString8();
+g5.chatAlert.setDbLastId(eio.readString8());
 console.log("newCount=" + g5.chatAlert.newCount + ", g5.chatAlert.dbLastId=" + g5.chatAlert.dbLastId);
 
 if (!eb.isEmpty(updateMain.onComplete)) {
@@ -43375,24 +43383,35 @@ data: [
     </item>
     <item name="chatAlert" type="10">
       <varValue>{
-lastId: "",
+lastId: "NA",
 dbLastId: "",
 newCount: 0,
+enabled: false,
+token: "",
 
 init: function() {
-    var a = eb.getCookie("chatLastId");
-    if (a == null) {
-        a = "0";
-        eb.setCookie("chatLastId", a);
+    this.token = "U" + g5.myUserInfo.id + "chatLastId";
+    var a = eb.getCookie(this.token);
+    if ((a == null) || (a == "")) {
+        a = "NA";
+        eb.setCookie(this.token, a);
     }
     this.lastId = a;
     this.dbLastId = a;
+    this.enabled = true;
+},
+
+setDbLastId: function(value) {
+    if (!this.enabled) return;
+    this.dbLastId = value;
+    if (this.lastId == "NA") this.clearAlert();
 },
 
 clearAlert: function() {
+    if (!this.enabled) return;
     this.lastId = this.dbLastId;
     this.newCount = 0;
-    eb.setCookie("chatLastId", this.lastId);
+    eb.setCookie(this.token, this.lastId);
 },
 
 }</varValue>
