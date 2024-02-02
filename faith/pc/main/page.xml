@@ -3871,7 +3871,6 @@ sender.changePage = function(pageIndex) {
         //g5.p2PersonSub.chatVideo.init(showUserPage.chatRoomVideo, showUserPage.v_userInfo.id == g5.myUserInfo.id);
         //this.chat.init();
         //this.chat.c_buttons.c_buttons.showButton3(true);
-        
         this.p1.resize();
         if (this.p1.v_clear) this.p1.loadMore();
     } else if (pageIndex == 2) {
@@ -3886,6 +3885,10 @@ sender.changePage = function(pageIndex) {
         ee.setVisible(this.p2, true);
         ee.tiledResizeV(this.chat, 3);
         g5.resizeV(this.parentNode, 3);
+        this.currentPageIndex = pageIndex;
+        if (this.chat.c_chat.c_chatRoot.v_items.length>0) {
+            g5.chatAlert.onChatReceive(this.chat.c_chat.c_chatRoot.v_items[this.chat.c_chat.c_chatRoot.v_items.length-1].v_id);
+        }
     } else if (pageIndex == 3) {
         g5.player.stop();
         this.button3.init(1);
@@ -5985,6 +5988,7 @@ sender.refresh = function(force) {
             }
             var itemWidth = eb.getDivRect(root).w;
             for (var i=dataset.rowCount-1; i>=0; i--) {
+                g5.chatAlert.onChatReceive(dataset.getData(0,i));
                 var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
                 root.loadData(item, dataset, i);
                 if ((root.v_items.length==0) &amp;&amp; (i==dataset.rowCount-1)) {
@@ -43530,6 +43534,15 @@ clearAlert: function() {
     this.newCount = 0;
     eb.setCookie(this.token, this.lastId);
 },
+
+onChatReceive: function(lastId) {
+    console.log("onChatReceive " + lastId);
+    if ((g5.p2.p2.p2sub.currentPageIndex == 2) &amp;&amp; (g5.p2.p2.v_isMe)) {
+        this.setDbLastId(lastId);
+        this.clearAlert();
+    }
+},
+
 
 }</varValue>
       <functionParam />
