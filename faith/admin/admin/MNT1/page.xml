@@ -355,7 +355,8 @@ sender.style.borderRadius = "5px";</onCreate>
       <layerVisible>false</layerVisible>
       <left>331</left>
       <leftRatio>0.664717348927875</leftRatio>
-      <onClick><![CDATA[getSiteMap.onComplete = function(dataset) {
+      <onClick><![CDATA[getSiteMapV2.month = ee.getEditText(ee.getControl("edit15"));
+getSiteMapV2.onComplete = function(dataset) {
     var xml = "";
     xml += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     xml += "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
@@ -369,7 +370,7 @@ sender.style.borderRadius = "5px";</onCreate>
     
     xml += "</urlset>\n";
     
-    var filename = "siteMap2.xml";
+    var filename = "siteMap" + getSiteMapV2.month + ".xml";
     var aLink = document.createElement("a");
     var bb = new Blob([xml], {type: "text/plain;charset=utf-8;"});
     aLink.setAttribute("href", window.URL.createObjectURL(bb));
@@ -380,7 +381,7 @@ sender.style.borderRadius = "5px";</onCreate>
     
     aLink.click();
 }
-getSiteMap();
+getSiteMapV2();
 
 
 
@@ -403,7 +404,7 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
       <widthRatio>0.315789473684211</widthRatio>
     </control>
   </controls>
-  <taskSet count="1">
+  <taskSet count="2">
     <taskSetItem name="getSiteMap">
       <script1>//onComplete(dataset)
 eio.appendString8(eb.getCookie("FAToken")); 
@@ -453,6 +454,62 @@ eio.appendDataSet(sqlResult,
 }
 getSiteMap.dataset = eio.readDataSet();
 getSiteMap.onComplete(getSiteMap.dataset); 
+
+
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="getSiteMapV2">
+      <script1>//month, onComplete(dataset)
+eio.appendString8(eb.getCookie("FAToken")); 
+eio.appendString8(getSiteMapV2.month);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var mon = eio.readString8();
+
+var sql,sqlResult;
+sql = "exec getUserInfoBySessionAdmin '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var userName = db.getString(sqlResult, "userName");
+
+sql =
+    "SELECT   TOP (100) PERCENT dbo.tContent.id,   " +
+    "                CONVERT(VARCHAR(50), dbo.tContent.regDatetime, 120) AS regDatetime " +
+    "FROM      dbo.tContent " +
+    "where CONVERT(VARCHAR(50), dbo.tContent.regDatetime, 120) like '" + db.encode(mon) + "-%' " +
+    "ORDER BY dbo.tContent.id DESC;";
+
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,
+    "id,regDateTime",
+    0, 500000);
+
+
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    return;
+}
+getSiteMapV2.dataset = eio.readDataSet();
+getSiteMapV2.onComplete(getSiteMapV2.dataset); 
 
 
 
