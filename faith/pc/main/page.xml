@@ -8615,6 +8615,7 @@ sender.refreshSearchText = function() {
     
     if (sender.v_items.length>0) {
         var item = sender.v_items[sender.v_items.length-1];
+        sender.setMeta(["name","description"], ["content", item.v_content.content]);
         document.title =
             item.v_userInfo.nickName + "@" +
             item.v_userInfo.userName + ": " +
@@ -8646,6 +8647,26 @@ sender.setMetaProperty = function(property, content) {
     meta.setAttribute("property", property);
     meta.setAttribute("content", content);
     //meta.setAttribute("data-rh", "true");
+    document.head.appendChild(meta);    
+}
+
+sender.setMeta = function(key, other) {
+    if (!Array.isArray(key)) return false;
+    if (key.length!=2) return false;
+    if (!Array.isArray(other)) other = new Array();
+    var i = 0;
+    while (i<document.getElementsByTagName("meta").length) {
+        if (document.getElementsByTagName("meta")[i].getAttribute(key[0]) == key[1]) {
+            document.getElementsByTagName("meta")[i].remove();
+        } else i++;
+    }
+    var meta = document.createElement("meta");
+    meta.setAttribute(key[0], key[1]);
+    i = 0;
+    while (i < other.length - 1) {
+        meta.setAttribute(other[i], other[i + 1]);
+        i += 2;
+    }
     document.head.appendChild(meta);    
 }
 
