@@ -8632,6 +8632,26 @@ sender.refreshSearchText = function() {
                 sender.setMetaProperty("og:image", "https://fistalk.com/incoming/" + sender.v_items[0].v_content.photo1);
             }
         }
+        
+        var structuredData = {
+            "@context": "https://schema.org",
+            "@type": "SocialMediaPosting",
+            "author": {
+                "@type": "Person",
+                "name": item.v_userInfo.nickName + "@" + item.v_userInfo.userName,
+                "url": "https://fistalk.com/" + item.v_userInfo.userName,
+            },
+            "datePublished": new Date(new Date().getTime() - item.v_content.seconds * 1000).toISOString().split('T')[0],
+            "headline": item.v_userInfo.nickName + "在Fistalk上发布的短文",
+            "sharedContent": {
+                "@type": "WebPage",
+                "url": window.location.href
+            }
+        };
+        var script = document.createElement("script");
+        script.type = "application/ld+json";
+        script.text = JSON.stringify(structuredData);
+        document.head.appendChild(script);        
     }
 } 
 
