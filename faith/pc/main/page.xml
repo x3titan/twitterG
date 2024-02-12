@@ -8627,9 +8627,9 @@ sender.refreshSearchText = function() {
         sender.setMetaProperty("og:description", item.v_content.content);
         if (item.v_content.photo1.length>0) {
             if (item.v_content.photo1.substr(0,4) == "?YTB") {
-                sender.setMetaProperty("og:video", "https://www.youtube.com/watch?v=" + sender.v_items[0].v_content.photo1.substr(4));
+                sender.setMetaProperty("og:video", "https://www.youtube.com/watch?v=" + item.v_content.photo1.substr(4));
             } else {
-                sender.setMetaProperty("og:image", "https://fistalk.com/incoming/" + sender.v_items[0].v_content.photo1);
+                sender.setMetaProperty("og:image", "https://fistalk.com/incoming/" + item.v_content.photo1);
             }
         }
         
@@ -8641,13 +8641,29 @@ sender.refreshSearchText = function() {
                 "name": item.v_userInfo.nickName + "@" + item.v_userInfo.userName,
                 "url": "https://fistalk.com/" + item.v_userInfo.userName,
             },
-            "datePublished": new Date(new Date().getTime() - item.v_content.seconds * 1000).toISOString().split('T')[0],
+            //"datePublished": new Date(new Date().getTime() - item.v_content.seconds * 1000).toISOString().split('T')[0],
+            "datePublished": new Date(new Date().getTime() - item.v_content.seconds * 1000).toISOString(),
             "headline": item.v_userInfo.nickName + "在Fistalk上发布的短文",
+            "image": "https://fistalk.com/incoming/" + item.v_userInfo.photo,
             "sharedContent": {
                 "@type": "WebPage",
                 "url": window.location.href
             }
         };
+        var imgs = new Array();
+        if ((item.v_content.photo1.length>0) &amp;&amp; (item.v_content.photo1.substr(0,4) != "?YTB"))
+            imgs.push("https://fistalk.com/incoming/" + item.v_content.photo1);
+        if ((item.v_content.photo2.length>0) &amp;&amp; (item.v_content.photo2.substr(0,4) != "?YTB"))
+            imgs.push("https://fistalk.com/incoming/" + item.v_content.photo2);
+        if ((item.v_content.photo3.length>0) &amp;&amp; (item.v_content.photo3.substr(0,4) != "?YTB"))
+            imgs.push("https://fistalk.com/incoming/" + item.v_content.photo3);
+        if ((item.v_content.photo4.length>0) &amp;&amp; (item.v_content.photo4.substr(0,4) != "?YTB"))
+            imgs.push("https://fistalk.com/incoming/" + item.v_content.photo4);
+        if (imgs.length == 1) {
+            structuredData.image = imgs[0];
+        } else {
+            structuredData.image = imgs;
+        }
         var script = document.createElement("script");
         script.type = "application/ld+json";
         script.text = JSON.stringify(structuredData);
