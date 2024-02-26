@@ -42381,7 +42381,6 @@ updateMain.busy = true;
 eio.appendString16(g5.token);
 eio.appendInt32(updateMain.cIds.length);
 for (var i=0; i<updateMain.cIds.length; i++) eio.appendString8(updateMain.cIds[i]+"");
-eio.appendString8(g5.chatAlert.lastId + "");
 
 
 ]]></script1>
@@ -42391,8 +42390,6 @@ var i, cIds = new Array();
 for (i=0; i<len; i++) {
     cIds.push(eio.readString8());
 }
-var chatAlertLastId = parseInt(eio.readString8());
-if (isNaN(chatAlertLastId)) chatAlertLastId = 0;
 var sql,sqlResult;  
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -42428,22 +42425,8 @@ sql = sqlCount +
     " WHERE " + sql1 + "; " +
     "exec getPromptCount " + myUserId + "; " +
     "exec chat1v1GetNewCount " + myUserId + "; ";
-if (chatAlertLastId==0) {
-    sql += "select 0 as c;";
-} else {
-    sql +=
-        "SELECT   COUNT(dbo.chatRoomData.id) AS c " +
-        "FROM      dbo.chatRoomData INNER JOIN " +
-        "                dbo.chatRoomInfo ON dbo.chatRoomData.roomId = dbo.chatRoomInfo.id " +
-        "WHERE   (dbo.chatRoomInfo.creatorId = " + myUserId + ") " +
-        "   AND (dbo.chatRoomInfo.roomType = 'DEF') " +
-        "   AND (dbo.chatRoomData.id > " + chatAlertLastId + "); ";
-}
-sql +=
-    "SELECT   ISNULL(MAX(dbo.chatRoomData.id), 0) AS c " +
-    "FROM      dbo.chatRoomData INNER JOIN " +
-    "                dbo.chatRoomInfo ON dbo.chatRoomData.roomId = dbo.chatRoomInfo.id " +
-    "WHERE   (dbo.chatRoomInfo.creatorId = " + myUserId + ") AND (dbo.chatRoomInfo.roomType = 'DEF'); ";
+
+sql += "exec chatRoomPublicGetNewCount " + myUserId + "; ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -42467,9 +42450,6 @@ db.nextResult(sqlResult);
 db.read(sqlResult);
 eio.appendString8(db.getString(sqlResult,"c"));
 
-db.nextResult(sqlResult);
-db.read(sqlResult);
-eio.appendString8(db.getString(sqlResult,"c"));
 
 
 
@@ -42507,9 +42487,10 @@ if (updateMain.chat1v1NewCount != newCount) {
     g5.p2.p13.showAlert(updateMain.chat1v1NewCount);
 }
 
-g5.chatAlert.setCount(eio.readString8());
-g5.chatAlert.setDbLastId(eio.readString8());
-//console.log("newCount=" + g5.chatAlert.newCount + ", g5.chatAlert.dbLastId=" + g5.chatAlert.dbLastId);
+//g5.chatAlert.setCount(eio.readString8());
+//g5.chatAlert.setDbLastId(eio.readString8());
+var newCount = eio.readString8()
+console.log("newCount=" + newCount);
 
 if (!eb.isEmpty(updateMain.onComplete)) {
     updateMain.onComplete(updateMain.dataset);
