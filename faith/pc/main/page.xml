@@ -43661,8 +43661,13 @@ showCount: function() {
     }
 },
 
-
-
+resetCount: function() {
+    this.newCount = 0;
+    this.showCount();
+    chatPClearNewCounter.onComplete = function() {
+    };
+    chatPClearNewCounter();
+},
 
 setCount: function(value) {
     this.newCount = parseInt(value);
@@ -43670,19 +43675,11 @@ setCount: function(value) {
     this.showCount();
 },
 
-
-clearAlert: function() {
-    if (!this.enabled) return;
-    this.lastId = this.dbLastId;
-    this.newCount = 0;
-    eb.setCookie(this.token, this.lastId);
-},
-
 onChatReceive: function(lastId) {
-    if ((g5.p2.p2.p2sub.currentPageIndex == 2) &amp;&amp; (g5.p2.p2.v_isMe)) {
-        this.setDbLastId(lastId);
-        this.clearAlert();
-        this.showCount();
+    if ((g5.currentPageIndex == 1) &amp;&amp;
+        (g5.p2.p2.p2sub.currentPageIndex == 2) &amp;&amp;
+        (g5.p2.p2.v_isMe)) {
+        this.resetCount();
     }
 },
 
