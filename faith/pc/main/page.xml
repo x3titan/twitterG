@@ -42504,9 +42504,9 @@ updateMain.busy = false;
     </taskSetItem>
     <taskSetItem name="chatPClearNewCounter">
       <script1>//onComplete
-eio.appendString16(g5.token);
+eio.appendString8(g5.token);
 </script1>
-      <script2><![CDATA[var token = eio.readString16();
+      <script2><![CDATA[var token = eio.readString8();
 
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -42526,34 +42526,14 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserName =db.getString(sqlResult,"userName");
 var myUserId = db.getString(sqlResult,"id");
 
-sql = "select * from userInfo where userName='" + db.encode(userName) + "' and email='" + db.encode(email) + "'; " +
-    "select * from userInfo where userName<>'" + db.encode(userName) + "' and email='" + db.encode(email) + "'; ";
-sqlResult = db.executeQuery("DB", sql);
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-if (db.read(sqlResult)) {
-    eio.appendString8("F");
-    eio.appendString8("您输入的电子邮件地址和原来的相同。");
-    return;
-}
-db.nextResult(sqlResult);
-if (db.read(sqlResult) &amp;&amp; (email.length>0)) {
-    eio.appendString8("F");
-    eio.appendString8("该电子邮件地址已经被其他人使用过了。");
-    return;
-}
-
-sql = "update userInfo set email = '" + db.encode(email) + "'" +
-    " where userName = '" + db.encode(userName) + "'";
+sql = "exec chatRoomPublicResetNewCount myUserId; ";
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
-} else {
-    eio.appendString8("T");
-}    
+    return;
+}
+eio.appendString8("T");
+
 
 
 
@@ -42576,7 +42556,7 @@ chatPClearNewCounter.onComplete();
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="120">
+  <g5Items count="121">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -43617,6 +43597,13 @@ init: function() {
     this.enabled = true;
 },
 
+//chatPClearNewCounter
+
+
+
+
+
+//deprecated
 setDbLastId: function(value) {
     if (!this.enabled) return;
     this.dbLastId = value;
@@ -43637,6 +43624,52 @@ showCount: function() {
         g5.p2.p2.showAlertP2(0);
     }
 },
+
+clearAlert: function() {
+    if (!this.enabled) return;
+    this.lastId = this.dbLastId;
+    this.newCount = 0;
+    eb.setCookie(this.token, this.lastId);
+},
+
+onChatReceive: function(lastId) {
+    if ((g5.p2.p2.p2sub.currentPageIndex == 2) &amp;&amp; (g5.p2.p2.v_isMe)) {
+        this.setDbLastId(lastId);
+        this.clearAlert();
+        this.showCount();
+    }
+},
+
+
+}</varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="chatAlertDB" type="10">
+      <varValue>{
+newCount: 0,
+
+init: function() {
+},
+
+showCount: function() {
+    g5.p2.p2.showAlert(this.newCount);
+    if (g5.p2.p2.v_isMe) {
+        g5.p2.p2.showAlertP2(this.newCount);
+    } else {
+        g5.p2.p2.showAlertP2(0);
+    }
+},
+
+
+
+
+setCount: function(value) {
+    this.newCount = parseInt(value);
+    if (isNaN(this.newCount)) this.newCount = 0;
+    this.showCount();
+},
+
 
 clearAlert: function() {
     if (!this.enabled) return;
