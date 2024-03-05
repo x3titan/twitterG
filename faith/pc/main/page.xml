@@ -3886,9 +3886,7 @@ sender.changePage = function(pageIndex) {
         ee.tiledResizeV(this.chat, 3);
         g5.resizeV(this.parentNode, 3);
         this.currentPageIndex = pageIndex;
-        if (this.chat.c_chat.c_chatRoot.v_items.length>0) {
-            g5.chatAlert.onChatReceive(this.chat.c_chat.c_chatRoot.v_items[this.chat.c_chat.c_chatRoot.v_items.length-1].v_id);
-        }
+        g5.chatAlertDB.resetCount();
     } else if (pageIndex == 3) {
         g5.player.stop();
         this.button3.init(1);
@@ -5988,7 +5986,7 @@ sender.refresh = function(force) {
             }
             var itemWidth = eb.getDivRect(root).w;
             for (var i=dataset.rowCount-1; i>=0; i--) {
-                g5.chatAlert.onChatReceive(dataset.getData(0,i));
+                g5.chatAlertDB.onChatReceive();
                 var item = createPanel(root, "dfcr_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
                 root.loadData(item, dataset, i);
                 if ((root.v_items.length==0) &amp;&amp; (i==dataset.rowCount-1)) {
@@ -36174,7 +36172,6 @@ g5.myUserInfo.loadFromDataset(eio.readDataSet(),0,0);
 g5.myUserInfo.follow = "1";
 g5.myUserInfo.isFollow = true;
 
-g5.chatAlert.init();
 g5.refreshUserInfo();
 g5.p2.p1.init();
 g5.processUrl();   
@@ -42527,7 +42524,7 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 var myUserName =db.getString(sqlResult,"userName");
 var myUserId = db.getString(sqlResult,"id");
 
-sql = "exec chatRoomPublicResetNewCount myUserId; ";
+sql = "exec chatRoomPublicResetNewCount " + myUserId + "; ";
 if (!db.executeNoneQuery("DB", sql)) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
@@ -43676,7 +43673,7 @@ setCount: function(value) {
     this.showCount();
 },
 
-onChatReceive: function(lastId) {
+onChatReceive: function() {
     if ((g5.currentPageIndex == 1) &amp;&amp;
         (g5.p2.p2.p2sub.currentPageIndex == 2) &amp;&amp;
         (g5.p2.p2.v_isMe)) {
