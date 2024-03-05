@@ -2727,6 +2727,7 @@ sender.show = function(v_userInfo, userId, userName) {
         } else if (userName) {
             //g5.pushHistory2("/" + escape(userName));
         }
+        g5.chatAlertDB.showCount();
     }
     if (!eb.isEmpty(v_userInfo)) {
         this.showByUserInfo(v_userInfo);
@@ -2862,6 +2863,7 @@ sender.activePage = function() {
     } else {
         document.documentElement.scrollTop = this.v_lastScrollTop;
     }
+    g5.chatAlertDB.showCount();
 }
 
 sender.refreshContent = function() {
@@ -42483,11 +42485,8 @@ if (updateMain.chat1v1NewCount != newCount) {
     g5.p2.p13.showAlert(updateMain.chat1v1NewCount);
 }
 
-//g5.chatAlert.setCount(eio.readString8());
-//g5.chatAlert.setDbLastId(eio.readString8());
 var newCount = eio.readString8();
-console.log("newCount=" + newCount);
-g5.chatAlertDB.setCount(newCount);
+if (g5.chatAlertDB.setCount(newCount)) updateMain.needRefresh = true;
 g5.chatAlertDB.showCount(); 
 
 if (!eb.isEmpty(updateMain.onComplete)) {
@@ -42554,7 +42553,7 @@ chatPClearNewCounter.onComplete();
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="121">
+  <g5Items count="120">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -43575,7 +43574,7 @@ data: [
       <functionParam />
       <functionCode />
     </item>
-    <item name="chatAlert" type="10">
+    <item name="chatAlertDB" type="10">
       <varValue>{
 lastId: "NA",
 dbLastId: "",
@@ -43609,9 +43608,14 @@ setDbLastId: function(value) {
 },
 
 setCount: function(value) {
-    this.newCount = parseInt(value);
+    var r = parseInt(value);
+    if (r != this.newCount) {
+        this.newCount = r;
+        r = true;
+    } else r = false;
     if (isNaN(this.newCount)) this.newCount = 0;
     this.showCount();
+    return r;
 },
 
 showCount: function() {
@@ -43635,49 +43639,6 @@ onChatReceive: function(lastId) {
         this.setDbLastId(lastId);
         this.clearAlert();
         this.showCount();
-    }
-},
-
-
-}</varValue>
-      <functionParam />
-      <functionCode />
-    </item>
-    <item name="chatAlertDB" type="10">
-      <varValue>{
-newCount: 0,
-
-init: function() {
-},
-
-showCount: function() {
-    g5.p2.p2.showAlert(this.newCount);
-    if (g5.p2.p2.v_isMe) {
-        g5.p2.p2.showAlertP2(this.newCount);
-    } else {
-        g5.p2.p2.showAlertP2(0);
-    }
-},
-
-resetCount: function() {
-    this.newCount = 0;
-    this.showCount();
-    chatPClearNewCounter.onComplete = function() {
-    };
-    chatPClearNewCounter();
-},
-
-setCount: function(value) {
-    this.newCount = parseInt(value);
-    if (isNaN(this.newCount)) this.newCount = 0;
-    this.showCount();
-},
-
-onChatReceive: function() {
-    if ((g5.currentPageIndex == 1) &amp;&amp;
-        (g5.p2.p2.p2sub.currentPageIndex == 2) &amp;&amp;
-        (g5.p2.p2.v_isMe)) {
-        this.resetCount();
     }
 },
 
