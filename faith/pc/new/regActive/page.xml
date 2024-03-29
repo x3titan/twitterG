@@ -3373,7 +3373,7 @@ if(r!=null)return  unescape(r[2]); return null;</functionCode>
     <item name="init" type="20">
       <varValue />
       <functionParam />
-      <functionCode>if (g5.getQueryString("lang")) {
+      <functionCode><![CDATA[if (g5.getQueryString("lang")) {
     eb.setCookie("lang", g5.getQueryString("lang"));
 } else {
     g5.lang.init();
@@ -3384,14 +3384,22 @@ if (activeString) {
     //在这里加入登录判断，1已经激活-1错误，0正常
     active.activeToken = activeString;
     active.onComplete = function(errorCode) {
-        if (errorCode == 0) {
-            g5.p1.a3.show("激活成功，请关闭本页面，并在等待主页面自动登录。如果主页面没有登录，请手工重新登录。");
+        if (errorCode > 0) {
+            g5.alert1("激活成功", 
+                "您的账户已成功激活，欢迎加入Fistalk大家庭！现在，您可以点击“确定”，立即开始探索与世界各地朋友进行互动和交流的精彩世界。加入我们，开启您的Fistalk之旅吧！",
+                function() {
+                    //函数代码
+                },
+                function() {
+                    //函数代码
+                }
+            );
         } else {
             g5.p1.a3.show("激活失败，请重新尝试正确的链接");
         }
     }
     active();
-}</functionCode>
+}]]></functionCode>
     </item>
   </g5Items>
 </page>
