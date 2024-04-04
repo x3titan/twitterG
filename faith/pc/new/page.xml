@@ -3859,17 +3859,25 @@ db.read(sqlResult);
 if (db.getInt32(sqlResult, "errorCode")!=0) {
     eio.appendString8("F");
     eio.appendString8(db.getString(sqlResult, "errorString"));
-    es.logWarning("用户登录失败,username=" + username + ",password=" + password);
+    eio.appendString8(db.getString(sqlResult, "errorCode"));
+    es.logWarning("用户登录失败,username=" + username + ",password=" + password + ",errorString=" + db.getString(sqlResult, "errorString"));
     return;
 } 
 eio.appendString8("T");
 eio.appendString8(db.getString(sqlResult, "errorString"));
 es.logCommon("用户输入账户密码登录：" + username);
 ]]></script2>
-      <script3>var resultCode=eio.readString8(); 
-if (resultCode=="F") {
-    g5.alert1("提示", "登录失败：" + eio.readString8());
-    return;
+      <script3>var r = eio.readString8(); 
+if (r == "F") {
+    var rStr = eio.readString8();
+    var rCode = eio.readString8();
+    if (rCode == "-10") {
+    
+        return;
+    } else {
+        g5.alert1("提示", "登录失败：" + rStr);
+        return;
+    }
 }  
 //获取令牌
 eb.setCookie("twitterGToken", eio.readString8());  
