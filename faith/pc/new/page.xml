@@ -2011,7 +2011,20 @@ ee.setRect(sender.parentNode.c_button2,null,h,null,null);</onCreate>
       <layerVisible>false</layerVisible>
       <left>67</left>
       <leftRatio>0.164619164619165</leftRatio>
-      <onClick>g5.p1.changePage("a4");</onClick>
+      <onClick>reActive.onComplete = function() {
+    g5.alert1("提示", "我们已经为您重新发送了一封激活邮件，请及时查看您的电子邮箱，" +
+        "并点击邮件中的链接以完成账号的激活过程。完成激活后，您将能够享受我们提供的全部服务和功能。" +
+        "如果您在邮件收件箱中没有找到激活邮件，请检查您的垃圾邮件文件夹，有时邮件可能会被误归类。" +
+        "我们非常期待您的加入，一起探索更多精彩内容。如果在激活过程中遇到任何问题，请不要犹豫，立即联系我们的客户支持团队求助。",
+        function() {
+            location.reload();
+        },
+        function() {
+            location.reload();
+        }
+    );
+}
+reActive();</onClick>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
 g5.initButtonV3(sender,[
     new g5.BStyle("#9c1315","#ac2325","#bc3335","","","","#ffffff","#ffffff","#ffffff","")
@@ -3798,7 +3811,7 @@ sender.renderItem = function(root) {
       <widthRatio>0.242870285188592</widthRatio>
     </control>
   </controls>
-  <taskSet count="9">
+  <taskSet count="10">
     <taskSetItem name="loginToken">
       <script1><![CDATA[g5.token = eb.getCookie("twitterGToken");
 if (eb.isEmpty(g5.token)) {
@@ -3996,7 +4009,7 @@ if (r == "F") {
     var rStr = eio.readString8();
     var rCode = eio.readString8();
     if (rCode == "-10") {
-    
+        g5.p1.changePage("a9");
         return;
     } else {
         g5.alert1("提示", "登录失败：" + rStr);
@@ -4537,6 +4550,65 @@ var exists = eio.readString8() == "T";
 if (!eb.isEmpty(checkRegEmail.onComplete)) {
     checkRegEmail.onComplete(exists);
     checkRegEmail.onComplete = null;
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="reActive">
+      <script1>eio.appendString8(login.username);
+eio.appendString8(login.password);
+eio.appendString8(g5.lang.current);</script1>
+      <script2>var userName = eio.readString8();
+var password = eio.readString8();
+var lang = eio.readString8();
+
+if (userName == "") {
+    eio.appendString8("F");
+    eio.appendString8("用户名不正确");
+    es.logWarning("用户登录失败,username=" + userName + ",password=" + password);
+    return;
+}
+
+var sql,sqlResult;
+var passwordMd5 = es.getMd5(password);
+sql = "select * from userInfo where " +
+    "(userName = '" + db.encode(userName) + "' " +
+    "or regEmail = '" + db.encode(userName) + "') " +
+    "and password = '" + es.getMd5(password) + "'; ";
+sqlResult = db.executeQuery("DB", sql);
+
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+var userId = db.getString(sqlResult, "id");
+
+sql = "exec sendEMailActive " + userId +
+    ",N'" + db.encode(lang) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString16("系统繁忙，请稍后再试");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendString16("success");
+
+
+</script2>
+      <script3>if (eio.readString8() != "T") {
+    return;
+}
+
+if (!eb.isEmpty(reActive.onComplete)) {
+    reActive.onComplete();
+    reActive.onComplete = null;
 }
 </script3>
     </taskSetItem>
