@@ -2127,6 +2127,7 @@ ee.setRect(sender.parentNode.c_btnSave,null,h+45,null,null);</onCreate>
       <heightRatio>0.609831029185868</heightRatio>
       <layerName>密码找回</layerName>
       <left>0</left>
+      <onCreate>sender.c_edit = sender.c_p1.c_p1.c_edit;</onCreate>
       <sizeRatio>0.975429975429975</sizeRatio>
       <top>238</top>
       <topRatio>0.365591397849462</topRatio>
@@ -2181,12 +2182,13 @@ ee.setRect(sender.parentNode.c_p1,null,h,null,null);</onCreate>
     <control type="Panel" pathname="/divRoot/panel9/panel86/panel90/panel95">
       <backgroundImgMode>fill</backgroundImgMode>
       <dockX>fill</dockX>
+      <ee_LocalName>c_p1</ee_LocalName>
       <fontColor>808080</fontColor>
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>31</height>
-      <heightRatio>0.198717948717949</heightRatio>
+      <heightRatio>0.144186046511628</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.borderRadius = "5px";
@@ -2198,7 +2200,7 @@ sender.style.backgroundColor = "rgba(0,0,0,0.05)";
 </onCreate>
       <sizeRatio>0.113970588235294</sizeRatio>
       <top>34</top>
-      <topRatio>0.217948717948718</topRatio>
+      <topRatio>0.158139534883721</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2206,6 +2208,7 @@ sender.style.backgroundColor = "rgba(0,0,0,0.05)";
       <backgroundSkin>empty</backgroundSkin>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>c_edit</ee_LocalName>
       <fontColor>808080</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
@@ -2262,9 +2265,13 @@ sender.style.backgroundColor = "rgba(0,0,0,0.05)";
       <heightRatio>0.211538461538462</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick>login.username = ee.getEditText(ee.getControl("edit7"));
-login.password = ee.getEditText(ee.getControl("edit8"));
-//login();</onClick>
+      <onClick>sendResetPsw.email = ee.getEditText(g5.p1.a10.c_edit);
+sendResetPsw.lang = g5.lang.current;
+sendResetPsw.onComplete = function() {
+    g5.alert1("提示", "我们已向您注册时使用的电子邮箱发送了一封密码重置邮件。请检查您的邮箱，并按照邮件中的指示操作以重置您的密码。如果您未收到邮件，请检查您的垃圾邮件文件夹或尝试再次发送请求。感谢您的配合。");
+    g5.p1.changePage("a3");
+}
+sendResetPsw();</onClick>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
 g5.initButtonV3(sender,[
     new g5.BStyle("#303030","#404040","#505050","","","","#ffffff","#ffffff","#ffffff","")
@@ -4822,53 +4829,37 @@ if (!eb.isEmpty(reActive.onComplete)) {
       <script1>//email,lang,onComplete
 eio.appendString8(sendResetPsw.email);
 eio.appendString8(sendResetPsw.lang);</script1>
-      <script2>var userName = eio.readString8();
-var password = eio.readString8();
+      <script2><![CDATA[var email = eio.readString8();
 var lang = eio.readString8();
 
-if (userName == "") {
+if (email == "") {
     eio.appendString8("F");
-    eio.appendString8("用户名不正确");
-    es.logWarning("用户登录失败,username=" + userName + ",password=" + password);
+    eio.appendString8("电子邮件不正确");
     return;
 }
 
 var sql,sqlResult;
-var passwordMd5 = es.getMd5(password);
-sql = "select * from userInfo where " +
-    "(userName = '" + db.encode(userName) + "' " +
-    "or regEmail = '" + db.encode(userName) + "') " +
-    "and password = '" + es.getMd5(password) + "'; ";
-sqlResult = db.executeQuery("DB", sql);
-
-if (sqlResult == null) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-if (!db.read(sqlResult)) {
-    eio.appendString8("F");
-    eio.appendString8("系统繁忙请稍后再试");
-    return;
-}
-var userId = db.getString(sqlResult, "id");
-
-sql = "exec sendEMailActive " + userId +
-    ",N'" + db.encode(lang) + "'";
+sql = "exec sendEMailResetPsw " +
+    "N'" + db.encode(email) + "', " +
+    "N'" + db.encode(lang) + "'";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
-    eio.appendString16("系统繁忙，请稍后再试");
+    eio.appendString8("系统繁忙，请稍后再试");
     es.logWarning("数据库执行错误, sql=" + sql);
     return;
 }
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "errorCode") < 0) {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+}
 eio.appendString8("T");
-eio.appendString16("success");
-
-
-</script2>
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
       <script3>if (eio.readString8() != "T") {
-    g5.alert1("无法发送重置邮件", eio.readString8());
+    g5.alert1("无法发送重置密码邮件", eio.readString8());
     return;
 }
 
