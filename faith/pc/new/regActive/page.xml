@@ -880,33 +880,32 @@ sender._input.addEventListener("keydown", function(event) {
       <heightRatio>0.244444444444444</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick>var p1 = ee.getEditText(ee.getControl("edit11"));
+      <onClick><![CDATA[var p1 = ee.getEditText(ee.getControl("edit11"));
 var p2 = ee.getEditText(ee.getControl("edit12"));
 if (p1!=p2) {
     g5.alert1("密码错误", "您两次输入的密码不一致，请重新输入");
     return;
 }
+if (p1.length<6) {
+    g5.alert1("密码错误", "密码长度不够");
+    return;
+}
 
-regV2.userName = checkUserName.userName;
-regV2.nickName = checkNickName.nickName;
-regV2.password = p1;
-regV2.onComplete = function() {
-    g5.alert1("注册成功", "欢迎加入拳头聊天室！", 
+changePsw.token = g5.getQueryString("rp");
+changePsw.psw = p1;
+changePsw.onComplete = function() {
+    g5.alert1("密码重置成功", "密码重置成功！<br/>您现在将被引导至登录窗口，请使用您的新密码登录。", 
         function() {
-            login.username = regV2.userName;
-            login.password = regV2.password;
-            login();
+            window.location.href = "/login";
         },
         function() {
-            login.username = regV2.userName;
-            login.password = regV2.password;
-            login();
+            window.location.href = "/login";
         }
     );
 }
-regV2();
+changePsw();
 
-</onClick>
+]]></onClick>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
 g5.initButtonV3(sender,[
     new g5.BStyle("#303030","#404040","#505050","","","","#ffffff","#ffffff","#ffffff","")
@@ -2213,7 +2212,7 @@ sender.renderItem = function(root) {
       <widthRatio>0.242870285188592</widthRatio>
     </control>
   </controls>
-  <taskSet count="9">
+  <taskSet count="10">
     <taskSetItem name="loginToken">
       <script1><![CDATA[g5.token = eb.getCookie("twitterGToken");
 if (eb.isEmpty(g5.token)) {
@@ -2820,6 +2819,60 @@ eio.appendString8("T");
 
 if (changePswValid.onComplete) {
     changePswValid.onComplete();
+}
+</script3>
+    </taskSetItem>
+    <taskSetItem name="changePsw">
+      <script1>//token,psw,onComplete()
+eio.appendString8(changePsw.token);
+eio.appendString8(changePsw.psw);
+
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var psw = eio.readString8();
+if (psw.length<6) {
+    eio.appendString8("F");
+    eio.appendString8("密码长度不正确。");
+    return;
+}
+
+var sql,sqlResult;
+sql =
+    "select * from [session] where [param] = 'psw1' " +
+    "and sessionId = '" + db.encode(token) + "'; ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("链接已失效，请重新尝试密码重置流程。");
+    return;
+}
+
+var userId = db.getString(sqlResult, "userId");
+sql =
+    "update userInfo set [password] = '" + db.encode(es.getMd5(psw)) + "' " +
+    "where id = " + userId + ";";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+
+eio.appendString8("T");
+
+
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    g5.alert1("设置新密码失败", eio.readString8());
+    return;
+}
+
+if (changePsw.onComplete) {
+    changePsw.onComplete();
 }
 </script3>
     </taskSetItem>
