@@ -2812,7 +2812,9 @@ eio.appendString8("T");
 
 </script2>
       <script3>if (eio.readString8() != "T") {
-    g5.alert1("提示", eio.readString8());
+    if (changePswValid.onFail) {
+        changePswValid.onFail(eio.readString8());
+    }
     return;
 }
 
@@ -3412,6 +3414,16 @@ if (pswChange) {
     changePswValid.token = pswChange;
     changePswValid.onComplete = function() {
         g5.p1.changePage("a6");
+    }
+    changePswValid.onFail = function(s) {
+        g5.alert1("提示", s,
+            function() {
+                window.close();
+            },
+            function() {
+                window.close();
+            }
+        );
     }
     changePswValid();
     return;
