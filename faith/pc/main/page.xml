@@ -2653,7 +2653,6 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -3826,7 +3825,6 @@ g5.initButtonV3(sender,[
       <ee_LocalName>p2sub</ee_LocalName>
       <height>374</height>
       <heightRatio>0.47948717948718</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>p2PersonSub</note>
       <onCreate><![CDATA[sender.v_fitInner = true;
@@ -3855,6 +3853,7 @@ sender.changePage = function(pageIndex) {
         this.button2.init(0);
         this.p2ChatRect = eb.getDivRect(this.p1.c_chat.c_chat);
         ee.setVisible(this.p2, false);
+        g5.chatAlertDB.resetCount();
     } else if (this.currentPageIndex == 3) {
         this.button3.init(0);
         ee.setVisible(this.p3, false);
@@ -4230,7 +4229,6 @@ sender.resize = function() {
       <height>274</height>
       <heightRatio>0.732620320855615</heightRatio>
       <layerName><![CDATA[  p2->聊天室]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.v_fitInner = true;
 </onCreate>
@@ -20583,6 +20581,7 @@ sender.fSearch = function() {
       <height>702</height>
       <heightRatio>0.9</heightRatio>
       <layerName>设置-账号-打赏</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.v_items = new Array();
@@ -43619,11 +43618,11 @@ init: function() {
     this.enabled = true;
 },
 
-//chatPClearNewCounter
-
-
-
-
+resetCount: function() {
+    chatPClearNewCounter.onComplete = function() { };
+    chatPClearNewCounter();
+    this.setCount(0);
+},
 
 //deprecated
 setDbLastId: function(value) {
