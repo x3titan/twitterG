@@ -1,5 +1,5 @@
 <page>
-  <controls count="134">
+  <controls count="137">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <backgroundImg>login.jpg</backgroundImg>
@@ -318,6 +318,7 @@ sender.changePage = function(pageName) {
         ee.setVisible(this.a9, true);
     } else if (this.currentPageName == "a10") {
         ee.setVisible(this.a10, true);
+        this.a10.onShow();
     }
     g5.tiledV(this,0,0,0);
 }
@@ -483,6 +484,7 @@ ee.showAni(ee.getControl("panel21"), 0);
       <height>397</height>
       <heightRatio>0.609831029185868</heightRatio>
       <layerName>主登录</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.975429975429975</sizeRatio>
       <top>226</top>
@@ -2170,15 +2172,23 @@ ee.setRect(sender.parentNode.c_btnSave,null,h+45,null,null);</onCreate>
     <control type="Panel" pathname="/divRoot/panel9/panel86">
       <dockX>fill</dockX>
       <ee_LocalName>a10</ee_LocalName>
-      <height>397</height>
-      <heightRatio>0.609831029185868</heightRatio>
+      <height>421</height>
+      <heightRatio>0.646697388632873</heightRatio>
       <layerName>密码找回</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <onCreate>sender.c_edit = sender.c_p1.c_p1.c_edit;</onCreate>
-      <sizeRatio>0.975429975429975</sizeRatio>
-      <top>238</top>
-      <topRatio>0.365591397849462</topRatio>
+      <onCreate>sender.c_edit = sender.c_p1.c_p1.c_edit;
+sender.c_edit2 = sender.c_p1.c_p2.c_edit;
+sender.c_captcha = sender.c_p1.c_captcha;
+
+sender.onShow = function() {
+    sender.c_captcha.refresh();
+    ee.setEditText(sender.c_edit, "");
+    ee.setEditText(sender.c_edit2, "");
+}
+</onCreate>
+      <sizeRatio>1.03439803439803</sizeRatio>
+      <top>230</top>
+      <topRatio>0.353302611367127</topRatio>
       <width>407</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2187,10 +2197,9 @@ ee.setRect(sender.parentNode.c_btnSave,null,h+45,null,null);</onCreate>
       <dockX>center</dockX>
       <fontColor>9C1315</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
-      <fontSize>12</fontSize>
       <hAlign>left</hAlign>
-      <height>142</height>
-      <heightRatio>0.357682619647355</heightRatio>
+      <height>90</height>
+      <heightRatio>0.213776722090261</heightRatio>
       <layerVisible>false</layerVisible>
       <left>67</left>
       <leftRatio>0.164619164619165</leftRatio>
@@ -2198,9 +2207,9 @@ ee.setRect(sender.parentNode.c_btnSave,null,h+45,null,null);</onCreate>
 sender.label.style.height = "";
 var h =sender.label.offsetHeight;
 ee.setRect(sender,null,null,null,h);
-h += eb.getDivRectSetting(sender).y + 15;
+h += eb.getDivRectSetting(sender).y + 5;
 ee.setRect(sender.parentNode.c_p1,null,h,null,null);</onCreate>
-      <sizeRatio>0.522058823529412</sizeRatio>
+      <sizeRatio>0.330882352941176</sizeRatio>
       <text>请在下方输入您的注册邮箱（密码保护邮箱）。这应该是您在注册账户时使用并通过认证的邮箱，或是您之后添加并认证的邮箱。我们将向该邮箱发送一封包含密码重置链接的邮件。您只需点击该链接，即可进行密码重置操作。</text>
       <top>0</top>
       <vAlign>top</vAlign>
@@ -2215,14 +2224,14 @@ ee.setRect(sender.parentNode.c_p1,null,h,null,null);</onCreate>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
-      <height>215</height>
-      <heightRatio>0.541561712846348</heightRatio>
+      <height>260</height>
+      <heightRatio>0.617577197149644</heightRatio>
       <layerVisible>false</layerVisible>
       <left>67</left>
       <leftRatio>0.164619164619165</leftRatio>
-      <sizeRatio>0.790441176470588</sizeRatio>
-      <top>147</top>
-      <topRatio>0.370277078085642</topRatio>
+      <sizeRatio>0.955882352941177</sizeRatio>
+      <top>142</top>
+      <topRatio>0.33729216152019</topRatio>
       <vAlign>top</vAlign>
       <width>272</width>
       <widthRatio>0.668304668304668</widthRatio>
@@ -2310,11 +2319,17 @@ sender.style.backgroundColor = "rgba(0,0,0,0.05)";
       <fontFamily>微软雅黑</fontFamily>
       <fontSize>12</fontSize>
       <height>33</height>
-      <heightRatio>0.211538461538462</heightRatio>
+      <heightRatio>0.126923076923077</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>sendResetPsw.email = ee.getEditText(g5.p1.a10.c_edit);
 sendResetPsw.lang = g5.lang.current;
+sendResetPsw.code = ee.getEditText(g5.p1.a10.c_edit2);
+sendResetPsw.onError = function(errorStr) {
+    g5.alert1("无法发送重置密码邮件", errorStr);
+    g5.p1.a10.c_captcha.refresh();
+    ee.setEditText(g5.p1.a10.c_edit2, "");
+}
 sendResetPsw.onComplete = function() {
     g5.alert1("提示", "我们已向您注册时使用的电子邮箱发送了一封密码重置邮件。请检查您的邮箱，并按照邮件中的指示操作以重置您的密码。如果您未收到邮件，请检查您的垃圾邮件文件夹或尝试再次发送请求。感谢您的配合。");
     g5.p1.changePage("a3");
@@ -2337,8 +2352,8 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
 </onCreate>
       <sizeRatio>0.121323529411765</sizeRatio>
       <text>发送密码重置邮件</text>
-      <top>102</top>
-      <topRatio>0.653846153846154</topRatio>
+      <top>191</top>
+      <topRatio>0.734615384615385</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2350,8 +2365,8 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
       <fontColor>404040</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
-      <height>36</height>
-      <heightRatio>0.167441860465116</heightRatio>
+      <height>33</height>
+      <heightRatio>0.126923076923077</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>g5.p1.changePage("a3");</onClick>
@@ -2367,10 +2382,105 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
 
 
 </onCreate>
-      <sizeRatio>0.132352941176471</sizeRatio>
+      <sizeRatio>0.121323529411765</sizeRatio>
       <text>返 回</text>
-      <top>149</top>
-      <topRatio>0.693023255813954</topRatio>
+      <top>229</top>
+      <topRatio>0.880769230769231</topRatio>
+      <width>272</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel9/panel86/panel90/panel97">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_captcha</ee_LocalName>
+      <height>65</height>
+      <heightRatio>0.25</heightRatio>
+      <left>0</left>
+      <onClick>sender.taskSet();</onClick>
+      <onCreate>sender.refresh = function() {
+    sender.taskSet();
+}
+</onCreate>
+      <sizeRatio>0.238970588235294</sizeRatio>
+      <taskSet>var rect = eb.getDivRect(sender);
+eio.appendInt32(rect.w);
+eio.appendInt32(rect.h);</taskSet>
+      <taskSetReturn>var r = eio.readString16();
+ee.setImage(sender,"url:data:image/png;base64," + r,"trim","","")
+</taskSetReturn>
+      <taskSetServer><![CDATA[var w = eio.readInt32();
+var h = eio.readInt32();
+
+
+var code = "";
+var cs = "abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ";
+const len = cs.length;
+for (var i = 0; i < 5; i++) {
+    code += cs.charAt(Math.floor(Math.random() * len));
+}
+var r = es.getCaptcha(code, w, h, 15, 70);
+session.set("codeEmail", code);
+
+eio.appendString16(r);]]></taskSetServer>
+      <top>74</top>
+      <topRatio>0.284615384615385</topRatio>
+      <width>272</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel9/panel86/panel90/panel98">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_p2</ee_LocalName>
+      <fontColor>808080</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>31</height>
+      <heightRatio>0.119230769230769</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>sender.style.borderRadius = "5px";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(0,0,0)";
+sender.style.borderStyle = "solid";
+sender.style.boxSizing="border-box";
+sender.style.backgroundColor = "rgba(0,0,0,0.05)";
+</onCreate>
+      <sizeRatio>0.113970588235294</sizeRatio>
+      <top>146</top>
+      <topRatio>0.561538461538462</topRatio>
+      <width>272</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel9/panel86/panel90/panel98/edit13">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <ee_LocalName>c_edit</ee_LocalName>
+      <fontColor>808080</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <height>29</height>
+      <heightRatio>0.935483870967742</heightRatio>
+      <inputFont>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</inputFont>
+      <inputFontSize>12</inputFontSize>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>sender._input.addEventListener("keydown", function(event) {
+    if (event.keyCode==13) {
+        login.username = ee.getEditText(ee.getControl("edit7"));
+        login.password = ee.getEditText(ee.getControl("edit8"));
+        login();
+        sender._input.blur();
+        event.preventDefault();
+        return false;
+    }
+});</onCreate>
+      <outerBottom>2</outerBottom>
+      <sizeRatio>0.106617647058824</sizeRatio>
+      <text>请输入验证码</text>
+      <top>0</top>
+      <topRatio>-0.032258064516129</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -4876,13 +4986,21 @@ if (!eb.isEmpty(reActive.onComplete)) {
     <taskSetItem name="sendResetPsw">
       <script1>//email,lang,onComplete
 eio.appendString8(sendResetPsw.email);
-eio.appendString8(sendResetPsw.lang);</script1>
+eio.appendString8(sendResetPsw.lang);
+eio.appendString8(sendResetPsw.code);</script1>
       <script2><![CDATA[var email = eio.readString8();
 var lang = eio.readString8();
+var code = eio.readString8();
 
 if (email == "") {
     eio.appendString8("F");
     eio.appendString8("电子邮件不正确");
+    return;
+}
+
+if (code.toLowerCase() != session.get("codeEmail").toLowerCase()) {
+    eio.appendString8("F");
+    eio.appendString8("图形验证码不正确");
     return;
 }
 
@@ -4907,7 +5025,7 @@ eio.appendString8("T");
 eio.appendString8(db.getString(sqlResult, "errorString"));
 ]]></script2>
       <script3>if (eio.readString8() != "T") {
-    g5.alert1("无法发送重置密码邮件", eio.readString8());
+    sendResetPsw.onError(eio.readString8());
     return;
 }
 
