@@ -431,18 +431,19 @@ sender.style.borderRadius = "5px";</onCreate>
 }
 
 var userId = query.dataset.getData(0,g5.tableClick.y);
+var oldRegEmail = query.dataset.getData(17,g5.tableClick.y);
+var newRegEmail = null;
 
-var password = prompt("请输入邮箱：");
-if (!password) return;
+var newRegEmail = prompt("请输入邮箱：", oldRegEmail);
+if (newRegEmail === null) return;
 
-//userId,newPassword,onComplete()
-if (changePassword.busy) return;
-changePassword.userId = userId;
-changePassword.newPassword = password;
-changePassword.onComplete = function() {
+if (changeEmail.busy) return;
+changeEmail.userId = userId;
+changeEmail.email = newRegEmail;
+changeEmail.onComplete = function() {
     alert("修改完成");
 }
-__changePassword();
+changeEmail();
 </onClick>
       <onCreate>sender.className = "buttonGray";
 sender.style.borderRadius = "5px";</onCreate>
@@ -5124,8 +5125,8 @@ eio.appendInt32(count);
 eio.appendDataSet(sqlResult,
     //0    1       2         3               4        5        6      7     8      9     10
     "id,status,regDatetime,lastAccessTime,userName,password,mobile,email,nickName,note,photo," +
-    // 11        12        13            14         15         16
-    "titleBg,homePage,chatRoomVideo,followCount,fansCount,lastPromptId",
+    // 11        12        13            14         15         16        17
+    "titleBg,homePage,chatRoomVideo,followCount,fansCount,lastPromptId,regEmail",
     pageSize*(pageCurrent-1), pageSize
 ); 
 ]]></script2>
@@ -5730,7 +5731,7 @@ var myUserName = db.getString(sqlResult, "userName");
 sql = "exec adminSetRegEmail " +
     myUserId + "," +
     userId + "," +
-    "'" + db.encode(es.getMd5(email)) + "'";
+    "'" + db.encode(email) + "'";
 sqlResult = db.executeQuery("DB", sql); 
 if (sqlResult == null) {
     eio.appendString8("F");
