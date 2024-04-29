@@ -1,5 +1,5 @@
 <page>
-  <controls count="136">
+  <controls count="138">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <backgroundImg>login.jpg</backgroundImg>
@@ -1511,36 +1511,32 @@ sender._input.addEventListener("keydown", function(event) {
       <layerVisible>false</layerVisible>
       <left>209</left>
       <leftRatio>0.513513513513513</leftRatio>
-      <onClick>var p1 = ee.getEditText(ee.getControl("edit11"));
+      <onClick><![CDATA[var p1 = ee.getEditText(ee.getControl("edit11"));
 var p2 = ee.getEditText(ee.getControl("edit12"));
 if (p1!=p2) {
     g5.alert1("密码错误", "您两次输入的密码不一致，请重新输入");
     return;
 }
+var chkPassword = function(psw) {
+    if ((psw.length<6) || (psw.length>20)) {
+        return "密码的长度必须在6-20位之间";
+    }
+    for (var i=0; i<psw.length; i++) {
+        var ch = psw[i];
+        if (ch==" ") return "密码中不允许出现空格字符";
+        if (ch.charCodeAt(0)>=128) return "密码中不允许出现汉字等双字节字符";
+    }
+    return "";
+}
+var r = chkPassword(p1);
+if (r.length>0) {
+    g5.alert1("密码错误", r);
+    return;
+}
 regV3.password = p1;
 g5.p1.changePage("a7");
-return;
 
-regV2.userName = checkUserName.userName;
-regV2.nickName = checkNickName.nickName;
-regV2.password = p1;
-regV2.onComplete = function() {
-    g5.alert1("注册成功", "欢迎加入拳头聊天室！", 
-        function() {
-            login.username = regV2.userName;
-            login.password = regV2.password;
-            login();
-        },
-        function() {
-            login.username = regV2.userName;
-            login.password = regV2.password;
-            login();
-        }
-    );
-}
-regV2();
-
-</onClick>
+]]></onClick>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
 g5.initButtonV3(sender,[
     new g5.BStyle("#303030","#404040","#505050","","","","#ffffff","#ffffff","#ffffff","")
@@ -1650,12 +1646,11 @@ sender._input.addEventListener("keydown", function(event) {
     <control type="Panel" pathname="/divRoot/panel9/panel77">
       <dockX>fill</dockX>
       <ee_LocalName>a7</ee_LocalName>
-      <height>397</height>
-      <heightRatio>0.609831029185868</heightRatio>
+      <height>403</height>
+      <heightRatio>0.619047619047619</heightRatio>
       <layerName>注册4：设置密保邮箱</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
-      <sizeRatio>0.975429975429975</sizeRatio>
+      <sizeRatio>0.99017199017199</sizeRatio>
       <top>243</top>
       <topRatio>0.373271889400922</topRatio>
       <width>407</width>
@@ -1759,7 +1754,116 @@ sender._input.addEventListener("keydown", function(event) {
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel9/panel77/panel81">
+    <control type="Panel" pathname="/divRoot/panel9/panel77/panel83">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>center</dockX>
+      <fontColor>9C1315</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <hAlign>left</hAlign>
+      <height>169</height>
+      <heightRatio>0.419354838709677</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>67</left>
+      <leftRatio>0.167076167076167</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+sender.label.style.height = "";
+var h = sender.label.offsetHeight + 15;
+ee.setRect(sender,null,null,null, h);
+h += eb.getDivRectSetting(sender).y + 15;
+ee.setRect(sender.parentNode.p1,null,h,null,null);</onCreate>
+      <sizeRatio>0.621323529411765</sizeRatio>
+      <text><![CDATA[<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>本邮箱地址将用于激活您的账户及找回密码等重要操作。</li>
+<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>请注意，每个邮箱地址只能用于激活一个账户。</li>
+<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>完成注册后，您将收到一封包含激活链接的邮件。</li>
+<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>请妥善保管此邮箱地址，以确保账户安全。</li>]]></text>
+      <top>130</top>
+      <topRatio>0.32258064516129</topRatio>
+      <vAlign>top</vAlign>
+      <width>272</width>
+      <widthRatio>0.668304668304668</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel9/panel77/panel99">
+      <dockX>center</dockX>
+      <ee_LocalName>p1</ee_LocalName>
+      <height>95</height>
+      <heightRatio>0.235732009925558</heightRatio>
+      <left>67</left>
+      <leftRatio>0.164619164619165</leftRatio>
+      <sizeRatio>0.349264705882353</sizeRatio>
+      <top>310</top>
+      <topRatio>0.769230769230769</topRatio>
+      <width>272</width>
+      <widthRatio>0.668304668304668</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel9/panel77/panel99/panel82">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <ee_LocalName>c_button1</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <height>33</height>
+      <heightRatio>0.347368421052632</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>g5.p1.changePage("a5");</onClick>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+g5.initButtonV3(sender,[
+    new g5.BStyle("#ffffff","#f0f0f0","#e0e0e0","","","","#303030","#303030","#303030","#303030")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";</onCreate>
+      <sizeRatio>0.270491803278689</sizeRatio>
+      <text><![CDATA[<< 上一步]]></text>
+      <top>0</top>
+      <width>122</width>
+      <widthRatio>0.448529411764706</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel9/panel77/panel99/panel75">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_button1</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <height>33</height>
+      <heightRatio>0.347368421052632</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>regV2.userName = checkUserName.userName;
+regV2.nickName = checkNickName.nickName;
+regV2.password = regV3.password;
+regV2.onComplete = function() {
+    g5.alert1("注册成功", "欢迎加入拳头聊天室！", 
+        function() {
+            login.username = regV2.userName;
+            login.password = regV2.password;
+            login();
+        },
+        function() {
+            login.username = regV2.userName;
+            login.password = regV2.password;
+            login();
+        }
+    );
+}
+regV2();
+</onClick>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+g5.initButtonV3(sender,[
+    new g5.BStyle("#ffffff","#f0f0f0","#e0e0e0","","","","#303030","#303030","#303030","#303030")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";</onCreate>
+      <sizeRatio>0.121323529411765</sizeRatio>
+      <text>跳 过</text>
+      <top>47</top>
+      <topRatio>0.494736842105263</topRatio>
+      <width>272</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel9/panel77/panel99/panel81">
       <backgroundColor>8ED0F9</backgroundColor>
       <cursor>pointer</cursor>
       <ee_LocalName>c_button2</ee_LocalName>
@@ -1768,10 +1872,10 @@ sender._input.addEventListener("keydown", function(event) {
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <height>33</height>
-      <heightRatio>0.0831234256926952</heightRatio>
+      <heightRatio>0.347368421052632</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>209</left>
-      <leftRatio>0.513513513513513</leftRatio>
+      <left>150</left>
+      <leftRatio>0.551470588235294</leftRatio>
       <onClick>regV3.userName = checkUserName.userName;
 regV3.nickName = checkNickName.nickName;
 regV3.regEmail = ee.getEditText(g5.p1.a7.c_email);
@@ -1798,67 +1902,11 @@ g5.initButtonV3(sender,[
     new g5.BStyle("#303030","#404040","#505050","","","","#ffffff","#ffffff","#ffffff","")
 ]);
 sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";</onCreate>
-      <sizeRatio>0.239130434782609</sizeRatio>
+      <sizeRatio>0.270491803278689</sizeRatio>
       <text><![CDATA[下一步 >>]]></text>
-      <top>305</top>
-      <topRatio>0.768261964735516</topRatio>
-      <width>138</width>
-      <widthRatio>0.339066339066339</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel9/panel77/panel82">
-      <backgroundColor>8ED0F9</backgroundColor>
-      <cursor>pointer</cursor>
-      <ee_LocalName>c_button1</ee_LocalName>
-      <fontBold>true</fontBold>
-      <fontColor>1DA1F2</fontColor>
-      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
-      <fontSize>12</fontSize>
-      <height>33</height>
-      <heightRatio>0.0831234256926952</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>58</left>
-      <leftRatio>0.142506142506143</leftRatio>
-      <onClick>g5.p1.changePage("a5");</onClick>
-      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
-g5.initButtonV3(sender,[
-    new g5.BStyle("#ffffff","#f0f0f0","#e0e0e0","","","","#303030","#303030","#303030","#303030")
-]);
-sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";</onCreate>
-      <sizeRatio>0.239130434782609</sizeRatio>
-      <text><![CDATA[<< 上一步]]></text>
-      <top>305</top>
-      <topRatio>0.768261964735516</topRatio>
-      <width>138</width>
-      <widthRatio>0.339066339066339</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel9/panel77/panel83">
-      <backgroundImgMode>fill</backgroundImgMode>
-      <dockX>center</dockX>
-      <fontColor>9C1315</fontColor>
-      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
-      <hAlign>left</hAlign>
-      <height>169</height>
-      <heightRatio>0.425692695214106</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>67</left>
-      <leftRatio>0.164619164619165</leftRatio>
-      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
-sender.label.style.height = "";
-var h = sender.label.offsetHeight + 15;
-ee.setRect(sender,null,null,null, h);
-h += eb.getDivRectSetting(sender).y + 15;
-ee.setRect(sender.parentNode.c_button1,null,h,null,null);
-ee.setRect(sender.parentNode.c_button2,null,h,null,null);</onCreate>
-      <sizeRatio>0.621323529411765</sizeRatio>
-      <text><![CDATA[<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>本邮箱地址将用于激活您的账户及找回密码等重要操作。</li>
-<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>请注意，每个邮箱地址只能用于激活一个账户。</li>
-<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>完成注册后，您将收到一封包含激活链接的邮件。</li>
-<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>请妥善保管此邮箱地址，以确保账户安全。</li>]]></text>
-      <top>130</top>
-      <topRatio>0.327455919395466</topRatio>
-      <vAlign>top</vAlign>
-      <width>272</width>
-      <widthRatio>0.668304668304668</widthRatio>
+      <top>0</top>
+      <width>122</width>
+      <widthRatio>0.448529411764706</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel9/panel70">
       <dockX>fill</dockX>
@@ -2131,6 +2179,7 @@ ee.setRect(sender.parentNode.c_btnSave,null,h+45,null,null);</onCreate>
       <height>421</height>
       <heightRatio>0.646697388632873</heightRatio>
       <layerName>密码找回</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.c_edit = sender.c_p1.c_p1.c_edit;
 sender.c_edit2 = sender.c_p1.c_p2.c_edit;
@@ -4588,27 +4637,11 @@ login();
 </script3>
     </taskSetItem>
     <taskSetItem name="regV2">
-      <script1><![CDATA[//userName, nickName, password, onComplete
-var chkPassword = function(psw) {
-    if ((psw.length<6) || (psw.length>20)) {
-        return "密码的长度必须在6-20位之间";
-    }
-    for (var i=0; i<psw.length; i++) {
-        var ch = psw[i];
-        if (ch==" ") return "密码中不允许出现空格字符";
-        if (ch.charCodeAt(0)>=128) return "密码中不允许出现汉字等双字节字符";
-    }
-    return "";
-}
-var r = chkPassword(regV2.password);
-if (r.length>0) {
-    g5.alert1("密码错误", r);
-    return;
-}
+      <script1>//userName, nickName, password, onComplete
 eio.appendString16(regV2.userName);
 eio.appendString16(regV2.nickName);
 eio.appendString16(regV2.password);
-]]></script1>
+</script1>
       <script2><![CDATA[var userName = eio.readString16();
 var nickName = eio.readString16();
 var password = eio.readString16();
