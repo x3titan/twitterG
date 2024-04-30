@@ -25,11 +25,9 @@ ee.getControl("divRoot").dockX = "disabled";
 ee.getControl("divRoot").dockY = "disabled";
 */
 
-var u = window.location.href.toLowerCase();
-var s = "fistalk.com/reg";
-if (u.indexOf(s) == u.length-s.length) {
-    g5.isReg = true;
-} else if (u != "https://fistalk.com/login") {
+var url = new URL(window.location.href);
+var pn = url.pathname;
+if ((pn == "/") || (pn == "") || (pn == "/faith/pc/new")) {
     window.location.href = "https://fistalk.com/login";
     return;
 }
@@ -40,13 +38,9 @@ g5.imgUrl = "/incoming/";
 ee.getControl("panel26").style.zIndex = 100;
 ee.getControl("panel20").style.zIndex = 100;
 
-if (g5.isReg) {
-    g5.p1.changePage("a4");
-} else {
-    g5.p1.changePage("a3");
-}
 eb.processDock();
-loginToken();]]></onControlLoad>
+loginToken();
+g5.processUrl();]]></onControlLoad>
       <onPageCreate><![CDATA[var tk = eb.getCookie("twitterGToken");
 if (!tk) tk = "";
 if (tk.length>0) {
@@ -317,6 +311,7 @@ sender.changePage = function(pageName) {
     } else if (this.currentPageName == "a9") {
         ee.setVisible(this.a9, true);
     } else if (this.currentPageName == "a10") {
+        g5.pushHistory2("/login/resetPsw");
         ee.setVisible(this.a10, true);
         this.a10.onShow();
     }
@@ -931,7 +926,6 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
       <height>409</height>
       <heightRatio>0.62826420890937</heightRatio>
       <layerName>注册1：选择账号</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.004914004914</sizeRatio>
       <top>234</top>
@@ -1649,6 +1643,7 @@ sender._input.addEventListener("keydown", function(event) {
       <height>403</height>
       <heightRatio>0.619047619047619</heightRatio>
       <layerName>注册4：设置密保邮箱</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.99017199017199</sizeRatio>
       <top>243</top>
@@ -5574,6 +5569,8 @@ if (pn=="/login") {
     g5.p1.changePage("a3");
 } else if (pn=="/reg") {
     g5.p1.changePage("a4");
+} else if (pn=="/login/resetPsw") {
+    g5.p1.changePage("a10");
 } else {
     g5.p1.changePage("a3");
 }
