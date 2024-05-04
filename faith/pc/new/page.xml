@@ -926,6 +926,7 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
       <height>409</height>
       <heightRatio>0.62826420890937</heightRatio>
       <layerName>注册1：选择账号</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>1.004914004914</sizeRatio>
       <top>234</top>
@@ -1643,7 +1644,6 @@ sender._input.addEventListener("keydown", function(event) {
       <height>403</height>
       <heightRatio>0.619047619047619</heightRatio>
       <layerName>注册4：设置密保邮箱</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.99017199017199</sizeRatio>
       <top>243</top>
@@ -1659,7 +1659,7 @@ sender._input.addEventListener("keydown", function(event) {
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>33</height>
-      <heightRatio>0.0831234256926952</heightRatio>
+      <heightRatio>0.0818858560794045</heightRatio>
       <layerVisible>false</layerVisible>
       <left>67</left>
       <leftRatio>0.164619164619165</leftRatio>
@@ -1667,7 +1667,7 @@ sender._input.addEventListener("keydown", function(event) {
       <sizeRatio>0.121323529411765</sizeRatio>
       <text>第四步：设置邮箱</text>
       <top>53</top>
-      <topRatio>0.133501259445844</topRatio>
+      <topRatio>0.13151364764268</topRatio>
       <width>272</width>
       <widthRatio>0.668304668304668</widthRatio>
     </control>
@@ -1679,7 +1679,7 @@ sender._input.addEventListener("keydown", function(event) {
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <height>33</height>
-      <heightRatio>0.0831234256926952</heightRatio>
+      <heightRatio>0.0818858560794045</heightRatio>
       <inputFont>Arial</inputFont>
       <inputFontSize>14</inputFontSize>
       <layerVisible>false</layerVisible>
@@ -1705,7 +1705,7 @@ sender._input.addEventListener("keydown", function(event) {
       <sizeRatio>0.121323529411765</sizeRatio>
       <text>请输入电子邮箱地址</text>
       <top>89</top>
-      <topRatio>0.224181360201511</topRatio>
+      <topRatio>0.220843672456576</topRatio>
       <width>272</width>
       <widthRatio>0.668304668304668</widthRatio>
     </control>
@@ -1717,7 +1717,7 @@ sender._input.addEventListener("keydown", function(event) {
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <height>40</height>
-      <heightRatio>0.100755667506297</heightRatio>
+      <heightRatio>0.0992555831265509</heightRatio>
       <layerVisible>false</layerVisible>
       <left>67</left>
       <leftRatio>0.164619164619165</leftRatio>
@@ -1725,7 +1725,7 @@ sender._input.addEventListener("keydown", function(event) {
       <sizeRatio>0.147058823529412</sizeRatio>
       <text>注册新用户</text>
       <top>4</top>
-      <topRatio>0.0100755667506297</topRatio>
+      <topRatio>0.00992555831265509</topRatio>
       <width>272</width>
       <widthRatio>0.668304668304668</widthRatio>
     </control>
@@ -1759,7 +1759,7 @@ sender._input.addEventListener("keydown", function(event) {
       <heightRatio>0.419354838709677</heightRatio>
       <layerVisible>false</layerVisible>
       <left>67</left>
-      <leftRatio>0.167076167076167</leftRatio>
+      <leftRatio>0.164619164619165</leftRatio>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
 sender.label.style.height = "";
 var h = sender.label.offsetHeight + 15;
@@ -1828,24 +1828,33 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";</onCreat
       <heightRatio>0.347368421052632</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <onClick>regV2.userName = checkUserName.userName;
-regV2.nickName = checkNickName.nickName;
-regV2.password = regV3.password;
-regV2.onComplete = function() {
-    g5.alert1("注册成功", "欢迎加入拳头聊天室！", 
-        function() {
-            login.username = regV2.userName;
-            login.password = regV2.password;
-            login();
-        },
-        function() {
-            login.username = regV2.userName;
-            login.password = regV2.password;
-            login();
+      <onClick>g5.popBlack.a6.show(
+    "提示",
+    "如果您未设置邮箱，将无法使用密码重置功能。您可以在登录系统后设置并认证您的邮箱。是否现在跳过此步骤？",
+    [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","设置邮箱","设置邮箱","设置邮箱","#14171a","#14171a","#14171a","")],
+    [new g5.BStyle("#e0245e","#ca2055","#b31d4b","跳过","跳过","跳过","#ffffff","#ffffff","#ffffff","")],
+    function() {
+        regV2.userName = checkUserName.userName;
+        regV2.nickName = checkNickName.nickName;
+        regV2.password = regV3.password;
+        regV2.onComplete = function() {
+            g5.alert1("注册成功", "欢迎加入拳头聊天室！", 
+                function() {
+                    login.username = regV2.userName;
+                    login.password = regV2.password;
+                    login();
+                },
+                function() {
+                    login.username = regV2.userName;
+                    login.password = regV2.password;
+                    login();
+                }
+            );
         }
-    );
-}
-regV2();
+        regV2();
+    }
+);
+
 </onClick>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
 g5.initButtonV3(sender,[
@@ -1994,7 +2003,7 @@ sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";</onCreat
       <heightRatio>0.0831234256926952</heightRatio>
       <layerVisible>false</layerVisible>
       <left>67</left>
-      <leftRatio>0.513513513513513</leftRatio>
+      <leftRatio>0.164619164619165</leftRatio>
       <onClick>window.location.href = "/login";
 </onClick>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
@@ -2249,7 +2258,7 @@ ee.setRect(sender.parentNode.c_p1,null,h,null,null);</onCreate>
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>31</height>
-      <heightRatio>0.144186046511628</heightRatio>
+      <heightRatio>0.119230769230769</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>sender.style.borderRadius = "5px";
@@ -2261,7 +2270,7 @@ sender.style.backgroundColor = "rgba(0,0,0,0.05)";
 </onCreate>
       <sizeRatio>0.113970588235294</sizeRatio>
       <top>34</top>
-      <topRatio>0.158139534883721</topRatio>
+      <topRatio>0.130769230769231</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2303,14 +2312,14 @@ sender.style.backgroundColor = "rgba(0,0,0,0.05)";
       <fontSize>12</fontSize>
       <hAlign>left</hAlign>
       <height>33</height>
-      <heightRatio>0.211538461538462</heightRatio>
+      <heightRatio>0.126923076923077</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <sizeRatio>0.121323529411765</sizeRatio>
       <text>电子邮箱（密码保护邮箱）</text>
       <top>1</top>
-      <topRatio>0.00641025641025641</topRatio>
+      <topRatio>0.00384615384615385</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2488,7 +2497,6 @@ sender._input.addEventListener("keydown", function(event) {
       <sizeRatio>0.106617647058824</sizeRatio>
       <text>请输入验证码</text>
       <top>0</top>
-      <topRatio>-0.032258064516129</topRatio>
       <width>272</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -5374,7 +5382,7 @@ data: [
     new g5.LangItem(1,"请输入密码","Please enter password."),
     new g5.LangItem(1,"请再次输入密码","Please confirm your password."),
     new g5.LangItem(1,"第三步：设置密码","Step 3: Set Password"),
-    new g5.LangItem(1,"第四步：设置邮箱","Step 3: Set Email"),
+    new g5.LangItem(1,"第四步：设置邮箱","Step 4: Set Email"),
     new g5.LangItem(1,
         "* 密码区分英文字母大小写<br>" +
         "* 密码可以包含英文数字或特殊符号<br>" +
@@ -5404,6 +5412,16 @@ data: [
     new g5.LangItem(1,"发送密码重置邮件","<span style='font-size: 0.9em;'>Send Password Reset Email</span>"),
     new g5.LangItem(1,"返 回","<< Back"),
     new g5.LangItem(1,"跳 过","Skip"),
+    new g5.LangItem(1,"跳过","Skip"),
+    new g5.LangItem(1,"请输入电子邮箱地址","<span style='font-size: 0.8em;'>Please enter your email address.</span>"),
+    new g5.LangItem(1,"设置邮箱","Setup Email"),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -5412,11 +5430,18 @@ data: [
         "请在下方输入您的注册邮箱（密码保护邮箱）。这应该是您在注册账户时使用并通过认证的邮箱，或是您之后添加并认证的邮箱。我们将向该邮箱发送一封包含密码重置链接的邮件。您只需点击该链接，即可进行密码重置操作。",
         "Please enter your registered email address (password recovery email) in the space provided below. This should be the email address you used and verified at the time of account registration, or one that you added and verified subsequently. We will send an email to this address containing a link to reset your password. Simply click on the link to proceed with the password reset process."),
     new g5.LangItem(1,
-        "",
-        ""),
+        "<li style=\"font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify\"><span style=\"margin-right: 10px;\">•</span>本邮箱地址将用于激活您的账户及找回密码等重要操作。</li><br>" +
+        "<li style=\"font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify\"><span style=\"margin-right: 10px;\">•</span>请注意，每个邮箱地址只能用于激活一个账户。</li><br>" +
+        "<li style=\"font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify\"><span style=\"margin-right: 10px;\">•</span>完成注册后，您将收到一封包含激活链接的邮件。</li><br>" +
+        "<li style=\"font-size: 0.9em;display: flex; align-items: top; margin-bottom: -14px; text-align: justify\"><span style=\"margin-right: 10px;\">•</span>请妥善保管此邮箱地址，以确保账户安全。</li>",
+        "<li style='font-size: 1.0em;display: flex; align-items: top; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>This email address will be used for important operations such as activating your account and retrieving passwords.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>Please note that each email address can only be used to activate one account.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After completing registration, you will receive an email containing an activation link.</li>" +
+        "<li style='font-size: 1.0em;display: flex; align-items: top; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>Please keep this email address safe to ensure the security of your account.</li>"
+        ),
     new g5.LangItem(1,
-        "",
-        ""),
+        "如果您未设置邮箱，将无法使用密码重置功能。您可以在登录系统后设置并认证您的邮箱。是否现在跳过此步骤？",
+        "If you do not set up an email, you will be unable to use the password reset feature. You can set up and verify your email after logging into the system. Would you like to skip this step for now?"),
     new g5.LangItem(1,
         "",
         ""),
