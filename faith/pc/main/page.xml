@@ -738,7 +738,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -927,7 +926,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.2710027100271</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -2655,7 +2653,6 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -28508,6 +28505,7 @@ return false;</onClick>
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.style.position = "fixed";
 sender.style.zIndex=100;
@@ -28780,6 +28778,7 @@ sender.replaceText("收藏此发言");
       <height>103</height>
       <heightRatio>0.129396984924623</heightRatio>
       <layerName>p2.B转推菜单</layerName>
+      <layerVisible>false</layerVisible>
       <left>372</left>
       <leftRatio>0.336043360433604</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
@@ -36531,6 +36530,7 @@ if (sqlResult == null) {
 }
 db.read(sqlResult);
 var contentId = db.getString(sqlResult,"contentId");
+var postCountDiff = db.getString(sqlResult,"postCountDiff");
 
 sql = "";
 for (var i=0; i<alertUsers.length; i++) {
@@ -36543,18 +36543,50 @@ for (var i=0; i<alertUsers.length; i++) {
 if (sql.length>0) sqlResult = db.executeNoneQuery("DB", sql);
 
 eio.appendString8("T");
-eio.appendString16(contentId);
+eio.appendString8(contentId);
+eio.appendString8(postCountDiff);
 
 ]]></script2>
-      <script3>if (eio.readString8() == "F") {
+      <script3><![CDATA[if (eio.readString8() == "F") {
     g5.alert1("提示", eio.readString8());
     newTwitter.busy = false;
     return;
 }
-newTwitter.contentId = eio.readString16();
-if (newTwitter.onComplete) newTwitter.onComplete(newTwitter.contentId);
+newTwitter.contentId = eio.readString8();
+newTwitter.postCountDiff = parseInt(eio.readString8());
+if (newTwitter.onComplete) {
+    g5.myUserInfo.postCount = (parseInt(g5.myUserInfo.postCount) + newTwitter.postCountDiff).toString();
+    if ((g5.p2.p2.v_userInfo) &amp;&amp; (g5.p2.p2.v_userInfo.id == g5.myUserInfo.id)) {
+        g5.p2.p2.v_userInfo.postCount = g5.myUserInfo.postCount;
+        g5.p2.p2.refreshFansFollowCount();
+    }
+    var itemList = g5.getAllBuff();
+    for (var i=0; i<itemList.length; i++) {
+        var items = itemList[i];
+        for (j=0; j<items.length; j++) {
+            if (items[j].v_userInfo) {
+                if (items[j].v_userInfo.id == g5.myUserInfo.id) { 
+                    items[j].v_userInfo.postCount = g5.myUserInfo.postCount;
+                }
+            }
+            if (items[j].v_reUserInfo) {
+                if (items[j].v_reUserInfo.id == g5.myUserInfo.id) { 
+                    items[j].v_reUserInfo.postCount = g5.myUserInfo.postCount;
+                }
+            }
+            if (items[j].v_content) {
+                if (items[j].v_content.exUserInfo) {
+                    if (items[j].v_content.exUserInfo.id == g5.myUserInfo.id) { 
+                        items[j].v_content.exUserInfo.postCount = g5.myUserInfo.postCount;
+                    }
+                }
+            }
+        }
+    }    
+    newTwitter.onComplete(newTwitter.contentId, newTwitter.postCountDiff);
+}
 newTwitter.busy = false;
-</script3>
+]]></script3>
     </taskSetItem>
     <taskSetItem name="updateHomepage">
       <script1>//busy,contentId,isForward,onComplete(dataset)
