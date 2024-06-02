@@ -1,5 +1,5 @@
 <page>
-  <controls count="51">
+  <controls count="52">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>FAFCFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -3431,6 +3431,41 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
       <width>162</width>
       <widthRatio>0.179005524861878</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel9">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <height>33</height>
+      <heightRatio>0.0414572864321608</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>271</left>
+      <leftRatio>0.249310027598896</leftRatio>
+      <onClick>let db = new g5.database();
+db.createTable("dba","tasks");
+db.addTask("sdfasd","fffff");
+db.addTask("sffasd","xxffff");
+db.addTask("sdaaasd","22fffff");
+db.displayTasks();
+</onClick>
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("#ffffff","#e8f5fe","#d2ecfc","","","","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+sender.style.boxShadow = "2px 2px 4px #a0a0a0";
+
+
+
+</onCreate>
+      <sizeRatio>0.203703703703704</sizeRatio>
+      <text>数据库测试</text>
+      <top>612</top>
+      <topRatio>0.768844221105528</topRatio>
+      <width>162</width>
+      <widthRatio>0.149034038638454</widthRatio>
+    </control>
   </controls>
   <taskSet count="2">
     <taskSetItem name="uploadImage">
@@ -3712,27 +3747,61 @@ sender.init(0);]]></functionCode>
       <functionCode>this.db = null;
 
 this.createTable = function(dbName, tableName) {
+    this.dbName = dbName;
+    this.tableName = tableName;
     this.request = indexedDB.open(dbName, 1);
     
-    request.onupgradeneeded = function(event) {
+    this.request.onupgradeneeded = function(event) {
         this.db = event.target.result;
         var objectStore = db.createObjectStore(tableName, { keyPath: 'id', autoIncrement: true });
         objectStore.createIndex('title', 'title', { unique: false });
         objectStore.createIndex('status', 'status', { unique: false });
     };
     
-    request.onsuccess = function(event) {
-        db = event.target.result;
+    this.request.onsuccess = function(event) {
+        this.db = event.target.result;
         console.log('Database opened successfully');
-        displayTasks();
+        this.displayTasks();
     };
     
-    request.onerror = function(event) {
+    this.request.onerror = function(event) {
         console.error('Database error:', event.target.error);
     };
 }
 
+this.addTask = function(title, status) {
+    var transaction = this.db.transaction([this.tableName], "readwrite");
+    var objectStore = transaction.objectStore(this.tableName);
+    var request = objectStore.add({ title: title, status: status });
 
+    request.onsuccess = function(event) {
+        console.log('Task added:', event.target.result);
+    };
+
+    request.onerror = function(event) {
+        console.error('Add task error:', event.target.error);
+    };
+}
+
+this.displayTasks = function() {
+    let transaction = this.db.transaction([this.tableName], "readonly");
+    let objectStore = transaction.objectStore(this.tableName);
+    let request = objectStore.openCursor();
+
+    request.onsuccess = function(event) {
+        let cursor = event.target.result;
+        if (cursor) {
+            console.log('Task:', cursor.value);
+            cursor.continue();
+        } else {
+            console.log('No more tasks');
+        }
+    };
+
+    request.onerror = function(event) {
+        console.error('Cursor error:', event.target.error);
+    };
+}
 </functionCode>
     </item>
   </g5Items>
