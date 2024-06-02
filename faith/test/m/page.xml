@@ -3745,6 +3745,7 @@ sender.init(0);]]></functionCode>
       <varValue />
       <functionParam />
       <functionCode>this.db = null;
+var self = this;
 
 this.createTable = function(dbName, tableName) {
     this.dbName = dbName;
@@ -3752,16 +3753,16 @@ this.createTable = function(dbName, tableName) {
     this.request = indexedDB.open(dbName, 1);
     
     this.request.onupgradeneeded = function(event) {
-        this.db = event.target.result;
-        var objectStore = db.createObjectStore(tableName, { keyPath: 'id', autoIncrement: true });
+        self.db = event.target.result;
+        var objectStore = self.db.createObjectStore(tableName, { keyPath: 'id', autoIncrement: true });
         objectStore.createIndex('title', 'title', { unique: false });
         objectStore.createIndex('status', 'status', { unique: false });
     };
     
     this.request.onsuccess = function(event) {
-        this.db = event.target.result;
-        console.log('Database opened successfully');
-        this.displayTasks();
+        self.db = event.target.result;
+        console.log("Database opened successfully");
+        self.displayTasks();
     };
     
     this.request.onerror = function(event) {
