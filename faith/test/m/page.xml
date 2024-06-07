@@ -3444,11 +3444,27 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
       <left>271</left>
       <leftRatio>0.249310027598896</leftRatio>
       <onClick><![CDATA[// 使用示例
+
+(async () => {
+    let db = new g5.Database("DBA", "tableA");
+    await db.getVersion();
+    console.log(db.version);
+    let exists = await db.tableExists();
+    console.log(exists);
+    if (!exists) await db.createTable("id",["f1","f2"]);
+    exists = await db.tableExists();
+    console.log(exists);
+})();
+
+return;
+
 (async () => {
     let taskManager = new g5.Database("DBA", "tableA");
+    await taskManager.deleteTable("tableA");
     await taskManager.createTable("id",["f1","f2"]);
-    await taskManager.addTask('Task 1', 'incomplete');
-    await taskManager.addTask('Task 2', 'complete');
+    await taskManager.append(["f1f1", "value1"]);
+    await taskManager.append(["f1f1", "value1"]);
+    await taskManager.append(["f1f1", "value1"]);
     let tasks = await taskManager.displayTasks();
     console.log(tasks);
     await taskManager.updateTask(1, 'complete');
@@ -3747,17 +3763,54 @@ eb.initMouseEvent(sender);
 sender.init(0);]]></functionCode>
     </item>
     <item name="Database" type="10">
-      <varValue><![CDATA[class TaskManager {
+      <varValue><![CDATA[class DatabaseTable {
     constructor(dbName, tableName) {
         this.dbName = dbName;
         this.tableName = tableName;
         this.db = null;
+        this.version = -1;
     }
 
-    // 初始化数据库
-    createTable(idName, fields) {
+    getVersion() {
         return new Promise((resolve, reject) => {
-            let request = indexedDB.open(this.dbName, 1);
+            let request = indexedDB.open(this.dbName);
+    
+            request.onsuccess = (event) => {
+                let db = event.target.result;
+                this.version = db.version;
+                db.close(); // 关闭数据库连接
+                resolve(this.version);
+            };
+    
+            request.onerror = (event) => {
+                reject(`Database error: ${event.target.error}`);
+            };
+        });
+    }
+
+    tableExists() {
+        return new Promise((resolve, reject) => {
+            let request = indexedDB.open(this.dbName);
+    
+            request.onsuccess = (event) => {
+                let db = event.target.result;
+                let exists = db.objectStoreNames.contains(this.tableName);
+                db.close();
+                resolve(exists);
+            };
+    
+            request.onerror = (event) => {
+                reject(`Database error: ${event.target.error}`);
+            };
+        });
+    }
+
+    async createTable(idName, fields) {
+        this.idName = idName;
+        this.fields = fields;
+        if (this.version < 0) await this.getVersion();
+        return new Promise((resolve, reject) => {
+            let request = indexedDB.open(this.dbName, this.version);
 
             request.onupgradeneeded = (event) => {
                 this.db = event.target.result;
@@ -3778,12 +3831,42 @@ sender.init(0);]]></functionCode>
         });
     }
 
+    deleteTable(tableName) {
+        return new Promise((resolve, reject) => {
+            let request = indexedDB.open(this.dbName, 2);
+    
+            request.onupgradeneeded = function(event) {
+                let db = event.target.result;
+                if (db.objectStoreNames.contains(tableName)) {
+                    db.deleteObjectStore(tableName);
+                    resolve(`Object store "${tableName}" deleted`);
+                } else {
+                    reject(`Object store "${tableName}" does not exist`);
+                }
+            };
+    
+            request.onsuccess = function(event) {
+                let db = event.target.result;
+                db.close();
+                resolve(`Object store "${tableName}" deleted`);
+            };
+    
+            request.onerror = function(event) {
+                reject(`Database error: ${event.target.error}`);
+            };
+        });
+    }
+    
     // 添加任务
-    addTask(title, status) {
+    append(record) {
         return new Promise((resolve, reject) => {
             let transaction = this.db.transaction([this.tableName], 'readwrite');
             let objectStore = transaction.objectStore(this.tableName);
-            let request = objectStore.add({ title: title, status: status });
+            let r = {};
+            for (let i = 0; i < this.fields.length; i++) {
+                r[this.fields[i]] = record[i];
+            }
+            let request = objectStore.add(r);
 
             request.onsuccess = () => {
                 resolve('Task added successfully');
