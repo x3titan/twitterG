@@ -3446,14 +3446,14 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
       <onClick><![CDATA[// 使用示例
 
 (async () => {
-    let db = new g5.Database("DBA", "tableA");
-    await db.getVersion();
-    console.log(db.version);
-    let exists = await db.tableExists();
-    console.log(exists);
-    if (!exists) await db.createTable("id",["f1","f2"]);
-    exists = await db.tableExists();
-    console.log(exists);
+    try {
+        let db = new g5.Database("DBA", "tableA");
+        let exists = await db.tableExists();
+        if (exists) await db.deleteTable();
+        await db.createTable("id",["f1","f2"]);
+    } catch (error) {
+        console.error(error);
+    }
 })();
 
 return;
@@ -3809,6 +3809,7 @@ sender.init(0);]]></functionCode>
         this.idName = idName;
         this.fields = fields;
         if (this.version < 0) await this.getVersion();
+        this.version++;
         return new Promise((resolve, reject) => {
             let request = indexedDB.open(this.dbName, this.version);
 
@@ -3831,27 +3832,28 @@ sender.init(0);]]></functionCode>
         });
     }
 
-    deleteTable(tableName) {
+    async deleteTable() {
+        if (this.version < 0) await this.getVersion();
+        this.version++;
         return new Promise((resolve, reject) => {
-            let request = indexedDB.open(this.dbName, 2);
+            let request = indexedDB.open(this.dbName, this.version);
     
-            request.onupgradeneeded = function(event) {
+            request.onupgradeneeded = (event) => {
                 let db = event.target.result;
-                if (db.objectStoreNames.contains(tableName)) {
-                    db.deleteObjectStore(tableName);
-                    resolve(`Object store "${tableName}" deleted`);
+                if (db.objectStoreNames.contains(this.tableName)) {
+                    db.deleteObjectStore(this.tableName);
+                    resolve(`Object store "${this.tableName}" deleted`);
                 } else {
-                    reject(`Object store "${tableName}" does not exist`);
+                    reject(`Object store "${this.tableName}" does not exist`);
                 }
             };
     
-            request.onsuccess = function(event) {
+            request.onsuccess = (event) => {
                 let db = event.target.result;
                 db.close();
-                resolve(`Object store "${tableName}" deleted`);
             };
     
-            request.onerror = function(event) {
+            request.onerror = (event) => {
                 reject(`Database error: ${event.target.error}`);
             };
         });
