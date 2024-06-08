@@ -1,5 +1,5 @@
 <page>
-  <controls count="52">
+  <controls count="53">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>FAFCFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -3443,6 +3443,46 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
       <layerVisible>false</layerVisible>
       <left>271</left>
       <leftRatio>0.249310027598896</leftRatio>
+      <onClick><![CDATA[(async () => {
+    try {
+        g5.db = new g5.Database("DBA", "tableA");
+        let exists = await g5.db.tableExists();
+        if (exists) await g5.db.deleteTable();
+        await g5.db.createTable("id",["f1","f2"]);
+    } catch (error) {
+        console.error(error);
+    }
+})();
+
+]]></onClick>
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("#ffffff","#e8f5fe","#d2ecfc","","","","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+sender.style.boxShadow = "2px 2px 4px #a0a0a0";
+
+
+
+</onCreate>
+      <sizeRatio>0.203703703703704</sizeRatio>
+      <text>创建表</text>
+      <top>612</top>
+      <topRatio>0.768844221105528</topRatio>
+      <width>162</width>
+      <widthRatio>0.149034038638454</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel10">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>1DA1F2</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <height>33</height>
+      <heightRatio>0.0414572864321608</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>271</left>
+      <leftRatio>0.249310027598896</leftRatio>
       <onClick><![CDATA[// 使用示例
 
 (async () => {
@@ -3455,21 +3495,6 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
         console.error(error);
     }
 })();
-
-return;
-
-(async () => {
-    let taskManager = new g5.Database("DBA", "tableA");
-    await taskManager.deleteTable("tableA");
-    await taskManager.createTable("id",["f1","f2"]);
-    await taskManager.append(["f1f1", "value1"]);
-    await taskManager.append(["f1f1", "value1"]);
-    await taskManager.append(["f1f1", "value1"]);
-    let tasks = await taskManager.displayTasks();
-    console.log(tasks);
-    await taskManager.updateTask(1, 'complete');
-    await taskManager.deleteTask(2);
-})();
 ]]></onClick>
       <onCreate>g5.initButtonV3(sender,[
     new g5.BStyle("#ffffff","#e8f5fe","#d2ecfc","","","","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
@@ -3481,9 +3506,9 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
 
 </onCreate>
       <sizeRatio>0.203703703703704</sizeRatio>
-      <text>数据库测试</text>
-      <top>612</top>
-      <topRatio>0.768844221105528</topRatio>
+      <text>插入数据和搜索</text>
+      <top>664</top>
+      <topRatio>0.834170854271357</topRatio>
       <width>162</width>
       <widthRatio>0.149034038638454</widthRatio>
     </control>
@@ -3859,7 +3884,6 @@ sender.init(0);]]></functionCode>
         });
     }
     
-    // 添加任务
     append(record) {
         return new Promise((resolve, reject) => {
             let transaction = this.db.transaction([this.tableName], 'readwrite');
@@ -3880,7 +3904,6 @@ sender.init(0);]]></functionCode>
         });
     }
 
-    // 列出所有任务
     displayTasks() {
         return new Promise((resolve, reject) => {
             let transaction = this.db.transaction([this.tableName], 'readonly');
