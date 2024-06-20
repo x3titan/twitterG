@@ -7041,18 +7041,7 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
       <layerVisible>false</layerVisible>
       <left>495</left>
       <leftRatio>0.455381784728611</leftRatio>
-      <onClick>if ("serviceWorker" in navigator &amp;&amp; "PushManager" in window) {
-    navigator.serviceWorker.register("/service-worker.js")
-    .then(function(swReg) {
-        console.log("Service Worker is registered", swReg);
-    })
-    .catch(function(error) {
-        console.error("Service Worker Error", error);
-    });
-} else {
-    console.warn("Push messaging is not supported");
-}
-
+      <onClick>g5.alertTest = new g5.PushNotificationManager();
 
 
 
@@ -7085,10 +7074,9 @@ sender.style.boxShadow = "2px 2px 4px #a0a0a0";
       <layerVisible>false</layerVisible>
       <left>495</left>
       <leftRatio>0.455381784728611</leftRatio>
-      <onClick>g5.askPermission();
+      <onClick><![CDATA[g5.alertTest.askPermission().then(() => g5.alertTest.subscribeUser());
 
-
-</onClick>
+]]></onClick>
       <onCreate>g5.initButtonV3(sender,[
     new g5.BStyle("#ffffff","#e8f5fe","#d2ecfc","","","","#1da1f2","#1da1f2","#1da1f2","#1da1f2")
 ]);
@@ -7592,16 +7580,14 @@ sender.init(0);]]></functionCode>
       <varValue><![CDATA[class PushNotificationManager {
     constructor() {
         this.vapidPublicKey = "YOUR_PUBLIC_VAPID_KEY";
-        //this.subscribeButton = document.getElementById("subscribeButton");
-        //this.subscribeButton.addEventListener("click", () => this.init());
+        this.registerServiceWorker();
     }
 
-    init() {
+    registerServiceWorker() {
         if ("serviceWorker" in navigator &amp;&amp; "PushManager" in window) {
             navigator.serviceWorker.register("/service-worker.js")
                 .then((swReg) => {
                     console.log("Service Worker is registered", swReg);
-                    this.subscribeButton.disabled = false;
                     this.askPermission().then(() => this.subscribeUser());
                 })
                 .catch((error) => {
