@@ -7579,7 +7579,10 @@ sender.init(0);]]></functionCode>
     <item name="PushNotificationManager" type="10">
       <varValue><![CDATA[class PushNotificationManager {
     constructor() {
-        this.vapidPublicKey = "YOUR_PUBLIC_VAPID_KEY";
+        //npx web-push generate-vapid-keys
+        //Private Key:
+        //jDzdymUjI3QBw18RmzQnfszqL0cOp6vTGmnlAmaxFsc
+        this.vapidPublicKey = "BHG6z5IeNc27CX0di_QMfZrpshyBB8TPI6_qRxaA0LImkH0bJGOifqTob5S6Q96h4lG8-w9MN1apGprHERKoroE";
         this.registerServiceWorker();
     }
 
@@ -7588,7 +7591,6 @@ sender.init(0);]]></functionCode>
             navigator.serviceWorker.register("/service-worker.js")
                 .then((swReg) => {
                     console.log("Service Worker is registered", swReg);
-                    this.askPermission().then(() => this.subscribeUser());
                 })
                 .catch((error) => {
                     console.error("Service Worker Error", error);
@@ -7616,10 +7618,10 @@ sender.init(0);]]></functionCode>
     }
 
     urlB64ToUint8Array(base64String) {
-        const padding = "=".repeat((4 - base64String.length % 4) % 4);
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding)
-            .replace(/-/g, "+")
-            .replace(/_/g, "/");
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
         const rawData = window.atob(base64);
         const outputArray = new Uint8Array(rawData.length);
         for (let i = 0; i < rawData.length; ++i) {
@@ -7666,6 +7668,7 @@ sender.init(0);]]></functionCode>
         });
     }
 }
+
 
 ]]></varValue>
       <functionParam />
