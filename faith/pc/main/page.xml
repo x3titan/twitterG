@@ -946,7 +946,6 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>Home主页面</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_bottom = ee.getControl("panel648");
@@ -2379,7 +2378,6 @@ sender.processUserName = function() {
       <fontSize>20</fontSize>
       <height>252</height>
       <heightRatio>0.323076923076923</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note><![CDATA[c_bottom->短文底部栏目]]></note>
       <onCreate><![CDATA[sender.c_recmdS = ee.getControl("panel650");
@@ -2594,6 +2592,10 @@ sender.refresh = function(dataset) {
         var item = createPanel(root, "recmdU_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
         sender.loadRecord(item, dataset, i);
         item.v_mode = "";
+        if (g5.myUserInfo.userName == "test066") {
+            item.v_selectMode = true;
+            item.v_selected = true;
+        }
         g5.renderUserBar(item);
         cy += eb.getDivRect(item).h;
         sender.v_items.push(item);
@@ -2633,7 +2635,6 @@ sender.refresh = function(dataset) {
       <height>60</height>
       <heightRatio>0.238095238095238</heightRatio>
       <layerName><![CDATA[c_noResult->没有更多了]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.1</sizeRatio>
       <text>没有更多了</text>
@@ -2653,6 +2654,7 @@ sender.refresh = function(dataset) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>用户(个人)信息页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.p1Items = new Array();
@@ -45857,16 +45859,24 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         ee.setRect(this, this.v_right-w,null,w,null);
     }
     root.refreshButton = function() {
-        if (root.v_userInfo.isFollow) {
-            root.button1.refreshStatus(2);
+        if (root.v_selectMode) {
+            if (root.v_selected) {
+                root.button1.refreshStatus(2);
+            } else {
+                root.button1.refreshStatus(1);
+            }
         } else {
-            root.button1.refreshStatus(1);
-        }
-        if (root.v_userInfo.userName == g5.myUserInfo.userName) {
-            root.button1.refreshStatus(3);
-        }
-        if (root.v_userInfo.isBlock1) {
-            root.button1.refreshStatus(0);
+            if (root.v_userInfo.isFollow) {
+                root.button1.refreshStatus(2);
+            } else {
+                root.button1.refreshStatus(1);
+            }
+            if (root.v_userInfo.userName == g5.myUserInfo.userName) {
+                root.button1.refreshStatus(3);
+            }
+            if (root.v_userInfo.isBlock1) {
+                root.button1.refreshStatus(0);
+            }
         }
     }
     root.refreshButton();
@@ -45874,22 +45884,30 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
         if (sender.v_index==0) {
             g5.setBlock1(root.v_userInfo,null);
         } else if (sender.v_index==1) {
-            //follow
-            if (g5.checkGuest("关注某用户")) {
+            if (root.v_selectMode) {
+                sender.refreshStatus(2);
             } else {
-                g5.setFollow(root.v_userInfo, function(v_userInfo) {
-                    sender.refreshStatus(2);
-                    root.v_userInfo = v_userInfo.clone();
-                });
+                //follow
+                if (g5.checkGuest("关注某用户")) {
+                } else {
+                    g5.setFollow(root.v_userInfo, function(v_userInfo) {
+                        sender.refreshStatus(2);
+                        root.v_userInfo = v_userInfo.clone();
+                    });
+                }
             }
         } else if (sender.v_index==2) {
-            //unfollow
-            if (g5.checkGuest("取消关注某用户")) {
+            if (root.v_selectMode) {
+                sender.refreshStatus(1);
             } else {
-                g5.setFollow(root.v_userInfo, function(v_userInfo) {
-                    sender.refreshStatus(1);
-                    root.v_userInfo = v_userInfo.clone();
-                });
+                //unfollow
+                if (g5.checkGuest("取消关注某用户")) {
+                } else {
+                    g5.setFollow(root.v_userInfo, function(v_userInfo) {
+                        sender.refreshStatus(1);
+                        root.v_userInfo = v_userInfo.clone();
+                    });
+                }
             }
         } else if (sender.v_index==3) {
             //编辑个人资料
