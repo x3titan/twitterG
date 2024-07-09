@@ -1,5 +1,5 @@
 <page>
-  <controls count="835">
+  <controls count="839">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -2380,15 +2380,13 @@ sender.processUserName = function() {
       <heightRatio>0.323076923076923</heightRatio>
       <left>0</left>
       <note><![CDATA[c_bottom->短文底部栏目]]></note>
-      <onCreate><![CDATA[sender.c_recmdS = ee.getControl("panel650");
-sender.c_recmdU = ee.getControl("panel653");
-sender.c_noResult = ee.getControl("panel651");
-sender.c_barTop = ee.getControl("panel655");
-sender.v_valid = false;
+      <onCreate><![CDATA[sender.v_valid = false;
 
 ee.setVisible(sender.c_recmdS, true);
 ee.setVisible(sender.c_recmdU, true);
 ee.setVisible(sender.c_noResult, true);
+ee.setVisible(sender.c_followConfirm, true);
+
 
 sender.refresh = function(dsSearch, dsUser) {
     this.c_recmdS.refresh(dsSearch);
@@ -2450,6 +2448,19 @@ sender.adjustP1 = function() {
     eb.setDivRect(g5.p2.p1,null,null,null,h);
 }
 
+sender.refreshButtonNext = function() {
+    //sender.c_followConfirm.c_button;
+    let enabled = false;
+    for (let i=0; i<sender.c_recmdU.v_items.length; i++) {
+        if (sender.c_recmdU.v_items[i].v_selected) {
+            enabled = true;
+            break;
+        }
+    }
+    sender.c_followConfirm.c_button.setEnabled(enabled);
+}
+
+
 
 ]]></onCreate>
       <sizeRatio>0.42</sizeRatio>
@@ -2462,6 +2473,7 @@ sender.adjustP1 = function() {
       <backgroundColor>E6ECF0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
+      <ee_LocalName>c_barTop</ee_LocalName>
       <height>10</height>
       <heightRatio>0.0396825396825397</heightRatio>
       <layerVisible>false</layerVisible>
@@ -2475,13 +2487,15 @@ sender.adjustP1 = function() {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel650">
       <backgroundColor>EAEAFE</backgroundColor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_recmdS</ee_LocalName>
       <fontColor>FFFFFF</fontColor>
       <fontSize>20</fontSize>
       <height>183</height>
       <heightRatio>0.726190476190476</heightRatio>
-      <layerName><![CDATA[c_recmdS->搜索推荐]]></layerName>
+      <layerName>搜索推荐</layerName>
       <layerVisible>false</layerVisible>
       <left>0</left>
+      <leftRatio>0.00166666666666667</leftRatio>
       <onCreate><![CDATA[sender.c_text = ee.getControl("panel652");
 
 sender.refresh = function(dataset) {
@@ -2554,28 +2568,15 @@ sender.refresh = function(dataset) {
       <width>570</width>
       <widthRatio>0.95</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel658">
-      <backgroundColor>E6ECF0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <dockX>fill</dockX>
-      <height>10</height>
-      <heightRatio>0.0396825396825397</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <sizeRatio>0.0166666666666667</sizeRatio>
-      <top>0</top>
-      <width>600</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel653">
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel703">
       <backgroundColor>EAEAFE</backgroundColor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_followConfirm</ee_LocalName>
       <fontColor>FFFFFF</fontColor>
       <fontSize>20</fontSize>
-      <height>236</height>
-      <heightRatio>0.936507936507937</heightRatio>
-      <layerName><![CDATA[c_recmdU->关注推荐]]></layerName>
-      <layerVisible>false</layerVisible>
+      <height>61</height>
+      <heightRatio>0.242063492063492</heightRatio>
+      <layerName>关注确认</layerName>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 
@@ -2606,9 +2607,161 @@ sender.refresh = function(dataset) {
     ee.tiledResizeV(sender,1);
 }
 ]]></onCreate>
+      <sizeRatio>0.101666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel703/panel704">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>10</height>
+      <heightRatio>0.0423728813559322</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel703/panel702">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontColor>404040</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>28</height>
+      <heightRatio>0.459016393442623</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>13</left>
+      <leftRatio>0.0216666666666667</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <sizeRatio>0.0912052117263844</sizeRatio>
+      <text>请确认初始关注的账号</text>
+      <top>21</top>
+      <topRatio>0.344262295081967</topRatio>
+      <width>307</width>
+      <widthRatio>0.511666666666667</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel703/panel707">
+      <backgroundColor>8ED0F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <dockX>right</dockX>
+      <ee_LocalName>c_button</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <height>29</height>
+      <heightRatio>0.475409836065574</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>376</left>
+      <leftRatio>0.626666666666667</leftRatio>
+      <onClick><![CDATA[if (!sender.v_enabled) return;
+
+followBatch.userId = [];
+let items = g5.p2.p1.c_bottom.c_recmdU.v_items;
+for (let i=0; i<items.length; i++) {
+    if (items[i].v_selected) {
+        followBatch.userId.push(items[i].v_userInfo.id);
+    }
+}
+followBatch.onComplete = function() {
+    location.reload();
+}
+followBatch();
+
+
+]]></onClick>
+      <onCreate>ee.setText(sender, g5.lang.getByTCn(500,ee.getText(sender)));
+g5.initButtonV3(sender,[
+    new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","","","",""),
+    new g5.BStyle("#8ed0f9","#8ed0f9","#8ed0f9","","","","","","","")
+]);
+sender.style.borderRadius = parseInt(eb.getDivRect(sender).h/2) + "px";
+
+sender.v_enabled = true;
+sender.setEnabled = function(enabled) {
+    this.v_enabled = enabled;
+    this.init(enabled?0:1);
+}
+sender.setEnabled(true);
+
+
+
+
+
+
+</onCreate>
+      <outerRight>20</outerRight>
+      <sizeRatio>0.142156862745098</sizeRatio>
+      <text>开始使用FISTALK</text>
+      <top>21</top>
+      <topRatio>0.344262295081967</topRatio>
+      <width>204</width>
+      <widthRatio>0.34</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel658">
+      <backgroundColor>E6ECF0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>10</height>
+      <heightRatio>0.0396825396825397</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.0166666666666667</sizeRatio>
+      <top>0</top>
+      <width>600</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel653">
+      <backgroundColor>EAEAFE</backgroundColor>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_recmdU</ee_LocalName>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>20</fontSize>
+      <height>236</height>
+      <heightRatio>0.936507936507937</heightRatio>
+      <layerName>关注推荐</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate><![CDATA[sender.v_items = new Array();
+
+sender.loadRecord = function(panel, dataset, index) {
+    panel.v_userInfo = new g5.UserInfo();
+    panel.v_userInfo.loadFromDataset(dataset,0,index);
+}
+
+sender.refresh = function(dataset) {
+    var root = sender;
+    var cy = 0;
+    var itemWidth = eb.getDivRect(root).w;
+    for (var i=0; i<dataset.rowCount; i++) {
+        var item = createPanel(root, "recmdU_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
+        sender.loadRecord(item, dataset, i);
+        item.v_mode = "";
+        if (g5.myUserInfo.userName == "test066") {
+            item.v_selectMode = true;
+            item.v_selected = true;
+            item.f_onSelectChange = function(selected) {
+                sender.parentNode.refreshButtonNext();
+            }
+        }
+        g5.renderUserBar(item);
+        cy += eb.getDivRect(item).h;
+        sender.v_items.push(item);
+    }
+    eb.processDock();
+    var rect = eb.getDivRectSetting(g5.p4);
+    ee.tiledV(sender, 0, 0, 0); 
+    ee.tiledResizeV(sender,1);
+}
+]]></onCreate>
       <sizeRatio>0.393333333333333</sizeRatio>
-      <top>8</top>
-      <topRatio>0.0317460317460317</topRatio>
+      <top>7</top>
+      <topRatio>0.0277777777777778</topRatio>
       <width>600</width>
       <widthRatio>1</widthRatio>
     </control>
@@ -2628,13 +2781,15 @@ sender.refresh = function(dataset) {
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648/panel651">
       <backgroundColor>EAEAFE</backgroundColor>
       <dockX>fill</dockX>
+      <ee_LocalName>c_noResult</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>A0A0A0</fontColor>
       <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
       <fontSize>12</fontSize>
       <height>60</height>
       <heightRatio>0.238095238095238</heightRatio>
-      <layerName><![CDATA[c_noResult->没有更多了]]></layerName>
+      <layerName>没有更多了</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <sizeRatio>0.1</sizeRatio>
       <text>没有更多了</text>
@@ -36008,7 +36163,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="76">
+  <taskSet count="77">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -38620,6 +38775,84 @@ var f = eio.readString8();
 if (!eb.isEmpty(follow.onComplete)) {
     follow.onComplete();
     follow.onComplete = null;
+}
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="followBatch">
+      <script1><![CDATA[//userId[], onComplete()
+eio.appendString8(g5.token);
+eio.appendInt32(followBatch.userId.length);
+for (let i=0; i<followBatch.userId.length; i++) {
+    eio.appendString8(followBatch.userId[i] + "");
+}
+g5.blockLoading.show();
+
+
+
+]]></script1>
+      <script2><![CDATA[var token = eio.readString8();
+let userIdLen = eio.readInt32();
+if (userIdLen > 100) {
+    eio.appendString8("F");
+    eio.appendString8("System Busy");
+    return;
+}
+let userIds = [];
+for (let i = 0; i < userIdLen; i++) {
+    userIds.push(eio.readString8());
+}
+
+var sql,sqlResult; 
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+}
+var myUserId = db.getString(sqlResult,"id");
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能关注和取消关注账号，您如果需要使用这个功能请注册正式用户。");
+    return;
+}
+
+sql = "";
+for (let i = 0; i < userIds.length; i++) {
+    let userId = userIds[i];
+    if (parseInt(userId) == 10877) continue; //不能关注游客
+    if (myUserId == userId) continue; //不能关注自己
+    sql += "exec followUser " + myUserId + "," + parseInt(userId) + ",1;\n";
+}
+if (sql == "") {
+    eio.appendString8("T");
+    return;
+}
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+
+eio.appendString8("T");
+]]></script2>
+      <script3>g5.blockLoading.close();
+if (eio.readString8() != "T") {
+    g5.alert1("提示", eio.readString8());
+    return;
+}
+if (!eb.isEmpty(followBatch.onComplete)) {
+    followBatch.onComplete();
+    followBatch.onComplete = null;
 }
 
 </script3>
@@ -45885,7 +46118,9 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
             g5.setBlock1(root.v_userInfo,null);
         } else if (sender.v_index==1) {
             if (root.v_selectMode) {
-                sender.refreshStatus(2);
+                root.v_selected = !root.v_selected;
+                root.refreshButton();
+                if (root.f_onSelectChange) root.f_onSelectChange(root.v_selected);
             } else {
                 //follow
                 if (g5.checkGuest("关注某用户")) {
@@ -45898,7 +46133,9 @@ if (root.v_userInfo.isBlock2 &amp;&amp; (!root.v_userInfo.isBlock1)) {
             }
         } else if (sender.v_index==2) {
             if (root.v_selectMode) {
-                sender.refreshStatus(1);
+                root.v_selected = !root.v_selected;
+                root.refreshButton();
+                if (root.f_onSelectChange) root.f_onSelectChange(root.v_selected);
             } else {
                 //unfollow
                 if (g5.checkGuest("取消关注某用户")) {
