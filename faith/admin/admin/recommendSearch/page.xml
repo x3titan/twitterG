@@ -366,9 +366,15 @@ sender.style.borderRadius = "5px";</onCreate>
 var v_onClick = new Array();
 v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","简体中文","简体中文","简体中文","#1da1f2","#1da1f2","#1da1f2",""));
 v_onClick.push(function (senderBtn, event) {
+    g5.editLang = "zh-CN";
+    ee.setText(sender, "简体中文");
+    query();
 });
 v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","English","English","English","#1da1f2","#1da1f2","#1da1f2",""));
 v_onClick.push(function (senderBtn, event) {
+    g5.editLang = "en";
+    ee.setText(sender, "English");
+    query();
 });
 g5.p1.p4.show(sender, 200, v_style, v_onClick);</onClick>
       <onCreate>sender.className = "buttonGray";
@@ -2751,11 +2757,13 @@ sender.renderItem = function(root) {
     <taskSetItem name="query">
       <script1>eio.appendString8(eb.getCookie("FAToken")); 
 eio.appendString8(ee.getEditText(ee.getControl("edit3")));
+eio.appendString8(g5.editLang);
 eio.appendInt32(g5.pageSize);
 eio.appendInt32(g5.pageCurrent);
 </script1>
       <script2><![CDATA[var token = eio.readString8();
 var searchText = eio.readString8();
+var editLang = eio.readString8();
 var pageSize = eio.readInt32();
 var pageCurrent = eio.readInt32();
 
@@ -2778,10 +2786,10 @@ var userId = db.getString(sqlResult, "id");
 var userName = db.getString(sqlResult, "userName");
 
 //获取记录数量
-var condition = "";
+var condition = "(lang = '" + db.encode(editLang) + "') ";
 if (searchText != "") {
     condition +=
-        " (" +
+        " and (" +
         "(dbo.recmdSearch.[text] like '%" + db.encode(searchText) + "%') " +
         ") ";
 }
@@ -3004,9 +3012,11 @@ if (moveDown.onComplete) {
     <taskSetItem name="addNew">
       <script1>//text, onComplete
 eio.appendString8(eb.getCookie("FAToken"));
+eio.appendString8(g5.editLang);
 eio.appendString8(addNew.text);
 </script1>
       <script2><![CDATA[var token = eio.readString8();
+var editLang = eio.readString8();
 var text = eio.readString8();
 
 //获取用户信息及认证
@@ -3035,6 +3045,7 @@ var userName = db.getString(sqlResult, "userName");
 
 sql = "exec recmdSearchAdd " +
     userId + "," +
+    "'" + db.encode(editLang) + "'," +
     "'" + db.encode(text) + "';";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -3392,9 +3403,14 @@ delFollow.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="8">
+  <g5Items count="9">
     <item name="imgUrl" type="10">
       <varValue>"/incoming/";</varValue>
+      <functionParam />
+      <functionCode />
+    </item>
+    <item name="editLang" type="10">
+      <varValue>"zh-CN";</varValue>
       <functionParam />
       <functionCode />
     </item>
