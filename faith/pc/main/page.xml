@@ -36884,9 +36884,12 @@ updateHomepage.busy = false;
       <script1>//busy,onComplete(dataset)
 if (getRecommend.busy) return;
 getRecommend.busy = true;
-eio.appendString16(g5.token);
+eio.appendString8(g5.token);
+eio.appendString8(g5.lang.current);
+
 </script1>
-      <script2><![CDATA[var token = eio.readString16();
+      <script2><![CDATA[var token = eio.readString8();
+var lang = eio.readString8();
 
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -36907,7 +36910,7 @@ var userName =db.getString(sqlResult,"userName");
 var userId = db.getString(sqlResult,"id");
 
 sql =
-    "select * from recmdSearch order by orderNumber DESC; " +
+    "select * from recmdSearch where lang = '" + db.encode(lang) + "' order by orderNumber DESC; " +
     "SELECT        TOP (100) PERCENT dbo.userInfo.id AS uId, dbo.userInfo.status AS uStatus, CONVERT(VARCHAR(50), dbo.userInfo.regDatetime, 120) AS uRegDatetime, dbo.userInfo.lastAccessTime AS uLastAccessTime,  " +
     "                         dbo.userInfo.userName AS uUserName, dbo.userInfo.mobile AS uMobile, dbo.userInfo.email AS uEmail, dbo.userInfo.nickName AS uNickName, dbo.userInfo.note AS uNote, dbo.userInfo.photo AS uPhoto,  " +
     "                         dbo.userInfo.titleBg AS uTitleBg, dbo.userInfo.homePage AS uHomePage, dbo.userInfo.followCount AS uFollowCount, dbo.userInfo.fansCount AS uFansCount, dbo.userInfo.postCount AS uPostCount, CASE WHEN uFollow.id IS NULL  " +
