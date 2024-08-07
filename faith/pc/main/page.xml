@@ -1878,6 +1878,7 @@ var sTemp = sender.convertHtml(newText);
 var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
 sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>");
 sender.c_edit.innerHTML = sTemp;
+sender.c_edit.innerHTML = sender.c_edit.innerHTML.replace(/&amp;nbsp;/g, ' ');
 sender.setCurPosAbs(cp);
 
 sender.processUserName();
@@ -1957,9 +1958,12 @@ e.style.overflowY = "auto";
 e.style.fontFamily = sender.editFontFamily;
 e.style.fontSize = sender.editFontSize;
 e.style.color = "#" + sender.editFontColor;
-e.style.wordBreak = "break-all";
+//e.style.whiteSpace = "normal";
+//e.style.wordBreak = "break-all";
+//e.style.wordWrap = "break-word";
+e.style.whiteSpace = "pre-wrap";
 e.style.wordWrap = "break-word";
-e.style.whiteSpace = "normal";
+e.style.wordBreak = "normal";
 e.innerHTML = "";
 eb.setDivRect(e, e.outerLeft, e.outerTop, eb.getDivRectSetting(sender).w - e.outerLeft - e.outerRight, null);
 sender.v_lastH = eb.getDivRectSetting(sender).h;
@@ -44352,9 +44356,11 @@ if (root.v_mode.charAt(2) == "x") {
 }
 root.c_content = c;
 c.style.overflow = "";
+c.style.whiteSpace = "pre-wrap";
+//c.style.whiteSpace = "normal";
 c.style.wordWrap = "break-word";
-c.style.wordBreak = "break-all";
-c.style.whiteSpace = "normal";
+c.style.wordBreak = "normal";
+//c.style.wordBreak = "break-all";
 c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
 c.style.color = "#000000";
 if (root.v_content.content.length>0) {
