@@ -946,6 +946,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>Home主页面</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_bottom = ee.getControl("panel648");
@@ -2382,6 +2383,7 @@ sender.processUserName = function() {
       <fontSize>20</fontSize>
       <height>252</height>
       <heightRatio>0.323076923076923</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note><![CDATA[c_bottom->短文底部栏目]]></note>
       <onCreate><![CDATA[sender.v_valid = false;
@@ -2580,6 +2582,7 @@ sender.refresh = function(dataset) {
       <height>61</height>
       <heightRatio>0.242063492063492</heightRatio>
       <layerName>关注确认</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_items = new Array();
 
@@ -6489,7 +6492,7 @@ sender.renderMsg = function(root) {
     ee.setRect(c, null, null, null, rect.h);
     root.v_mode = 0;
     root.parentNode.refreshContent(root, false);
-    
+
     //button
     rect = eb.getDivRectSetting(root.c_content);
     c = createPanel(root, root.id+"_btn", "", mainWidth - 24, rect.y, 20,20);
@@ -12234,7 +12237,6 @@ sender.showAlert = function(value) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -12615,9 +12617,9 @@ sender.renderMsg = function(root) {
             g5.showCommonText(root.v_msgContent, left? "tam_hlink1":"tam_hlink2").replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
         var rect = eb.getDivRect(c);
         if (rect.w > w-110-15*2) {
+            c.style.whiteSpace = "pre-wrap";
             c.style.wordWrap = "break-word";
-            c.style.wordBreak = "break-all";
-            c.style.whiteSpace = "normal";
+            c.style.wordBreak = "normal";
             eb.setDivRect(c,null,null,w-110-15*2, null);
         }
         
@@ -19457,6 +19459,7 @@ var sTemp = sender.convertHtml(newText);
 var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
 sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
 sender.c_edit.innerHTML = sTemp;
+sender.c_edit.innerHTML = sender.c_edit.innerHTML.replace(/&amp;nbsp;/g, ' ');
 sender.setCurPosAbs(cp);
 
 sender.processUserName();
@@ -19534,9 +19537,9 @@ e.style.overflowY = "auto";
 e.style.fontFamily = sender.editFontFamily;
 e.style.fontSize = sender.editFontSize;
 e.style.color = "#" + sender.editFontColor;
-e.style.wordBreak = "break-all";
+e.style.whiteSpace = "pre-wrap";
 e.style.wordWrap = "break-word";
-e.style.whiteSpace = "normal";
+e.style.wordBreak = "normal";
 e.innerHTML = "";
 eb.setDivRect(e, e.outerLeft, e.outerTop, eb.getDivRectSetting(sender).w - e.outerLeft - e.outerRight, null);
 sender.v_lastH = eb.getDivRectSetting(sender).h;
@@ -31068,14 +31071,14 @@ sender.setEnabled(false);
       <widthRatio>0.156015037593985</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel42/panel614">
-      <__U_editFontColor type="string">000000</__U_editFontColor>
+      <__U_editFontColor type="color">000000</__U_editFontColor>
       <__U_editFontFamily type="string">'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</__U_editFontFamily>
       <__U_editFontSize type="string">16pt</__U_editFontSize>
       <__U_editMaxY type="string">150px</__U_editMaxY>
-      <__U_onCurPosChange-sender-oldPos-newPos type="string">sender.processUserName();</__U_onCurPosChange-sender-oldPos-newPos>
-      <__U_onFocusChange-sender-isFocus type="string" />
-      <__U_onHeightChange-sender-oldH-newH type="string" />
-      <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml type="string"><![CDATA[var text = ee.getEditText(sender.c_edit);
+      <__U_onCurPosChange-sender-oldPos-newPos type="jsMix">sender.processUserName();</__U_onCurPosChange-sender-oldPos-newPos>
+      <__U_onFocusChange-sender-isFocus type="jsMix" />
+      <__U_onHeightChange-sender-oldH-newH type="jsMix" />
+      <__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml type="jsMix"><![CDATA[var text = ee.getEditText(sender.c_edit);
 
 if (newText.split("\n").length-1>20) {
     return false;
@@ -31086,6 +31089,7 @@ var sTemp = sender.convertHtml(newText);
 var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
 sTemp = sTemp.replace(ptn, "<span style='color:#1da1f2'>@$1</span>")
 sender.c_edit.innerHTML = sTemp;
+sender.c_edit.innerHTML = sender.c_edit.innerHTML.replace(/&amp;nbsp;/g, ' ');
 sender.setCurPosAbs(cp);
 
 sender.processUserName();
@@ -31167,9 +31171,9 @@ e.style.overflowY = "auto";
 e.style.fontFamily = sender.editFontFamily;
 e.style.fontSize = sender.editFontSize;
 e.style.color = "#" + sender.editFontColor;
-e.style.wordBreak = "break-all";
+e.style.whiteSpace = "pre-wrap";
 e.style.wordWrap = "break-word";
-e.style.whiteSpace = "normal";
+e.style.wordBreak = "normal";
 e.innerHTML = "";
 eb.setDivRect(e, e.outerLeft, e.outerTop, eb.getDivRectSetting(sender).w - e.outerLeft - e.outerRight, null);
 sender.v_lastH = eb.getDivRectSetting(sender).h;
@@ -44685,8 +44689,14 @@ if (!showRe) {
 
     //reContent
     c = createPanel(cRe, root.id+"_panel25", "", 120, 36, p1w-130, 100);
-    addText(c, g5.showCommonText(root.v_reContent.content), "left", "top", "微软雅黑", 12, "000000", "normal");
-    c.label.style.wordBreak = "break-all";
+    c.style.whiteSpace = "pre-wrap";
+    c.style.wordWrap = "break-word";
+    c.style.wordBreak = "normal";
+    c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    c.style.fontSize = "12pt";
+    c.style.color = "#000000";
+    c.innerHTML = g5.showCommonText(root.v_reContent.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>");
+    
     //rePhotos                                                                                          
     if (root.v_reContent.photos.length>0) {
         c = createPanel(cRe, root.id+"_panel26", "", 11, 36, 100,100);
@@ -44840,9 +44850,9 @@ if (!showRe) {
     eb.initMouseEvent(root.c_reTitleText);
     //reContent
     c = createPanel(cRe, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, null);
+    c.style.whiteSpace = "pre-wrap";
     c.style.wordWrap = "break-word";
-    c.style.wordBreak = "break-all";
-    c.style.whiteSpace = "normal";
+    c.style.wordBreak = "normal";
     c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     c.style.fontSize = "12pt";
     c.style.color = "#000000";
