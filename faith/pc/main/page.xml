@@ -12237,6 +12237,7 @@ sender.showAlert = function(value) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>私信聊天</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_chat = ee.getControl("layoutyitem12");
@@ -13106,7 +13107,6 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>粉丝列表</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -13233,6 +13233,7 @@ sender.loadFromDB = function() {
         var itemCount = 0;
         for (var i=0; i<dataset.rowCount; i++) {
             if (showFansList.userId == dataset.getData(0,i)) continue;
+            if (dataset.getData(4,i) == "guest") continue;
             itemCount++;
             var item = createPanel(root, "fanl_" + dataset.getData(0,i), "", 0, cy, itemWidth, 5);
             sender.loadRecord(item, dataset, i);
@@ -21763,7 +21764,7 @@ v_onClick.push(
         g5.p2.p36.changeLang(0);
     }
 );
-v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","英文","英文","英文","#808080","#000000","#000000",""));
+v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","English","English","English","#808080","#000000","#000000",""));
 v_onClick.push(
     function (senderBtnC, event) {
         g5.p2.p36.changeLang(1);
@@ -43699,8 +43700,8 @@ data: [
     new g5.LangItem(1,"请确认关注的账号","Please confirm the accounts to follow."),
     new g5.LangItem(1,"开始使用FISTALK","Start FISTALK"),
     new g5.LangItem(1,"热门搜索关键字：","Trending Keywords:"),
-    new g5.LangItem(1,"",""),
-    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"你转发了","You retweeted"),
+    new g5.LangItem(1,"转发了","Retweeted"),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -44126,11 +44127,11 @@ if (root.v_content.exUplinkType == "L") {
     var sTemp = "<svg viewBox=\"0 -2 34 34\" style='height: 1.25rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.icon.forward+"</svg>";
     sTemp += " <div id='"+root.id+"_fwL01' style='display:inline;'>";
     if (g5.myUserInfo.userName==root.v_content.exUserInfo.userName) {
-        sTemp += "你";
+        sTemp += g5.lang.getByCn("你转发了");
     } else {
-        sTemp += root.v_content.exUserInfo.nickName + " ";
+        sTemp += root.v_content.exUserInfo.nickName + " " + g5.lang.getByCn("转发了");
     }
-    sTemp += "转发了</div>";    
+    sTemp += "</div>";    
     addText(c, sTemp, "left", "middle", "微软雅黑", 10, "#657786", "normal");
     c.fw=c.label.rows[0].cells[0].childNodes[2];
     ee.setOnClick(c,function(sender,event) {
