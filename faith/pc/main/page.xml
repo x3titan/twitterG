@@ -738,6 +738,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -926,6 +927,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.2710027100271</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -13107,6 +13109,7 @@ sender.resize = function (img) {
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>粉丝列表</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_lastScrollTop = 0;
@@ -29496,7 +29499,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -29732,7 +29734,6 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName>图片展示</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -29741,14 +29742,8 @@ if (!ee.isInternalNode(sender, event.target)) {
     return;
 }
 sender.parentNode.close();</onClick>
-      <onCreate><![CDATA[sender.c_photoRoot = ee.getControl("panel145");
-sender.c_photo = ee.getControl("panel75");
-sender.c_video = ee.getControl("panel76");
-sender.c_button1 = ee.getControl("panel8");
-sender.c_button2 = ee.getControl("panel52");
-sender.c_mobileBg = ee.getControl("panel607");
-sender.c_BtnConfirm = ee.getControl("panel613");
-sender.c_iosCover = ee.getControl("panel619");
+      <onCreate><![CDATA[sender.c_photo = sender.c_photoRoot.c_photo;
+sender.c_video = sender.c_photoRoot.c_video;
 
 sender.show = function(photos, photo) {
     ee.setVisible(this.c_mobileBg, g5.isMobile);
@@ -29775,6 +29770,8 @@ sender.show = function(photos, photo) {
         var r = eb.getDivRectSetting(sender.c_photoRoot);
         ee.setRect(sender.c_photo, 0,0,r.w, r.h);
         ee.setRect(sender.c_iosCover, 0,0,r.w, r.h);
+    } else {
+        this.setPC();
     }
     sender.v_photos = photos;
     sender.v_index = -1;
@@ -29817,6 +29814,8 @@ sender.showConfirm = function(photo, onConfirm) {
         var r = eb.getDivRectSetting(sender.c_photoRoot);
         ee.setRect(sender.c_photo, 0,0,r.w, r.h);
         ee.setRect(sender.c_iosCover, 0,0,r.w, r.h);
+    } else {
+        this.setPC();
     }
     this.v_photos = new Array();
     this.v_photos.push(photo);
@@ -29826,6 +29825,36 @@ sender.showConfirm = function(photo, onConfirm) {
     ee.setVisible(this, true);
     ee.setVisible(this.parentNode, true);
 }
+
+sender.setPC = function() {
+    sender.c_photo.addEventListener("wheel", (event) => {
+        event.preventDefault();  // 防止页面滚动
+        //if (event.deltaY > 0) {
+        //    console.log("鼠标滚轮向下滚动");
+        //} else {
+        //    console.log("鼠标滚轮向上滚动");
+        //}
+    });
+    sender.c_photo.addEventListener("mousedown", (event) => {
+        //startX = event.clientX;
+        //startY = event.clientY;
+        console.log('开始拖动');
+    });
+    sender.c_photo.addEventListener("mousemove", (event) => {
+        //if (isDragging) {
+        //    const dx = event.clientX - startX;
+        //    const dy = event.clientY - startY;
+        //    targetDiv.style.transform = `translate(${dx}px, ${dy}px)`;
+        //}
+    });
+    sender.c_photo.addEventListener("mouseup", () => {
+        //if (isDragging) {
+        //    isDragging = false;
+        //    console.log('结束拖动');
+        //}
+    });    
+}
+
 
 sender.setHammer = function() {
     if (!g5.isMobile) return;
@@ -30051,11 +30080,11 @@ sender.clickRight = function() {
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>c_mobileBg</ee_LocalName>
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>c_mobileBg</note>
       <sizeRatio>0.719060523938573</sizeRatio>
       <top>0</top>
       <width>1107</width>
@@ -30065,12 +30094,12 @@ sender.clickRight = function() {
       <backgroundImgMode>fill</backgroundImgMode>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>c_photoRoot</ee_LocalName>
       <height>696</height>
       <heightRatio>0.874371859296482</heightRatio>
       <layerVisible>false</layerVisible>
       <left>80</left>
       <leftRatio>0.0722673893405601</leftRatio>
-      <note>c_photoRoot</note>
       <onClick>sender.parentNode.parentNode.close();</onClick>
       <outerBottom>50</outerBottom>
       <outerLeft>80</outerLeft>
@@ -30085,11 +30114,11 @@ sender.clickRight = function() {
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel145/panel75">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>c_photo</ee_LocalName>
       <height>696</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>c_photo</note>
       <sizeRatio>0.734952481520591</sizeRatio>
       <top>0</top>
       <width>947</width>
@@ -30098,11 +30127,11 @@ sender.clickRight = function() {
     <control type="Panel" pathname="/divRoot/panel112/panel142/panel145/panel76">
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>c_video</ee_LocalName>
       <height>696</height>
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>c_video</note>
       <sizeRatio>0.734952481520591</sizeRatio>
       <top>0</top>
       <width>947</width>
@@ -30146,6 +30175,7 @@ sender.clickRight = function() {
       <cursor>pointer</cursor>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <ee_LocalName>c_iosCover</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1E90FF</fontColor>
       <fontSize>14</fontSize>
@@ -30153,7 +30183,6 @@ sender.clickRight = function() {
       <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
       <left>0</left>
-      <note>c_iosCover</note>
       <onCreate>eb.setAlpha(sender, 1);
 sender.addEventListener("touchstart", function(ev) {
     var newEv = new TouchEvent(ev.type, ev);
@@ -30216,6 +30245,7 @@ sender.addEventListener("pointermove", function(ev) {
       <cursor>pointer</cursor>
       <dockX>left</dockX>
       <dockY>center</dockY>
+      <ee_LocalName>c_button1</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1E90FF</fontColor>
       <fontSize>14</fontSize>
@@ -30258,6 +30288,7 @@ eb.initMouseEvent(sender);
       <cursor>pointer</cursor>
       <dockX>right</dockX>
       <dockY>center</dockY>
+      <ee_LocalName>c_button2</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1E90FF</fontColor>
       <fontSize>14</fontSize>
@@ -30303,6 +30334,7 @@ eb.initMouseEvent(sender);
       <cursor>pointer</cursor>
       <dockX>center</dockX>
       <dockY>bottom</dockY>
+      <ee_LocalName>c_BtnConfirm</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>1DA1F2</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -30312,7 +30344,6 @@ eb.initMouseEvent(sender);
       <layerVisible>false</layerVisible>
       <left>473</left>
       <leftRatio>0.427280939476061</leftRatio>
-      <note>c_BtnConfirm</note>
       <onClick>sender.parentNode.f_onConfirm();
 sender.parentNode.parentNode.close();
 window.event? window.event.cancelBubble = true : event.stopPropagation();
