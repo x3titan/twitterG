@@ -29827,13 +29827,44 @@ sender.showConfirm = function(photo, onConfirm) {
 }
 
 sender.setPC = function() {
+    sender.v_r = eb.getDivRectSetting(sender);
+    sender.v_ri = null;
+    sender.v_sc = 1;
+    //sender.v_ri = new Rect();
+    //sender.v_ri.w = sender.c_photo.img.width;
+    //sender.v_ri.h = sender.c_photo.img.height;
     sender.c_photo.addEventListener("wheel", (event) => {
         event.preventDefault();  // 防止页面滚动
-        //if (event.deltaY > 0) {
-        //    console.log("鼠标滚轮向下滚动");
-        //} else {
-        //    console.log("鼠标滚轮向上滚动");
-        //}
+        if (!sender.v_ri) {
+            if (sender.c_photo.img) {
+                sender.v_ri = new Rect();
+                sender.v_ri.w = sender.c_photo.img.width;
+                sender.v_ri.h = sender.c_photo.img.height;
+            } else return;
+        }
+        let sc = sender.v_sc;
+        if (event.deltaY < 0) {
+            sc = sc * 1.05;
+        } else {
+            sc = sc * (1/1.05);
+        }
+        sc = Math.max(1, sc);
+        
+        let r0 = eb.getDivRectSetting(sender.c_photoRoot);
+        let r = new Rect();
+        r.w = parseInt(sender.v_r.w * sc);
+        r.h = parseInt(sender.v_r.h * sc);
+        r.w = Math.max(r.w, r0.w);
+        r.h = Math.max(r.h, r0.h);
+        r.x = parseInt((sender.v_r.x + sender.v_r.w/2) - r.w/2);
+        r.y = parseInt((sender.v_r.y + sender.v_r.h/2) - r.h/2);
+        r.x = Math.min(0, r.x);
+        r.y = Math.min(0, r.y);
+        if (r.x+r.w<r0.w) r.x = r0.w-r.w;
+        if (r.y+r.h<r0.h) r.y = r0.h-r.h;
+        ee.setRect(sender.c_photo, r.x,r.y,r.w,r.h);
+        
+        sender.v_sc = sc;
     });
     sender.c_photo.addEventListener("mousedown", (event) => {
         //startX = event.clientX;
