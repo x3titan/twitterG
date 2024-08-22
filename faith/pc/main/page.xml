@@ -29827,12 +29827,10 @@ sender.showConfirm = function(photo, onConfirm) {
 }
 
 sender.setPC = function() {
-    sender.v_r = eb.getDivRectSetting(sender);
     sender.v_ri = null;
     sender.v_sc = 1;
-    //sender.v_ri = new Rect();
-    //sender.v_ri.w = sender.c_photo.img.width;
-    //sender.v_ri.h = sender.c_photo.img.height;
+    sender.v_r = eb.getDivRectSetting(sender.c_photoRoot);
+    ee.setRect(sender.c_photo, 0,0,sender.v_r.w, sender.v_r.h);
     sender.c_photo.addEventListener("wheel", (event) => {
         event.preventDefault();  // 防止页面滚动
         if (!sender.v_ri) {
@@ -29844,27 +29842,29 @@ sender.setPC = function() {
         }
         let sc = sender.v_sc;
         if (event.deltaY < 0) {
-            sc = sc * 1.05;
+            sc = sc * 1.04;
         } else {
-            sc = sc * (1/1.05);
+            sc = sc * (1/1.04);
         }
         sc = Math.max(1, sc);
+        let scDiff = sc / sender.v_sc - 1;
+        sender.v_sc = sc;
         
+        let r1 = eb.getDivRectSetting(sender.c_photo);
         let r0 = eb.getDivRectSetting(sender.c_photoRoot);
         let r = new Rect();
         r.w = parseInt(sender.v_r.w * sc);
         r.h = parseInt(sender.v_r.h * sc);
-        r.w = Math.max(r.w, r0.w);
-        r.h = Math.max(r.h, r0.h);
-        r.x = parseInt((sender.v_r.x + sender.v_r.w/2) - r.w/2);
-        r.y = parseInt((sender.v_r.y + sender.v_r.h/2) - r.h/2);
+        r.x = r1.x - scDiff * (event.clientX - sender.v_r.x - r1.x);
+        r.y = r1.y - scDiff * (event.clientY - sender.v_r.y - r1.y);
+        //r.x = parseInt((sender.v_r.w/2) - r.w/2);
+        //r.y = parseInt((sender.v_r.h/2) - r.h/2);
         r.x = Math.min(0, r.x);
         r.y = Math.min(0, r.y);
         if (r.x+r.w<r0.w) r.x = r0.w-r.w;
         if (r.y+r.h<r0.h) r.y = r0.h-r.h;
         ee.setRect(sender.c_photo, r.x,r.y,r.w,r.h);
         
-        sender.v_sc = sc;
     });
     sender.c_photo.addEventListener("mousedown", (event) => {
         //startX = event.clientX;
