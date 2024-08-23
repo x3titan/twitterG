@@ -20811,11 +20811,11 @@ sender.renderItem = function(root) {
     root.style.borderLeft = "";
     root.style.borderRight = "";
     var cx = 0;
-    var w1=100, w3=50;
+    var w1=200, w3=50;
     var w2 = w-w1-w3;
     
     c = createPanel(root, root.id+"W1", "", cx, cy, w1, 26); cx+=w1;
-    addText(c, root.v_data.type==""?"支付类型":root.v_data.type, "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+    addText(c, root.v_data.type==""?g5.lang.getByCn("支付类型"):root.v_data.type, "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
     c.style.cursor="pointer";
     ee.setOnClick(c, function(senderBtn, event) {
         var v_style = new Array();
@@ -20823,14 +20823,14 @@ sender.renderItem = function(root) {
         v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","微信支付","微信支付","微信支付","#808080","#000000","#000000",""));
         v_onClick.push(
             function (senderBtnC, event) {
-                senderBtn.parentNode.v_data.type = "微信支付";
+                senderBtn.parentNode.v_data.type = g5.lang.getByCn("微信支付");
                 sender.refreshList();
             }
         );
         v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","支付宝","支付宝","支付宝","#808080","#000000","#000000",""));
         v_onClick.push(
             function (senderBtnC, event) {
-                senderBtn.parentNode.v_data.type = "支付宝";
+                senderBtn.parentNode.v_data.type = g5.lang.getByCn("支付宝");
                 sender.refreshList();
             }
         );
@@ -20881,7 +20881,7 @@ sender.renderItem = function(root) {
     
     if (root.v_data.linkType == "") {
         c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
-        addText(c, "二维码 / 链接", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+        addText(c, g5.lang.getByCn("二维码 / 链接"), "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
         c.style.cursor="pointer";
         ee.setOnClick(c, function(senderBtn, event) {
             var v_style = new Array();
@@ -21002,7 +21002,7 @@ sender.renderItem = function(root) {
             function (senderBtnC, event) {
                 g5.popBlack.a6.show(
                     "删除确认",
-                    "在没有保存之前，本操作将不会生效，确认删除本记录" + (root.v_data.type==""?"":("(" + root.v_data.type + ")")) + "吗？",
+                    "在没有保存之前，本操作将不会生效，确认删除本记录/%" + (root.v_data.type==""?"":("(" + root.v_data.type + ")")) + "%/吗？",
                     [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
                     [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","删除","#ffffff","#ffffff","#ffffff","")],
                     function() {
@@ -21048,11 +21048,11 @@ sender.addButton = function() {
     var c;
     c = createPanel(root, "p2p35_BtnNew", "", 0, cy, itemWidth, 40);
     
-    addText(c, "+ 增加", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "606060", "normal");
+    addText(c, g5.lang.getByCn("+ 增加"), "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "606060", "normal");
     c.style.cursor="pointer";
     c.v_style = [
-        new g5.BStyle("#ffffff","#e0e0e0","#d0d0d0","+ 增加","+ 增加","+ 增加","#404040","#404040","#404040",""),
-        new g5.BStyle("#ffffff","#ffffff","#d0d0d0","+ 增加","+ 增加","+ 增加","#404040","#404040","#404040",""),
+        new g5.BStyle("#ffffff","#e0e0e0","#d0d0d0",g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),"#404040","#404040","#404040",""),
+        new g5.BStyle("#ffffff","#ffffff","#d0d0d0",g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),"#404040","#404040","#404040",""),
     ];
     c.init = function(index) {
         this.v_index = index;
@@ -21185,11 +21185,12 @@ sender.style.borderRightColor = "#e6ecf0";
       <left>60</left>
       <leftRatio>0.1</leftRatio>
       <onClick>g5.mainDiv.scrollTop = 0;</onClick>
-      <sizeRatio>0.337748344370861</sizeRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <sizeRatio>0.112087912087912</sizeRatio>
       <text>打赏设置</text>
       <top>0</top>
-      <width>151</width>
-      <widthRatio>0.251666666666667</widthRatio>
+      <width>455</width>
+      <widthRatio>0.758333333333333</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel623/panel624/panel626">
       <cursor>pointer</cursor>
@@ -21343,7 +21344,8 @@ setDonateList.onComplete = function() {
     g5.alert1("提示", "保存完成");
 }
 setDonateList();</onClick>
-      <onCreate>sender.bgColorDisabled = "#8ed0f9";
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+sender.bgColorDisabled = "#8ed0f9";
 sender.bgColorEnabled = "#1da1f2";
 sender.bgColorHot = "#1a91da";
 sender.bgColorDown = "#1781c2";
@@ -29734,6 +29736,7 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName>图片展示</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
@@ -29832,7 +29835,7 @@ sender.setPC = function() {
     sender.v_r = eb.getDivRectSetting(sender.c_photoRoot);
     ee.setRect(sender.c_photo, 0,0,sender.v_r.w, sender.v_r.h);
     sender.c_photo.addEventListener("wheel", (event) => {
-        event.preventDefault();  // 防止页面滚动
+        event.preventDefault();
         if (!sender.v_ri) {
             if (sender.c_photo.img) {
                 sender.v_ri = new Rect();
@@ -29842,9 +29845,9 @@ sender.setPC = function() {
         }
         let sc = sender.v_sc;
         if (event.deltaY < 0) {
-            sc = sc * 1.04;
+            sc = sc * 1.05;
         } else {
-            sc = sc * (1/1.04);
+            sc = sc * (1/1.05);
         }
         sc = Math.max(1, sc);
         let scDiff = sc / sender.v_sc - 1;
@@ -29867,22 +29870,35 @@ sender.setPC = function() {
         
     });
     sender.c_photo.addEventListener("mousedown", (event) => {
-        //startX = event.clientX;
-        //startY = event.clientY;
-        console.log('开始拖动');
+        sender.v_MPos = new Rect();
+        sender.v_MPos.x = event.clientX;
+        sender.v_MPos.y = event.clientY;
+        sender.v_Drag = true;
+        const onMouseMove = (event) => {
+            if (!sender.v_Drag) return;
+            let dx = event.clientX - sender.v_MPos.x;
+            let dy = event.clientY - sender.v_MPos.y;
+            sender.v_MPos.x = event.clientX;
+            sender.v_MPos.y = event.clientY;
+            let r1 = eb.getDivRectSetting(sender.c_photo);
+            dx += r1.x; r1.x = Math.min(0, dx);
+            dy += r1.y; r1.y = Math.min(0, dy);
+            let r0 = eb.getDivRectSetting(sender.c_photoRoot);
+            r1.x = Math.max(r1.x, r0.w - r1.w);
+            r1.y = Math.max(r1.y, r0.h - r1.h);
+            ee.setRect(sender.c_photo, r1.x, r1.y, null, null);
+        };
+        const onMouseUp = () => {
+            sender.v_Drag = false;
+            document.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseUp);
+        };
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp); 
     });
-    sender.c_photo.addEventListener("mousemove", (event) => {
-        //if (isDragging) {
-        //    const dx = event.clientX - startX;
-        //    const dy = event.clientY - startY;
-        //    targetDiv.style.transform = `translate(${dx}px, ${dy}px)`;
-        //}
-    });
-    sender.c_photo.addEventListener("mouseup", () => {
-        //if (isDragging) {
-        //    isDragging = false;
-        //    console.log('结束拖动');
-        //}
+    
+    sender.c_photo.addEventListener("click", () => {
+        event.stopPropagation();
     });    
 }
 
@@ -33966,7 +33982,6 @@ g5.initButtonV3(sender,[
       <height>209</height>
       <heightRatio>0.262562814070352</heightRatio>
       <layerName>通用字符串输入窗口</layerName>
-      <layerVisible>false</layerVisible>
       <left>374</left>
       <leftRatio>0.337850045167118</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
@@ -33981,6 +33996,10 @@ sender.style.borderRadius = "10px";
 sender.style.boxShadow = "5px 5px 15px #808080";
 
 sender.show = function(title,text,inputHint,defaultValue,bStyle1,bStyle2,onComplete,onButton1) {
+    title = g5.lang.getByCn(title);
+    text = g5.lang.getByCn(text);
+    inputHint = g5.lang.getByCn(inputHint);
+    defaultValue = g5.lang.getByCn(defaultValue);
     ee.setText(this.c_title,title);
     ee.setText(this.c_p1.c_text,text);
     this.c_btnCancel.v_style = bStyle1;
@@ -43444,7 +43463,7 @@ data: [
     new g5.LangItem(1,"新用户名","New user name"),
     new g5.LangItem(1,"请在这里输入新的用户名","Please enter a new username here."),
     new g5.LangItem(1,"保存","Save"),
-    new g5.LangItem(1,"请在这里输入新的手机号码","Please enter your new phone number here."),
+    new g5.LangItem(1,"请在这里输入新的手机号码","<spawn style='font-size: 0.8em;'>Please enter your new phone number here.</spawn>"),
     new g5.LangItem(1,"修改手机号码","Change Cell Phone Number"),
     new g5.LangItem(1,"当前手机号码：","Old number"),
     new g5.LangItem(1,"新手机号码","New number"),
@@ -43470,9 +43489,9 @@ data: [
         "· 账号被删除后，您将不能登录本系统，同时您以前发的短文都将不可见，别的用户也无法查看您的个人信息。<br><br>" +
         "· 您确定要删除您的账号后，我们会给您提供3天的冷却期，在这期间，您可以撤销您的删除账号请求。<br><br>" +
         "· 冷却期过后，您的账号将被永久删除。如果需要恢复，需要和客服人员联系。",
-        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After your account is deleted, you will not be able to log in to this system, and your previous posts will not be visible to other users, who will also not be able to view your personal information.</li>" +
-        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>If you are sure you want to delete your account, we will provide you with a 3-day cooling-off period during which you can cancel your account deletion request.</li>" +
-        "<li style='font-size: 0.9em;display: flex; align-items: top; margin-bottom: 0px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After the cooling-off period, your account will be permanently deleted. If you want to restore your account, you need to contact customer service.</li>"
+        "<li style='font-size: 0.8em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After your account is deleted, you will not be able to log in to this system, and your previous posts will not be visible to other users, who will also not be able to view your personal information.</li>" +
+        "<li style='font-size: 0.8em;display: flex; align-items: top; margin-bottom: 6px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>If you are sure you want to delete your account, we will provide you with a 3-day cooling-off period during which you can cancel your account deletion request.</li>" +
+        "<li style='font-size: 0.8em;display: flex; align-items: top; margin-bottom: 0px; text-align: justify'><span style='margin-right: 10px;'>&amp;#8226;</span>After the cooling-off period, your account will be permanently deleted. If you want to restore your account, you need to contact customer service.</li>"
         ),
     new g5.LangItem(1,"删除账号","Delete Account"),
     new g5.LangItem(1,
@@ -43764,6 +43783,27 @@ data: [
     new g5.LangItem(1,"热门搜索关键字：","Trending Keywords:"),
     new g5.LangItem(1,"你转发了","You retweeted"),
     new g5.LangItem(1,"转发了","Retweeted"),
+    new g5.LangItem(1,"打赏设置","Donate Settings"),
+    new g5.LangItem(1,"+ 增加","+ Add"),
+    new g5.LangItem(1,"上移","Move Up"),
+    new g5.LangItem(1,"下移","Move Down"),
+    new g5.LangItem(1,"微信支付","WeChat Pay"),
+    new g5.LangItem(1,"支付宝","Alipay"),
+    new g5.LangItem(1,"自定义","Custom"),
+    new g5.LangItem(1,"输入","Input"),
+    new g5.LangItem(1,"二维码 / 链接","QR Code / Link"),
+    new g5.LangItem(1,"付款二维码","Payment QR Code"),
+    new g5.LangItem(1,"付款链接","Payment Link"),
+    new g5.LangItem(1,"付款链接地址：","Payment Link URL:"),
+    new g5.LangItem(1,"付款类型：","Payment Type:"),
+    new g5.LangItem(1,"支付类型","Payment Method"),
+    new g5.LangItem(1,"保存完成","Save Completed"),
+    new g5.LangItem(1,"输入错误","Input Error"),
+    new g5.LangItem(1,"付款类型的长度应该在2-6个汉字或英文字符之间","The payment type length should be between 2-6 Chinese characters or English letters."),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
+    new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
     new g5.LangItem(1,"",""),
@@ -43772,8 +43812,8 @@ data: [
         "显示语言将修改为%1;，您是否继续？",
         "The display language will be changed to %1;. Do you want to continue?"),
     new g5.LangItem(1,
-        "",
-        ""),
+        "在没有保存之前，本操作将不会生效，确认删除本记录%1;吗？",
+        "Changes will not take effect until saved. Are you sure you want to delete this record %1;?"),
     new g5.LangItem(1,
         "",
         ""),
