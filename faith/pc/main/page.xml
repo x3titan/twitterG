@@ -29844,6 +29844,11 @@ sender.setPC = function() {
                 sender.v_rr = new Rect();
                 sender.v_rr.w = sender.c_photo.img.naturalWidth;
                 sender.v_rr.h = sender.c_photo.img.naturalHeight;
+                if (sender.v_ri.w>sender.v_rr.w) {
+                    sender.v_maxSc = 3;
+                } else {
+                    sender.v_maxSc = sender.v_rr.w * 3 / sender.v_ri.w;
+                }
             } else return;
         }
         let sc = sender.v_sc;
@@ -29853,6 +29858,7 @@ sender.setPC = function() {
             sc = sc * (1/1.05);
         }
         sc = Math.max(1, sc);
+        sc = Math.min(sender.v_maxSc, sc);
         let scDiff = sc / sender.v_sc - 1;
         sender.v_sc = sc;
         
