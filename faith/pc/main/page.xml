@@ -29736,11 +29736,11 @@ sender.onpointermove = function(event) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName>图片展示</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onAni2End>sender.close();
 </onAni2End>
-      <onClick>return;
+      <onClick>sender.parentNode.close();
+return;
 if (!ee.isInternalNode(sender, event.target)) {
     return;
 }
@@ -29906,8 +29906,10 @@ sender.setPC = function() {
         document.addEventListener("mouseup", onMouseUp); 
     });
     
-    sender.c_photo.addEventListener("click", () => {
-        event.stopPropagation();
+    sender.c_photo.addEventListener("click", (event) => {
+        if (event.target === sender.c_photo.img) {
+            event.stopPropagation();
+        }
     });    
 }
 
@@ -33991,6 +33993,7 @@ g5.initButtonV3(sender,[
       <height>209</height>
       <heightRatio>0.262562814070352</heightRatio>
       <layerName>通用字符串输入窗口</layerName>
+      <layerVisible>false</layerVisible>
       <left>374</left>
       <leftRatio>0.337850045167118</leftRatio>
       <onAni2End>ee.setVisible(ee.getControl("panel112"), false);
