@@ -29834,83 +29834,92 @@ sender.setPC = function() {
     sender.v_sc = 1;
     sender.v_r = eb.getDivRectSetting(sender.c_photoRoot);
     ee.setRect(sender.c_photo, 0,0,sender.v_r.w, sender.v_r.h);
-    sender.c_photo.addEventListener("wheel", (event) => {
-        event.preventDefault();
-        if (!sender.v_ri) {
-            if (sender.c_photo.img) {
-                sender.v_ri = new Rect();
-                sender.v_ri.w = sender.c_photo.img.width;
-                sender.v_ri.h = sender.c_photo.img.height;
-                sender.v_rr = new Rect();
-                sender.v_rr.w = sender.c_photo.img.naturalWidth;
-                sender.v_rr.h = sender.c_photo.img.naturalHeight;
-                if (sender.v_ri.w>sender.v_rr.w) {
-                    sender.v_maxSc = 3;
-                } else {
-                    sender.v_maxSc = sender.v_rr.w * 3 / sender.v_ri.w;
-                }
-            } else return;
-        }
-        let sc = sender.v_sc;
-        if (event.deltaY < 0) {
-            sc = sc * 1.05;
-        } else {
-            sc = sc * (1/1.05);
-        }
-        sc = Math.max(1, sc);
-        sc = Math.min(sender.v_maxSc, sc);
-        let scDiff = sc / sender.v_sc - 1;
-        sender.v_sc = sc;
+    if (!sender.c_photo.v_eventWheel) {
+        sender.c_photo.addEventListener("wheel", (event) => {
+            event.preventDefault();
+            if (!sender.v_ri) {
+                if (sender.c_photo.img) {
+                    sender.v_ri = new Rect();
+                    sender.v_ri.w = sender.c_photo.img.width;
+                    sender.v_ri.h = sender.c_photo.img.height;
+                    sender.v_rr = new Rect();
+                    sender.v_rr.w = sender.c_photo.img.naturalWidth;
+                    sender.v_rr.h = sender.c_photo.img.naturalHeight;
+                    if (sender.v_ri.w>sender.v_rr.w) {
+                        sender.v_maxSc = 3;
+                    } else {
+                        sender.v_maxSc = sender.v_rr.w * 3 / sender.v_ri.w;
+                    }
+                } else return;
+            }
+            let sc = sender.v_sc;
+            if (event.deltaY < 0) {
+                sc = sc * 1.05;
+            } else {
+                sc = sc * (1/1.05);
+            }
+            sc = Math.max(1, sc);
+            sc = Math.min(sender.v_maxSc, sc);
+            let scDiff = sc / sender.v_sc - 1;
+            sender.v_sc = sc;
+            
+            let r1 = eb.getDivRectSetting(sender.c_photo);
+            let r0 = eb.getDivRectSetting(sender.c_photoRoot);
+            let r = new Rect();
+            r.w = parseInt(sender.v_r.w * sc);
+            r.h = parseInt(sender.v_r.h * sc);
+            r.x = r1.x - scDiff * (event.clientX - sender.v_r.x - r1.x);
+            r.y = r1.y - scDiff * (event.clientY - sender.v_r.y - r1.y);
+            //r.x = parseInt((sender.v_r.w/2) - r.w/2);
+            //r.y = parseInt((sender.v_r.h/2) - r.h/2);
+            r.x = Math.min(0, r.x);
+            r.y = Math.min(0, r.y);
+            if (r.x+r.w<r0.w) r.x = r0.w-r.w;
+            if (r.y+r.h<r0.h) r.y = r0.h-r.h;
+            ee.setRect(sender.c_photo, r.x,r.y,r.w,r.h);
+        });
+        sender.c_photo.v_eventWheel = true;
+    }
         
-        let r1 = eb.getDivRectSetting(sender.c_photo);
-        let r0 = eb.getDivRectSetting(sender.c_photoRoot);
-        let r = new Rect();
-        r.w = parseInt(sender.v_r.w * sc);
-        r.h = parseInt(sender.v_r.h * sc);
-        r.x = r1.x - scDiff * (event.clientX - sender.v_r.x - r1.x);
-        r.y = r1.y - scDiff * (event.clientY - sender.v_r.y - r1.y);
-        //r.x = parseInt((sender.v_r.w/2) - r.w/2);
-        //r.y = parseInt((sender.v_r.h/2) - r.h/2);
-        r.x = Math.min(0, r.x);
-        r.y = Math.min(0, r.y);
-        if (r.x+r.w<r0.w) r.x = r0.w-r.w;
-        if (r.y+r.h<r0.h) r.y = r0.h-r.h;
-        ee.setRect(sender.c_photo, r.x,r.y,r.w,r.h);
-        
-    });
-    sender.c_photo.addEventListener("mousedown", (event) => {
-        sender.v_MPos = new Rect();
-        sender.v_MPos.x = event.clientX;
-        sender.v_MPos.y = event.clientY;
-        sender.v_Drag = true;
-        const onMouseMove = (event) => {
-            if (!sender.v_Drag) return;
-            let dx = event.clientX - sender.v_MPos.x;
-            let dy = event.clientY - sender.v_MPos.y;
+    if (!sender.c_photo.v_eventMousedown) {
+        sender.c_photo.addEventListener("mousedown", (event) => {
+            sender.v_MPos = new Rect();
             sender.v_MPos.x = event.clientX;
             sender.v_MPos.y = event.clientY;
-            let r1 = eb.getDivRectSetting(sender.c_photo);
-            dx += r1.x; r1.x = Math.min(0, dx);
-            dy += r1.y; r1.y = Math.min(0, dy);
-            let r0 = eb.getDivRectSetting(sender.c_photoRoot);
-            r1.x = Math.max(r1.x, r0.w - r1.w);
-            r1.y = Math.max(r1.y, r0.h - r1.h);
-            ee.setRect(sender.c_photo, r1.x, r1.y, null, null);
-        };
-        const onMouseUp = () => {
-            sender.v_Drag = false;
-            document.removeEventListener("mousemove", onMouseMove);
-            document.removeEventListener("mouseup", onMouseUp);
-        };
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp); 
-    });
+            sender.v_Drag = true;
+            const onMouseMove = (event) => {
+                if (!sender.v_Drag) return;
+                let dx = event.clientX - sender.v_MPos.x;
+                let dy = event.clientY - sender.v_MPos.y;
+                sender.v_MPos.x = event.clientX;
+                sender.v_MPos.y = event.clientY;
+                let r1 = eb.getDivRectSetting(sender.c_photo);
+                dx += r1.x; r1.x = Math.min(0, dx);
+                dy += r1.y; r1.y = Math.min(0, dy);
+                let r0 = eb.getDivRectSetting(sender.c_photoRoot);
+                r1.x = Math.max(r1.x, r0.w - r1.w);
+                r1.y = Math.max(r1.y, r0.h - r1.h);
+                ee.setRect(sender.c_photo, r1.x, r1.y, null, null);
+            };
+            const onMouseUp = () => {
+                sender.v_Drag = false;
+                document.removeEventListener("mousemove", onMouseMove);
+                document.removeEventListener("mouseup", onMouseUp);
+            };
+            document.addEventListener("mousemove", onMouseMove);
+            document.addEventListener("mouseup", onMouseUp); 
+        });
+        sender.c_photo.v_eventMousedown = true;
+    }
     
-    sender.c_photo.addEventListener("click", (event) => {
-        if (event.target === sender.c_photo.img) {
-            event.stopPropagation();
-        }
-    });    
+    if (!sender.c_photo.v_eventClick) {
+        sender.c_photo.addEventListener("click", (event) => {
+            if (event.target === sender.c_photo.img) {
+                event.stopPropagation();
+            }
+        });
+        sender.c_photo.v_eventClick = true;
+    }
 }
 
 
