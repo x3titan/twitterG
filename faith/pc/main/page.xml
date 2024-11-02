@@ -1,5 +1,5 @@
 <page>
-  <controls count="841">
+  <controls count="842">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -738,6 +738,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -926,6 +927,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.2710027100271</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -946,6 +948,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>Home主页面</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_bottom = ee.getControl("panel648");
@@ -29537,7 +29540,6 @@ sender.renderItem = function(root) {
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -30544,7 +30546,6 @@ sender.init(0);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName>发短文</layerName>
-      <layerVisible>false</layerVisible>
       <left>287</left>
       <leftRatio>0.259259259259259</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
@@ -30591,6 +30592,7 @@ sender.check = function() {
 
 sender.showNew = function() {
     this.init(g5.lang.getByCn("发言"), this.v_lastOp == "new");
+    this.setMode(0);
     this.v_lastOp = "new";
     this.onComplete = function() {
         if (newTwitter.busy) return;
@@ -30633,6 +30635,7 @@ sender.showNew = function() {
 
 sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
     this.init(g5.lang.getByCn("回复发言"), this.v_lastOp == "re" &amp;&amp; this.v_lastId == v_content.id);
+    this.setMode(0);
     this.v_lastOp = "re";
     this.v_lastId = v_content.id;
     this.onComplete = function() {
@@ -30683,6 +30686,7 @@ sender.showRe = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
 
 sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
     this.init(g5.lang.getByCn("带评论转发"), this.v_lastOp == "fw" &amp;&amp; this.v_lastId == v_content.id);
+    this.setMode(0);
     this.v_lastOp = "fw";
     this.v_lastId = v_content.id;
     this.onComplete = function() {
@@ -30730,10 +30734,22 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
     ee.getControl("panel51").v_photos = new Array();
     g5.refreshPhoto(ee.getControl("panel51"));
 }
+
+sender.setMode = function(mode) {
+    sender.v_mode = mode;
+    if (mode == 0) {
+        ee.setVisible(sender.c_pic, true);
+        ee.setVisible(sender.c_vote, false);
+    } else {
+        ee.setVisible(sender.c_pic, false);
+        ee.setVisible(sender.c_vote, true);
+    }
+}
+
 ]]></onCreate>
       <sizeRatio>1.1484962406015</sizeRatio>
       <top>92</top>
-      <topRatio>0.115577889447236</topRatio>
+      <topRatio>0.114321608040201</topRatio>
       <width>532</width>
       <widthRatio>0.480578139114724</widthRatio>
     </control>
@@ -30870,6 +30886,7 @@ ee.setOnMouseLeave(sender, function(sender,event) {
       <widthRatio>0.112781954887218</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel42/panel51">
+      <ee_LocalName>c_pic</ee_LocalName>
       <height>292</height>
       <heightRatio>0.477905073649754</heightRatio>
       <layerVisible>false</layerVisible>
@@ -31806,10 +31823,14 @@ sender.fSearch = function() {
       <height>36</height>
       <heightRatio>0.0589198036006547</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>144</left>
-      <leftRatio>0.270676691729323</leftRatio>
+      <left>134</left>
+      <leftRatio>0.25187969924812</leftRatio>
       <onClick>if (g5.myUserInfo.userName != "yuxiangrousi") return; ///!!!test
-
+if (sender.parentNode.v_mode == 0) {
+    sender.parentNode.setMode(1);
+} else {
+    sender.parentNode.setMode(0);
+}
 </onClick>
       <onCreate><![CDATA[sender.label = null;
 sender.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;fill: currentcolor;vertical-align:middle;\">" + g5.icon.vote + "</svg>";
@@ -31818,11 +31839,23 @@ g5.initButtonV3(sender,[
     new g5.BStyle("","#dfeffa","#cee2db","","","","rgb(29,161,242)","rgb(29,161,242)","rgb(29,131,212)","")
 ]);]]></onCreate>
       <sizeRatio>1</sizeRatio>
-      <text>图片</text>
+      <text>vote</text>
       <top>241</top>
       <topRatio>0.39443535188216</topRatio>
       <width>36</width>
       <widthRatio>0.0676691729323308</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel112/panel42/panel710">
+      <ee_LocalName>c_vote</ee_LocalName>
+      <height>292</height>
+      <heightRatio>0.477905073649754</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0545112781954887</leftRatio>
+      <sizeRatio>0.617336152219873</sizeRatio>
+      <top>289</top>
+      <topRatio>0.472995090016367</topRatio>
+      <width>473</width>
+      <widthRatio>0.889097744360902</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel112/panel10">
       <ani2Alpha>disappear:渐变消失</ani2Alpha>
