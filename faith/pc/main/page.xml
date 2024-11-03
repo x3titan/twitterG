@@ -31851,6 +31851,356 @@ g5.initButtonV3(sender,[
       <heightRatio>0.477905073649754</heightRatio>
       <left>29</left>
       <leftRatio>0.0545112781954887</leftRatio>
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.v_data = new Array();
+
+
+sender.init = function() {
+
+}
+
+
+sender.renderItem = function(root) {
+    var w = eb.getDivRect(root).w;
+    var c,cy=10;
+    
+    root.style.boxSizing="border-box";
+    root.style.borderWidth = "1px";
+    root.style.borderColor = "rgb(230,236,240)";
+    root.style.borderStyle = "solid";
+    root.style.borderTop = "";
+    root.style.borderLeft = "";
+    root.style.borderRight = "";
+    var cx = 0;
+    var w1=200, w3=50;
+    var w2 = w-w1-w3;
+    
+    c = createPanel(root, root.id+"W1", "", cx, cy, w1, 26); cx+=w1;
+    addText(c, root.v_data.type==""?g5.lang.getByCn("支付类型"):root.v_data.type, "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+    c.style.cursor="pointer";
+    ee.setOnClick(c, function(senderBtn, event) {
+        var v_style = new Array();
+        var v_onClick = new Array();
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","微信支付","微信支付","微信支付","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = g5.lang.getByCn("微信支付");
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","支付宝","支付宝","支付宝","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = g5.lang.getByCn("支付宝");
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","PayPal","PayPal","PayPal","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = "PayPal";
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","ApplePay","ApplePay","ApplePay","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = "ApplePay";
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","Venmo","Venmo","Venmo","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                senderBtn.parentNode.v_data.type = "Venmo";
+                sender.refreshList();
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","自定义","自定义","自定义","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                g5.popBlack.a10.show(
+                    "输入", "付款类型：", "请在这里输入付款类型，长度2-6", "",
+                    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","")],
+                    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
+                    function(text) {
+                        if ((text.length>6) || (text.length<2)) {
+                            g5.alert1("输入错误", "付款类型的长度应该在2-6个汉字或英文字符之间");
+                            return;
+                        }
+                        senderBtn.parentNode.v_data.type = text;
+                        sender.refreshList();
+                    },
+                    function() {
+                    }
+                );
+            }
+        );
+        g5.popup1.p4.show(senderBtn, 120, v_style, v_onClick); 
+        
+    });
+    
+    if (root.v_data.linkType == "") {
+        c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
+        addText(c, g5.lang.getByCn("二维码 / 链接"), "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+        c.style.cursor="pointer";
+        ee.setOnClick(c, function(senderBtn, event) {
+            var v_style = new Array();
+            var v_onClick = new Array();
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款二维码","付款二维码","付款二维码","#808080","#000000","#000000",""));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                    sender.c_file.v_myData = root.v_data;                
+                    sender.c_file.c_file.blur();
+                    sender.c_file.c_file.click();
+                }
+            );
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款链接","付款链接","付款链接","#808080","#000000","#000000",""));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                    g5.popBlack.a10.show(
+                        "输入", "付款链接地址：", "请在这里输入您的付款链接地址", "",
+                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
+                        function(text) {
+                            if (text == "") return;
+                            senderBtn.parentNode.v_data.linkType = "l";
+                            senderBtn.parentNode.v_data.linkValue = text;
+                            sender.refreshList();
+                        },
+                        function() {
+                        }
+                    );
+                }
+            );
+            var rect = g5.getRectAbs(senderBtn);
+            g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
+        });
+    } else if (root.v_data.linkType == "g") {
+        c = createPanel(root, root.id+"W2", "", cx, cy-6, w2, 26+12); cx+=w2;
+        c.style.borderRadius = "0px 10px 0px 10px";
+        c.style.borderWidth = "1px";
+        c.style.borderColor = "rgb(230,236,240)";
+        c.style.borderStyle = "solid";
+        c.imgUrl = "url:" + g5.imgUrl + root.v_data.linkValue;
+        g5.setImage(c,c.imgUrl,"trim","","",10);
+        c.style.cursor="pointer";
+        ee.setOnClick(c, function(senderBtn, event) {
+            var v_style = new Array();
+            var v_onClick = new Array();
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","查看","查看","查看","#808080","#000000","#000000",""));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                    g5.popBlack.a2.show([root.v_data.linkValue], root.v_data.linkValue);
+                    g5.player.stop();
+                }
+            );
+            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","重新上传","重新上传","重新上传","#808080","#000000","#000000",""));
+            v_onClick.push(
+                function (senderBtnC, event) {
+                    sender.c_file.v_myData = root.v_data;                
+                    sender.c_file.c_file.blur();
+                    sender.c_file.c_file.click();
+                }
+            );
+            var rect = g5.getRectAbs(senderBtn);
+            g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+        });
+    } else if (root.v_data.linkType == "l") {
+        c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
+        addText(c, root.v_data.linkValue, "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+        c.style.cursor="pointer";
+        ee.setOnClick(c, function(senderBtn, event) {
+            g5.popBlack.a10.show(
+                "输入", "付款链接地址：", "请在这里输入您的付款链接地址", senderBtn.parentNode.v_data.linkValue,
+                [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+                [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
+                function(text) {
+                    if (text == "") return;
+                    senderBtn.parentNode.v_data.linkType = "l";
+                    senderBtn.parentNode.v_data.linkValue = text;
+                    sender.refreshList();
+                },
+                function() {
+                }
+            );
+        });
+    }
+    
+    c = createPanel(root, root.id+"W3", "", cx, cy-13, w3, 26+15); cx+=w3;
+    addText(c, "...", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 18, "1da1f2", "bold");
+    c.style.cursor="pointer";
+    ee.setOnClick(c, function(senderBtn, event) {
+        var v_style = new Array();
+        var v_onClick = new Array();
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","上移","上移","上移","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                var i = sender.getIndexByRoot(root);
+                if (i>0) {
+                    var t = sender.v_data[i];
+                    sender.v_data[i] = sender.v_data[i-1];
+                    sender.v_data[i-1] = t;
+                    sender.refreshList();
+                }
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","下移","下移","下移","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                var i = sender.getIndexByRoot(root);
+                if ((i>=0) &amp;&amp; (i<sender.v_data.length-1)) {
+                    var t = sender.v_data[i];
+                    sender.v_data[i] = sender.v_data[i+1];
+                    sender.v_data[i+1] = t;
+                    sender.refreshList();
+                }
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除","删除","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                g5.popBlack.a6.show(
+                    "删除确认",
+                    "在没有保存之前，本操作将不会生效，确认删除本记录/%" + (root.v_data.type==""?"":("(" + root.v_data.type + ")")) + "%/吗？",
+                    [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+                    [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","删除","#ffffff","#ffffff","#ffffff","")],
+                    function() {
+                        var i = sender.getIndexByRoot(root);
+                        if (i>=0) {
+                            sender.v_data.splice(i,1);
+                            sender.refreshList();
+                        }
+                    }
+                );            
+            }
+        );
+        g5.popup1.p4.show(senderBtn, 80, v_style, v_onClick); 
+    });
+    
+    cy+=26;
+    cy+=10;
+    eb.setDivRect(root,null,null,null,cy);
+    return root; 
+}
+
+sender.getIndexByRoot = function(root) {
+    for (var i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i] == root) return i;
+    }
+    return -1;
+}
+
+
+sender.addNew = function() {
+    this.v_data.push(new sender.type_itemData());
+    this.refreshList();
+}
+
+sender.addButton = function() {
+    var cy = 0;
+    if (this.v_items.length>0) {
+        cy = eb.getDivRect(this.v_items[this.v_items.length-1]);
+        cy = cy.y + cy.h;
+    }
+    var root = this.v_root;
+    var itemWidth = eb.getDivRect(root).w;
+    var c;
+    c = createPanel(root, "p2p35_BtnNew", "", 0, cy, itemWidth, 40);
+    
+    addText(c, g5.lang.getByCn("+ 增加"), "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "606060", "normal");
+    c.style.cursor="pointer";
+    c.v_style = [
+        new g5.BStyle("#ffffff","#e0e0e0","#d0d0d0",g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),"#404040","#404040","#404040",""),
+        new g5.BStyle("#ffffff","#ffffff","#d0d0d0",g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),"#404040","#404040","#404040",""),
+    ];
+    c.init = function(index) {
+        this.v_index = index;
+        this.style.backgroundColor = this.v_style[index].color1;
+        ee.setText(this, this.v_style[index].text1);
+        ee.setTextColor(this, this.v_style[index].tColor1);
+        if (this.v_style[index].bdColor=="") {
+            this.style.borderWidth = "0px";
+        } else {
+            this.style.boxSizing="border-box";
+            this.style.borderWidth = "1px";
+            this.style.borderColor = this.v_style[index].bdColor;
+            this.style.borderStyle = "solid";
+        }
+        this.style.borderRadius = parseInt(eb.getDivRectSetting(this).h/2) + "px";
+    }
+    ee.setOnMouseEnter(c, function(sender,event) { 
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    });
+    ee.setOnMouseLeave(c, function(sender,event) { 
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    });
+    c.eeMouseDown = function(sender,event,x,y) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color3;
+        ee.setText(sender, s.text3);
+        ee.setTextColor(sender, s.tColor3);
+    }
+    c.eeMouseUp = function(sender,event,x,y) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+    eb.initMouseEvent(c);
+    ee.setOnClick(c, function(senderBtn, event) {
+        sender.removeButton();
+        sender.addNew();
+        window.event? window.event.cancelBubble = true : event.stopPropagation();    
+    });    
+    if (g5.isMobile) {
+        c.init(1);
+    } else c.init(0);
+}
+
+sender.removeButton = function() {
+    var c = $g("p2p35_BtnNew");
+    if (!c) return;
+    ee.removeControl(c);
+}
+
+sender.refreshList = function() {
+    while (this.v_items.length>0) {
+        ee.removeControl(this.v_items[0]);
+        this.v_items.splice(0,1);
+    }
+    this.removeButton();
+    
+    var i;
+    for (i=0; i<this.v_data.length; i++) {
+        var root = this.v_root;
+        var itemWidth = eb.getDivRect(this.v_root).w;
+        var item;
+        item = createPanel(root, "p2p35_" + i, "", 0, 0, itemWidth, 5);
+        item.v_data = this.v_data[i];
+        this.renderItem(item);
+        this.v_items.push(item);
+    }
+    if (this.checkValid() &amp;&amp; (this.v_data.length<5)) this.addButton();
+    ee.tiledV(this.v_root,0,0,0);
+}
+
+sender.checkValid = function() {
+    for (var i=0; i<this.v_data.length; i++) {
+        if (this.v_data[i].type == "") return false;
+        if (this.v_data[i].linkType == "") return false;
+        if (this.v_data[i].linkValue == "") return false;
+    }
+    return true;
+}
+]]></onCreate>
       <sizeRatio>0.617336152219873</sizeRatio>
       <top>289</top>
       <topRatio>0.472995090016367</topRatio>
