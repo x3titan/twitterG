@@ -30573,7 +30573,8 @@ sender.init = function(titleText, keepLast) {
     var cir = ee.getControl("panel50");
     var cirText = ee.getControl("panel45");
     cir.refresh(0);
-    ee.setText(cirText, "");    
+    ee.setText(cirText, "");
+    this.c_vote.reset();
 }
 
 sender.close = function() {
@@ -31853,12 +31854,14 @@ g5.initButtonV3(sender,[
       <leftRatio>0.0545112781954887</leftRatio>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_data = new Array();
+sender.v_root = sender;
 
-
-sender.init = function() {
-
+sender.reset = function() {
+    this.v_data = new Array();
+    this.v_data.push("");
+    this.v_data.push("");
+    this.refreshList();
 }
-
 
 sender.renderItem = function(root) {
     var w = eb.getDivRect(root).w;
@@ -32107,7 +32110,7 @@ sender.addButton = function() {
     var root = this.v_root;
     var itemWidth = eb.getDivRect(root).w;
     var c;
-    c = createPanel(root, "p2p35_BtnNew", "", 0, cy, itemWidth, 40);
+    c = createPanel(root, this.id + "_BtnNew", "", 0, cy, itemWidth, 40);
     
     addText(c, g5.lang.getByCn("+ 增加"), "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "606060", "normal");
     c.style.cursor="pointer";
@@ -32166,7 +32169,7 @@ sender.addButton = function() {
 }
 
 sender.removeButton = function() {
-    var c = $g("p2p35_BtnNew");
+    var c = $g(this.id + "_BtnNew");
     if (!c) return;
     ee.removeControl(c);
 }
@@ -32183,7 +32186,7 @@ sender.refreshList = function() {
         var root = this.v_root;
         var itemWidth = eb.getDivRect(this.v_root).w;
         var item;
-        item = createPanel(root, "p2p35_" + i, "", 0, 0, itemWidth, 5);
+        item = createPanel(root, this.id + "_" + i, "", 0, 0, itemWidth, 5);
         item.v_data = this.v_data[i];
         this.renderItem(item);
         this.v_items.push(item);
@@ -32194,9 +32197,7 @@ sender.refreshList = function() {
 
 sender.checkValid = function() {
     for (var i=0; i<this.v_data.length; i++) {
-        if (this.v_data[i].type == "") return false;
-        if (this.v_data[i].linkType == "") return false;
-        if (this.v_data[i].linkValue == "") return false;
+        if (this.v_data[i] == "") return false;
     }
     return true;
 }
