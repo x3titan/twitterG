@@ -31012,63 +31012,34 @@ sender.renderItem = function(root) {
     root.style.borderLeft = "";
     root.style.borderRight = "";
     var cx = 0;
-    var w1=200, w3=50;
-    var w2 = w-w1-w3;
+    var w3=50;
+    var w2 = w-w3;
     
-    c = createPanel(root, root.id+"W1", "", cx, cy, w1, 26); cx+=w1;
-    addText(c, root.v_data.type==""?g5.lang.getByCn("支付类型"):root.v_data.type, "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+    c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
+    addText(c, g5.lang.getByCn("二维码 / 链接"), "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
     c.style.cursor="pointer";
     ee.setOnClick(c, function(senderBtn, event) {
         var v_style = new Array();
         var v_onClick = new Array();
-        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","微信支付","微信支付","微信支付","#808080","#000000","#000000",""));
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款二维码","付款二维码","付款二维码","#808080","#000000","#000000",""));
         v_onClick.push(
             function (senderBtnC, event) {
-                senderBtn.parentNode.v_data.type = g5.lang.getByCn("微信支付");
-                sender.refreshList();
+                sender.c_file.v_myData = root.v_data;                
+                sender.c_file.c_file.blur();
+                sender.c_file.c_file.click();
             }
         );
-        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","支付宝","支付宝","支付宝","#808080","#000000","#000000",""));
-        v_onClick.push(
-            function (senderBtnC, event) {
-                senderBtn.parentNode.v_data.type = g5.lang.getByCn("支付宝");
-                sender.refreshList();
-            }
-        );
-        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","PayPal","PayPal","PayPal","#808080","#000000","#000000",""));
-        v_onClick.push(
-            function (senderBtnC, event) {
-                senderBtn.parentNode.v_data.type = "PayPal";
-                sender.refreshList();
-            }
-        );
-        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","ApplePay","ApplePay","ApplePay","#808080","#000000","#000000",""));
-        v_onClick.push(
-            function (senderBtnC, event) {
-                senderBtn.parentNode.v_data.type = "ApplePay";
-                sender.refreshList();
-            }
-        );
-        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","Venmo","Venmo","Venmo","#808080","#000000","#000000",""));
-        v_onClick.push(
-            function (senderBtnC, event) {
-                senderBtn.parentNode.v_data.type = "Venmo";
-                sender.refreshList();
-            }
-        );
-        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","自定义","自定义","自定义","#808080","#000000","#000000",""));
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款链接","付款链接","付款链接","#808080","#000000","#000000",""));
         v_onClick.push(
             function (senderBtnC, event) {
                 g5.popBlack.a10.show(
-                    "输入", "付款类型：", "请在这里输入付款类型，长度2-6", "",
-                    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","")],
+                    "输入", "付款链接地址：", "请在这里输入您的付款链接地址", "",
+                    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
                     [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
                     function(text) {
-                        if ((text.length>6) || (text.length<2)) {
-                            g5.alert1("输入错误", "付款类型的长度应该在2-6个汉字或英文字符之间");
-                            return;
-                        }
-                        senderBtn.parentNode.v_data.type = text;
+                        if (text == "") return;
+                        senderBtn.parentNode.v_data.linkType = "l";
+                        senderBtn.parentNode.v_data.linkValue = text;
                         sender.refreshList();
                     },
                     function() {
@@ -31076,98 +31047,10 @@ sender.renderItem = function(root) {
                 );
             }
         );
-        g5.popup1.p4.show(senderBtn, 120, v_style, v_onClick); 
-        
+        var rect = g5.getRectAbs(senderBtn);
+        g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
     });
-    
-    if (root.v_data.linkType == "") {
-        c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
-        addText(c, g5.lang.getByCn("二维码 / 链接"), "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
-        c.style.cursor="pointer";
-        ee.setOnClick(c, function(senderBtn, event) {
-            var v_style = new Array();
-            var v_onClick = new Array();
-            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款二维码","付款二维码","付款二维码","#808080","#000000","#000000",""));
-            v_onClick.push(
-                function (senderBtnC, event) {
-                    sender.c_file.v_myData = root.v_data;                
-                    sender.c_file.c_file.blur();
-                    sender.c_file.c_file.click();
-                }
-            );
-            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","付款链接","付款链接","付款链接","#808080","#000000","#000000",""));
-            v_onClick.push(
-                function (senderBtnC, event) {
-                    g5.popBlack.a10.show(
-                        "输入", "付款链接地址：", "请在这里输入您的付款链接地址", "",
-                        [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                        [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
-                        function(text) {
-                            if (text == "") return;
-                            senderBtn.parentNode.v_data.linkType = "l";
-                            senderBtn.parentNode.v_data.linkValue = text;
-                            sender.refreshList();
-                        },
-                        function() {
-                        }
-                    );
-                }
-            );
-            var rect = g5.getRectAbs(senderBtn);
-            g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
-        });
-    } else if (root.v_data.linkType == "g") {
-        c = createPanel(root, root.id+"W2", "", cx, cy-6, w2, 26+12); cx+=w2;
-        c.style.borderRadius = "0px 10px 0px 10px";
-        c.style.borderWidth = "1px";
-        c.style.borderColor = "rgb(230,236,240)";
-        c.style.borderStyle = "solid";
-        c.imgUrl = "url:" + g5.imgUrl + root.v_data.linkValue;
-        g5.setImage(c,c.imgUrl,"trim","","",10);
-        c.style.cursor="pointer";
-        ee.setOnClick(c, function(senderBtn, event) {
-            var v_style = new Array();
-            var v_onClick = new Array();
-            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","查看","查看","查看","#808080","#000000","#000000",""));
-            v_onClick.push(
-                function (senderBtnC, event) {
-                    g5.popBlack.a2.show([root.v_data.linkValue], root.v_data.linkValue);
-                    g5.player.stop();
-                }
-            );
-            v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","重新上传","重新上传","重新上传","#808080","#000000","#000000",""));
-            v_onClick.push(
-                function (senderBtnC, event) {
-                    sender.c_file.v_myData = root.v_data;                
-                    sender.c_file.c_file.blur();
-                    sender.c_file.c_file.click();
-                }
-            );
-            var rect = g5.getRectAbs(senderBtn);
-            g5.popup1.p4.showPos(rect.x+rect.w/2-80, rect.y+rect.h+10, 140, v_style, v_onClick); 
-            window.event? window.event.cancelBubble = true : event.stopPropagation();
-        });
-    } else if (root.v_data.linkType == "l") {
-        c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
-        addText(c, root.v_data.linkValue, "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
-        c.style.cursor="pointer";
-        ee.setOnClick(c, function(senderBtn, event) {
-            g5.popBlack.a10.show(
-                "输入", "付款链接地址：", "请在这里输入您的付款链接地址", senderBtn.parentNode.v_data.linkValue,
-                [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
-                function(text) {
-                    if (text == "") return;
-                    senderBtn.parentNode.v_data.linkType = "l";
-                    senderBtn.parentNode.v_data.linkValue = text;
-                    sender.refreshList();
-                },
-                function() {
-                }
-            );
-        });
-    }
-    
+
     c = createPanel(root, root.id+"W3", "", cx, cy-13, w3, 26+15); cx+=w3;
     addText(c, "...", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 18, "1da1f2", "bold");
     c.style.cursor="pointer";
