@@ -28667,869 +28667,6 @@ return false;</onClick>
       <width>80</width>
       <widthRatio>1</widthRatio>
     </control>
-    <control type="Panel" pathname="/divRoot/panel40">
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundSkin>empty</backgroundSkin>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
-      <height>796</height>
-      <heightRatio>1</heightRatio>
-      <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onCreate><![CDATA[sender.style.position = "fixed";
-sender.style.zIndex=100;
-sender.p1 = ee.getControl("panel149");
-sender.p2 = ee.getControl("panel124");
-sender.p3 = ee.getControl("panel213");
-sender.p4 = ee.getControl("panel323");
-
-sender.addEventListener("mousewheel",function(event){
-    for (var i=0; i<sender.eeChildren.length; i++) {
-        if (sender.eeChildren[i].style.visibility != "hidden") {
-            sender.eeChildren[i].style.visibility = "hidden";
-        }
-    }
-    sender.style.visibility = "hidden";
-    window.event? window.event.cancelBubble = true : event.stopPropagation();
-    event.returnValue = false;
-    return false;
-},false);
-
-sender.close = function() {
-    for (var i=0; i<sender.eeChildren.length; i++) {
-        if (sender.eeChildren[i].style.visibility != "hidden") {
-            ee.setVisible(sender.eeChildren[i], false);
-            //ee.showAni(sender.eeChildren[i], 1);
-        }
-    }
-    ee.setVisible(sender, false);
-    g5.popupPos = null;
-}
-
-]]></onCreate>
-      <onMouseMove><![CDATA[return;
-var getDist = function(x,y,div) {
-    var rect = eb.getDivRectSetting(div);
-    var dx, dy;
-    if (x<rect.x) {
-        dx = rect.x - x;
-    } else if (x<rect.x+rect.w) {
-        dx = -1;
-    } else {
-        dx = x - rect.x - rect.w;
-    }
-    if (y<rect.y) {
-        dy = rect.y - y;
-    } else if (y<rect.y+rect.h) {
-        dy = -1;
-    } else {
-        dy = y - rect.y - rect.h;
-    }
-    return Math.max(dx,dy);
-}
-
-var div = null;
-for (var i = 0; i<sender.eeChildren.length; i++) {
-    if (sender.eeChildren[i].style.visibility != "hidden") {
-        div = sender.eeChildren[i];
-        break;
-    }
-}
-if (div == null) return;
-
-var lastDist = getDist(sender.v_lastX,sender.v_lastY, div);
-var currentDist = getDist(x,y, div);
-if (currentDist>lastDist) {
-    sender.v_closeCount++;
-} else {
-    sender.v_closeCount = 0;
-}
-sender.v_lastX = x;
-sender.v_lastY = y;
-if (sender.v_closeCount>=4) {
-    sender.click();
-}
-
-
-]]></onMouseMove>
-      <onMouseUp>sender.close();</onMouseUp>
-      <sizeRatio>0.719060523938573</sizeRatio>
-      <top>0</top>
-      <width>1107</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel149">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <aniAlpha>appear:渐变出现</aniAlpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>211</height>
-      <heightRatio>0.265075376884422</heightRatio>
-      <layerName>p1.A自己选项</layerName>
-      <layerVisible>false</layerVisible>
-      <left>381</left>
-      <leftRatio>0.344173441734417</leftRatio>
-      <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
-      <onCreate><![CDATA[sender.v_isBookMark = false;
-
-sender.style.borderRadius = "6px";
-sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
-
-sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo) {
-    g5.popupPos = document.documentElement.scrollTop+1;
-    g5.popupFunc = function() {
-        g5.popup1.close();
-    }
-    this.v_content = v_content.clone();
-    this.v_reContent = v_reContent.clone();
-    this.v_userInfo = v_userInfo;
-    this.v_reUserInfo = v_reUserInfo;
-    var rect = g5.getRectAbs(refDiv);
-    var sr = eb.getDivRectSetting(this);
-    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
-        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y - eb.getDivRect(this).h - 10, null, null);
-    } else {
-        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y+rect.h+10, null, null);
-    }
-    ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> " + g5.lang.getByCn("删除"));
-    if (this.v_content.forceTopSn == "0") {
-        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> " + g5.lang.getByCn("在个人主页中置顶"));
-    } else {    
-        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> " + g5.lang.getByCn("在个人主页中取消置顶"));
-    }
-    if (this.v_isBookMark) {
-        this.c_button3.replaceText(g5.lang.getByCn("移除此收藏"));
-    } else {
-        this.c_button3.replaceText(g5.lang.getByCn("收藏此发言"));
-    }
-
-    ee.tiledV(this, 0, 0, 0);
-    ee.tiledResizeV(this, 1);
-    ee.setVisible(this.parentNode, true);
-    ee.setVisible(this, true);
-}
-
-ee.setOnClick(sender.c_button1, function(c_button1, event) {
-    g5.popBlack.a6.show(
-        "删除确认",
-        "此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。",
-        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
-        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","确认删除","#ffffff","#ffffff","#ffffff","")],
-        function() {
-            var cid;
-            if (sender.v_content.exUplinkType == "L") {
-                cid = sender.v_content.exContentId;
-            } else {
-                cid = sender.v_content.id;
-            }
-            var c = sender.v_content.clone();
-            c.id = cid;
-            c.exUplinkType = "";
-            g5.deleteTwitter(c,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
-        }
-    );
-});
-
-ee.setOnClick(sender.c_button2, function(c_button2, event) {
-    var cid;
-    if (sender.v_content.exUplinkType == "L") {
-        cid = sender.v_content.exContentId;
-    } else {
-        cid = sender.v_content.id;
-    }
-    g5.setTwitterForceTop(cid, sender.v_content.forceTopSn=="0");
-});]]></onCreate>
-      <sizeRatio>0.861224489795918</sizeRatio>
-      <top>192</top>
-      <topRatio>0.241206030150754</topRatio>
-      <width>245</width>
-      <widthRatio>0.221318879855465</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel149/panel110">
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <ee_LocalName>c_button1</ee_LocalName>
-      <fontColor>E0245E</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.23696682464455</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onCreate>g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);</onCreate>
-      <sizeRatio>0.204081632653061</sizeRatio>
-      <text> x 删除</text>
-      <top>0</top>
-      <width>245</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel149/panel111">
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <ee_LocalName>c_button2</ee_LocalName>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.23696682464455</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onCreate>g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);</onCreate>
-      <sizeRatio>0.204081632653061</sizeRatio>
-      <text> x 置顶到你的个人资料</text>
-      <top>52</top>
-      <topRatio>0.246445497630332</topRatio>
-      <width>245</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel149/panel28">
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <ee_LocalName>c_button3</ee_LocalName>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.23696682464455</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <onClick>if (sender.parentNode.v_isBookMark) {
-    g5.contentDel(sender.parentNode.v_content.id, function() { });
-    setBookMark.operation = "del";
-    setBookMark.contentId = sender.parentNode.v_content.id;
-    setBookMark.onComplete = function() {
-    }
-    setBookMark();
-} else {
-    setBookMark.operation = "add";
-    setBookMark.contentId = sender.parentNode.v_content.id;
-    setBookMark.onComplete = function() {
-        g5.alert1(
-            "增加（标记）书签",
-            "您已经将此发言标记为书签，点击书签可以随时查看。"
-        );
-        g5.p2.p5.refresh();
-    }
-    setBookMark();
-}</onClick>
-      <onCreate><![CDATA[g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);
-
-sender.replaceText = function(text) {
-    this.setText("   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-        g5.icon.bookMark +
-        "</svg> <div style='display:inline;'>" + text + "</div>");
-}
-sender.replaceText("收藏此发言");
-]]></onCreate>
-      <sizeRatio>0.204081632653061</sizeRatio>
-      <text> x 收藏此发言</text>
-      <top>101</top>
-      <topRatio>0.478672985781991</topRatio>
-      <width>245</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel149/panel708">
-      <bindControl>disabled</bindControl>
-      <bindTop>bottom</bindTop>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.23696682464455</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>c_button4</note>
-      <onClick><![CDATA[var cid = sender.parentNode.v_content.id;
-if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
-var value = window.location.origin + "/msg/" + cid;
-g5.copyClipboard(value,
-    function() {
-        g5.alert1("复制成功", "/%" + value + "%/<br/>已经成功复制到您的剪贴板");
-    },
-    function() {
-        g5.alert1("复制失败", "您的浏览器或许不支持或者没有权限复制剪贴板，请手工复制以下链接：<br/>/%" + value + "%/");
-    }
-);]]></onClick>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-    "<g><path d=\"M11.96 14.945c-.067 0-.136-.01-.203-.027-1.13-.318-2.097-.986-2.795-1.932-.832-1.125-1.176-2.508-.968-3.893s.942-2.605 2.068-3.438l3.53-2.608c2.322-1.716 5.61-1.224 7.33 1.1.83 1.127 1.175 2.51.967 3.895s-.943 2.605-2.07 3.438l-1.48 1.094c-.333.246-.804.175-1.05-.158-.246-.334-.176-.804.158-1.05l1.48-1.095c.803-.592 1.327-1.463 1.476-2.45.148-.988-.098-1.975-.69-2.778-1.225-1.656-3.572-2.01-5.23-.784l-3.53 2.608c-.802.593-1.326 1.464-1.475 2.45-.15.99.097 1.975.69 2.778.498.675 1.187 1.15 1.992 1.377.4.114.633.528.52.928-.092.33-.394.547-.722.547z\"></path><path d=\"M7.27 22.054c-1.61 0-3.197-.735-4.225-2.125-.832-1.127-1.176-2.51-.968-3.894s.943-2.605 2.07-3.438l1.478-1.094c.334-.245.805-.175 1.05.158s.177.804-.157 1.05l-1.48 1.095c-.803.593-1.326 1.464-1.475 2.45-.148.99.097 1.975.69 2.778 1.225 1.657 3.57 2.01 5.23.785l3.528-2.608c1.658-1.225 2.01-3.57.785-5.23-.498-.674-1.187-1.15-1.992-1.376-.4-.113-.633-.527-.52-.927.112-.4.528-.63.926-.522 1.13.318 2.096.986 2.794 1.932 1.717 2.324 1.224 5.612-1.1 7.33l-3.53 2.608c-.933.693-2.023 1.026-3.105 1.026z\"></path></g>" +
-    "</svg> <div style='display:inline;'>" + g5.lang.getByCn("复制发言链接") + "</div>");    
-
-g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);]]></onCreate>
-      <sizeRatio>0.204081632653061</sizeRatio>
-      <text>   X   复制发言链接</text>
-      <top>146</top>
-      <topRatio>0.691943127962085</topRatio>
-      <width>245</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel124">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <aniAlpha>appear:渐变出现</aniAlpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>103</height>
-      <heightRatio>0.129396984924623</heightRatio>
-      <layerName>p2.B转推菜单</layerName>
-      <layerVisible>false</layerVisible>
-      <left>372</left>
-      <leftRatio>0.336043360433604</leftRatio>
-      <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
-      <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel125");
-sender.c_button2 = ee.getControl("panel126");
-
-sender.style.borderRadius = "6px";
-sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
-sender.setMode=function(isForward) {
-    if (isForward) {
-        $g("panel125label").innerHTML = g5.lang.getByCn("取消转发");
-    } else {
-        $g("panel125label").innerHTML = g5.lang.getByCn("转发");
-    }
-}
-
-sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
-    g5.popupPos = document.documentElement.scrollTop+1;
-    g5.popupFunc = function() {
-        g5.popup1.close();
-    }
-    var rect = g5.getRectAbs(refDiv);
-    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
-        ee.setRect(this, rect.x - 10, rect.y - eb.getDivRect(this).h - 10, null, null);
-    } else {
-        ee.setRect(this, rect.x - 10, rect.y+rect.h+10, null, null);
-    }
-    this.setMode(v_content.isForward);
-    v_content = v_content.clone();
-    v_reContent = v_reContent.clone();
-    ee.setOnClick(this.c_button1, function(button1, event) {
-        if (newTwitter.busy) return;
-        if (g5.myUserInfo.status == "FREEZE") {
-            g5.alert1("不能转发", "对不起，您的账户目前处于冻结状态，不能对短文进行直接转发操作。");
-            return;
-        }
-        if (updateMain.busy) {
-            updateMain.cancel = true;
-        }
-        newTwitter.content="";
-        newTwitter.uplinkType="L";
-        var contentIdB;
-        if (v_content.exUplinkType=="L") {
-            contentIdB = v_content.exContentId;
-        } else {
-            contentIdB = v_content.id;
-        }
-        newTwitter.uplinkId = contentIdB;
-        newTwitter.photos=new Array();
-        newTwitter.onComplete = function(contentId) {
-            if (v_content.isForward) {
-                var v_newContent = v_content.clone();
-                v_newContent.exContentId = v_newContent.id;
-                v_newContent.id = contentId;
-                v_newContent.exUplinkType = "L";
-                v_newContent.exUserInfo = g5.myUserInfo;
-                g5.p2.p2.insert(v_newContent, v_reContent, v_userInfo, v_reUserInfo);
-                g5.p2.p9.insert(v_newContent, v_content, v_userInfo, v_reUserInfo);
-            }
-        }
-        newTwitter();
-        sender.close();
-        if (v_content.isForward) {
-            v_content.isForward = false;
-            v_content.fwCount--;
-            if (v_content.fwCount<0) v_content.fwCount = 0;
-            g5.contentDel(g5.contentGetMyDownlinkId(contentIdB, "L"), function() {});
-            g5.p2.p9.delHis(contentIdB);
-        } else {
-            v_content.isForward = true;
-            v_content.fwCount++;
-        }
-        v_content.id = contentIdB;
-        g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
-    });
-    ee.setOnClick(this.c_button2, function(button2, event) {
-        if (g5.isMobile) {
-            g5.p2.p31.showFw(v_content.clone(),v_reContent.clone(),v_userInfo,v_reUserInfo);
-        } else {
-            g5.popBlack.a3.showFw(v_content.clone(),v_reContent.clone(),v_userInfo,v_reUserInfo);
-        }
-    });
-    ee.setVisible(this.parentNode, true);
-    ee.setVisible(this, true);
-}
-
-
-sender.close = function() {
-    ee.setVisible(this, false);
-    ee.setVisible(this.parentNode, false);
-}
-]]></onCreate>
-      <sizeRatio>0.47906976744186</sizeRatio>
-      <top>341</top>
-      <topRatio>0.428391959798995</topRatio>
-      <width>215</width>
-      <widthRatio>0.194218608852755</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel124/panel125">
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.485436893203884</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>c_button1</note>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.icon.forward+"</svg> <div id='panel125label' style='display:inline;'>转发</div>");
-g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);]]></onCreate>
-      <sizeRatio>0.232558139534884</sizeRatio>
-      <text>   X   转发</text>
-      <top>0</top>
-      <width>215</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel124/panel126">
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.485436893203884</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>c_button2</note>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> " +
-    g5.lang.getByCn("带评论转发"));
-g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);]]></onCreate>
-      <sizeRatio>0.232558139534884</sizeRatio>
-      <text>   X   带评论转发</text>
-      <top>52</top>
-      <topRatio>0.504854368932039</topRatio>
-      <width>215</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel213">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <aniAlpha>appear:渐变出现</aniAlpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>281</height>
-      <heightRatio>0.353015075376884</heightRatio>
-      <layerName>p3.C其他人选项</layerName>
-      <layerVisible>false</layerVisible>
-      <left>304</left>
-      <leftRatio>0.274616079494128</leftRatio>
-      <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
-      <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel214");
-sender.c_button2 = ee.getControl("panel215");
-sender.c_button3 = ee.getControl("panel143");
-sender.c_button4 = ee.getControl("panel216");
-sender.c_button5 = ee.getControl("panel542");
-
-sender.style.borderRadius = "6px";
-sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
-sender.setMode=function(mode) {
-    if (mode=="0") {
-        $g("panel125label").innerHTML = "转推";
-    } else if (mode=="1") {
-        $g("panel125label").innerHTML = "取消转推";
-    }
-}
-sender.show = function(refDiv, content, userInfo) {
-    g5.popupPos = document.documentElement.scrollTop+1;
-    g5.popupFunc = function() {
-        g5.popup1.close();
-    }
-    this.v_content = content
-    this.v_userInfo = userInfo;
-    var rect = g5.getRectAbs(refDiv);
-    var sr = eb.getDivRectSetting(this);
-    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
-        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y - eb.getDivRect(this).h - 10, null, null);
-    } else {
-        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y+rect.h+10, null, null);
-    }
-    if (userInfo.isBlock1) {
-        ee.setText(this.c_button1,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-            "<g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g><g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g>" +
-            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("取消屏蔽") + " @"+userInfo.userName+"</div>");
-    } else if (userInfo.isFollow) {
-        ee.setText(this.c_button1,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-            "<g><path d=\"M20.083 6.173l2.323 2.323c.293.293.768.293 1.06 0s.294-.768 0-1.06l-2.32-2.326 2.322-2.323c.293-.294.293-.77 0-1.062s-.768-.293-1.06 0L20.082 4.05 17.76 1.73c-.293-.293-.768-.293-1.06 0-.147.146-.22.338-.22.53s.072.384.22.53l2.32 2.32-2.32 2.325c-.147.146-.22.338-.22.53s.072.384.22.53c.292.293.767.293 1.06 0l2.323-2.32zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.645-4.513-2.53 0-4.267 1.687-4.646 4.513-.273 2.025-.01 3.462.805 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-" +
-            ".54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z\"></path></g>" +
-            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("取消关注") + " @"+userInfo.userName+"</div>");    
-    } else {
-        ee.setText(this.c_button1,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-            "<g><path d=\"M23.152 3.483h-2.675V.81c0-.415-.336-.75-.75-.75s-.75.335-.75.75v2.674H16.3c-.413 0-.75.336-.75.75s.337.75.75.75h2.677V7.66c0 .413.336.75.75.75s.75-.337.75-.75V4.982h2.675c.414 0 .75-.336.75-.75s-.336-.75-.75-.75zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.646-4.513S4.15 3.342 3.77 6.168c-.27 2.025-.007 3.462.807 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-.54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z\"></path></g>" +
-            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("关注") + " @"+userInfo.userName+"</div>");    
-    }
-    if (userInfo.isBlock1) {
-        ee.setVisible(this.c_button2, false);
-    } else {
-        ee.setVisible(this.c_button2, true);
-        ee.setText(this.c_button2,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-            "<g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g><g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g>" +
-            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("屏蔽") + " @"+userInfo.userName+"</div>");
-    }
-    if (userInfo.isHide) {
-        ee.setText(this.c_button5,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.mute + 
-            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("取消隐藏") + " @"+userInfo.userName+"</div>");    
-    } else {
-        ee.setText(this.c_button5,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.mute + 
-            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("隐藏") + " @"+userInfo.userName+"</div>");    
-    }
-    if (this.v_isBookMark) {
-        this.c_button3.replaceText("移除此收藏");
-    } else {
-        this.c_button3.replaceText("收藏此发言");
-    }    
-
-    ee.tiledV(this,0,0,0);
-    ee.setVisible(this.parentNode, true);
-    ee.setVisible(this, true);
-    //ee.showAni(this, 0);
-}
-]]></onCreate>
-      <sizeRatio>0.851515151515152</sizeRatio>
-      <top>174</top>
-      <topRatio>0.218592964824121</topRatio>
-      <width>330</width>
-      <widthRatio>0.29810298102981</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel213/panel214">
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <dockY>top</dockY>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.177935943060498</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>c_button1</note>
-      <onClick>if (g5.checkGuest("取消关注某用户")) return;
-if (sender.parentNode.v_userInfo.isBlock1) {
-    g5.setBlock1(sender.parentNode.v_userInfo, null);
-} else {
-    g5.setFollow(sender.parentNode.v_userInfo, null);
-}
-</onClick>
-      <onCreate>sender.label.style.tableLayout = "fixed";
-sender.label.rows[0].cells[0].style.overflow = "hidden";
-sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
-sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
-
-g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);</onCreate>
-      <sizeRatio>0.151515151515152</sizeRatio>
-      <text>   X   取消关注/关注 @xxx</text>
-      <top>0</top>
-      <width>330</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel213/panel215">
-      <bindControl>panel214</bindControl>
-      <bindTop>bottom</bindTop>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.177935943060498</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>c_button2</note>
-      <onClick>if (g5.checkGuest("屏蔽某用户")) return;
-g5.setBlock1(sender.parentNode.v_userInfo, null);
-</onClick>
-      <onCreate>sender.label.style.tableLayout = "fixed";
-sender.label.rows[0].cells[0].style.overflow = "hidden";
-sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
-sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
-
-g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);</onCreate>
-      <sizeRatio>0.151515151515152</sizeRatio>
-      <text>   X   屏蔽 @xxx</text>
-      <top>50</top>
-      <topRatio>0.177935943060498</topRatio>
-      <width>330</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel213/panel143">
-      <bindControl>panel215</bindControl>
-      <bindTop>bottom</bindTop>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.177935943060498</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>c_button3</note>
-      <onClick>if (g5.checkGuest("收藏发言")) return;
-var cid = sender.parentNode.v_content.id;
-if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
-if (sender.parentNode.v_isBookMark) {
-    g5.contentDel(cid, function() { });
-    setBookMark.operation = "del";
-    setBookMark.contentId = cid;
-    setBookMark.onComplete = function() {
-    }
-    setBookMark();
-} else {
-    setBookMark.operation = "add";
-    setBookMark.contentId = cid;
-    setBookMark.onComplete = function() {
-        g5.alert1(
-            "发言已收藏",
-            "可点击菜单栏“收藏”按钮进行查看。"
-        );
-        g5.p2.p5.refresh();
-    }
-    setBookMark();
-}
-</onClick>
-      <onCreate><![CDATA[g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);
-
-sender.replaceText = function(text) {
-    text = g5.lang.getByCn(text);
-    this.setText("   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-        g5.icon.bookMark +
-        "</svg> <div style='display:inline;'>" + text + "</div>");
-}
-sender.replaceText("收藏此发言");
-]]></onCreate>
-      <sizeRatio>0.151515151515152</sizeRatio>
-      <text>   X   收藏此发言</text>
-      <topRatio>0.355871886120996</topRatio>
-      <width>330</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel213/panel216">
-      <bindControl>panel143</bindControl>
-      <bindTop>bottom</bindTop>
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.177935943060498</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>c_button4</note>
-      <onClick><![CDATA[var cid = sender.parentNode.v_content.id;
-if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
-var value = window.location.origin + "/msg/" + cid;
-g5.copyClipboard(value,
-    function() {
-        g5.alert1("复制成功", "/%" + value + "%/<br/>已经成功复制到您的剪贴板");
-    },
-    function() {
-        g5.alert1("复制失败", "您的浏览器或许不支持或者没有权限复制剪贴板，请手工复制以下链接：<br/>/%" + value + "%/");
-    }
-);]]></onClick>
-      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
-    "<g><path d=\"M11.96 14.945c-.067 0-.136-.01-.203-.027-1.13-.318-2.097-.986-2.795-1.932-.832-1.125-1.176-2.508-.968-3.893s.942-2.605 2.068-3.438l3.53-2.608c2.322-1.716 5.61-1.224 7.33 1.1.83 1.127 1.175 2.51.967 3.895s-.943 2.605-2.07 3.438l-1.48 1.094c-.333.246-.804.175-1.05-.158-.246-.334-.176-.804.158-1.05l1.48-1.095c.803-.592 1.327-1.463 1.476-2.45.148-.988-.098-1.975-.69-2.778-1.225-1.656-3.572-2.01-5.23-.784l-3.53 2.608c-.802.593-1.326 1.464-1.475 2.45-.15.99.097 1.975.69 2.778.498.675 1.187 1.15 1.992 1.377.4.114.633.528.52.928-.092.33-.394.547-.722.547z\"></path><path d=\"M7.27 22.054c-1.61 0-3.197-.735-4.225-2.125-.832-1.127-1.176-2.51-.968-3.894s.943-2.605 2.07-3.438l1.478-1.094c.334-.245.805-.175 1.05.158s.177.804-.157 1.05l-1.48 1.095c-.803.593-1.326 1.464-1.475 2.45-.148.99.097 1.975.69 2.778 1.225 1.657 3.57 2.01 5.23.785l3.528-2.608c1.658-1.225 2.01-3.57.785-5.23-.498-.674-1.187-1.15-1.992-1.376-.4-.113-.633-.527-.52-.927.112-.4.528-.63.926-.522 1.13.318 2.096.986 2.794 1.932 1.717 2.324 1.224 5.612-1.1 7.33l-3.53 2.608c-.933.693-2.023 1.026-3.105 1.026z\"></path></g>" +
-    "</svg> <div style='display:inline;'>" + g5.lang.getByCn("复制发言链接") + "</div>");    
-
-g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);]]></onCreate>
-      <sizeRatio>0.151515151515152</sizeRatio>
-      <text>   X   复制发言链接</text>
-      <top>150</top>
-      <topRatio>0.533807829181495</topRatio>
-      <width>330</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel213/panel542">
-      <cursor>pointer</cursor>
-      <dockX>fill</dockX>
-      <fontColor>14171A</fontColor>
-      <fontFamily>微软雅黑</fontFamily>
-      <fontSize>12</fontSize>
-      <hAlign>left</hAlign>
-      <height>50</height>
-      <heightRatio>0.177935943060498</heightRatio>
-      <layerVisible>false</layerVisible>
-      <left>0</left>
-      <note>c_button4</note>
-      <onClick>if (g5.checkGuest("使用隐藏功能")) return;
-g5.setHide(sender.parentNode.v_userInfo.clone(), function(v_userInfo) {
-});
-
-</onClick>
-      <onCreate>sender.label.style.tableLayout = "fixed";
-sender.label.rows[0].cells[0].style.overflow = "hidden";
-sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
-sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
-
-ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
-g5.initButtonV3(sender,[
-    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
-]);</onCreate>
-      <sizeRatio>0.151515151515152</sizeRatio>
-      <text>   X   隐藏</text>
-      <top>199</top>
-      <topRatio>0.708185053380783</topRatio>
-      <width>330</width>
-      <widthRatio>1</widthRatio>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel40/panel323">
-      <ani2Alpha>disappear:渐变消失</ani2Alpha>
-      <aniAlpha>appear:渐变出现</aniAlpha>
-      <backgroundColor>FFFFFF</backgroundColor>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <bgColorEnabled>true</bgColorEnabled>
-      <height>205</height>
-      <heightRatio>0.257537688442211</heightRatio>
-      <layerName>p4.通用弹出菜单</layerName>
-      <layerVisible>false</layerVisible>
-      <left>375</left>
-      <leftRatio>0.338753387533875</leftRatio>
-      <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
-      <onCreate><![CDATA[sender.style.borderRadius = "10px";
-sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
-
-sender.show = function(refDiv, width, v_style, v_function) {
-    this.showPos(eb.getClientSize().w+100, 0, width, v_style, v_function);
-    var rect = g5.getRectAbs(refDiv);
-    var x, y;
-    var sr = eb.getDivRectSetting(this);
-    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
-        x = rect.x - 50;
-        y = rect.y - sr.h - 10;
-    } else {
-        x = rect.x - 50;
-        y = rect.y + rect.h + 10;
-    }
-    x = Math.min(x, eb.getClientSize().w - sr.w);
-    x = Math.max(20, x);
-    eb.setDivRect(this,x,y,null,null);
-}
-
-sender.showPos = function(x, y, width, v_style, v_function) {
-    if (!eb.isEmpty(this.v_items)) {
-        for (var i=0; i<this.v_items.length; i++) {
-            ee.removeControl(this.v_items[i]);
-        }
-    }
-    this.v_items = new Array();
-    var i, item, cy=0;
-    var root = this;
-    ee.setRect(root,null,null,width,null);
-    var itemWidth = eb.getDivRectSetting(root).w;
-    for (i=0; i < v_style.length; i++) {
-        if (v_style[i].text1.search("&amp;nbsp;&amp;nbsp;&amp;nbsp;") == 0) break;
-        v_style[i].text1 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text1.trim());
-        v_style[i].text2 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text2.trim());
-        v_style[i].text3 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text3.trim());
-    }
-    this.v_style = v_style;
-    this.v_function = v_function;
-    var maxLen = 0;
-    var currentLen;
-    for (i=0; i<v_style.length; i++) {
-        var item = createPanel(root, "popup1_" + i, "", 0, cy, itemWidth, 50);
-        item.v_index = i;
-        currentLen = this.renderItem(item);
-        maxLen = Math.max(currentLen, maxLen);
-        ee.removeControl(item);
-    }
-    maxLen += 30;
-    ee.setRect(root,null,null,maxLen,null);
-    for (i=0; i<v_style.length; i++) {
-        var item = createPanel(root, "popup1_" + i, "", 0, cy, maxLen, 50);
-        item.v_index = i;
-        currentLen = this.renderItem(item);
-        maxLen = Math.max(currentLen, maxLen);
-        this.v_items.push(item);
-        cy += 0 + eb.getDivRect(item).h;
-    }
-    g5.tiledV(this, 0, 0, 0);
-
-    ee.setRect(this, x, y, null, null);
-    
-    this.parentNode.v_lastX = -1000
-    this.parentNode.v_lastY = -1000;
-    this.parentNode.v_closeCount = 0;
-    ee.setVisible(this.parentNode, true);
-    ee.setVisible(this, true);
-    //ee.showAni(this, 0);
-}
-
-
-sender.renderItem = function(root) {
-    var w = eb.getDivRectSetting(root).w;
-    var h = eb.getDivRectSetting(root).h;
-    var c,cy=7;
-    
-    //button1
-    c = createPanel(root, root.id+"button1", "", 0,0,w,h);
-    root.c_button = c;
-    c.style.cursor = "pointer";
-    c.v_style = root.parentNode.v_style[root.v_index];
-    addText(c, c.v_style.text1, "left", "middle", "微软雅黑", 12, "ffffff", "");
-    ee.setOnClick(c,function(sender,event) {
-        sender.parentNode.parentNode.v_function[sender.parentNode.v_index](sender,event);
-    });
-    g5.initButtonV3(c,[
-        c.v_style
-    ]);
-    c.label.style.width = "";
-    c.label.rows[0].cells[0].style.whiteSpace="nowrap";
-    var r = c.label.offsetWidth;
-    ee.setRect(c,null,null,w,null);
-    c.label.rows[0].cells[0].style.whiteSpace="normal";
-    return r; 
-}
-
-]]></onCreate>
-      <sizeRatio>0.776515151515151</sizeRatio>
-      <top>18</top>
-      <topRatio>0.0226130653266332</topRatio>
-      <width>264</width>
-      <widthRatio>0.238482384823848</widthRatio>
-    </control>
     <control type="Panel" pathname="/divRoot/panel112">
       <autoScroll>true</autoScroll>
       <backgroundColor>FFFFFF</backgroundColor>
@@ -30750,7 +29887,7 @@ sender.setMode = function(mode) {
 ]]></onCreate>
       <sizeRatio>1.1484962406015</sizeRatio>
       <top>92</top>
-      <topRatio>0.114321608040201</topRatio>
+      <topRatio>0.115577889447236</topRatio>
       <width>532</width>
       <widthRatio>0.480578139114724</widthRatio>
     </control>
@@ -35296,6 +34433,869 @@ g5.initButtonV3(sender,[
       <topRatio>0.021356783919598</topRatio>
       <width>36</width>
       <widthRatio>0.123711340206186</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>796</height>
+      <heightRatio>1</heightRatio>
+      <layerName><![CDATA[popup1->主界面弹窗]]></layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate><![CDATA[sender.style.position = "fixed";
+sender.style.zIndex=100;
+sender.p1 = ee.getControl("panel149");
+sender.p2 = ee.getControl("panel124");
+sender.p3 = ee.getControl("panel213");
+sender.p4 = ee.getControl("panel323");
+
+sender.addEventListener("mousewheel",function(event){
+    for (var i=0; i<sender.eeChildren.length; i++) {
+        if (sender.eeChildren[i].style.visibility != "hidden") {
+            sender.eeChildren[i].style.visibility = "hidden";
+        }
+    }
+    sender.style.visibility = "hidden";
+    window.event? window.event.cancelBubble = true : event.stopPropagation();
+    event.returnValue = false;
+    return false;
+},false);
+
+sender.close = function() {
+    for (var i=0; i<sender.eeChildren.length; i++) {
+        if (sender.eeChildren[i].style.visibility != "hidden") {
+            ee.setVisible(sender.eeChildren[i], false);
+            //ee.showAni(sender.eeChildren[i], 1);
+        }
+    }
+    ee.setVisible(sender, false);
+    g5.popupPos = null;
+}
+
+]]></onCreate>
+      <onMouseMove><![CDATA[return;
+var getDist = function(x,y,div) {
+    var rect = eb.getDivRectSetting(div);
+    var dx, dy;
+    if (x<rect.x) {
+        dx = rect.x - x;
+    } else if (x<rect.x+rect.w) {
+        dx = -1;
+    } else {
+        dx = x - rect.x - rect.w;
+    }
+    if (y<rect.y) {
+        dy = rect.y - y;
+    } else if (y<rect.y+rect.h) {
+        dy = -1;
+    } else {
+        dy = y - rect.y - rect.h;
+    }
+    return Math.max(dx,dy);
+}
+
+var div = null;
+for (var i = 0; i<sender.eeChildren.length; i++) {
+    if (sender.eeChildren[i].style.visibility != "hidden") {
+        div = sender.eeChildren[i];
+        break;
+    }
+}
+if (div == null) return;
+
+var lastDist = getDist(sender.v_lastX,sender.v_lastY, div);
+var currentDist = getDist(x,y, div);
+if (currentDist>lastDist) {
+    sender.v_closeCount++;
+} else {
+    sender.v_closeCount = 0;
+}
+sender.v_lastX = x;
+sender.v_lastY = y;
+if (sender.v_closeCount>=4) {
+    sender.click();
+}
+
+
+]]></onMouseMove>
+      <onMouseUp>sender.close();</onMouseUp>
+      <sizeRatio>0.719060523938573</sizeRatio>
+      <top>0</top>
+      <width>1107</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>211</height>
+      <heightRatio>0.265075376884422</heightRatio>
+      <layerName>p1.A自己选项</layerName>
+      <layerVisible>false</layerVisible>
+      <left>381</left>
+      <leftRatio>0.344173441734417</leftRatio>
+      <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
+      <onCreate><![CDATA[sender.v_isBookMark = false;
+
+sender.style.borderRadius = "6px";
+sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
+
+sender.show = function(refDiv, v_content, v_reContent, v_userInfo, v_reUserInfo) {
+    g5.popupPos = document.documentElement.scrollTop+1;
+    g5.popupFunc = function() {
+        g5.popup1.close();
+    }
+    this.v_content = v_content.clone();
+    this.v_reContent = v_reContent.clone();
+    this.v_userInfo = v_userInfo;
+    this.v_reUserInfo = v_reUserInfo;
+    var rect = g5.getRectAbs(refDiv);
+    var sr = eb.getDivRectSetting(this);
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y - eb.getDivRect(this).h - 10, null, null);
+    } else {
+        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y+rect.h+10, null, null);
+    }
+    ee.setText(this.c_button1,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(224, 36, 94,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.trash + "</svg> " + g5.lang.getByCn("删除"));
+    if (this.v_content.forceTopSn == "0") {
+        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> " + g5.lang.getByCn("在个人主页中置顶"));
+    } else {    
+        ee.setText(sender.c_button2,"   <svg viewBox=\"0 -4 34 34\" style='height: 1.75rem;color: rgba(20, 23, 26,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.pin + "</svg> " + g5.lang.getByCn("在个人主页中取消置顶"));
+    }
+    if (this.v_isBookMark) {
+        this.c_button3.replaceText(g5.lang.getByCn("移除此收藏"));
+    } else {
+        this.c_button3.replaceText(g5.lang.getByCn("收藏此发言"));
+    }
+
+    ee.tiledV(this, 0, 0, 0);
+    ee.tiledResizeV(this, 1);
+    ee.setVisible(this.parentNode, true);
+    ee.setVisible(this, true);
+}
+
+ee.setOnClick(sender.c_button1, function(c_button1, event) {
+    g5.popBlack.a6.show(
+        "删除确认",
+        "此操作不可撤消，并且将从你的个人资料、关注你的任何账号的时间线以及搜索结果中移除。",
+        [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+        [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","确认删除","#ffffff","#ffffff","#ffffff","")],
+        function() {
+            var cid;
+            if (sender.v_content.exUplinkType == "L") {
+                cid = sender.v_content.exContentId;
+            } else {
+                cid = sender.v_content.id;
+            }
+            var c = sender.v_content.clone();
+            c.id = cid;
+            c.exUplinkType = "";
+            g5.deleteTwitter(c,sender.v_reContent,sender.v_userInfo,sender.v_reUserInfo);
+        }
+    );
+});
+
+ee.setOnClick(sender.c_button2, function(c_button2, event) {
+    var cid;
+    if (sender.v_content.exUplinkType == "L") {
+        cid = sender.v_content.exContentId;
+    } else {
+        cid = sender.v_content.id;
+    }
+    g5.setTwitterForceTop(cid, sender.v_content.forceTopSn=="0");
+});]]></onCreate>
+      <sizeRatio>0.861224489795918</sizeRatio>
+      <top>192</top>
+      <topRatio>0.241206030150754</topRatio>
+      <width>245</width>
+      <widthRatio>0.221318879855465</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149/panel110">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_button1</ee_LocalName>
+      <fontColor>E0245E</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.23696682464455</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);</onCreate>
+      <sizeRatio>0.204081632653061</sizeRatio>
+      <text> x 删除</text>
+      <top>0</top>
+      <width>245</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149/panel111">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_button2</ee_LocalName>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.23696682464455</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);</onCreate>
+      <sizeRatio>0.204081632653061</sizeRatio>
+      <text> x 置顶到你的个人资料</text>
+      <top>52</top>
+      <topRatio>0.246445497630332</topRatio>
+      <width>245</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149/panel28">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_button3</ee_LocalName>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.23696682464455</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>if (sender.parentNode.v_isBookMark) {
+    g5.contentDel(sender.parentNode.v_content.id, function() { });
+    setBookMark.operation = "del";
+    setBookMark.contentId = sender.parentNode.v_content.id;
+    setBookMark.onComplete = function() {
+    }
+    setBookMark();
+} else {
+    setBookMark.operation = "add";
+    setBookMark.contentId = sender.parentNode.v_content.id;
+    setBookMark.onComplete = function() {
+        g5.alert1(
+            "增加（标记）书签",
+            "您已经将此发言标记为书签，点击书签可以随时查看。"
+        );
+        g5.p2.p5.refresh();
+    }
+    setBookMark();
+}</onClick>
+      <onCreate><![CDATA[g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);
+
+sender.replaceText = function(text) {
+    this.setText("   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+        g5.icon.bookMark +
+        "</svg> <div style='display:inline;'>" + text + "</div>");
+}
+sender.replaceText("收藏此发言");
+]]></onCreate>
+      <sizeRatio>0.204081632653061</sizeRatio>
+      <text> x 收藏此发言</text>
+      <top>101</top>
+      <topRatio>0.478672985781991</topRatio>
+      <width>245</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel149/panel708">
+      <bindControl>disabled</bindControl>
+      <bindTop>bottom</bindTop>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.23696682464455</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_button4</note>
+      <onClick><![CDATA[var cid = sender.parentNode.v_content.id;
+if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
+var value = window.location.origin + "/msg/" + cid;
+g5.copyClipboard(value,
+    function() {
+        g5.alert1("复制成功", "/%" + value + "%/<br/>已经成功复制到您的剪贴板");
+    },
+    function() {
+        g5.alert1("复制失败", "您的浏览器或许不支持或者没有权限复制剪贴板，请手工复制以下链接：<br/>/%" + value + "%/");
+    }
+);]]></onClick>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+    "<g><path d=\"M11.96 14.945c-.067 0-.136-.01-.203-.027-1.13-.318-2.097-.986-2.795-1.932-.832-1.125-1.176-2.508-.968-3.893s.942-2.605 2.068-3.438l3.53-2.608c2.322-1.716 5.61-1.224 7.33 1.1.83 1.127 1.175 2.51.967 3.895s-.943 2.605-2.07 3.438l-1.48 1.094c-.333.246-.804.175-1.05-.158-.246-.334-.176-.804.158-1.05l1.48-1.095c.803-.592 1.327-1.463 1.476-2.45.148-.988-.098-1.975-.69-2.778-1.225-1.656-3.572-2.01-5.23-.784l-3.53 2.608c-.802.593-1.326 1.464-1.475 2.45-.15.99.097 1.975.69 2.778.498.675 1.187 1.15 1.992 1.377.4.114.633.528.52.928-.092.33-.394.547-.722.547z\"></path><path d=\"M7.27 22.054c-1.61 0-3.197-.735-4.225-2.125-.832-1.127-1.176-2.51-.968-3.894s.943-2.605 2.07-3.438l1.478-1.094c.334-.245.805-.175 1.05.158s.177.804-.157 1.05l-1.48 1.095c-.803.593-1.326 1.464-1.475 2.45-.148.99.097 1.975.69 2.778 1.225 1.657 3.57 2.01 5.23.785l3.528-2.608c1.658-1.225 2.01-3.57.785-5.23-.498-.674-1.187-1.15-1.992-1.376-.4-.113-.633-.527-.52-.927.112-.4.528-.63.926-.522 1.13.318 2.096.986 2.794 1.932 1.717 2.324 1.224 5.612-1.1 7.33l-3.53 2.608c-.933.693-2.023 1.026-3.105 1.026z\"></path></g>" +
+    "</svg> <div style='display:inline;'>" + g5.lang.getByCn("复制发言链接") + "</div>");    
+
+g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);]]></onCreate>
+      <sizeRatio>0.204081632653061</sizeRatio>
+      <text>   X   复制发言链接</text>
+      <top>146</top>
+      <topRatio>0.691943127962085</topRatio>
+      <width>245</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel124">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>103</height>
+      <heightRatio>0.129396984924623</heightRatio>
+      <layerName>p2.B转推菜单</layerName>
+      <layerVisible>false</layerVisible>
+      <left>372</left>
+      <leftRatio>0.336043360433604</leftRatio>
+      <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
+      <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel125");
+sender.c_button2 = ee.getControl("panel126");
+
+sender.style.borderRadius = "6px";
+sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
+sender.setMode=function(isForward) {
+    if (isForward) {
+        $g("panel125label").innerHTML = g5.lang.getByCn("取消转发");
+    } else {
+        $g("panel125label").innerHTML = g5.lang.getByCn("转发");
+    }
+}
+
+sender.show = function(refDiv,v_content,v_reContent,v_userInfo,v_reUserInfo) {
+    g5.popupPos = document.documentElement.scrollTop+1;
+    g5.popupFunc = function() {
+        g5.popup1.close();
+    }
+    var rect = g5.getRectAbs(refDiv);
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        ee.setRect(this, rect.x - 10, rect.y - eb.getDivRect(this).h - 10, null, null);
+    } else {
+        ee.setRect(this, rect.x - 10, rect.y+rect.h+10, null, null);
+    }
+    this.setMode(v_content.isForward);
+    v_content = v_content.clone();
+    v_reContent = v_reContent.clone();
+    ee.setOnClick(this.c_button1, function(button1, event) {
+        if (newTwitter.busy) return;
+        if (g5.myUserInfo.status == "FREEZE") {
+            g5.alert1("不能转发", "对不起，您的账户目前处于冻结状态，不能对短文进行直接转发操作。");
+            return;
+        }
+        if (updateMain.busy) {
+            updateMain.cancel = true;
+        }
+        newTwitter.content="";
+        newTwitter.uplinkType="L";
+        var contentIdB;
+        if (v_content.exUplinkType=="L") {
+            contentIdB = v_content.exContentId;
+        } else {
+            contentIdB = v_content.id;
+        }
+        newTwitter.uplinkId = contentIdB;
+        newTwitter.photos=new Array();
+        newTwitter.onComplete = function(contentId) {
+            if (v_content.isForward) {
+                var v_newContent = v_content.clone();
+                v_newContent.exContentId = v_newContent.id;
+                v_newContent.id = contentId;
+                v_newContent.exUplinkType = "L";
+                v_newContent.exUserInfo = g5.myUserInfo;
+                g5.p2.p2.insert(v_newContent, v_reContent, v_userInfo, v_reUserInfo);
+                g5.p2.p9.insert(v_newContent, v_content, v_userInfo, v_reUserInfo);
+            }
+        }
+        newTwitter();
+        sender.close();
+        if (v_content.isForward) {
+            v_content.isForward = false;
+            v_content.fwCount--;
+            if (v_content.fwCount<0) v_content.fwCount = 0;
+            g5.contentDel(g5.contentGetMyDownlinkId(contentIdB, "L"), function() {});
+            g5.p2.p9.delHis(contentIdB);
+        } else {
+            v_content.isForward = true;
+            v_content.fwCount++;
+        }
+        v_content.id = contentIdB;
+        g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo);
+    });
+    ee.setOnClick(this.c_button2, function(button2, event) {
+        if (g5.isMobile) {
+            g5.p2.p31.showFw(v_content.clone(),v_reContent.clone(),v_userInfo,v_reUserInfo);
+        } else {
+            g5.popBlack.a3.showFw(v_content.clone(),v_reContent.clone(),v_userInfo,v_reUserInfo);
+        }
+    });
+    ee.setVisible(this.parentNode, true);
+    ee.setVisible(this, true);
+}
+
+
+sender.close = function() {
+    ee.setVisible(this, false);
+    ee.setVisible(this.parentNode, false);
+}
+]]></onCreate>
+      <sizeRatio>0.47906976744186</sizeRatio>
+      <top>341</top>
+      <topRatio>0.428391959798995</topRatio>
+      <width>215</width>
+      <widthRatio>0.194218608852755</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel124/panel125">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.485436893203884</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_button1</note>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>"+g5.icon.forward+"</svg> <div id='panel125label' style='display:inline;'>转发</div>");
+g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);]]></onCreate>
+      <sizeRatio>0.232558139534884</sizeRatio>
+      <text>   X   转发</text>
+      <top>0</top>
+      <width>215</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel124/panel126">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.485436893203884</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_button2</note>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'><g><path d=\"M22.132 7.653c0-.6-.234-1.166-.66-1.59l-3.535-3.536c-.85-.85-2.333-.85-3.182 0L3.417 13.865c-.323.323-.538.732-.63 1.25l-.534 5.816c-.02.223.06.442.217.6.14.142.332.22.53.22.023 0 .046 0 .068-.003l5.884-.544c.45-.082.86-.297 1.184-.62l11.337-11.34c.425-.424.66-.99.66-1.59zm-17.954 8.69l3.476 3.476-3.825.35.348-3.826zm5.628 2.447c-.282.283-.777.284-1.06 0L5.21 15.255c-.292-.292-.292-.77 0-1.06l8.398-8.398 4.596 4.596-8.398 8.397zM20.413 8.184l-1.15 1.15-4.595-4.597 1.15-1.15c.14-.14.33-.22.53-.22s.388.08.53.22l3.535 3.536c.142.142.22.33.22.53s-.08.39-.22.53z\"></path></g></svg> " +
+    g5.lang.getByCn("带评论转发"));
+g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);]]></onCreate>
+      <sizeRatio>0.232558139534884</sizeRatio>
+      <text>   X   带评论转发</text>
+      <top>52</top>
+      <topRatio>0.504854368932039</topRatio>
+      <width>215</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel213">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>281</height>
+      <heightRatio>0.353015075376884</heightRatio>
+      <layerName>p3.C其他人选项</layerName>
+      <layerVisible>false</layerVisible>
+      <left>304</left>
+      <leftRatio>0.274616079494128</leftRatio>
+      <onAni2End>ee.setVisible(ee.getControl("panel40"), false);</onAni2End>
+      <onCreate><![CDATA[sender.c_button1 = ee.getControl("panel214");
+sender.c_button2 = ee.getControl("panel215");
+sender.c_button3 = ee.getControl("panel143");
+sender.c_button4 = ee.getControl("panel216");
+sender.c_button5 = ee.getControl("panel542");
+
+sender.style.borderRadius = "6px";
+sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
+sender.setMode=function(mode) {
+    if (mode=="0") {
+        $g("panel125label").innerHTML = "转推";
+    } else if (mode=="1") {
+        $g("panel125label").innerHTML = "取消转推";
+    }
+}
+sender.show = function(refDiv, content, userInfo) {
+    g5.popupPos = document.documentElement.scrollTop+1;
+    g5.popupFunc = function() {
+        g5.popup1.close();
+    }
+    this.v_content = content
+    this.v_userInfo = userInfo;
+    var rect = g5.getRectAbs(refDiv);
+    var sr = eb.getDivRectSetting(this);
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y - eb.getDivRect(this).h - 10, null, null);
+    } else {
+        ee.setRect(this, Math.min(rect.x - 50,eb.getClientSize().w - sr.w), rect.y+rect.h+10, null, null);
+    }
+    if (userInfo.isBlock1) {
+        ee.setText(this.c_button1,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+            "<g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g><g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g>" +
+            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("取消屏蔽") + " @"+userInfo.userName+"</div>");
+    } else if (userInfo.isFollow) {
+        ee.setText(this.c_button1,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+            "<g><path d=\"M20.083 6.173l2.323 2.323c.293.293.768.293 1.06 0s.294-.768 0-1.06l-2.32-2.326 2.322-2.323c.293-.294.293-.77 0-1.062s-.768-.293-1.06 0L20.082 4.05 17.76 1.73c-.293-.293-.768-.293-1.06 0-.147.146-.22.338-.22.53s.072.384.22.53l2.32 2.32-2.32 2.325c-.147.146-.22.338-.22.53s.072.384.22.53c.292.293.767.293 1.06 0l2.323-2.32zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.645-4.513-2.53 0-4.267 1.687-4.646 4.513-.273 2.025-.01 3.462.805 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-" +
+            ".54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z\"></path></g>" +
+            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("取消关注") + " @"+userInfo.userName+"</div>");    
+    } else {
+        ee.setText(this.c_button1,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+            "<g><path d=\"M23.152 3.483h-2.675V.81c0-.415-.336-.75-.75-.75s-.75.335-.75.75v2.674H16.3c-.413 0-.75.336-.75.75s.337.75.75.75h2.677V7.66c0 .413.336.75.75.75s.75-.337.75-.75V4.982h2.675c.414 0 .75-.336.75-.75s-.336-.75-.75-.75zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.646-4.513S4.15 3.342 3.77 6.168c-.27 2.025-.007 3.462.807 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-.54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z\"></path></g>" +
+            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("关注") + " @"+userInfo.userName+"</div>");    
+    }
+    if (userInfo.isBlock1) {
+        ee.setVisible(this.c_button2, false);
+    } else {
+        ee.setVisible(this.c_button2, true);
+        ee.setText(this.c_button2,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+            "<g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g><g><path d=\"M12 1.25C6.072 1.25 1.25 6.072 1.25 12S6.072 22.75 12 22.75 22.75 17.928 22.75 12 17.928 1.25 12 1.25zm0 1.5c2.28 0 4.368.834 5.982 2.207L4.957 17.982C3.584 16.368 2.75 14.282 2.75 12c0-5.1 4.15-9.25 9.25-9.25zm0 18.5c-2.28 0-4.368-.834-5.982-2.207L19.043 6.018c1.373 1.614 2.207 3.7 2.207 5.982 0 5.1-4.15 9.25-9.25 9.25z\"></path></g>" +
+            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("屏蔽") + " @"+userInfo.userName+"</div>");
+    }
+    if (userInfo.isHide) {
+        ee.setText(this.c_button5,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.mute + 
+            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("取消隐藏") + " @"+userInfo.userName+"</div>");    
+    } else {
+        ee.setText(this.c_button5,"&amp;emsp;<svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" + g5.icon.mute + 
+            "</svg> <div style='display:inline;'>" + g5.lang.getByCn("隐藏") + " @"+userInfo.userName+"</div>");    
+    }
+    if (this.v_isBookMark) {
+        this.c_button3.replaceText("移除此收藏");
+    } else {
+        this.c_button3.replaceText("收藏此发言");
+    }    
+
+    ee.tiledV(this,0,0,0);
+    ee.setVisible(this.parentNode, true);
+    ee.setVisible(this, true);
+    //ee.showAni(this, 0);
+}
+]]></onCreate>
+      <sizeRatio>0.851515151515152</sizeRatio>
+      <top>174</top>
+      <topRatio>0.218592964824121</topRatio>
+      <width>330</width>
+      <widthRatio>0.29810298102981</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel213/panel214">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.177935943060498</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_button1</note>
+      <onClick>if (g5.checkGuest("取消关注某用户")) return;
+if (sender.parentNode.v_userInfo.isBlock1) {
+    g5.setBlock1(sender.parentNode.v_userInfo, null);
+} else {
+    g5.setFollow(sender.parentNode.v_userInfo, null);
+}
+</onClick>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+
+g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);</onCreate>
+      <sizeRatio>0.151515151515152</sizeRatio>
+      <text>   X   取消关注/关注 @xxx</text>
+      <top>0</top>
+      <width>330</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel213/panel215">
+      <bindControl>panel214</bindControl>
+      <bindTop>bottom</bindTop>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.177935943060498</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_button2</note>
+      <onClick>if (g5.checkGuest("屏蔽某用户")) return;
+g5.setBlock1(sender.parentNode.v_userInfo, null);
+</onClick>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+
+g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);</onCreate>
+      <sizeRatio>0.151515151515152</sizeRatio>
+      <text>   X   屏蔽 @xxx</text>
+      <top>50</top>
+      <topRatio>0.177935943060498</topRatio>
+      <width>330</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel213/panel143">
+      <bindControl>panel215</bindControl>
+      <bindTop>bottom</bindTop>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.177935943060498</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_button3</note>
+      <onClick>if (g5.checkGuest("收藏发言")) return;
+var cid = sender.parentNode.v_content.id;
+if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
+if (sender.parentNode.v_isBookMark) {
+    g5.contentDel(cid, function() { });
+    setBookMark.operation = "del";
+    setBookMark.contentId = cid;
+    setBookMark.onComplete = function() {
+    }
+    setBookMark();
+} else {
+    setBookMark.operation = "add";
+    setBookMark.contentId = cid;
+    setBookMark.onComplete = function() {
+        g5.alert1(
+            "发言已收藏",
+            "可点击菜单栏“收藏”按钮进行查看。"
+        );
+        g5.p2.p5.refresh();
+    }
+    setBookMark();
+}
+</onClick>
+      <onCreate><![CDATA[g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);
+
+sender.replaceText = function(text) {
+    text = g5.lang.getByCn(text);
+    this.setText("   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+        g5.icon.bookMark +
+        "</svg> <div style='display:inline;'>" + text + "</div>");
+}
+sender.replaceText("收藏此发言");
+]]></onCreate>
+      <sizeRatio>0.151515151515152</sizeRatio>
+      <text>   X   收藏此发言</text>
+      <topRatio>0.355871886120996</topRatio>
+      <width>330</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel213/panel216">
+      <bindControl>panel143</bindControl>
+      <bindTop>bottom</bindTop>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.177935943060498</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_button4</note>
+      <onClick><![CDATA[var cid = sender.parentNode.v_content.id;
+if (sender.parentNode.v_content.exUplinkType == "L") cid = sender.parentNode.v_content.exContentId;
+var value = window.location.origin + "/msg/" + cid;
+g5.copyClipboard(value,
+    function() {
+        g5.alert1("复制成功", "/%" + value + "%/<br/>已经成功复制到您的剪贴板");
+    },
+    function() {
+        g5.alert1("复制失败", "您的浏览器或许不支持或者没有权限复制剪贴板，请手工复制以下链接：<br/>/%" + value + "%/");
+    }
+);]]></onClick>
+      <onCreate><![CDATA[ee.setText(sender,"   <svg viewBox=\"0 -2 34 34\" style='height: 1.75rem;color: rgba(101,119,134,1.00);fill: currentcolor;vertical-align:middle;'>" +
+    "<g><path d=\"M11.96 14.945c-.067 0-.136-.01-.203-.027-1.13-.318-2.097-.986-2.795-1.932-.832-1.125-1.176-2.508-.968-3.893s.942-2.605 2.068-3.438l3.53-2.608c2.322-1.716 5.61-1.224 7.33 1.1.83 1.127 1.175 2.51.967 3.895s-.943 2.605-2.07 3.438l-1.48 1.094c-.333.246-.804.175-1.05-.158-.246-.334-.176-.804.158-1.05l1.48-1.095c.803-.592 1.327-1.463 1.476-2.45.148-.988-.098-1.975-.69-2.778-1.225-1.656-3.572-2.01-5.23-.784l-3.53 2.608c-.802.593-1.326 1.464-1.475 2.45-.15.99.097 1.975.69 2.778.498.675 1.187 1.15 1.992 1.377.4.114.633.528.52.928-.092.33-.394.547-.722.547z\"></path><path d=\"M7.27 22.054c-1.61 0-3.197-.735-4.225-2.125-.832-1.127-1.176-2.51-.968-3.894s.943-2.605 2.07-3.438l1.478-1.094c.334-.245.805-.175 1.05.158s.177.804-.157 1.05l-1.48 1.095c-.803.593-1.326 1.464-1.475 2.45-.148.99.097 1.975.69 2.778 1.225 1.657 3.57 2.01 5.23.785l3.528-2.608c1.658-1.225 2.01-3.57.785-5.23-.498-.674-1.187-1.15-1.992-1.376-.4-.113-.633-.527-.52-.927.112-.4.528-.63.926-.522 1.13.318 2.096.986 2.794 1.932 1.717 2.324 1.224 5.612-1.1 7.33l-3.53 2.608c-.933.693-2.023 1.026-3.105 1.026z\"></path></g>" +
+    "</svg> <div style='display:inline;'>" + g5.lang.getByCn("复制发言链接") + "</div>");    
+
+g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);]]></onCreate>
+      <sizeRatio>0.151515151515152</sizeRatio>
+      <text>   X   复制发言链接</text>
+      <top>150</top>
+      <topRatio>0.533807829181495</topRatio>
+      <width>330</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel213/panel542">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <fontColor>14171A</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>50</height>
+      <heightRatio>0.177935943060498</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <note>c_button4</note>
+      <onClick>if (g5.checkGuest("使用隐藏功能")) return;
+g5.setHide(sender.parentNode.v_userInfo.clone(), function(v_userInfo) {
+});
+
+</onClick>
+      <onCreate>sender.label.style.tableLayout = "fixed";
+sender.label.rows[0].cells[0].style.overflow = "hidden";
+sender.label.rows[0].cells[0].style.textOverflow = "ellipsis";
+sender.label.rows[0].cells[0].style.whiteSpace = "nowrap";
+
+ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));
+g5.initButtonV3(sender,[
+    new g5.BStyle("","rgb(245,248,250)","rgb(240,243,245)","","","","","","","")
+]);</onCreate>
+      <sizeRatio>0.151515151515152</sizeRatio>
+      <text>   X   隐藏</text>
+      <top>199</top>
+      <topRatio>0.708185053380783</topRatio>
+      <width>330</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel40/panel323">
+      <ani2Alpha>disappear:渐变消失</ani2Alpha>
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>205</height>
+      <heightRatio>0.257537688442211</heightRatio>
+      <layerName>p4.通用弹出菜单</layerName>
+      <layerVisible>false</layerVisible>
+      <left>375</left>
+      <leftRatio>0.338753387533875</leftRatio>
+      <onAni2End>ee.setVisible(sender.parentNode, false);</onAni2End>
+      <onCreate><![CDATA[sender.style.borderRadius = "10px";
+sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
+
+sender.show = function(refDiv, width, v_style, v_function) {
+    this.showPos(eb.getClientSize().w+100, 0, width, v_style, v_function);
+    var rect = g5.getRectAbs(refDiv);
+    var x, y;
+    var sr = eb.getDivRectSetting(this);
+    if (rect.y > eb.getDivRect(ee.getControl("divRoot")).h/2) {
+        x = rect.x - 50;
+        y = rect.y - sr.h - 10;
+    } else {
+        x = rect.x - 50;
+        y = rect.y + rect.h + 10;
+    }
+    x = Math.min(x, eb.getClientSize().w - sr.w);
+    x = Math.max(20, x);
+    eb.setDivRect(this,x,y,null,null);
+}
+
+sender.showPos = function(x, y, width, v_style, v_function) {
+    if (!eb.isEmpty(this.v_items)) {
+        for (var i=0; i<this.v_items.length; i++) {
+            ee.removeControl(this.v_items[i]);
+        }
+    }
+    this.v_items = new Array();
+    var i, item, cy=0;
+    var root = this;
+    ee.setRect(root,null,null,width,null);
+    var itemWidth = eb.getDivRectSetting(root).w;
+    for (i=0; i < v_style.length; i++) {
+        if (v_style[i].text1.search("&amp;nbsp;&amp;nbsp;&amp;nbsp;") == 0) break;
+        v_style[i].text1 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text1.trim());
+        v_style[i].text2 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text2.trim());
+        v_style[i].text3 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text3.trim());
+    }
+    this.v_style = v_style;
+    this.v_function = v_function;
+    var maxLen = 0;
+    var currentLen;
+    for (i=0; i<v_style.length; i++) {
+        var item = createPanel(root, "popup1_" + i, "", 0, cy, itemWidth, 50);
+        item.v_index = i;
+        currentLen = this.renderItem(item);
+        maxLen = Math.max(currentLen, maxLen);
+        ee.removeControl(item);
+    }
+    maxLen += 30;
+    ee.setRect(root,null,null,maxLen,null);
+    for (i=0; i<v_style.length; i++) {
+        var item = createPanel(root, "popup1_" + i, "", 0, cy, maxLen, 50);
+        item.v_index = i;
+        currentLen = this.renderItem(item);
+        maxLen = Math.max(currentLen, maxLen);
+        this.v_items.push(item);
+        cy += 0 + eb.getDivRect(item).h;
+    }
+    g5.tiledV(this, 0, 0, 0);
+
+    ee.setRect(this, x, y, null, null);
+    
+    this.parentNode.v_lastX = -1000
+    this.parentNode.v_lastY = -1000;
+    this.parentNode.v_closeCount = 0;
+    ee.setVisible(this.parentNode, true);
+    ee.setVisible(this, true);
+    //ee.showAni(this, 0);
+}
+
+
+sender.renderItem = function(root) {
+    var w = eb.getDivRectSetting(root).w;
+    var h = eb.getDivRectSetting(root).h;
+    var c,cy=7;
+    
+    //button1
+    c = createPanel(root, root.id+"button1", "", 0,0,w,h);
+    root.c_button = c;
+    c.style.cursor = "pointer";
+    c.v_style = root.parentNode.v_style[root.v_index];
+    addText(c, c.v_style.text1, "left", "middle", "微软雅黑", 12, "ffffff", "");
+    ee.setOnClick(c,function(sender,event) {
+        sender.parentNode.parentNode.v_function[sender.parentNode.v_index](sender,event);
+    });
+    g5.initButtonV3(c,[
+        c.v_style
+    ]);
+    c.label.style.width = "";
+    c.label.rows[0].cells[0].style.whiteSpace="nowrap";
+    var r = c.label.offsetWidth;
+    ee.setRect(c,null,null,w,null);
+    c.label.rows[0].cells[0].style.whiteSpace="normal";
+    return r; 
+}
+
+]]></onCreate>
+      <sizeRatio>0.776515151515151</sizeRatio>
+      <top>18</top>
+      <topRatio>0.0226130653266332</topRatio>
+      <width>264</width>
+      <widthRatio>0.238482384823848</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel268">
       <backgroundColor>FFFFFF</backgroundColor>
