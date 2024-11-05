@@ -30910,9 +30910,13 @@ sender.v_root = sender;
 
 sender.reset = function() {
     this.v_data = new Array();
-    this.v_data.push("");
-    this.v_data.push("");
+    this.v_data.push(new sender.type_itemData());
+    this.v_data.push(new sender.type_itemData());
     this.refreshList();
+}
+
+sender.type_itemData = function() {
+    this.value = "";
 }
 
 sender.renderItem = function(root) {
@@ -30931,20 +30935,20 @@ sender.renderItem = function(root) {
     var w2 = w-w3;
     
     c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
-    if (root.v_data == "") {
+    if (root.v_data.value == "") {
         addText(c, g5.lang.getByCn("选项,点击修改"), "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
     } else {
-        addText(c, root.v_data, "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+        addText(c, root.v_data.value, "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
     }
     c.style.cursor="pointer";
     ee.setOnClick(c, function(senderBtn, event) {
         g5.popBlack.a10.show(
-            "输入", "选项：", "请在这里输入选项标签", "",
+            "输入", "选项：", "请在这里输入选项标签", root.v_data.value,
             [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
             [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
             function(text) {
                 if (text == "") return;
-                senderBtn.parentNode.v_data = text;
+                root.v_data.value = text;
                 sender.refreshList();
             },
             function() {
@@ -31118,7 +31122,7 @@ sender.refreshList = function() {
 
 sender.checkValid = function() {
     for (var i=0; i<this.v_data.length; i++) {
-        if (this.v_data[i] == "") return false;
+        if (this.v_data[i].value == "") return false;
     }
     return true;
 }
@@ -33499,7 +33503,6 @@ sender.show = function(title,text,inputHint,defaultValue,bStyle1,bStyle2,onCompl
     title = g5.lang.getByCn(title);
     text = g5.lang.getByCn(text);
     inputHint = g5.lang.getByCn(inputHint);
-    defaultValue = g5.lang.getByCn(defaultValue);
     ee.setText(this.c_title,title);
     ee.setText(this.c_p1.c_text,text);
     this.c_btnCancel.v_style = bStyle1;
@@ -43882,6 +43885,7 @@ data: [
     new g5.LangItem(1,
         "您的账号处于删除冷却期，冷却期结束后账号将被永久删除，您是否要停止删除自己的账号？",
         "Your account is currently in the deletion cooling-off period, and after the cooling-off period ends, your account will be permanently deleted. Do you want to stop deleting your account?"),
+    new g5.LangItem(1,"",""),
     new g5.LangItem(7001,""," "),
     new g5.LangItem(1,"回复","Reply"),
     new g5.LangItem(1,"转发","Retweet"),
