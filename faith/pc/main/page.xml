@@ -29742,10 +29742,18 @@ sender.close = function() {
 }
 
 sender.check = function() {
-    this.c_button.setEnabled(
-        ((this.c_edit.getEditText().trim().length>0) &amp;&amp; (this.c_edit.getEditText().trim().length<=200)) ||
-        this.c_photos.v_photos.length>0
-    );    
+    let enabled = false;
+    if (this.v_mode == 0) {
+        enabled =
+            ((this.c_edit.getEditText().trim().length>0) &amp;&amp; (this.c_edit.getEditText().trim().length<=200)) ||
+            this.c_photos.v_photos.length>0;
+    } else {
+        enabled = this.c_vote.checkValid();
+        if (enabled) {
+            enabled = this.c_vote.v_data.length > 1;
+        }
+    }
+    this.c_button.setEnabled(enabled);
 }
 
 sender.showNew = function() {
@@ -29900,11 +29908,15 @@ sender.setMode = function(mode) {
         ee.setVisible(sender.c_btn1, true);
         ee.setVisible(sender.c_btn2, true);
         ee.setVisible(sender.c_vote, false);
+        var r = eb.getDivRectSetting(sender.c_pic);
+        ee.setRect(this, null, null, null, r.y + r.h + 30);
+        
     } else {
         ee.setVisible(sender.c_pic, false);
         ee.setVisible(sender.c_btn1, false);
         ee.setVisible(sender.c_btn2, false);
         ee.setVisible(sender.c_vote, true);
+        this.c_vote.refreshList();
     }
 }
 
@@ -31117,10 +31129,14 @@ sender.refreshList = function() {
         this.v_items.push(item);
     }
     if (this.checkValid() &amp;&amp; (this.v_data.length<5)) this.addButton();
+    this.parentNode.check();
     ee.tiledV(this.v_root,0,0,0);
+    var r = eb.getDivRectSetting(this);
+    ee.setRect(this.parentNode, null, null, null, r.y + r.h + 30);
 }
 
 sender.checkValid = function() {
+    if (this.v_data.length >= 5) return false;
     for (var i=0; i<this.v_data.length; i++) {
         if (this.v_data[i].value == "") return false;
     }
