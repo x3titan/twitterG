@@ -45058,25 +45058,30 @@ if (root.v_content.content.length>0) {
 
 //photos
 if (root.v_content.photos.length>0) {
-    if (root.v_mode.charAt(2) == "x") {
-        c = createPanel(root, root.id+"_panel18", "", 20, cy, w - 40, parseInt((w-40)*0.565));
+    if (root.v_content.photos[0].substr(0,4) == "?VID") {
+        root.v_content.voteId = root.v_content.photos[0].substr(4);
+        cy += 10;
     } else {
-        c = createPanel(root, root.id+"_panel18", "", 75, cy, mainWidth, parseInt(mainWidth*0.565));
+        if (root.v_mode.charAt(2) == "x") {
+            c = createPanel(root, root.id+"_panel18", "", 20, cy, w - 40, parseInt((w-40)*0.565));
+        } else {
+            c = createPanel(root, root.id+"_panel18", "", 75, cy, mainWidth, parseInt(mainWidth*0.565));
+        }
+        cy += eb.getDivRectSetting(c).h + 18;
+        c.style.borderRadius = "15px";
+        c.style.borderWidth = "1px";
+        c.style.borderColor = "rgb(230,236,240)";
+        c.style.borderStyle = "solid";
+        c.style.cursor="pointer";
+        c.v_photos = root.v_content.photos;
+        c.v_mode = "";
+        g5.refreshPhoto(c);
+        root.c_photos = c; 
+        c.eeMouseDown = function(sender,event,x,y) {
+            //return false;
+        }
+        eb.initMouseEvent(c);
     }
-    cy += eb.getDivRectSetting(c).h + 18;
-    c.style.borderRadius = "15px";
-    c.style.borderWidth = "1px";
-    c.style.borderColor = "rgb(230,236,240)";
-    c.style.borderStyle = "solid";
-    c.style.cursor="pointer";
-    c.v_photos = root.v_content.photos;
-    c.v_mode = "";
-    g5.refreshPhoto(c);
-    root.c_photos = c; 
-    c.eeMouseDown = function(sender,event,x,y) {
-        //return false;
-    }
-    eb.initMouseEvent(c);
 } else {
     cy +=10;
 }
