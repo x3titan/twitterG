@@ -29762,11 +29762,17 @@ sender.showNew = function() {
     this.v_lastOp = "new";
     this.onComplete = function() {
         if (newTwitter.busy) return;
-        newTwitter.uplinkType = "N";
-        newTwitter.uplinkId = 0;
-        newTwitter.content = sender.c_edit.getEditText();
-        newTwitter.photos = sender.c_photos.v_photos;
-        newTwitter.onComplete = function(contentId) {
+        newTwitterV2.uplinkType = "N";
+        newTwitterV2.uplinkId = 0;
+        newTwitterV2.content = sender.c_edit.getEditText();
+        newTwitterV2.photos = sender.c_photos.v_photos;
+        newTwitterV2.voteList = new Array();
+        if (this.v_mode == 1) {
+            for (var i=0; i<this.c_vote.v_data.length; i++) {
+                newTwitterV2.voteList.push(this.c_vote.v_data[i].value);
+            }
+        }
+        newTwitterV2.onComplete = function(contentId) {
             sender.v_lastOp = "";
             sender.close();
             var newContent = new g5.ContentInfo();
@@ -29775,8 +29781,8 @@ sender.showNew = function() {
             newContent.status = "IDL";
             newContent.uplinkType = "N";
             newContent.uplinkId = 0;
-            newContent.content = newTwitter.content;
-            newContent.photos = newTwitter.photos;
+            newContent.content = newTwitterV2.content;
+            newContent.photos = newTwitterV2.photos;
             newContent.reCount = 0;
             newContent.fwCount = 0;
             newContent.likeCount = 0;
@@ -29791,7 +29797,7 @@ sender.showNew = function() {
                 }
             }
         }
-        newTwitter();
+        newTwitterV2();
     }
     ee.setVisible(ee.getControl("panel112"), true);
     ee.setVisible(this, true);
@@ -30396,7 +30402,6 @@ if ((content.length<=0) &amp;&amp; (photos.length<=0)) {
     g5.alert1("提示", "发言内容不能为空，您至少要留有文字或者至少一张图片或者视频。");
     return;
 }
-//newTwitter();
 
 if (sender.parentNode.onComplete) {
     sender.parentNode.onComplete();
@@ -36634,7 +36639,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="77">
+  <taskSet count="78">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -37071,6 +37076,7 @@ for (var i=0; i<newTwitter.photos.length; i++) eio.appendString16(newTwitter.pho
 
 
 
+
 ]]></script1>
       <script2><![CDATA[var token = eio.readString16();
 var text = eio.readString16();
@@ -37187,6 +37193,171 @@ if (newTwitter.onComplete) {
     newTwitter.onComplete(newTwitter.contentId, newTwitter.postCountDiff);
 }
 newTwitter.busy = false;
+</script3>
+    </taskSetItem>
+    <taskSetItem name="newTwitterV2">
+      <script1><![CDATA[//busy,content,uplinkType,uplinkId,busy,photos(array),voteList,onComplete(contentId)
+if (newTwitterV2.busy) return;
+newTwitterV2.busy = true;
+
+if (eb.isEmpty(newTwitterV2.photos)) newTwitterV2.photos = new Array();
+
+var text = newTwitterV2.content;
+if (newTwitterV2.uplinkType!="L") {
+    if ((text.length<=0) &amp;&amp; (newTwitterV2.photos.length<=0)) {
+        g5.alert1("发言内容不符合要求", "发言内容不能为空");
+        newTwitterV2.busy = false;
+        return;
+    }
+}
+
+eio.appendString16(g5.token);
+eio.appendString16(text);
+eio.appendString16(newTwitterV2.uplinkType);
+eio.appendString16(newTwitterV2.uplinkId+"");
+eio.appendInt32(newTwitterV2.photos.length);
+for (var i=0; i<newTwitterV2.photos.length; i++) eio.appendString16(newTwitterV2.photos[i]);
+eio.appendByte(newTwitterV2.voteList.length);
+for (var i=0; i<newTwitterV2.voteList.length; i++) eio.appendString8(newTwitterV2.voteList[i]);
+
+
+
+
+
+
+
+]]></script1>
+      <script2><![CDATA[var token = eio.readString16();
+var text = eio.readString16();
+var uplinkType = eio.readString16();
+var uplinkId = eio.readString16();
+let count = Math.min(eio.readInt32(),4);
+var photos = new Array();
+for (var i=0; i<count; i++) {
+    photos.push(eio.readString16());
+}
+while (photos.length<4) photos.push("");
+count = Math.min(eio.readByte(), 5);
+let voteList = new Array();
+for (var i=0; i<count; i++) {
+    voteList.push(eio.readString8());
+}
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var userName = db.getString(sqlResult,"userName");
+var userId = db.getString(sqlResult,"id");
+if (userName=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能对发言进行操作，请注册正式用户。");
+    return;
+}
+var myStatus = db.getString(sqlResult,"status");
+if (myStatus == "FREEZE") {
+    eio.appendString8("F");
+    eio.appendString8("对不起，您的账户目前处于冻结状态，不能发表或者回复短文。");
+    return;
+} else if (myStatus == "Private") {
+} else if (myStatus != "IDL") {
+    eio.appendString8("F");
+    eio.appendString8("对不起，您的账户目前处于非正常状态（" + myStatus + "），不能发表或者回复短文。");
+    return;
+}
+
+var ptn = /@([a-zA-Z0-9_\-]{2,20})/gim;
+var s = text.replace(ptn, "@$1|");
+var alertUsers = new Array();
+var i=0,j;
+while (i<s.length) {
+    if (s.charAt(i)!="@") {
+        i++;
+        continue;
+    }
+    j = i+1;
+    while (j<s.length) {
+        if (s.charAt(j)=="|") break;
+        j++;
+    }
+    if (j-i-1>0) {
+        var un = s.substr(i+1,j-i-1);
+        if (un.toUpperCase()!=userName.toUpperCase())
+            alertUsers.push(un);
+    }
+    i=j;
+}
+
+sql = "DECLARE @voteNames TYPEStringTable;\n";
+if (voteList.length>0) {
+    sql += "INSERT INTO @voteNames (value) VALUES ";
+    for (var i=0; i<voteList.length; i++) {
+        if (i>0) sql += ",";
+        sql += "('" + db.encode(voteList[i]) + "')";
+    }
+    sql += ";\n";
+}
+sql +=
+    "exec twitterNewV2 " +
+    userId + 
+    ",N'" + db.encode(text) + "'" +
+    ",1" +
+    ",'" + db.encode(photos[0]) + "'" +
+    ",'" + db.encode(photos[1]) + "'" +
+    ",'" + db.encode(photos[2]) + "'" +
+    ",'" + db.encode(photos[3]) + "'" +
+    ",'" + db.encode(uplinkType) + "'" +
+    ",'" + db.encode(uplinkId) + "'" +
+    ",@voteNames;\n";
+    
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var contentId = db.getString(sqlResult,"contentId");
+var postCountDiff = db.getString(sqlResult,"postCountDiff");
+
+sql = "";
+for (var i=0; i<alertUsers.length; i++) {
+    sql += "exec [userPromptSend] " +
+        userId +
+        ",'" + db.encode(alertUsers[i]) + "'" +
+        "," + contentId +
+        ",'" + db.encode(text) + "';\n";
+}
+if (sql.length>0) sqlResult = db.executeNoneQuery("DB", sql);
+
+eio.appendString8("T");
+eio.appendString8(contentId);
+eio.appendString8(postCountDiff);
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("提示", eio.readString8());
+    newTwitterV2.busy = false;
+    return;
+}
+newTwitterV2.contentId = eio.readString8();
+newTwitterV2.postCountDiff = parseInt(eio.readString8());
+if (newTwitterV2.onComplete) {
+    g5.syncPostCount(newTwitterV2.postCountDiff);
+    newTwitterV2.onComplete(newTwitterV2.contentId, newTwitterV2.postCountDiff);
+}
+newTwitterV2.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="updateHomepage">
