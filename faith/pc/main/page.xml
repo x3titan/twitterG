@@ -43159,12 +43159,16 @@ if (!eb.isEmpty(setBookMark.onComplete)) {
 </script3>
     </taskSetItem>
     <taskSetItem name="updateMain">
-      <script1><![CDATA[//cIds,onComplete(dataset) <cancel>
+      <script1><![CDATA[//cIds,voteCId,voteId,onComplete(dataset) <cancel>
 if (updateMain.cIds.length<=0) return;
 updateMain.busy = true;
 eio.appendString16(g5.token);
 eio.appendInt32(updateMain.cIds.length);
 for (var i=0; i<updateMain.cIds.length; i++) eio.appendString8(updateMain.cIds[i]+"");
+eio.appendByte(updateMain.voteCId.length);
+for (var i=0; i<updateMain.voteCId.length; i++) eio.appendString8(updateMain.voteCId[i]+"");
+eio.appendByte(updateMain.voteId.length);
+for (var i=0; i<updateMain.voteId.length; i++) eio.appendString8(updateMain.voteId[i]+"");
 
 
 ]]></script1>
@@ -45060,6 +45064,8 @@ if (root.v_content.content.length>0) {
 if (root.v_content.photos.length>0) {
     if (root.v_content.photos[0].substr(0,4) == "?VID") {
         root.v_content.voteId = root.v_content.photos[0].substr(4);
+        root.v_isVote = true;
+        root.v_voteRender = false;
         cy += 10;
     } else {
         if (root.v_mode.charAt(2) == "x") {
@@ -47122,6 +47128,8 @@ g5.RC_LastTime1s = new Date();
 
 var buffs = g5.contentGetCurrentBuffs();
 var cId = new Array();
+var voteCId = new Array();
+var voteId = new Array();
 var i,j;
 for (i=0; i<buffs.length; i++) {
     for (j=0; j<buffs[i].length; j++) {
@@ -47131,6 +47139,10 @@ for (i=0; i<buffs.length; i++) {
         if (r.y + r.h < 0) continue;
         if (r.y > eb.getClientSize().h) continue;
         cId.push(buffs[i][j].v_content.id);
+        if (buffs[i][j].v_isVote) {
+            voteCId.push(buffs[i][j].v_content.id);
+            voteId.push(buffs[i][j].v_content.voteId);
+        }
     }
 }
 var diff = false;
@@ -47156,6 +47168,8 @@ if ((new Date()).getTime() - g5.RC_LastTime.getTime() < g5.RC_Interval) return;
 g5.RC_LastTime = new Date();
 
 updateMain.cIds = cId;
+updateMain.voteCId = voteCId;
+updateMain.voteId = voteId;
 updateMain.onComplete = function(dataset) {
     if (g5.likeBusy|| g5.unlikeBusy) return;
     var changed = false;
