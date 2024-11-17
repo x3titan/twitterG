@@ -43159,7 +43159,7 @@ if (!eb.isEmpty(setBookMark.onComplete)) {
 </script3>
     </taskSetItem>
     <taskSetItem name="updateMain">
-      <script1><![CDATA[//cIds,voteCId,voteId,onComplete(dataset) <cancel>
+      <script1><![CDATA[//cIds,voteCId,voteId,onComplete(dataset,voteResult) <cancel>
 if (updateMain.cIds.length<=0) return;
 updateMain.busy = true;
 eio.appendString16(g5.token);
@@ -43223,6 +43223,18 @@ sql = sqlCount +
 
 sql += "exec chatRoomPublicGetNewCount " + myUserId + "; ";
 
+sql += "declare @vt TYPEBigIntTable; ";
+if (voteCId.length>0) {
+    sql += "insert into @vt (value1, value2) values ";
+    for (i=0; i<voteCId.length; i++) {
+        if (i>0) sql += ",";
+        sql += "(" + voteCId[i] + "," + voteId[i] + ")";
+    }
+    sql += "; ";
+}
+sql += "exec [voteGetInfo] @vt; ";
+
+
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -43245,6 +43257,9 @@ db.nextResult(sqlResult);
 db.read(sqlResult);
 eio.appendString8(db.getString(sqlResult,"c"));
 
+db.nextResult(sqlResult);
+eio.appendDataSet(sqlResult,"voteIndex,voteCId,voteId,optionName,voteCount",
+    0, 99999);
 
 
 
@@ -43286,8 +43301,10 @@ var newCount = eio.readString8();
 if (g5.chatAlertDB.setCount(newCount)) updateMain.needRefresh = true;
 g5.chatAlertDB.showCount(); 
 
+updateMain.voteReult = eio.readDataSet();
+
 if (!eb.isEmpty(updateMain.onComplete)) {
-    updateMain.onComplete(updateMain.dataset);
+    updateMain.onComplete(updateMain.dataset, updateMain.voteReult);
     updateMain.onComplete = null;
     updateMain.needRefresh = false;
     updateMain.cancel = false;
