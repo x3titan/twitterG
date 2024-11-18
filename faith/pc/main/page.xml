@@ -43367,7 +43367,7 @@ chatPClearNewCounter.onComplete();
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="121">
+  <g5Items count="122">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -47194,7 +47194,7 @@ g5.RC_LastTime = new Date();
 updateMain.cIds = cId;
 updateMain.voteCId = voteCId;
 updateMain.voteId = voteId;
-updateMain.onComplete = function(dataset) {
+updateMain.onComplete = function(dataset, voteResult) {
     if (g5.likeBusy|| g5.unlikeBusy) return;
     var changed = false;
     for (var i=0; i<dataset.rowCount; i++) {
@@ -47207,6 +47207,7 @@ updateMain.onComplete = function(dataset) {
         v_content.unlikeCount = dataset.getData(5,i);
         changed = g5.refreshContentCount(v_content) || changed;
     }
+    g5.refreshContentVote(voteResult);
     if (updateMain.needRefresh) {
         g5.RC_Interval = g5.RC_MIN;
     } else if (!changed) {
@@ -47221,6 +47222,12 @@ g5.p2.p9.refreshNew();
 
 
 //g5.writeLog(cId + "\n" + (g5.RC_Interval/1000)+"s", true);
+]]></functionCode>
+    </item>
+    <item name="refreshContentVote" type="20">
+      <varValue />
+      <functionParam>voteData</functionParam>
+      <functionCode><![CDATA[if (voteData.rowCount<=0) return;
 ]]></functionCode>
     </item>
     <item name="refreshContentCount" type="20">
