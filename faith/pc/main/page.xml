@@ -47228,7 +47228,36 @@ g5.p2.p9.refreshNew();
       <varValue />
       <functionParam>voteData</functionParam>
       <functionCode><![CDATA[if (voteData.rowCount<=0) return;
-]]></functionCode>
+let buffs = g5.contentGetCurrentBuffs();
+let sn = "xxx";
+let CID,i,j1,j2;
+let root;
+for (i=0; i<=voteData.rowCount; i++) {
+    if (sn != voteData.getData(0,i)) {
+        if (i>0) {
+            if (root==null) break;
+            console.log(root.v_content.voteData);
+        }
+        sn = voteData.getData(0,i);
+        CID = voteData.getData(1,i);
+        root = null;
+        for (j1=0; j1<buffs.length; j1++) {
+            for (j2=0; j2<buffs[j1].length; j2++) {
+                if (!buffs[j1][j2].v_content) continue;
+                if (buffs[j1][j2].v_content.id == CID) {
+                    root = buffs[j1][j2];
+                    root.v_content.voteData = new Array();
+                    break;
+                }
+            }
+        }
+    }
+    if (root == null) break;
+    root.v_content.voteData.push({
+        optionName:voteData.getData(3,i),
+        voteCount:parseInt(voteData.getData(4,i))
+    });
+}]]></functionCode>
     </item>
     <item name="refreshContentCount" type="20">
       <varValue />
