@@ -47262,13 +47262,48 @@ for (i=0; i<=voteData.rowCount; i++) {
     <item name="refreshContentVoteRender" type="20">
       <varValue />
       <functionParam>root</functionParam>
-      <functionCode>let r,voteRoot,c,cy;
+      <functionCode><![CDATA[let i,r,r2,newH,voteRoot,c,cy;
+r = eb.getDivRectSetting(root.c_content);
 if (!root.c_vote) {
-    r = eb.getDivRectSetting(root.c_content);
     cy = r.y + r.h + 10;
     voteRoot = createPanel(root, root.id+"_voteRoot", "", r.x, cy, r.w, null);
-    
-}</functionCode>
+    voteRoot.v_items = new Array();
+} else {
+    voteRoot = root.c_vote;
+}
+for (i=0; i<root.v_content.voteData.length; i++) {
+    if (i>=voteRoot.v_items.length) {
+        c = createPanel(voteRoot, root.id+"_voteOp"+i, "", 0, i*35, r.w, 30);
+        voteRoot.v_items.push(c);    
+    }
+    c = voteRoot.v_items[i];
+    ee.setText(c,root.v_content.voteData[i].optionName);
+}
+while (voteRoot.v_items.length>root.v_content.voteData.length) {
+    ee.removeControl(voteRoot.v_items[voteRoot.v_items.length-1]);
+    voteRoot.v_items.splice(voteRoot.v_items.length-1);
+}
+if (voteRoot.v_items.length<=0) reutrn;
+r2 = eb.getDivRectSetting(voteRoot.v_items[voteRoot.v_items.length-1]);
+ee.setRect(voteRoot,null,null,null,r2.y+r2.h);
+r2 = eb.getDivRectSetting(voteRoot);
+newH = r2.y + r2.h + 10;
+if (newH!=r.h) {
+    ee.setRect(root, null, null, null, newH);
+    let items,index;
+    items = root.parentNode.v_items;
+    if (!items) return;
+    index = -1;
+    for (i=0; i<items.length; i++) {
+        if (items[i]==root) {
+            index = i;
+            break;
+        }
+    }
+    if (index<0) return;
+    g5.batchMoveY(items,index,newH-r.h);
+}
+]]></functionCode>
     </item>
     <item name="refreshContentCount" type="20">
       <varValue />
