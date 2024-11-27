@@ -47231,12 +47231,12 @@ g5.p2.p9.refreshNew();
 let buffs = g5.contentGetCurrentBuffs();
 let sn = "xxx";
 let CID,i,j1,j2;
-let root;
+let root,rootItems,rootIndex;
 for (i=0; i<=voteData.rowCount; i++) {
     if (sn != voteData.getData(0,i)) {
         if (i>0) {
             if (root==null) break;
-            g5.refreshContentVoteRender(root);
+            g5.refreshContentVoteRender(root,rootItems,rootIndex);
         }
         sn = voteData.getData(0,i);
         CID = voteData.getData(1,i);
@@ -47246,6 +47246,8 @@ for (i=0; i<=voteData.rowCount; i++) {
                 if (!buffs[j1][j2].v_content) continue;
                 if (buffs[j1][j2].v_content.id == CID) {
                     root = buffs[j1][j2];
+                    rootItems = buffs[j1];
+                    rootIndex = j2;
                     root.v_content.voteData = new Array();
                     break;
                 }
@@ -47261,7 +47263,7 @@ for (i=0; i<=voteData.rowCount; i++) {
     </item>
     <item name="refreshContentVoteRender" type="20">
       <varValue />
-      <functionParam>root</functionParam>
+      <functionParam>root,rootItems,rootIndex</functionParam>
       <functionCode><![CDATA[let i,r,r2,newH,voteRoot,c,cy;
 r = eb.getDivRectSetting(root.c_content);
 if (!root.c_vote) {
@@ -47288,20 +47290,10 @@ r2 = eb.getDivRectSetting(voteRoot.v_items[voteRoot.v_items.length-1]);
 ee.setRect(voteRoot,null,null,null,r2.y+r2.h);
 r2 = eb.getDivRectSetting(voteRoot);
 newH = r2.y + r2.h + 10;
+r = eb.getDivRectSetting(root);
 if (newH!=r.h) {
     ee.setRect(root, null, null, null, newH);
-    let items,index;
-    items = root.parentNode.v_items;
-    if (!items) return;
-    index = -1;
-    for (i=0; i<items.length; i++) {
-        if (items[i]==root) {
-            index = i;
-            break;
-        }
-    }
-    if (index<0) return;
-    g5.batchMoveY(items,index,newH-r.h);
+    g5.batchMoveY(rootItems,rootIndex+1,newH-r.h);
 }
 ]]></functionCode>
     </item>
