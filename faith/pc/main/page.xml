@@ -42850,7 +42850,7 @@ db.read(sqlResult);
 eio.appendString8(db.getString(sqlResult,"c"));
 
 db.nextResult(sqlResult);
-eio.appendDataSet(sqlResult,"voteIndex,voteCId,voteId,optionName,voteCount",
+eio.appendDataSet(sqlResult,"voteIndex,voteCId,voteId,optionName,voteCount,myVote",
     0, 99999);
 
 
@@ -46849,7 +46849,8 @@ for (i=0; i<=voteData.rowCount; i++) {
     if (root == null) break;
     root.v_content.voteData.push({
         optionName:voteData.getData(3,i),
-        voteCount:parseInt(voteData.getData(4,i))
+        voteCount:parseInt(voteData.getData(4,i)),
+        myVote:parseInt(voteData.getData(5,i))
     });
 }]]></functionCode>
     </item>
@@ -46867,6 +46868,13 @@ if (!root.c_vote) {
 } else {
     voteRoot = root.c_vote;
     oldH = eb.getDivRectSetting(voteRoot).h;
+}
+root.v_content.myVote = false;
+for (i=0; i<root.v_content.voteData.length; i++) {
+    if (root.v_content.voteData[i].myVote>0) {
+        root.v_content.myVote = true;
+        break;
+    }
 }
 for (i=0; i<root.v_content.voteData.length; i++) {
     if (i>=voteRoot.v_items.length) {
