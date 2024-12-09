@@ -42991,34 +42991,24 @@ if (db.getString(sqlResult,"userName")=="guest") {
     return;
 }
 
-sql = "select * from userInfo where userName='" + db.encode(userName) + "' and mobile='" + db.encode(mobile) + "'; " +
-    "select * from userInfo where userName<>'" + db.encode(userName) + "' and mobile='" + db.encode(mobile) + "'; ";
+sql = "exec vote " +
+    myUserId + "," +
+    voteId + "," +
+    optionIndex + "; ";
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
     return;
 }
-if (db.read(sqlResult)) {
-    eio.appendString8("F");
-    eio.appendString8("您输入的手机号码和原来的相同。");
-    return;
-}
-db.nextResult(sqlResult);
-if (db.read(sqlResult)) {
-    eio.appendString8("F");
-    eio.appendString8("该手机号码已经被其他人使用过了。");
-    return;
-}
-
-sql = "update userInfo set mobile = '" + db.encode(mobile) + "'" +
-    " where userName = '" + db.encode(userName) + "'";
-if (!db.executeNoneQuery("DB", sql)) {
+db.read(sqlResult);
+if (db.getString(sqlResult, "errorCode")!="0") {
     eio.appendString8("F");
     eio.appendString8("系统繁忙请稍后再试");
-} else {
-    eio.appendString8("T");
-}    
+    return;
+}
+eio.appendString8("T");
+
 
 
 
@@ -46996,6 +46986,7 @@ if (root.v_content.myVote) {
             ee.setText(c,"投票后才可以看到投票结果");
         } else {
             ee.setText(c, g5.lang.getByCn("<span style='display: inline-block; width: 10px;'></span>" + (i+1) + ". " + root.v_content.voteData[i].optionName));
+            c.v_voteId = root.v_content.voteId;
             c.v_optionName = root.v_content.voteData[i].optionName;
             c.v_optionIndex = i;
             g5.initButtonV3(c,[
@@ -47011,6 +47002,14 @@ if (root.v_content.myVote) {
                     [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
                     [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
                     function() {
+                        //voteId,optionIndex,onComplete
+                        if (vote.busy) return;
+                        vote.voteId = senderBtn.v_voteId;
+                        vote.optionIndex = senderBtn.v_optionIndex;
+                        vote.onComplete = function() {
+                            g5.alert1("提示", "投票成功");
+                        }
+                        vote();
                     },
                     function() {
                     }
