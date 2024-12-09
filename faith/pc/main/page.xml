@@ -36231,7 +36231,7 @@ if (currentDist>100) {
       <widthRatio>1</widthRatio>
     </control>
   </controls>
-  <taskSet count="78">
+  <taskSet count="79">
     <taskSetItem name="uploadImage">
       <script1>//data,controlName,onComplete
 //newFileName
@@ -42954,6 +42954,93 @@ eio.appendString8("T");
     return;
 }
 chatPClearNewCounter.onComplete();
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="vote">
+      <script1>//voteId,optionIndex,onComplete
+vote.busy = true;
+eio.appendString16(g5.token);
+eio.appendString8(vote.voteId+"");
+eio.appendByte(vote.optionIndex);
+</script1>
+      <script2><![CDATA[let token = eio.readString16();
+let voteId = parseInt(eio.readString8());
+let optionIndex = eio.readByte();
+
+var sql,sqlResult;  
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+var myUserName = db.getString(sqlResult,"userName");
+var myUserId = parseInt(db.getString(sqlResult,"id"));
+if (db.getString(sqlResult,"userName")=="guest") {
+    eio.appendString8("F");
+    eio.appendString8("游客不能使用本功能。");
+    return;
+}
+
+sql = "select * from userInfo where userName='" + db.encode(userName) + "' and mobile='" + db.encode(mobile) + "'; " +
+    "select * from userInfo where userName<>'" + db.encode(userName) + "' and mobile='" + db.encode(mobile) + "'; ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+if (db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("您输入的手机号码和原来的相同。");
+    return;
+}
+db.nextResult(sqlResult);
+if (db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("该手机号码已经被其他人使用过了。");
+    return;
+}
+
+sql = "update userInfo set mobile = '" + db.encode(mobile) + "'" +
+    " where userName = '" + db.encode(userName) + "'";
+if (!db.executeNoneQuery("DB", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    eio.appendString8("T");
+}    
+
+
+
+
+
+
+
+
+
+
+
+
+]]></script2>
+      <script3>if (eio.readString8() == "F") {
+    g5.alert1("投票失败：",eio.readString8());
+    vote.busy = false;
+    return;
+}
+if (vote.onComplete()) {
+    vote.onComplete();
+}
+vote.busy = false;
 
 </script3>
     </taskSetItem>
