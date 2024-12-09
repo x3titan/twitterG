@@ -46961,14 +46961,28 @@ if (myVote != root.v_content.myVote) {
     }
 }
 if (root.v_content.myVote) {
+    let voteCount = 0;
+    for (i=0; i<root.v_content.voteData.length; i++) {
+        voteCount += root.v_content.voteData[i].voteCount;
+    }
     for (i=0; i<root.v_content.voteData.length; i++) {
         if (i>=voteRoot.v_items.length) {
             c = createPanel(voteRoot, root.id+"_voteOp"+i, "", 0, s1+i*(ch+s2), r.w, ch);
-            addText(c, " ", "left", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1B95E0", "");
+            c.v_c0 = createPanel(c, root.id+"_voteO1p"+i, "", 0, 0, 10, ch);
+            c.v_c0.style.borderRadius = "10px";
+            c.v_c0.style.backgroundColor = "#e0e0e0";
+            c.v_c1 = createPanel(c, root.id+"_voteO2p"+i, "", 0, 0, r.w, ch);
+            addText(c.v_c1, " ", "left", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1B95E0", "");
+            c.v_c2 = createPanel(c, root.id+"_voteO3p"+i, "", 0, 0, r.w, ch);
+            addText(c.v_c2, " ", "right", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1B95E0", "");
             voteRoot.v_items.push(c);    
         }
         c = voteRoot.v_items[i];
-        ee.setText(c,(i+1) + ". " + root.v_content.voteData[i].optionName);
+        ee.setText(c.v_c1,(i+1) + ". " + root.v_content.voteData[i].optionName);
+        ee.setText(c.v_c2,
+            parseInt(root.v_content.voteData[i].voteCount/voteCount*1000)/10 + "% (" +
+            root.v_content.voteData[i].voteCount + "票)");
+        ee.setRect(c.v_c0,null,null,root.v_content.voteData[i].voteCount/voteCount*(r.w-10)+10,null);
     }
     while (voteRoot.v_items.length>root.v_content.voteData.length) {
         ee.removeControl(voteRoot.v_items[voteRoot.v_items.length-1]);
