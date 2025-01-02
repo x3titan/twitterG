@@ -30516,6 +30516,7 @@ ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
       <onCreate><![CDATA[sender.v_items = new Array();
 sender.v_data = new Array();
 sender.v_root = sender;
+sender.MAXOptions = 10;
 
 sender.reset = function() {
     this.v_data = new Array();
@@ -30725,7 +30726,7 @@ sender.refreshList = function() {
         this.renderItem(item);
         this.v_items.push(item);
     }
-    if (this.checkValid() &amp;&amp; (this.v_data.length<5)) this.addButton();
+    if (this.checkValid() &amp;&amp; (this.v_data.length<sender.MAXOptions)) this.addButton();
     this.parentNode.check();
     ee.tiledV(this.v_root,0,0,0);
     var r = eb.getDivRectSetting(this);
@@ -30733,7 +30734,7 @@ sender.refreshList = function() {
 }
 
 sender.checkValid = function() {
-    if (this.v_data.length >= 5) return false;
+    if (this.v_data.length > sender.MAXOptions) return false;
     for (var i=0; i<this.v_data.length; i++) {
         if (this.v_data[i].value == "") return false;
     }
@@ -46992,7 +46993,7 @@ if (root.v_content.myVote) {
     for (i=0; i<=root.v_content.voteData.length; i++) {
         if (i>=voteRoot.v_items.length) {
             c = createPanel(voteRoot, root.id+"_voteOp"+i, "", 0, s1+i*(ch+s2), r.w, ch);
-            addText(c, " ", "left", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1B95E0", "");
+            addText(c, " ", "center", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "");
             voteRoot.v_items.push(c);    
         }
         c = voteRoot.v_items[i];
@@ -47004,9 +47005,9 @@ if (root.v_content.myVote) {
             c.v_optionName = root.v_content.voteData[i].optionName;
             c.v_optionIndex = i;
             g5.initButtonV3(c,[
-                new g5.BStyle("","#dfeffa","#cfdfea","","","","rgb(29,161,242)","rgb(29,161,242)","rgb(29,161,242)","")
+                new g5.BStyle("","#dfeffa","#cfdfea","","","","#000000","#000000","#000000","#C0C0C0")
             ]);
-            c.style.borderRadius = "10px"; //parseInt(eb.getDivRect(c).h/2) + "px";
+            c.style.borderRadius = "10px";
             ee.setOnClick(c, function(senderBtn, event) {
                 g5.popBlack.a6.show(
                     "投票确认",
