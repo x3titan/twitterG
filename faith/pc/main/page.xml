@@ -30841,6 +30841,20 @@ sender.checkValid = function() {
       <height>62</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
+      <onClick><![CDATA[let style = new Array();
+let onClick = new Array();
+let i;
+for (i=0; i<=7; i++) {
+    style.push(new g5.BStyle("","#e8f5fe","#d2ecfc",i+"",i+"",i+"","#404040","#404040","#404040",""));
+    onClick.push(
+        function (sender, event) {
+            return;
+        },
+    );
+}
+
+g5.popup1.p4.show(sender, 170, style, onClick);
+   ]]></onClick>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
 sender.style.borderColor = "rgb(230,236,240)";
@@ -30975,6 +30989,21 @@ sender.style.borderRadius = "5px";
       <heightRatio>1</heightRatio>
       <left>5</left>
       <leftRatio>0.0316455696202532</leftRatio>
+      <onClick><![CDATA[let style = new Array();
+let onClick = new Array();
+let i;
+for (i=0; i<=59; i++) {
+    style.push(new g5.BStyle("","#e8f5fe","#d2ecfc",i+"",i+"",i+"","#404040","#404040","#404040",""));
+    onClick.push(
+        function (sender, event) {
+            return;
+        },
+    );
+}
+
+g5.popup1.p4.v_itemHeight = 30;
+g5.popup1.p4.show(sender, 170, style, onClick);
+   ]]></onClick>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
 sender.style.borderColor = "rgb(230,236,240)";
@@ -34982,6 +35011,9 @@ g5.initButtonV3(sender,[
       <onCreate><![CDATA[sender.style.borderRadius = "10px";
 sender.style.boxShadow="rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px";
 
+sender.v_defaultItemHeight = 50;
+sender.v_itemHeight = 0;
+
 sender.show = function(refDiv, width, v_style, v_function) {
     this.showPos(eb.getClientSize().w+100, 0, width, v_style, v_function);
     var rect = g5.getRectAbs(refDiv);
@@ -35020,8 +35052,15 @@ sender.showPos = function(x, y, width, v_style, v_function) {
     this.v_function = v_function;
     var maxLen = 0;
     var currentLen;
+    let itemHeight;
+    if (sender.v_itemHeight == 0) {
+        itemHeight = sender.v_defaultItemHeight;
+    } else {
+        itemHeight = sender.v_itemHeight;
+        sender.v_itemHeight = 0;
+    }
     for (i=0; i<v_style.length; i++) {
-        var item = createPanel(root, "popup1_" + i, "", 0, cy, itemWidth, 50);
+        var item = createPanel(root, "popup1_" + i, "", 0, cy, itemWidth, itemHeight);
         item.v_index = i;
         currentLen = this.renderItem(item);
         maxLen = Math.max(currentLen, maxLen);
@@ -35030,15 +35069,23 @@ sender.showPos = function(x, y, width, v_style, v_function) {
     maxLen += 30;
     ee.setRect(root,null,null,maxLen,null);
     for (i=0; i<v_style.length; i++) {
-        var item = createPanel(root, "popup1_" + i, "", 0, cy, maxLen, 50);
+        var item = createPanel(root, "popup1_" + i, "", 0, cy, maxLen, itemHeight);
         item.v_index = i;
         currentLen = this.renderItem(item);
         maxLen = Math.max(currentLen, maxLen);
         this.v_items.push(item);
         cy += 0 + eb.getDivRect(item).h;
     }
-    g5.tiledV(this, 0, 0, 0);
-
+    g5.tiledV(this, 0, 0, 0); 
+    let r = eb.getDivRectSetting(this);
+    if (r.h>eb.getClientSize().h/2) {
+        eb.setDivRect(this,null,null,null,parseInt(eb.getClientSize().h/2));
+        this.style.overflowX = "hidden";
+        this.style.overflowY = "auto";
+    } else {
+        this.style.overflowX = "hidden";
+        this.style.overflowY = "hidden";
+    }
     ee.setRect(this, x, y, null, null);
     
     this.parentNode.v_lastX = -1000
