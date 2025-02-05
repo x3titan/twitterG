@@ -35031,6 +35031,13 @@ sender.show = function(refDiv, width, v_style, v_function) {
     eb.setDivRect(this,x,y,null,null);
 }
 
+sender.f_onMousewheel = function(event) {
+    event.stopPropagation(); 
+}
+sender.f_onMouseup = function(event) {
+    event.stopPropagation(); 
+}
+
 sender.showPos = function(x, y, width, v_style, v_function) {
     if (!eb.isEmpty(this.v_items)) {
         for (var i=0; i<this.v_items.length; i++) {
@@ -35082,9 +35089,13 @@ sender.showPos = function(x, y, width, v_style, v_function) {
         eb.setDivRect(this,null,null,null,parseInt(eb.getClientSize().h/2));
         this.style.overflowX = "hidden";
         this.style.overflowY = "auto";
+        this.addEventListener("mousewheel", this.f_onMousewheel);
+        this.addEventListener("mouseup", this.f_onMouseup);
     } else {
         this.style.overflowX = "hidden";
         this.style.overflowY = "hidden";
+        this.removeEventListener("mousewheel", this.f_onMousewheel);
+        this.removeEventListener("mouseup", this.f_onMouseup);
     }
     ee.setRect(this, x, y, null, null);
     
