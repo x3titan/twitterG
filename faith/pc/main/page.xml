@@ -30990,19 +30990,15 @@ sender.style.borderRadius = "5px";
       <left>5</left>
       <leftRatio>0.0316455696202532</leftRatio>
       <onClick><![CDATA[let style = new Array();
-let onClick = new Array();
 let i;
 for (i=0; i<=59; i++) {
     style.push(new g5.BStyle("","#e8f5fe","#d2ecfc",i+"",i+"",i+"","#404040","#404040","#404040",""));
-    onClick.push(
-        function (sender, event) {
-            return;
-        },
-    );
 }
 
 g5.popup1.p4.v_itemHeight = 30;
-g5.popup1.p4.show(sender, 170, style, onClick);
+g5.popup1.p4.show(sender, 170, style, function(index,text1,text2,text3) {
+    console.log(index+"," + text1);
+});
    ]]></onClick>
       <onCreate>sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
@@ -35050,6 +35046,9 @@ sender.showPos = function(x, y, width, v_style, v_function) {
     ee.setRect(root,null,null,width,null);
     var itemWidth = eb.getDivRectSetting(root).w;
     for (i=0; i < v_style.length; i++) {
+        v_style[i].sText1 = v_style[i].text1;
+        v_style[i].sText2 = v_style[i].text2;
+        v_style[i].sText3 = v_style[i].text3;
         if (v_style[i].text1.search("&amp;nbsp;&amp;nbsp;&amp;nbsp;") == 0) break;
         v_style[i].text1 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text1.trim());
         v_style[i].text2 = "&amp;nbsp;&amp;nbsp;&amp;nbsp;" + g5.lang.getByCn(v_style[i].text2.trim());
@@ -35119,9 +35118,21 @@ sender.renderItem = function(root) {
     c.style.cursor = "pointer";
     c.v_style = root.parentNode.v_style[root.v_index];
     addText(c, c.v_style.text1, "left", "middle", "微软雅黑", 12, "ffffff", "");
-    ee.setOnClick(c,function(sender,event) {
-        sender.parentNode.parentNode.v_function[sender.parentNode.v_index](sender,event);
-    });
+    if (typeof sender.v_function === "function") {
+        ee.setOnClick(c,function(senderBtn,event) {
+            let index = senderBtn.parentNode.v_index;
+            senderBtn.parentNode.parentNode.v_function(index,
+                senderBtn.parentNode.parentNode.v_style[index].sText1,
+                senderBtn.parentNode.parentNode.v_style[index].sText2,
+                senderBtn.parentNode.parentNode.v_style[index].sText3
+            );
+            senderBtn.parentNode.parentNode.parentNode.close();
+        });
+    } else {
+        ee.setOnClick(c,function(sender,event) {
+            sender.parentNode.parentNode.v_function[sender.parentNode.v_index](sender,event);
+        });
+    }
     g5.initButtonV3(c,[
         c.v_style
     ]);
