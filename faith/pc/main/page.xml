@@ -30764,9 +30764,10 @@ sender.checkValid = function() {
       <ee_LocalName>c_duration</ee_LocalName>
       <heightRatio>0.342465753424658</heightRatio>
       <left>0</left>
-      <onCreate>sender.c_day = sender.eeChildren[0].eeChildren[1].eeChildren[0].eeChildren[0].eeChildren[0].v_value;
+      <onCreate><![CDATA[sender.c_day = sender.eeChildren[0].eeChildren[1].eeChildren[0].eeChildren[0].eeChildren[0].v_value;
 sender.c_hour = sender.eeChildren[0].eeChildren[1].eeChildren[0].eeChildren[1].eeChildren[0].v_value;
 sender.c_min = sender.eeChildren[0].eeChildren[1].eeChildren[0].eeChildren[2].eeChildren[0].v_value;
+sender.v_minMin = 10;
 
 sender.init = function() {
     ee.setText(this.c_day,"1");
@@ -30776,15 +30777,37 @@ sender.init = function() {
 
 sender.setDay = function(value) {
     ee.setText(this.c_day,value+"");
+    if (this.getResultMin()<this.v_minMin) {
+        this.setMin(this.v_minMin);
+        this.setHour(0);
+    }
 }
 sender.setHour = function(value) {
     ee.setText(this.c_hour,value+"");
+    if (this.getResultMin()<this.v_minMin) {
+        this.setMin(this.v_minMin);
+    }
 }
 sender.setMin = function(value) {
     ee.setText(this.c_min,value+"");
+    if (this.getResultMin()<this.v_minMin) {
+        this.setMin(this.v_minMin);
+    }
+}
+sender.getResultSec = function() {
+    return (
+        parseInt(ee.getText(this.c_day)) * 3600 * 24 +
+        parseInt(ee.getText(this.c_hour)) * 3600 +
+        parseInt(ee.getText(this.c_min)) * 60
+    );
+}
+sender.getResultMin = function() {
+    return parseInt(this.getResultSec()/60);
 }
 
-</onCreate>
+
+
+]]></onCreate>
       <sizeRatio>0.211416490486258</sizeRatio>
       <top>187</top>
       <topRatio>0.64041095890411</topRatio>
