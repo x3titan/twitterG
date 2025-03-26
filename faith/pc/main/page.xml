@@ -47289,14 +47289,22 @@ for (i=0; i<buffs.length; i++) {
     for (j=0; j<buffs[i].length; j++) {
         if (!buffs[i][j].v_content) continue;
         if (!buffs[i][j].v_content.id) continue;
+        if (buffs[i][j].v_isVote) {
+            if (!buffs[i][j].c_vote) {
+                emergencyRefresh = true;
+                voteCId.push(buffs[i][j].v_content.id);
+                voteId.push(buffs[i][j].v_content.voteId);
+            }
+        }
         var r = g5.getRectAbs(buffs[i][j]);
         if (r.y + r.h < 0) continue;
         if (r.y > eb.getClientSize().h) continue;
         cId.push(buffs[i][j].v_content.id);
         if (buffs[i][j].v_isVote) {
-            if (!buffs[i][j].c_vote) emergencyRefresh = true;
-            voteCId.push(buffs[i][j].v_content.id);
-            voteId.push(buffs[i][j].v_content.voteId);
+            if (buffs[i][j].c_vote) {
+                voteCId.push(buffs[i][j].v_content.id);
+                voteId.push(buffs[i][j].v_content.voteId);
+            }
         }
     }
 }
