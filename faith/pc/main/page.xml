@@ -47279,10 +47279,11 @@ if (newTwitter.busy) return;
 if ((new Date()).getTime() - g5.RC_LastTime1s.getTime() < 1000) return;
 g5.RC_LastTime1s = new Date();
 
-var buffs = g5.contentGetCurrentBuffs();
-var cId = new Array();
-var voteCId = new Array();
-var voteId = new Array();
+let buffs = g5.contentGetCurrentBuffs();
+let cId = new Array();
+let voteCId = new Array();
+let voteId = new Array();
+let emergencyRefresh = false;
 var i,j;
 for (i=0; i<buffs.length; i++) {
     for (j=0; j<buffs[i].length; j++) {
@@ -47293,6 +47294,7 @@ for (i=0; i<buffs.length; i++) {
         if (r.y > eb.getClientSize().h) continue;
         cId.push(buffs[i][j].v_content.id);
         if (buffs[i][j].v_isVote) {
+            if (!buffs[i][j].c_vote) emergencyRefresh = true;
             voteCId.push(buffs[i][j].v_content.id);
             voteId.push(buffs[i][j].v_content.voteId);
         }
@@ -47317,7 +47319,7 @@ if (diff) {
 }
 g5.RC_CID = cId;
 
-if ((new Date()).getTime() - g5.RC_LastTime.getTime() < g5.RC_Interval) return;
+if (!emergencyRefresh &amp;&amp; ((new Date()).getTime() - g5.RC_LastTime.getTime() < g5.RC_Interval)) return;
 g5.RC_LastTime = new Date();
 
 updateMain.cIds = cId;
