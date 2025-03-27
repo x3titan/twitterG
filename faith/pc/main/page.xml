@@ -47431,22 +47431,37 @@ if (myVote != root.v_content.myVote) {
     }
 }
 
-let initVoteBars = function(bar) {
+let initVoteBars = function(bar, txt) {
     Object.assign(bar.style, {
         transition: 'width 2s ease-out'
     });
     
-    // 使用 IntersectionObserver 判断是否滚动到可视区域
     const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const bar = entry.target;
-          bar.style.width = bar.v_width + "px";
-          obs.unobserve(bar); // 避免重复触发
-        }
-      });
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bar = entry.target;
+                bar.style.width = bar.v_width + "px";
+                
+                let start = null;
+                const duration = 2000;
+                function animateNum(timestamp) {
+                    if (!start) start = timestamp;
+                    const progress = Math.min((timestamp - start) / duration, 1);
+                    const current = Math.floor(progress * txt.v_percent);
+                    ee.setText(txt, current + txt.v_text);
+                    if (progress < 1) {
+                        requestAnimationFrame(animateNum);
+                    } else {
+                        ee.setText(txt, txt.v_percent + txt.v_text);
+                    }
+                }
+                requestAnimationFrame(animateNum);
+                
+                obs.unobserve(bar);
+            }
+        });
     }, {
-      threshold: 0.1
+        threshold: 0.1
     });
 
     observer.observe(bar);
@@ -47458,7 +47473,8 @@ if (root.v_content.myVote) {
         voteCount += root.v_content.voteData[i].voteCount;
     }
     for (i=0; i<root.v_content.voteData.length; i++) {
-        if (i>=voteRoot.v_items.length) {
+        let isNew = i>=voteRoot.v_items.length;
+        if (isNew) {
             c = createPanel(voteRoot, root.id+"_voteOp"+i, "", 0, s1+i*(ch+s2), r.w, ch);
             c.v_c0 = createPanel(c, root.id+"_voteO1p"+i, "", 0, 0, 0, ch);
             c.v_c0.style.borderRadius = "10px";
@@ -47475,9 +47491,14 @@ if (root.v_content.myVote) {
         ee.setText(c.v_c2,
             parseInt(root.v_content.voteData[i].voteCount/voteCount*1000)/10 + "% (" +
             root.v_content.voteData[i].voteCount + "票)");
-        //ee.setRect(c.v_c0,null,null,root.v_content.voteData[i].voteCount/voteCount*(r.w-10)+10,null);
+        c.v_c2.v_percent = parseInt(root.v_content.voteData[i].voteCount/voteCount*1000)/10;
+        c.v_c2.v_text = "% (" + root.v_content.voteData[i].voteCount + "票)";
         c.v_c0.v_width = root.v_content.voteData[i].voteCount/voteCount*(r.w-10)+10;
-        initVoteBars(c.v_c0);
+        if (isNew) {
+            initVoteBars(c.v_c0, c.v_c2);
+        } else {
+            ee.setRect(c.v_c0,null,null,root.v_content.voteData[i].voteCount/voteCount*(r.w-10)+10,null);
+        }
     }
     while (voteRoot.v_items.length>root.v_content.voteData.length) {
         ee.removeControl(voteRoot.v_items[voteRoot.v_items.length-1]);
