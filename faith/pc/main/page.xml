@@ -37245,7 +37245,7 @@ newTwitter.busy = false;
 </script3>
     </taskSetItem>
     <taskSetItem name="newTwitterV2">
-      <script1><![CDATA[//busy,content,uplinkType,uplinkId,busy,photos(array),voteList,onComplete(contentId)
+      <script1><![CDATA[//busy,content,uplinkType,uplinkId,busy,photos(array),voteList,voteDuration,onComplete(contentId)
 if (newTwitterV2.busy) return;
 newTwitterV2.busy = true;
 
@@ -37268,6 +37268,8 @@ eio.appendInt32(newTwitterV2.photos.length);
 for (var i=0; i<newTwitterV2.photos.length; i++) eio.appendString16(newTwitterV2.photos[i]);
 eio.appendByte(newTwitterV2.voteList.length);
 for (var i=0; i<newTwitterV2.voteList.length; i++) eio.appendString8(newTwitterV2.voteList[i]);
+if (!newTwitterV2.voteDuration) newTwitterV2.voteDuration = 10 * 60;
+eio.appendString8(newTwitterV2.voteDuration+"");
 
 
 
@@ -37291,6 +37293,7 @@ let voteList = new Array();
 for (var i=0; i<count; i++) {
     voteList.push(eio.readString8());
 }
+let voteDuration = parseInt(eio.readString8());
 
 var sql,sqlResult;  
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
@@ -37368,7 +37371,8 @@ sql +=
     ",'" + db.encode(photos[3]) + "'" +
     ",'" + db.encode(uplinkType) + "'" +
     ",'" + db.encode(uplinkId) + "'" +
-    ",@voteNames;\n";
+    ",@voteNames" +
+    "," + voteDuration + ";\n";
     
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
