@@ -47510,15 +47510,17 @@ if (root.v_content.myVote) {
         voteRoot.v_items.splice(voteRoot.v_items.length-1);
     }
 } else {
-    for (i=0; i<=root.v_content.voteData.length; i++) {
+    for (i=0; i<=root.v_content.voteData.length+1; i++) {
         if (i>=voteRoot.v_items.length) {
             c = createPanel(voteRoot, root.id+"_voteOp"+i, "", 0, s1+i*(ch+s2), r.w, ch);
             addText(c, " ", "center", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "");
             voteRoot.v_items.push(c);    
         }
         c = voteRoot.v_items[i];
-        if (i>=root.v_content.voteData.length) {
+        if (i==root.v_content.voteData.length) {
             ee.setText(c,"投票后才可以看到投票结果");
+        } else if (i==root.v_content.voteData.length+1) {
+            ee.setText(c,"距离投票结束还有：");
         } else {
             ee.setText(c, g5.lang.getByCn("<span style='display: inline-block; width: 10px;'></span>" + (i+1) + ". " + root.v_content.voteData[i].optionName));
             c.v_voteId = root.v_content.voteId;
@@ -47553,7 +47555,7 @@ if (root.v_content.myVote) {
             });
         }
     }
-    while (voteRoot.v_items.length>root.v_content.voteData.length+1) {
+    while (voteRoot.v_items.length>root.v_content.voteData.length+2) {
         ee.removeControl(voteRoot.v_items[voteRoot.v_items.length-1]);
         voteRoot.v_items.splice(voteRoot.v_items.length-1);
     }
