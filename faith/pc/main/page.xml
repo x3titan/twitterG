@@ -43500,7 +43500,7 @@ vote.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="123">
+  <g5Items count="124">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -46036,6 +46036,22 @@ if (sReTime &amp;&amp; root.v_reTimeLabel) {
 
 </functionCode>
     </item>
+    <item name="renderTwitterRefreshVote" type="20">
+      <varValue />
+      <functionParam>root</functionParam>
+      <functionCode><![CDATA[if (root.c_vote &amp;&amp; root.c_voteTimeLabel) {
+    let t = (new Date()) - root.v_voteLocalStartTime;
+    t = parseInt(t/1000);
+    t = parseInt(root.v_content.voteData[0].remainingTimeSec) - t;
+    if (t<=0) {
+        ee.setText(root.c_voteTimeLabel, "投票已结束");
+    } else {
+        ee.setText(root.c_voteTimeLabel, "距离投票结束还有：" + g5.getMins(t,3));
+    }
+}
+
+]]></functionCode>
+    </item>
     <item name="renderTwitterL" type="20">
       <varValue />
       <functionParam>root</functionParam>
@@ -47099,6 +47115,7 @@ for (var j=0; j<currentItemsArr.length; j++) {
     for (var i=0; i<currentItems.length; i++) {
         var item = currentItems[i];
         if (!item.v_content) continue;
+        g5.renderTwitterRefreshVote(item);
         var now = parseInt((new Date()).getTime()/1000);    
         var time = now-item.v_content.startTime;
         if (time>=24*60*60) continue;
@@ -47523,9 +47540,8 @@ if (root.v_content.myVote) {
         if (i==root.v_content.voteData.length) {
             ee.setText(c,"投票后才可以看到投票结果");
         } else if (i==root.v_content.voteData.length+1) {
-            ee.setText(c,"距离投票结束还有：");
-            console.log(root.v_content.voteData[0].durationSec);
-            console.log(root.v_content.voteData[0].remainingTimeSec);
+            root.v_voteLocalStartTime = new Date();
+            root.c_voteTimeLabel = c;
         } else {
             ee.setText(c, g5.lang.getByCn("<span style='display: inline-block; width: 10px;'></span>" + (i+1) + ". " + root.v_content.voteData[i].optionName));
             c.v_voteId = root.v_content.voteId;
@@ -48206,6 +48222,25 @@ if (style == 1) {
                 return g5.lang.moEnglish[time.getMonth()] + " " + time.getDate();
             }
         }
+    }
+} else if (style == 3) {
+    if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + g5.lang.getByCn("秒");
+    let sec = seconds%60;
+    let min = parseInt((seconds%(60*60))/60);
+    let hour = parseInt((seconds%(60*60*24))/(60*60));
+    let day = parseInt(seconds/(60*60*24));
+    if (seconds<60*60) {
+        return parseInt(seconds/60) + g5.lang.getByCn("分") +
+            spt + sec + g5.lang.getByCn("秒");
+    } else if (seconds<60*60*24) {
+        return hour + g5.lang.getByCn("小时") +
+            spt + min + g5.lang.getByCn("分钟") + 
+            spt + sec + g5.lang.getByCn("秒");
+    } else {
+        return day + g5.lang.getByCn("天") +
+            spt + hour + g5.lang.getByCn("小时") +
+            spt + min + g5.lang.getByCn("分钟") + 
+            spt + sec + g5.lang.getByCn("秒");
     }
 } else {
     if (seconds<60) return (seconds<10 ? "0"+seconds: seconds) + g5.lang.getByCn("秒");
