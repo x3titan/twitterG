@@ -18776,49 +18776,6 @@ sender.showLast = function() {
     g5.changeP2(30);
 }
 
-sender.showNewV1 = function() {
-    this.c_p1.resize();
-    this.c_p1.setMode(0);
-    this.init("发言", this.v_lastOp == "new");
-    this.v_lastOp = "new";
-    this.onComplete = function() {
-        if (newTwitter.busy) return;
-        newTwitter.uplinkType = "N";
-        newTwitter.uplinkId = 0;
-        newTwitter.content = sender.c_edit.getEditText();
-        newTwitter.photos = sender.c_photos.v_photos;
-        newTwitter.onComplete = function(contentId) {
-            sender.v_lastOp = "";
-            history.go(-1);
-            var newContent = new g5.ContentInfo();
-            newContent.id = contentId;
-            newContent.seconds = 0;
-            newContent.status = "IDL";
-            newContent.uplinkType = "N";
-            newContent.uplinkId = 0;
-            newContent.content = newTwitter.content;
-            newContent.photos = newTwitter.photos;
-            newContent.reCount = 0;
-            newContent.fwCount = 0;
-            newContent.likeCount = 0;
-            newContent.unlikeCount = 0;
-            newContent.isForward = false;
-            newContent.isLike = false;
-            newContent.isUnlike = false;
-            g5.p2.p1.insert(newContent.clone(),new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
-            if (showUserPage.v_userInfo) {
-                if (showUserPage.v_userInfo.id == g5.myUserInfo.id) {
-                    g5.p2.p2.insert(newContent.clone(),new g5.ContentInfo(),g5.myUserInfo,new g5.UserInfo());
-                }
-            }
-        }
-        newTwitter();
-    }
-    g5.changeP2(30);
-    ee.getControl("panel51").v_photos = new Array();
-    g5.refreshPhoto(ee.getControl("panel51"));
-}
-
 sender.showNew = function() {
     this.c_p1.resize();
     this.c_p1.setMode(0);
@@ -18837,7 +18794,7 @@ sender.showNew = function() {
             }
             newTwitterV2.voteDuration = this.c_p1.c_vote.c_duration.getResultSec();
         }
-        newTwitterV2.onComplete = function(contentId) {
+        newTwitterV2.onComplete = function(contentId, noUse, voteId) {
             sender.v_lastOp = "";
             history.go(-1);
             var newContent = new g5.ContentInfo();
@@ -18848,6 +18805,10 @@ sender.showNew = function() {
             newContent.uplinkId = 0;
             newContent.content = newTwitterV2.content;
             newContent.photos = newTwitterV2.photos;
+            if (newTwitterV2.voteList.length>0) {
+                newContent.photos = new Array();
+                newContent.photos.push("?VID" + voteId);
+            }
             newContent.reCount = 0;
             newContent.fwCount = 0;
             newContent.likeCount = 0;
@@ -38191,8 +38152,9 @@ if (sqlResult == null) {
     return;
 }
 db.read(sqlResult);
-var contentId = db.getString(sqlResult,"contentId");
-var postCountDiff = db.getString(sqlResult,"postCountDiff");
+let contentId = db.getString(sqlResult,"contentId");
+let voteId = db.getString(sqlResult,"voteId");
+let postCountDiff = db.getString(sqlResult,"postCountDiff");
 
 sql = "";
 for (var i=0; i<alertUsers.length; i++) {
@@ -38207,6 +38169,7 @@ if (sql.length>0) sqlResult = db.executeNoneQuery("DB", sql);
 eio.appendString8("T");
 eio.appendString8(contentId);
 eio.appendString8(postCountDiff);
+eio.appendString8(voteId);
 
 ]]></script2>
       <script3>if (eio.readString8() == "F") {
@@ -38216,9 +38179,10 @@ eio.appendString8(postCountDiff);
 }
 newTwitterV2.contentId = eio.readString8();
 newTwitterV2.postCountDiff = parseInt(eio.readString8());
+newTwitterV2.voteId = parseInt(eio.readString8());
 if (newTwitterV2.onComplete) {
     g5.syncPostCount(newTwitterV2.postCountDiff);
-    newTwitterV2.onComplete(newTwitterV2.contentId, newTwitterV2.postCountDiff);
+    newTwitterV2.onComplete(newTwitterV2.contentId, newTwitterV2.postCountDiff, newTwitterV2.voteId);
 }
 newTwitterV2.busy = false;
 </script3>
