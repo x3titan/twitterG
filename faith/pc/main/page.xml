@@ -30229,18 +30229,25 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
     this.v_lastOp = "fw";
     this.v_lastId = v_content.id;
     this.onComplete = function() {
-        if (newTwitter.busy) return;
+        if (newTwitterV2.busy) return;
         var contentIdB;
         if (v_content.exUplinkType=="L") {
             contentIdB = v_content.exContentId;
         } else {
             contentIdB = v_content.id;
         }
-        newTwitter.uplinkType = "F";
-        newTwitter.uplinkId = contentIdB;
-        newTwitter.content = sender.c_edit.getEditText();
-        newTwitter.photos = sender.c_photos.v_photos;
-        newTwitter.onComplete = function(contentId) {
+        newTwitterV2.uplinkType = "F";
+        newTwitterV2.uplinkId = contentIdB;
+        newTwitterV2.content = sender.c_edit.getEditText();
+        newTwitterV2.photos = sender.c_photos.v_photos;
+        newTwitterV2.voteList = new Array();
+        if (this.v_mode == 1) {
+            for (var i=0; i<this.c_vote.v_data.length; i++) {
+                newTwitterV2.voteList.push(this.c_vote.v_data[i].value);
+            }
+            newTwitterV2.voteDuration = this.c_vote.c_duration.getResultSec();
+        }
+        newTwitterV2.onComplete = function(contentId, noUse, voteId) {
             sender.v_lastOp = "";
             sender.close();
             var newContent = new g5.ContentInfo();
@@ -30249,8 +30256,12 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             newContent.status = "IDL";
             newContent.uplinkType = "F";
             newContent.uplinkId = contentIdB;
-            newContent.content = newTwitter.content;
-            newContent.photos = newTwitter.photos;
+            newContent.content = newTwitterV2.content;
+            newContent.photos = newTwitterV2.photos;
+            if (newTwitterV2.voteList.length>0) {
+                newContent.photos = new Array();
+                newContent.photos.push("?VID" + voteId);
+            }
             newContent.reCount = 0;
             newContent.fwCount = 0;
             newContent.likeCount = 0;
@@ -30266,7 +30277,7 @@ sender.showFw = function(v_content,v_reContent,v_userInfo,v_reUserInfo) {
             v_content.fwCount++;
             g5.syncTwitter(v_content,v_reContent,v_userInfo,v_reUserInfo)
         }
-        newTwitter();
+        newTwitterV2();
     }
     ee.setVisible(ee.getControl("panel112"), true);
     ee.setVisible(this, true);
