@@ -48156,14 +48156,14 @@ for (i=0; i<buffs.length; i++) {
                 voteId.push(buffs[i][j].v_content.voteId);
             }
         }
-        //if (buffs[i][j].v_reContent &amp;&amp; buffs[i][j].v_reContent.isVote) {
-        //    if (!buffs[i][j].c_reVote || buffs[i][j].v_voteNeedRefresh) {
-        //        emergencyRefresh = true;
-        //        buffs[i][j].v_voteNeedRefresh = false;
-        //        voteCId.push(buffs[i][j].v_content.id);
-        //        voteId.push(buffs[i][j].v_content.voteId);
-        //    }
-        //}
+        if (buffs[i][j].v_reContent &amp;&amp; buffs[i][j].v_reContent.isVote) {
+            if (!buffs[i][j].c_reVote || buffs[i][j].v_reContent.voteNeedRefresh) {
+                emergencyRefresh = true;
+                buffs[i][j].v_reContent.voteNeedRefresh = false;
+                voteCId.push(buffs[i][j].v_reContent.id);
+                voteId.push(buffs[i][j].v_reContent.voteId);
+            }
+        }
         var r = g5.getRectAbs(buffs[i][j]);
         if (r.y + r.h < 0) continue;
         if (r.y > eb.getClientSize().h) continue;
@@ -48172,6 +48172,12 @@ for (i=0; i<buffs.length; i++) {
             if (buffs[i][j].c_vote) {
                 voteCId.push(buffs[i][j].v_content.id);
                 voteId.push(buffs[i][j].v_content.voteId);
+            }
+        }
+        if (buffs[i][j].v_reContent.isVote) {
+            if (buffs[i][j].c_vote) {
+                voteCId.push(buffs[i][j].v_reContent.id);
+                voteId.push(buffs[i][j].v_reContent.voteId);
             }
         }
     }
