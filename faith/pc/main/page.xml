@@ -48149,13 +48149,21 @@ for (i=0; i<buffs.length; i++) {
         if (!buffs[i][j].v_content) continue;
         if (!buffs[i][j].v_content.id) continue;
         if (buffs[i][j].v_content.isVote) {
-            if (!buffs[i][j].c_vote || buffs[i][j].v_voteNeedRefresh) {
+            if (!buffs[i][j].c_vote || buffs[i][j].v_content.voteNeedRefresh) {
                 emergencyRefresh = true;
-                buffs[i][j].v_voteNeedRefresh = false;
+                buffs[i][j].v_content.voteNeedRefresh = false;
                 voteCId.push(buffs[i][j].v_content.id);
                 voteId.push(buffs[i][j].v_content.voteId);
             }
         }
+        //if (buffs[i][j].v_reContent &amp;&amp; buffs[i][j].v_reContent.isVote) {
+        //    if (!buffs[i][j].c_reVote || buffs[i][j].v_voteNeedRefresh) {
+        //        emergencyRefresh = true;
+        //        buffs[i][j].v_voteNeedRefresh = false;
+        //        voteCId.push(buffs[i][j].v_content.id);
+        //        voteId.push(buffs[i][j].v_content.voteId);
+        //    }
+        //}
         var r = g5.getRectAbs(buffs[i][j]);
         if (r.y + r.h < 0) continue;
         if (r.y > eb.getClientSize().h) continue;
@@ -48408,7 +48416,7 @@ if (root.v_content.myVote || root.v_content.voteData[0].remainingTimeSec<=0) {
                         vote.voteId = senderBtn.v_voteId;
                         vote.optionIndex = senderBtn.v_optionIndex;
                         vote.onComplete = function() {
-                            root.v_voteNeedRefresh = true;
+                            root.v_content.voteNeedRefresh = true;
                             g5.alert1("提示", "投票成功");
                         }
                         vote();
