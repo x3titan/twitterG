@@ -48244,12 +48244,12 @@ g5.p2.p9.refreshNew();
 let buffs = g5.contentGetCurrentBuffs();
 let sn = "xxx";
 let CID,i,j1,j2;
-let root,rootItems,rootIndex;
+let root,rootItems,rootIndex,isRe;
 for (i=0; i<=voteData.rowCount; i++) {
     if (sn != voteData.getData(0,i)) {
         if (i>0) {
             if (root==null) break;
-            g5.refreshContentVoteRender(root,rootItems,rootIndex);
+            g5.refreshContentVoteRender(root,rootItems,rootIndex,isRe);
         }
         sn = voteData.getData(0,i);
         CID = voteData.getData(1,i);
@@ -48262,25 +48262,46 @@ for (i=0; i<=voteData.rowCount; i++) {
                     rootItems = buffs[j1];
                     rootIndex = j2;
                     root.v_content.voteData = new Array();
+                    isRe = false;
+                    break;
+                }
+                if (!buffs[j1][j2].v_reContent) continue;
+                if (buffs[j1][j2].v_reContent.id == CID) {
+                    root = buffs[j1][j2];
+                    rootItems = buffs[j1];
+                    rootIndex = j2;
+                    root.v_reContent.voteData = new Array();
+                    isRe = true;
                     break;
                 }
             }
         }
     }
     if (root == null) break;
-    root.v_content.voteData.push({
-        optionName:voteData.getData(3,i),
-        voteCount:parseInt(voteData.getData(6,i)),
-        myVote:parseInt(voteData.getData(7,i)),
-        durationSec:parseInt(voteData.getData(4,i)),
-        remainingTimeSec:voteData.getData(5,i)
-    });
+    if (isRe) {
+        root.v_reContent.voteData.push({
+            optionName:voteData.getData(3,i),
+            voteCount:parseInt(voteData.getData(6,i)),
+            myVote:parseInt(voteData.getData(7,i)),
+            durationSec:parseInt(voteData.getData(4,i)),
+            remainingTimeSec:voteData.getData(5,i)
+        });
+    } else {
+        root.v_content.voteData.push({
+            optionName:voteData.getData(3,i),
+            voteCount:parseInt(voteData.getData(6,i)),
+            myVote:parseInt(voteData.getData(7,i)),
+            durationSec:parseInt(voteData.getData(4,i)),
+            remainingTimeSec:voteData.getData(5,i)
+        });
+    }
 }]]></functionCode>
     </item>
     <item name="refreshContentVoteRender" type="20">
       <varValue />
-      <functionParam>root,rootItems,rootIndex</functionParam>
-      <functionCode><![CDATA[let s1=10, s2=5, s3=10, ch=31;
+      <functionParam>root,rootItems,rootIndex,isRe</functionParam>
+      <functionCode><![CDATA[if (isRe) return;
+let s1=10, s2=5, s3=10, ch=31;
 let i,r,r2,newH,oldH,voteRoot,c,cy;
 r = eb.getDivRectSetting(root.c_content);
 if (!root.c_vote) {
