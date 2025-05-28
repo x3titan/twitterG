@@ -46059,7 +46059,6 @@ if (root.v_content.photos.length>0) {
     if (root.v_content.photos[0].substr(0,4) == "?VID") {
         root.v_content.voteId = root.v_content.photos[0].substr(4);
         root.v_content.isVote = true;
-        root.v_voteRender = false;
         cy += 10;
     } else {
         if (root.v_mode.charAt(2) == "x") {
@@ -46368,16 +46367,21 @@ if (!showRe) {
     
     //rePhotos                                                                                          
     if (root.v_reContent.photos.length>0) {
-        c = createPanel(cRe, root.id+"_panel26", "", 11, 36, 100,100);
-        c.style.borderRadius = "15px";
-        c.style.borderWidth = "1px";
-        c.style.borderColor = "rgb(230,236,240)";
-        c.style.borderStyle = "solid";
-        c.v_photos = root.v_reContent.photos;
-        c.v_mode = "";
-        g5.refreshPhoto(c);
-        root.c_rePhotos = c;
-        eb.initMouseEvent(c);
+        if (root.v_reContent.photos[0].substr(0,4) == "?VID") {
+            root.v_reContent.voteId = root.v_reContent.photos[0].substr(4);
+            root.v_reContent.isVote = true;
+        } else {
+            c = createPanel(cRe, root.id+"_panel26", "", 11, 36, 100,100);
+            c.style.borderRadius = "15px";
+            c.style.borderWidth = "1px";
+            c.style.borderColor = "rgb(230,236,240)";
+            c.style.borderStyle = "solid";
+            c.v_photos = root.v_reContent.photos;
+            c.v_mode = "";
+            g5.refreshPhoto(c);
+            root.c_rePhotos = c;
+            eb.initMouseEvent(c);
+        }
     }
 } else if (root.v_content.uplinkType == "F") {
     var p1ratio = 2.64;
@@ -46542,12 +46546,17 @@ if (!showRe) {
     
     //rePhotos
     if (root.v_reContent.photos.length>0) {
-        c = createPanel(cRe, root.id+"_panel26", "", 0, p1y, p1w, parseInt(p1w*0.565));
-        p1y += eb.getDivRectSetting(c).h;
-        c.v_photos = root.v_reContent.photos;
-        c.v_mode = "";
-        g5.refreshPhoto(c);
-        root.c_rePhotos = c;
+        if (root.v_reContent.photos[0].substr(0,4) == "?VID") {
+            root.v_reContent.voteId = root.v_reContent.photos[0].substr(4);
+            root.v_reContent.isVote = true;
+        } else {
+            c = createPanel(cRe, root.id+"_panel26", "", 0, p1y, p1w, parseInt(p1w*0.565));
+            p1y += eb.getDivRectSetting(c).h;
+            c.v_photos = root.v_reContent.photos;
+            c.v_mode = "";
+            g5.refreshPhoto(c);
+            root.c_rePhotos = c;
+        }
     }
     
     c = cRe;
