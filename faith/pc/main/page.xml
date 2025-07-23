@@ -1,5 +1,5 @@
 <page>
-  <controls count="886">
+  <controls count="908">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -538,7 +538,6 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>Home主页面</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_bottom = ee.getControl("panel648");
@@ -916,15 +915,9 @@ sender.showAlert = function(value) {
       <fontSize>20</fontSize>
       <height>429</height>
       <heightRatio>0.55</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>主页顶部发帖</note>
-      <onCreate><![CDATA[sender.c_photos = ee.getControl("panel7");
-sender.c_edit = ee.getControl("panel577");
-sender.c_button = ee.getControl("panel251");
-sender.c_userPhoto = ee.getControl("panel2");
-
-sender.style.boxSizing="border-box";
+      <onCreate><![CDATA[sender.style.boxSizing="border-box";
 sender.style.borderWidth = "1px";
 sender.style.borderColor = "rgb(230,236,240)";
 sender.style.borderStyle = "solid";
@@ -954,9 +947,29 @@ sender.init = function() {
         ee.setText(ee.getControl("panel122"), "");
     }    
     ee.setVisible(ee.getControl("panel53"), false);
+    sender.setMode(0);
     eb.processDock();
 }
-sender.init();]]></onCreate>
+
+sender.setMode = function(mode) {
+    sender.v_mode = mode;
+    if (mode == 0) {
+        ee.setVisible(sender.c_photos, true);
+        ee.setVisible(sender.c_btn1, true);
+        ee.setVisible(sender.c_btn2, true);
+        ee.setVisible(sender.c_vote, false);
+        
+    } else {
+        ee.setVisible(sender.c_photos, false);
+        ee.setVisible(sender.c_btn1, false);
+        ee.setVisible(sender.c_btn2, false);
+        ee.setVisible(sender.c_vote, true);
+        this.c_vote.refreshList();
+    }
+}
+
+sender.init();
+]]></onCreate>
       <sizeRatio>0.715</sizeRatio>
       <top>52</top>
       <topRatio>0.0666666666666667</topRatio>
@@ -966,12 +979,12 @@ sender.init();]]></onCreate>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel2">
       <backgroundImg>user.png</backgroundImg>
       <cursor>pointer</cursor>
+      <ee_LocalName>c_userPhoto</ee_LocalName>
       <height>50</height>
       <heightRatio>0.116550116550117</heightRatio>
       <layerVisible>false</layerVisible>
       <left>16</left>
       <leftRatio>0.0266666666666667</leftRatio>
-      <note>c_userPhoto</note>
       <onClick>g5.p2.p1.loadNew(); 
 return;
 g5.p2.p2.show(g5.myUserInfo);
@@ -1013,12 +1026,12 @@ ee.setOnMouseLeave(c, function(sender,e) {
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>bottom</dockY>
+      <ee_LocalName>c_photos</ee_LocalName>
       <height>289</height>
       <heightRatio>0.673659673659674</heightRatio>
       <layerVisible>false</layerVisible>
       <left>77</left>
       <leftRatio>0.128333333333333</leftRatio>
-      <note>c_photos</note>
       <onCreate><![CDATA[sender.style.borderRadius = "15px";
 sender.v_mode="x";
 sender.v_photos = new Array();
@@ -1047,10 +1060,690 @@ sender.onDeletePhoto = function() {
       <width>503</width>
       <widthRatio>0.838333333333333</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741">
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <ee_LocalName>c_vote</ee_LocalName>
+      <height>334</height>
+      <heightRatio>0.778554778554779</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>77</left>
+      <leftRatio>0.128333333333333</leftRatio>
+      <onCreate><![CDATA[sender.v_items = new Array();
+sender.v_data = new Array();
+sender.v_root = sender.c_voteList;
+sender.MAXOptions = 10;
+
+sender.reset = function() {
+    this.v_data = new Array();
+    this.v_data.push(new sender.type_itemData());
+    this.v_data.push(new sender.type_itemData());
+    this.refreshList();
+}
+
+sender.type_itemData = function() {
+    this.value = "";
+}
+
+sender.renderItem = function(root) {
+    var w = eb.getDivRect(root).w;
+    var c,cy=10;
+    
+    root.style.boxSizing="border-box";
+    root.style.borderWidth = "1px";
+    root.style.borderColor = "rgb(230,236,240)";
+    root.style.borderStyle = "solid";
+    root.style.borderTop = "";
+    root.style.borderLeft = "";
+    root.style.borderRight = "";
+    var cx = 0;
+    var w3=50;
+    var w2 = w-w3;
+    
+    c = createPanel(root, root.id+"W2", "", cx, cy, w2, 26); cx+=w2;
+    if (root.v_data.value == "") {
+        addText(c, g5.lang.getByCn("选项,点击修改"), "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+    } else {
+        addText(c, root.v_data.value, "left", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1da1f2", "normal");
+    }
+    c.style.cursor="pointer";
+    ee.setOnClick(c, function(senderBtn, event) {
+        g5.popBlack.a10.show(
+            "输入", "选项：", "请在这里输入选项标签", root.v_data.value,
+            [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
+            [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
+            function(text) {
+                if (text == "") return;
+                root.v_data.value = text;
+                sender.refreshList();
+            },
+            function() {
+            }
+        );
+    });
+
+    c = createPanel(root, root.id+"W3", "", cx, cy-13, w3, 26+15); cx+=w3;
+    addText(c, "...", "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 18, "1da1f2", "bold");
+    c.style.cursor="pointer";
+    ee.setOnClick(c, function(senderBtn, event) {
+        var v_style = new Array();
+        var v_onClick = new Array();
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","上移","上移","上移","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                var i = sender.getIndexByRoot(root);
+                if (i>0) {
+                    var t = sender.v_data[i];
+                    sender.v_data[i] = sender.v_data[i-1];
+                    sender.v_data[i-1] = t;
+                    sender.refreshList();
+                }
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","下移","下移","下移","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                var i = sender.getIndexByRoot(root);
+                if ((i>=0) &amp;&amp; (i<sender.v_data.length-1)) {
+                    var t = sender.v_data[i];
+                    sender.v_data[i] = sender.v_data[i+1];
+                    sender.v_data[i+1] = t;
+                    sender.refreshList();
+                }
+            }
+        );
+        v_style.push(new g5.BStyle("","#e8f5fe","#d2ecfc","删除","删除","删除","#808080","#000000","#000000",""));
+        v_onClick.push(
+            function (senderBtnC, event) {
+                g5.popBlack.a6.show(
+                    "删除确认",
+                    "在没有保存之前，本操作将不会生效，确认删除本记录/%" + (root.v_data.type==""?"":("(" + root.v_data.type + ")")) + "%/吗？",
+                    [new g5.BStyle("#e6ecf0","#cfd4d8","#b8bdc0","取消","取消","取消","#14171a","#14171a","#14171a","")],
+                    [new g5.BStyle("#e0245e","#ca2055","#b31d4b","删除","确认删除","删除","#ffffff","#ffffff","#ffffff","")],
+                    function() {
+                        var i = sender.getIndexByRoot(root);
+                        if (i>=0) {
+                            sender.v_data.splice(i,1);
+                            sender.refreshList();
+                        }
+                    }
+                );            
+            }
+        );
+        g5.popup1.p4.show(senderBtn, 80, v_style, v_onClick); 
+    });
+    
+    cy+=26;
+    cy+=10;
+    eb.setDivRect(root,null,null,null,cy);
+    return root; 
+}
+
+sender.getIndexByRoot = function(root) {
+    for (var i=0; i<this.v_items.length; i++) {
+        if (this.v_items[i] == root) return i;
+    }
+    return -1;
+}
+
+
+sender.addNew = function() {
+    this.v_data.push(new sender.type_itemData());
+    this.refreshList();
+}
+
+sender.addButton = function() {
+    var cy = 0;
+    if (this.v_items.length>0) {
+        cy = eb.getDivRect(this.v_items[this.v_items.length-1]);
+        cy = cy.y + cy.h;
+    }
+    var root = this.v_root;
+    var itemWidth = eb.getDivRect(root).w;
+    var c;
+    c = createPanel(root, this.id + "_BtnNew", "", 0, cy, itemWidth, 40);
+    
+    addText(c, g5.lang.getByCn("+ 增加"), "center", "center", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "606060", "normal");
+    c.style.cursor="pointer";
+    c.v_style = [
+        new g5.BStyle("#ffffff","#e0e0e0","#d0d0d0",g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),"#404040","#404040","#404040",""),
+        new g5.BStyle("#ffffff","#ffffff","#d0d0d0",g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),g5.lang.getByCn("+ 增加"),"#404040","#404040","#404040",""),
+    ];
+    c.init = function(index) {
+        this.v_index = index;
+        this.style.backgroundColor = this.v_style[index].color1;
+        ee.setText(this, this.v_style[index].text1);
+        ee.setTextColor(this, this.v_style[index].tColor1);
+        if (this.v_style[index].bdColor=="") {
+            this.style.borderWidth = "0px";
+        } else {
+            this.style.boxSizing="border-box";
+            this.style.borderWidth = "1px";
+            this.style.borderColor = this.v_style[index].bdColor;
+            this.style.borderStyle = "solid";
+        }
+        this.style.borderRadius = parseInt(eb.getDivRectSetting(this).h/2) + "px";
+    }
+    ee.setOnMouseEnter(c, function(sender,event) { 
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    });
+    ee.setOnMouseLeave(c, function(sender,event) { 
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color1;
+        ee.setText(sender, s.text1);
+        ee.setTextColor(sender, s.tColor1);
+    });
+    c.eeMouseDown = function(sender,event,x,y) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color3;
+        ee.setText(sender, s.text3);
+        ee.setTextColor(sender, s.tColor3);
+    }
+    c.eeMouseUp = function(sender,event,x,y) {
+        var s =sender.v_style[sender.v_index];
+        sender.style.backgroundColor = s.color2;
+        ee.setText(sender, s.text2);
+        ee.setTextColor(sender, s.tColor2);
+    }
+    eb.initMouseEvent(c);
+    ee.setOnClick(c, function(senderBtn, event) {
+        sender.removeButton();
+        sender.addNew();
+        window.event? window.event.cancelBubble = true : event.stopPropagation();    
+    });    
+    if (g5.isMobile) {
+        c.init(1);
+    } else c.init(0);
+}
+
+sender.removeButton = function() {
+    var c = $g(this.id + "_BtnNew");
+    if (!c) return;
+    ee.removeControl(c);
+}
+
+sender.refreshList = function() {
+    while (this.v_items.length>0) {
+        ee.removeControl(this.v_items[0]);
+        this.v_items.splice(0,1);
+    }
+    this.removeButton();
+    
+    var i;
+    for (i=0; i<this.v_data.length; i++) {
+        var root = this.v_root;
+        var itemWidth = eb.getDivRect(this.v_root).w;
+        var item;
+        item = createPanel(root, this.id + "_" + i, "", 0, 0, itemWidth, 5);
+        item.v_data = this.v_data[i];
+        this.renderItem(item);
+        this.v_items.push(item);
+    }
+    if (this.checkValid() &amp;&amp; (this.v_data.length<sender.MAXOptions)) this.addButton();
+    this.parentNode.parentNode.check();
+    ee.tiledV(this.v_root,0,0,0);
+    ee.tiledV(this,0,0,0);
+    let r = eb.getDivRectSetting(this);
+    ee.setRect(this.parentNode, null, null, null, r.y + r.h + 130);
+    ee.resizeV(this.parentNode.parentNode, 2);
+}
+
+sender.checkValid = function() {
+    if (this.v_data.length > sender.MAXOptions) return false;
+    for (var i=0; i<this.v_data.length; i++) {
+        if (this.v_data[i].value == "") return false;
+    }
+    return true;
+}
+]]></onCreate>
+      <outerBottom>70</outerBottom>
+      <outerLeft>77</outerLeft>
+      <outerRight>20</outerRight>
+      <sizeRatio>0.664015904572565</sizeRatio>
+      <top>25</top>
+      <topRatio>0.221445221445221</topRatio>
+      <width>503</width>
+      <widthRatio>0.838333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel742">
+      <dockX>fill</dockX>
+      <ee_LocalName>c_voteList</ee_LocalName>
+      <heightRatio>0.29940119760479</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.185185185185185</sizeRatio>
+      <top>0</top>
+      <width>503</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743">
+      <backgroundColor>F0F0FA</backgroundColor>
+      <dockX>fill</dockX>
+      <ee_LocalName>c_duration</ee_LocalName>
+      <heightRatio>0.29940119760479</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate><![CDATA[sender.c_day = sender.eeChildren[0].eeChildren[1].eeChildren[0].eeChildren[0].eeChildren[0].v_value;
+sender.c_hour = sender.eeChildren[0].eeChildren[1].eeChildren[0].eeChildren[1].eeChildren[0].v_value;
+sender.c_min = sender.eeChildren[0].eeChildren[1].eeChildren[0].eeChildren[2].eeChildren[0].v_value;
+sender.v_minMin = 10;
+
+sender.init = function() {
+    ee.setText(this.c_day,"1");
+    ee.setText(this.c_hour,"0");
+    ee.setText(this.c_min,"0");
+}
+
+sender.setDay = function(value) {
+    ee.setText(this.c_day,value+"");
+    if (this.getResultMin()<this.v_minMin) {
+        this.setMin(this.v_minMin);
+        this.setHour(0);
+    }
+}
+sender.setHour = function(value) {
+    ee.setText(this.c_hour,value+"");
+    if (this.getResultMin()<this.v_minMin) {
+        this.setMin(this.v_minMin);
+    }
+}
+sender.setMin = function(value) {
+    ee.setText(this.c_min,value+"");
+    if (this.getResultMin()<this.v_minMin) {
+        this.setMin(this.v_minMin);
+    }
+}
+sender.getResultSec = function() {
+    return (
+        parseInt(ee.getText(this.c_day)) * 3600 * 24 +
+        parseInt(ee.getText(this.c_hour)) * 3600 +
+        parseInt(ee.getText(this.c_min)) * 60
+    );
+}
+sender.getResultMin = function() {
+    return parseInt(this.getResultSec()/60);
+}
+
+
+
+]]></onCreate>
+      <sizeRatio>0.185185185185185</sizeRatio>
+      <top>187</top>
+      <topRatio>0.559880239520958</topRatio>
+      <width>503</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.185185185185185</sizeRatio>
+      <top>0</top>
+      <width>503</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem33">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontBold>true</fontBold>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <heavyEnabled>false</heavyEnabled>
+      <height>38</height>
+      <heightRatio>0.38</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <sizeRatio>0.0703703703703704</sizeRatio>
+      <text>投票有效期</text>
+      <top>0</top>
+      <width>503</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>62</height>
+      <heightRatio>0.62</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.114814814814815</sizeRatio>
+      <top>38</top>
+      <topRatio>0.38</topRatio>
+      <width>503</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.114814814814815</sizeRatio>
+      <top>0</top>
+      <width>503</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem55">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.344444444444444</sizeRatio>
+      <top>0</top>
+      <width>168</width>
+      <widthRatio>0.333333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem55/panel744">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <hAlign>left</hAlign>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick><![CDATA[let style = new Array();
+let i;
+for (i=0; i<=7; i++) {
+    style.push(new g5.BStyle("","#e8f5fe","#d2ecfc",i+"",i+"",i+"","#404040","#404040","#404040",""));
+}
+
+g5.popup1.p4.v_itemHeight = 30;
+g5.popup1.p4.show(sender, 170, style, function(index,text1,text2,text3) {
+    sender.parentNode.parentNode.parentNode.parentNode.parentNode.setDay(text1);
+});
+   ]]></onClick>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = "5px 5px 5px 15px";
+</onCreate>
+      <sizeRatio>0.344444444444444</sizeRatio>
+      <top>0</top>
+      <width>168</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem55/panel744/panel745">
+      <dockX>fill</dockX>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <hAlign>left</hAlign>
+      <height>30</height>
+      <heightRatio>0.483870967741936</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0555555555555556</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.176470588235294</sizeRatio>
+      <text>天</text>
+      <top>0</top>
+      <width>158</width>
+      <widthRatio>0.944444444444444</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem55/panel744/panel746">
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>141</left>
+      <leftRatio>0.85</leftRatio>
+      <onCreate><![CDATA[c.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"height:100%;width:100%;margin:0px 0px 0px 0px;fill:#808080;vertical-align:middle;\">" + g5.icon.dropdownList + "</svg>";
+]]></onCreate>
+      <sizeRatio>2.2962962962963</sizeRatio>
+      <text>V</text>
+      <top>0</top>
+      <width>27</width>
+      <widthRatio>0.15</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem55/panel744/panel747">
+      <dockX>fill</dockX>
+      <ee_LocalName>v_value</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.580645161290323</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0555555555555556</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.211764705882353</sizeRatio>
+      <text>1</text>
+      <top>22</top>
+      <topRatio>0.354838709677419</topRatio>
+      <width>158</width>
+      <widthRatio>0.944444444444444</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem56">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>168</left>
+      <leftRatio>0.333333333333333</leftRatio>
+      <sizeRatio>0.344444444444444</sizeRatio>
+      <top>0</top>
+      <width>167</width>
+      <widthRatio>0.333333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem56/panel748">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <hAlign>left</hAlign>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>5</left>
+      <leftRatio>0.0277777777777778</leftRatio>
+      <onClick><![CDATA[let style = new Array();
+let i;
+for (i=0; i<=23; i++) {
+    style.push(new g5.BStyle("","#e8f5fe","#d2ecfc",i+"",i+"",i+"","#404040","#404040","#404040",""));
+}
+
+g5.popup1.p4.v_itemHeight = 30;
+g5.popup1.p4.show(sender, 170, style, function(index,text1,text2,text3) {
+    sender.parentNode.parentNode.parentNode.parentNode.parentNode.setHour(text1);
+});
+   ]]></onClick>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = "5px";
+</onCreate>
+      <outerLeft>5</outerLeft>
+      <sizeRatio>0.354285714285714</sizeRatio>
+      <top>0</top>
+      <width>162</width>
+      <widthRatio>0.972222222222222</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem56/panel748/panel749">
+      <dockX>fill</dockX>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <hAlign>left</hAlign>
+      <height>30</height>
+      <heightRatio>0.483870967741936</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0571428571428571</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.181818181818182</sizeRatio>
+      <text>小时</text>
+      <top>0</top>
+      <width>152</width>
+      <widthRatio>0.942857142857143</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem56/panel748/panel750">
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>135</left>
+      <leftRatio>0.845714285714286</leftRatio>
+      <onCreate><![CDATA[c.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"height:100%;width:100%;margin:0px 0px 0px 0px;fill:#808080;vertical-align:middle;\">" + g5.icon.dropdownList + "</svg>";
+]]></onCreate>
+      <sizeRatio>2.2962962962963</sizeRatio>
+      <text>V</text>
+      <top>0</top>
+      <width>27</width>
+      <widthRatio>0.154285714285714</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem56/panel748/panel751">
+      <dockX>fill</dockX>
+      <ee_LocalName>v_value</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.580645161290323</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0571428571428571</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.218181818181818</sizeRatio>
+      <text>0</text>
+      <top>22</top>
+      <topRatio>0.354838709677419</topRatio>
+      <width>152</width>
+      <widthRatio>0.942857142857143</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem57">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>335</left>
+      <leftRatio>0.666666666666667</leftRatio>
+      <sizeRatio>0.344444444444444</sizeRatio>
+      <top>0</top>
+      <width>168</width>
+      <widthRatio>0.333333333333333</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem57/panel752">
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <hAlign>left</hAlign>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>5</left>
+      <leftRatio>0.0277777777777778</leftRatio>
+      <onClick><![CDATA[let style = new Array();
+let i;
+for (i=0; i<=59; i++) {
+    style.push(new g5.BStyle("","#e8f5fe","#d2ecfc",i+"",i+"",i+"","#404040","#404040","#404040",""));
+}
+
+g5.popup1.p4.v_itemHeight = 30;
+g5.popup1.p4.show(sender, 170, style, function(index,text1,text2,text3) {
+    sender.parentNode.parentNode.parentNode.parentNode.parentNode.setMin(text1);
+});
+   ]]></onClick>
+      <onCreate>sender.style.boxSizing="border-box";
+sender.style.borderWidth = "1px";
+sender.style.borderColor = "rgb(230,236,240)";
+sender.style.borderStyle = "solid";
+sender.style.borderRadius = "5px 5px 15px 5px";</onCreate>
+      <outerLeft>5</outerLeft>
+      <sizeRatio>0.354285714285714</sizeRatio>
+      <top>0</top>
+      <width>163</width>
+      <widthRatio>0.972222222222222</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem57/panel752/panel753">
+      <dockX>fill</dockX>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <hAlign>left</hAlign>
+      <height>30</height>
+      <heightRatio>0.483870967741936</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0571428571428571</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.181818181818182</sizeRatio>
+      <text>分钟</text>
+      <top>0</top>
+      <width>153</width>
+      <widthRatio>0.942857142857143</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem57/panel752/panel754">
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>136</left>
+      <leftRatio>0.845714285714286</leftRatio>
+      <onCreate><![CDATA[c.innerHTML = "<svg viewBox=\"0 0 30 30\" style=\"height:100%;width:100%;margin:0px 0px 0px 0px;fill:#808080;vertical-align:middle;\">" + g5.icon.dropdownList + "</svg>";
+]]></onCreate>
+      <sizeRatio>2.2962962962963</sizeRatio>
+      <text>V</text>
+      <top>0</top>
+      <width>27</width>
+      <widthRatio>0.154285714285714</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741/panel743/layouty10/layoutyitem36/layoutx21/layoutxitem57/panel752/panel755">
+      <dockX>fill</dockX>
+      <ee_LocalName>v_value</ee_LocalName>
+      <fontBold>true</fontBold>
+      <fontColor>657786</fontColor>
+      <fontFamily>'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif</fontFamily>
+      <fontSize>12</fontSize>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.580645161290323</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>10</left>
+      <leftRatio>0.0571428571428571</leftRatio>
+      <onCreate>ee.setText(sender, g5.lang.getByCn(ee.getText(sender)));</onCreate>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.218181818181818</sizeRatio>
+      <text>0</text>
+      <top>22</top>
+      <topRatio>0.354838709677419</topRatio>
+      <width>153</width>
+      <widthRatio>0.942857142857143</widthRatio>
+    </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel9">
       <backgroundImgMode>fill</backgroundImgMode>
       <cursor>pointer</cursor>
       <dockY>bottom</dockY>
+      <ee_LocalName>c_btn2</ee_LocalName>
       <height>36</height>
       <heightRatio>0.0839160839160839</heightRatio>
       <layerVisible>false</layerVisible>
@@ -1234,6 +1927,7 @@ sender.refresh = function(progress) {
       <cursor>pointer</cursor>
       <dockX>right</dockX>
       <dockY>bottom</dockY>
+      <ee_LocalName>c_button</ee_LocalName>
       <fontBold>true</fontBold>
       <fontColor>FFFFFF</fontColor>
       <fontFamily>微软雅黑</fontFamily>
@@ -1309,6 +2003,7 @@ sender.setEnabled(false);
       <backgroundColor>008080</backgroundColor>
       <cursor>pointer</cursor>
       <dockY>bottom</dockY>
+      <ee_LocalName>c_btn1</ee_LocalName>
       <height>36</height>
       <heightRatio>0.0839160839160839</heightRatio>
       <layerVisible>false</layerVisible>
@@ -1501,13 +2196,12 @@ if (newText.length<180) {
 ]]></__U_onInputChange-sender-key-oldText-newText-oldHtml-newHtml>
       <backgroundColor>D3D3D3</backgroundColor>
       <dockX>fill</dockX>
-      <ee_LocalName>c_label</ee_LocalName>
+      <ee_LocalName>c_edit</ee_LocalName>
       <height>53</height>
       <heightRatio>0.123543123543124</heightRatio>
       <layerVisible>false</layerVisible>
       <left>77</left>
       <leftRatio>0.128333333333333</leftRatio>
-      <note>c_edit</note>
       <onCreate><![CDATA[//public
 sender.currentText = "";
 sender.currentHtml = "";
@@ -18708,6 +19402,7 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>756</height>
       <heightRatio>0.969230769230769</heightRatio>
       <layerName>发短文手机版</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel587");
