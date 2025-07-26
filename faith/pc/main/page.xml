@@ -1,5 +1,5 @@
 <page>
-  <controls count="908">
+  <controls count="909">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -951,14 +951,43 @@ sender.init = function() {
     eb.processDock();
 }
 
+sender.refresh = function() {
+    var rOld = eb.getDivRectSetting(this);
+    var rEdit = eb.getDivRectSetting(this.c_edit);
+    var rPhoto = eb.getDivRectSetting(this.c_photos);
+    var rVote = eb.getDivRectSetting(this.c_vote);
+    var sep = 5, newH;
+    if (this.v_mode == 0) {
+        newH = rEdit.y + rEdit.h + sep + 51;
+    } else if (this.v_mode == 1) {
+        newH = rEdit.y + rEdit.h + sep + rPhoto.h + sep + 51 + 5;
+        ee.setRect(this.c_photos,null,rEdit.y + rEdit.h + sep,null,null);
+    } else {
+        newH = rEdit.y + rEdit.h + sep + rVote.h + sep + 51 + 5;
+        ee.setRect(this.c_vote,null,rEdit.y + rEdit.h + sep,null,null);
+    }
+    var dy = newH - rOld.h;
+    console.log(rOld.h + ", " + newH);
+    ee.setRect(this,null,null,null,newH);
+    g5.batchMoveY(g5.p2.p1.v_items,0,dy);
+    eb.setDivRect(g5.p2.p1,null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
+    eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
+    g5.p2.p1.c_bottom.adjustP1();
+    eb.processDock();
+}
+
 sender.setMode = function(mode) {
     sender.v_mode = mode;
     if (mode == 0) {
+        ee.setVisible(sender.c_photos, false);
+        ee.setVisible(sender.c_btn1, true);
+        ee.setVisible(sender.c_btn2, true);
+        ee.setVisible(sender.c_vote, false);
+    } else if (mode == 1) {
         ee.setVisible(sender.c_photos, true);
         ee.setVisible(sender.c_btn1, true);
         ee.setVisible(sender.c_btn2, true);
         ee.setVisible(sender.c_vote, false);
-        
     } else {
         ee.setVisible(sender.c_photos, false);
         ee.setVisible(sender.c_btn1, false);
@@ -1025,7 +1054,6 @@ ee.setOnMouseLeave(c, function(sender,e) {
       <backgroundColor>FAFAFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
-      <dockY>bottom</dockY>
       <ee_LocalName>c_photos</ee_LocalName>
       <height>289</height>
       <heightRatio>0.673659673659674</heightRatio>
@@ -1038,20 +1066,12 @@ sender.v_photos = new Array();
 
 sender.onDeletePhoto = function() {
     if (sender.v_photos.length<=0) {
-        ee.setVisible(sender, false);
-        var cy = 462-140;
-        cy = -cy;
-        ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+cy);
-        g5.batchMoveY(g5.p2.p1.v_items,0,cy);
-        eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + cy);
-        eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + cy);
-        g5.p2.p1.c_bottom.adjustP1();
-        eb.processDock();
+        this.parentNode.setMode(0);
+        this.parentNode.refresh();
     }
 }
 
 ]]></onCreate>
-      <outerBottom>70</outerBottom>
       <outerLeft>77</outerLeft>
       <outerRight>20</outerRight>
       <sizeRatio>0.57455268389662</sizeRatio>
@@ -1062,7 +1082,6 @@ sender.onDeletePhoto = function() {
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel741">
       <dockX>fill</dockX>
-      <dockY>bottom</dockY>
       <ee_LocalName>c_vote</ee_LocalName>
       <height>334</height>
       <heightRatio>0.778554778554779</heightRatio>
@@ -1283,12 +1302,9 @@ sender.refreshList = function() {
         this.v_items.push(item);
     }
     if (this.checkValid() &amp;&amp; (this.v_data.length<sender.MAXOptions)) this.addButton();
-    this.parentNode.parentNode.check();
+    this.parentNode.check();
     ee.tiledV(this.v_root,0,0,0);
     ee.tiledV(this,0,0,0);
-    let r = eb.getDivRectSetting(this);
-    ee.setRect(this.parentNode, null, null, null, r.y + r.h + 130);
-    ee.resizeV(this.parentNode.parentNode, 2);
 }
 
 sender.checkValid = function() {
@@ -1299,12 +1315,11 @@ sender.checkValid = function() {
     return true;
 }
 ]]></onCreate>
-      <outerBottom>70</outerBottom>
       <outerLeft>77</outerLeft>
       <outerRight>20</outerRight>
       <sizeRatio>0.664015904572565</sizeRatio>
-      <top>25</top>
-      <topRatio>0.221445221445221</topRatio>
+      <top>37</top>
+      <topRatio>0.0862470862470862</topRatio>
       <width>503</width>
       <widthRatio>0.838333333333333</widthRatio>
     </control>
@@ -1747,8 +1762,8 @@ sender.style.borderRadius = "5px 5px 15px 5px";</onCreate>
       <height>36</height>
       <heightRatio>0.0839160839160839</heightRatio>
       <layerVisible>false</layerVisible>
-      <left>130</left>
-      <leftRatio>0.216666666666667</leftRatio>
+      <left>131</left>
+      <leftRatio>0.218333333333333</leftRatio>
       <onClick><![CDATA[g5.uploadPhotoCheck(ee.getControl("panel7"),false,function() {
     if (g5.isMobile) {
         g5.p2.p32.show(function(ytbVideo) {
@@ -2088,14 +2103,8 @@ c.addEventListener("change", function() {
                         ee.getControl("panel7").v_photos.push(uploadImage.newFileName);
                         g5.refreshPhoto(ee.getControl("panel7"));
                         if (ee.getControl("panel7").style.visibility=="hidden") {
-                            ee.setVisible(ee.getControl("panel7"), true);
-                            var cy = 462-140;
-                            ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h+cy);
-                            g5.batchMoveY(g5.p2.p1.v_items,0,cy);
-                            eb.setDivRect(g5.p2.p1, null,null,null,eb.getDivRect(g5.p2.p1).h + cy);
-                            eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + cy);
-                            g5.p2.p1.c_bottom.adjustP1();
-                            eb.processDock();
+                            sender.parentNode.setMode(1);
+                            sender.parentNode.refresh();
                         }
                         ee.getControl("panel1").check();
                         return;
@@ -2147,6 +2156,8 @@ sender.resize = function (img) {
       <__U_onFocusChange-sender-isFocus type="jsMix" />
       <__U_onHeightChange-sender-oldH-newH type="jsMix">var dy = newH - oldH;
 if (dy == 0) return;
+sender.parentNode.refresh();
+return;
 ee.setRect(ee.getControl("panel1"),null,null,null,eb.getDivRect(ee.getControl("panel1")).h + dy);
 g5.batchMoveY(g5.p2.p1.v_items,0,dy);
 ee.setRect(g5.p2.p1, null,null,null,eb.getDivRectSetting(g5.p2.p1).h + dy);
@@ -2661,6 +2672,39 @@ sender.processUserName = function() {
       <vAlign>top</vAlign>
       <width>101</width>
       <widthRatio>0.200795228628231</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel1/panel756">
+      <backgroundColor>008080</backgroundColor>
+      <cursor>pointer</cursor>
+      <dockY>bottom</dockY>
+      <ee_LocalName>c_btn3</ee_LocalName>
+      <height>36</height>
+      <heightRatio>0.0839160839160839</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>182</left>
+      <leftRatio>0.303333333333333</leftRatio>
+      <onClick>if (sender.parentNode.v_mode == 2) {
+    sender.parentNode.setMode(sender.v_lastMode);
+    sender.parentNode.refresh();
+} else {
+    sender.v_lastMode = sender.parentNode.v_mode;
+    sender.parentNode.setMode(2);
+    sender.parentNode.refresh();
+}
+</onClick>
+      <onCreate><![CDATA[sender.label = null;
+sender.innerHTML="<svg viewBox=\"0 0 24 24\" style=\"font-size: 13px;height:1.5em;width:1.5em;margin:8px 8px 8px 8px;fill: currentcolor;vertical-align:middle;\">" + g5.icon.vote + "</svg>";
+sender.style.borderRadius = "50%";
+g5.initButtonV3(sender,[
+    new g5.BStyle("","#dfeffa","#cee2db","","","","rgb(29,161,242)","rgb(29,161,242)","rgb(29,131,212)","")
+]);]]></onCreate>
+      <outerBottom>15</outerBottom>
+      <sizeRatio>1</sizeRatio>
+      <text>vote</text>
+      <top>378</top>
+      <topRatio>0.881118881118881</topRatio>
+      <width>36</width>
+      <widthRatio>0.06</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel134/panel135/panel41/panel648">
       <backgroundColor>FFFFFF</backgroundColor>
