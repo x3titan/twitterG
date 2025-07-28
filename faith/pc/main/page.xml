@@ -538,6 +538,7 @@ ee.setVisible(sender, true);
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>Home主页面</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.c_bottom = ee.getControl("panel648");
@@ -915,6 +916,7 @@ sender.showAlert = function(value) {
       <fontSize>20</fontSize>
       <height>429</height>
       <heightRatio>0.55</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>主页顶部发帖</note>
       <onCreate><![CDATA[sender.style.boxSizing="border-box";
@@ -926,10 +928,22 @@ sender.style.borderLeft = "";
 sender.style.borderRight = "";
 
 sender.check = function() {
-    var enabled = this.c_edit.getEditText().trim().length > 0;
-    if (ee.getControl("panel7").v_photos.length>0) enabled = true;
-    if (this.c_edit.getEditText().trim().length>200) enabled = false;
-    ee.getControl("panel251").setEnabled(enabled);
+    let enabled = false;
+    if (this.v_mode == 0) {
+        enabled =
+            (this.c_edit.getEditText().trim().length>0) &amp;&amp;(this.c_edit.getEditText().trim().length<=200);
+    } else if (this.v_mode ==1) {
+        enabled =
+            ((this.c_edit.getEditText().trim().length>0) &amp;&amp;(this.c_edit.getEditText().trim().length<=200)) ||
+            this.c_photos.v_photos.length>0;
+    } else {
+        enabled = this.c_vote.checkValid();
+        if (enabled) {
+            enabled = this.c_vote.v_data.length > 1;
+        }
+        enabled = enabled &amp; ((this.c_edit.getEditText().trim().length>0) &amp;&amp;(this.c_edit.getEditText().trim().length<=200));
+    }
+    this.c_button.setEnabled(enabled);
 }
 
 sender.init = function() {
@@ -947,8 +961,9 @@ sender.init = function() {
         ee.setText(ee.getControl("panel122"), "");
     }    
     ee.setVisible(ee.getControl("panel53"), false);
-    sender.setMode(0);
-    eb.processDock();
+    this.c_vote.reset();
+    this.setMode(0);
+    this.refresh();
 }
 
 sender.refresh = function() {
@@ -967,13 +982,13 @@ sender.refresh = function() {
         ee.setRect(this.c_vote,null,rEdit.y + rEdit.h + sep,null,null);
     }
     var dy = newH - rOld.h;
-    console.log(rOld.h + ", " + newH);
     ee.setRect(this,null,null,null,newH);
     g5.batchMoveY(g5.p2.p1.v_items,0,dy);
     eb.setDivRect(g5.p2.p1,null,null,null,eb.getDivRect(g5.p2.p1).h + dy);
     eb.setDivRect(g5.p2.p1.parentNode, null,null,null,eb.getDivRect(g5.p2.p1.parentNode).h + dy);
     g5.p2.p1.c_bottom.adjustP1();
     eb.processDock();
+    this.check();
 }
 
 sender.setMode = function(mode) {
@@ -997,7 +1012,9 @@ sender.setMode = function(mode) {
     }
 }
 
-sender.init();
+setTimeout(function() {
+    sender.init();
+}, 500); 
 ]]></onCreate>
       <sizeRatio>0.715</sizeRatio>
       <top>52</top>
@@ -1305,6 +1322,7 @@ sender.refreshList = function() {
     this.parentNode.check();
     ee.tiledV(this.v_root,0,0,0);
     ee.tiledV(this,0,0,0);
+    this.parentNode.refresh();
 }
 
 sender.checkValid = function() {
@@ -1952,22 +1970,34 @@ sender.refresh = function(progress) {
       <layerVisible>false</layerVisible>
       <left>497</left>
       <leftRatio>0.828333333333333</leftRatio>
-      <onClick>if (!sender.v_enabled) return;
+      <onClick><![CDATA[if (!sender.v_enabled) return;
+if (newTwitterV2.busy) return;
 
-if (newTwitter.busy) return;
-newTwitter.uplinkType = "N";
-newTwitter.uplinkId = 0;
-newTwitter.content = g5.p2.p1.c_new.c_edit.getEditText();
-newTwitter.photos = ee.getControl("panel7").v_photos;
-newTwitter.onComplete = function(contentId) {
+let root = sender.parentNode;
+newTwitterV2.uplinkType = "N";
+newTwitterV2.uplinkId = 0;
+newTwitterV2.content = root.c_edit.getEditText();
+newTwitterV2.photos = root.c_photos.v_photos;
+newTwitterV2.voteList = new Array();
+if (root.v_mode == 2) {
+    for (var i=0; i<root.c_vote.v_data.length; i++) {
+        newTwitterV2.voteList.push(root.c_vote.v_data[i].value);
+    }
+    newTwitterV2.voteDuration = root.c_vote.c_duration.getResultSec();
+}
+newTwitterV2.onComplete = function(contentId, noUse, voteId) {
     var newContent = new g5.ContentInfo();
     newContent.id = contentId;
     newContent.seconds = 0;
     newContent.status = "IDL";
     newContent.uplinkType = "N";
     newContent.uplinkId = 0;
-    newContent.content = newTwitter.content;
-    newContent.photos = newTwitter.photos;
+    newContent.content = newTwitterV2.content;
+    newContent.photos = newTwitterV2.photos;
+    if (newTwitterV2.voteList.length>0) {
+        newContent.photos = new Array();
+        newContent.photos.push("?VID" + voteId);
+    }
     newContent.reCount = 0;
     newContent.fwCount = 0;
     newContent.likeCount = 0;
@@ -1982,9 +2012,9 @@ newTwitter.onComplete = function(contentId) {
         }
     }
 }
-newTwitter();
+newTwitterV2();
 sender.parentNode.init();
-</onClick>
+]]></onClick>
       <onCreate>ee.setText(sender, g5.lang.getByTCn(500,ee.getText(sender)));
 g5.initButtonV3(sender,[
     new g5.BStyle("#1da1f2","#1a91da","#1781c2","","","","","","",""),
@@ -19446,7 +19476,6 @@ sender.loadRecord = function(panel, dataset, index) {
       <height>756</height>
       <heightRatio>0.969230769230769</heightRatio>
       <layerName>发短文手机版</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
       <onCreate><![CDATA[sender.c_photos = ee.getControl("panel587");
