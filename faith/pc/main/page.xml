@@ -38476,13 +38476,13 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
     es.logCommon("用户token登录失败,token=" + token);
     return;
 } 
+es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
+    ",nickName=" + db.getString(sqlResult, "nickName"));
 session.set("userName", db.getString(sqlResult,"userName"));
 var myUserId = db.getString(sqlResult,"id");
 
 db.nextResult(sqlResult);
 eio.appendString8("T");
-es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
-    ",nickName=" + db.getString(sqlResult, "nickName"));
 eio.appendDataSet(sqlResult,"id,status,regDatetime,lastAccessTime,userName,mobile,nickName,note,photo,titleBg,homePage,followCount,fansCount,postCount,isFollow,block1,block2,email",0,1);
 
 sql = "exec createDefaultChatRoom " + myUserId + "; ";
