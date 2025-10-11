@@ -40,4 +40,4 @@ rem Step 7: Push to remote repository
 rem Use PowerShell to output a completion message
 powershell -Command "Write-Host 'All steps completed!'"
 
-pause
+if /I not "%~1"=="--auto" pause
