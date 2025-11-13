@@ -704,6 +704,18 @@ sender.loadFromServer = function() {
                 ee.removeControl(item);
                 continue;
             }
+            let dup = false;
+            for (var j=0; j<root.v_items.length; j++) {
+                if (!root.v_items[j].v_content) continue;
+                if (!root.v_items[j].v_content.id) continue;
+                if (root.v_items[j].v_content.id == item.v_content.id) {
+                    dup = true;
+                }
+            }
+            if (dup) {
+                ee.removeControl(item);
+                continue;
+            }
             item.v_mode = "";
             g5.renderTwitter(item);
             if (updateHomepage.isForward) {
