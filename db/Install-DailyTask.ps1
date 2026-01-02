@@ -2,8 +2,9 @@
 # 说明：使用 SYSTEM 账户运行，避免账号/权限问题
 
 $TaskName = "Daily_Commit_Database_Task"
-$CurrentDir = (Get-Location).Path
-$ScriptPath = "$CurrentDir\autoCommitDB.ps1"
+#$CurrentDir = (Get-Location).Path
+$CurrentDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ScriptPath = Join-Path $CurrentDir "autoCommitDB.ps1"
 
 # 确保脚本存在
 if (-not (Test-Path $ScriptPath)) {
@@ -24,11 +25,13 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 # 创建计划任务：每天 $DailyTime 执行，使用 SYSTEM 运行
+#/RU "SYSTEM"
 schtasks /Create `
   /TN $TaskName `
   /SC DAILY `
   /ST $DailyTime `
-  /RU "SYSTEM" `
+  /RU "Administrator" `
+  /RP "*************" `
   /RL HIGHEST `
   /TR $Action `
   /F | Out-Null

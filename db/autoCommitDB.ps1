@@ -8,7 +8,8 @@
 $ErrorActionPreference = "Stop"  # 让出错直接抛异常，便于统一捕获
 
 # ========== 配置 ==========
-$Directory  = (Get-Location).Path              # 等价于 %cd%
+#$Directory  = (Get-Location).Path              # 等价于 %cd%
+$Directory = Split-Path -Parent $MyInvocation.MyCommand.Path
 $TargetFile = "twitterG.bak"
 $ZipFile    = "twitterG.zip"
 $GitPath    = "C:\Users\Administrator\AppData\Local\GitHubDesktop\app-3.0.8\resources\app\git\cmd\git.exe"
@@ -53,6 +54,7 @@ try {
     if (-not (Test-Path $ZipPath)) {
         throw "Zip file creation failed!"
     }
+    Write-Log  "Zip completed"
 
     # 5) 进入仓库目录（当前目录）
     Set-Location -Path $Directory
@@ -68,6 +70,9 @@ try {
     } else {
         & $GitPath commit -m "Add new zip file"
     }
+    #Write-Log ("Running as: " + [System.Security.Principal.WindowsIdentity]::GetCurrent().Name)
+
+    Write-Log  "git commit completed"
 
     # 8) git push
     & $GitPath push
