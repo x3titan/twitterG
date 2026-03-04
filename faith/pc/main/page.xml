@@ -40334,6 +40334,12 @@ sql =
     "WHERE (dbo.tContent.uplinkId = " + topicId + ") AND dbo.tContent.uplinkType='R' AND dbo.tContent.status<>'DEL' " +
     "ORDER BY isMe,isPoster,dbo.tContent.id DESC; ";
 
+sql =
+    "exec [twitterAddCount] " + topicId + ",'click'," + userId + ",'" + es.getRemoteIPAddress() + "';\r\n" +
+    "exec TASKSET_ShowTopic " +
+    userId + "," +
+    topicId + ";";
+
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
