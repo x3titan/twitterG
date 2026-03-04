@@ -39867,7 +39867,11 @@ sql =
     "                and (exUserInfo.status='IDL' or exUserInfo.status is null) " + 
     "                and (exHideList.id IS NULL) " + 
     "ORDER BY dbo.tContent.forceTopSn DESC,dbo.tContent.id DESC ";
-    
+sql = "exec [TASKSET_ShowUserPageP3] " +
+    ((pageIndex+1) * pageSize) + "," +
+    myUserId + "," +
+    userId + ";";
+            
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
     eio.appendString8("F");
