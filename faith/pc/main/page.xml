@@ -40718,7 +40718,8 @@ if (searchTwitter.needRefresh) {
 
 
 ]]></script1>
-      <script2><![CDATA[var token = eio.readString16();
+      <script2><![CDATA[//2026-03-06 checked and no use, can be deleted
+var token = eio.readString16();
 var searchString = eio.readString16();
 var needRefresh = eio.readString16();
 var lastId = parseInt(eio.readString16());
@@ -40931,6 +40932,10 @@ if (options == "user") {
     "                left outer join hideList as uHideList on dbo.userInfo.id = uHideList.hideId and uHideList.userId = " + userId + " " +
     "WHERE " + cond + " and (dbo.userInfo.status='IDL' or dbo.userInfo.status='DelIn' or dbo.userInfo.status='Private') " +
     orderby;
+    sql = "exec [TASKSET_SearchV2_User] " +
+        top + "," +
+        userId + "," +
+        "N'" + db.encode(searchString) + "';"
 } else {
     sql =
     "SELECT   TOP (" + top + ") dbo.tContent.id, DATEDIFF(second, dbo.tContent.regDatetime, GETDATE()) AS seconds, " +
@@ -40989,6 +40994,11 @@ if (options == "user") {
     "   and (tContent.uplinkType<>'L') and (ublockList.id IS NULL) and (ublockList1.id IS NULL) " +
     "   and (uHideList.id IS NULL) " + cond + " " +
     orderby;
+    sql = "exec [TASKSET_SearchV2_Twee] " +
+        top + "," +
+        userId + "," +
+        "N'" + db.encode(options) + "'," +
+        "N'" + db.encode(searchString) + "';"
 }
 
 sqlResult = db.executeQuery("DB", sql);
