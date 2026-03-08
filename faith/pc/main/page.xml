@@ -45343,6 +45343,19 @@ vote.busy = false;
     </item>
     <item name="ContentInfo" type="10">
       <varValue><![CDATA[function() {
+    /*
+    updateHomepage
+    showUserPage
+    showUserPageLoadMore
+    showUserPageP3
+    showBookMark
+    showTopic
+    showTopicRenew
+    showTopicP2
+    searchTwitter(can be deleted)
+    searchV2
+    DB Procedure：twitterSource
+    */    
     this.size = 19;
     this.init = function() {
         if (this.photos.length<=0) {
@@ -45360,25 +45373,26 @@ vote.busy = false;
         this.startTime = parseInt((new Date()).getTime()/1000)-this.seconds;
     }
     this.loadFromDataset = function(ds, x, idx) {
-        this.id = ds.getData(x+0,idx);
-        this.seconds = ds.getData(x+1,idx);
-        this.status = ds.getData(x+2,idx);
-        this.uplinkType = ds.getData(x+3,idx);
-        this.uplinkId = ds.getData(x+4,idx);
-        this.content = ds.getData(x+5,idx);
-        this.photo1 = ds.getData(x+6,idx);
-        this.photo2 = ds.getData(x+7,idx);
-        this.photo3 = ds.getData(x+8,idx);
-        this.photo4 = ds.getData(x+9,idx);
-        this.clickCount = ds.getData(x+10,idx);
-        this.reCount = ds.getData(x+11,idx);
-        this.fwCount = ds.getData(x+12,idx);
-        this.likeCount = ds.getData(x+13,idx);
-        this.unlikeCount = ds.getData(x+14,idx);
-        this.isForward = ds.getData(x+15,idx)=="1";
-        this.isLike = ds.getData(x+16,idx)=="1";
-        this.isUnlike = ds.getData(x+17,idx)=="1";
-        this.forceTopSn = ds.getData(x+18,idx);
+        let p = x;
+        this.id = ds.getData(p++, idx);
+        this.seconds = ds.getData(p++, idx);
+        this.status = ds.getData(p++, idx);
+        this.uplinkType = ds.getData(p++, idx);
+        this.uplinkId = ds.getData(p++, idx);
+        this.content = ds.getData(p++, idx);
+        this.photo1 = ds.getData(p++, idx);
+        this.photo2 = ds.getData(p++, idx);
+        this.photo3 = ds.getData(p++, idx);
+        this.photo4 = ds.getData(p++, idx);
+        this.clickCount = ds.getData(p++, idx);
+        this.reCount = ds.getData(p++, idx);
+        this.fwCount = ds.getData(p++, idx);
+        this.likeCount = ds.getData(p++, idx);
+        this.unlikeCount = ds.getData(p++, idx);
+        this.isForward = ds.getData(p++, idx) === "1";
+        this.isLike = ds.getData(p++, idx) === "1";
+        this.isUnlike = ds.getData(p++, idx) === "1";
+        this.forceTopSn = ds.getData(p++, idx);
         this.init();
     }
     this.loadExFromDataset = function (ds, x, idx) {
@@ -45387,30 +45401,31 @@ vote.busy = false;
         x+=this.exUserInfo.size;
         this.exUplinkType = ds.getData(x+0, idx);
         this.exContentId = ds.getData(x+1, idx);
-        this.exIsForward = ds.getData(x+2, idx)=="1";
-        this.exIsLike = ds.getData(x+3, idx)=="1";
-        this.exIsUnlike = ds.getData(x+4, idx)=="1";
+        this.exIsForward = ds.getData(x+2, idx) === "1";
+        this.exIsLike = ds.getData(x+3, idx) === "1";
+        this.exIsUnlike = ds.getData(x+4, idx) == = "1";
     }
     this.setDataset = function(ds, x, idx) {
-        ds.setData(x+0,idx,this.id);
-        ds.setData(x+1,idx,this.seconds);    
-        ds.setData(x+2,idx,this.status);    
-        ds.setData(x+3,idx,this.uplinkType);    
-        ds.setData(x+4,idx,this.uplinkId);    
-        ds.setData(x+5,idx,this.content);    
-        ds.setData(x+6,idx,this.photo1);    
-        ds.setData(x+7,idx,this.photo2);    
-        ds.setData(x+8,idx,this.photo3);    
-        ds.setData(x+9,idx,this.photo4);
-        ds.setData(x+10,dx,this.clickCount);    
-        ds.setData(x+11,idx,this.reCount);    
-        ds.setData(x+12,idx,this.fwCount);    
-        ds.setData(x+13,idx,this.likeCount);    
-        ds.setData(x+14,idx,this.unlikeCount);
-        ds.setData(x+15,idx,this.isForward?"1":"0");
-        ds.setData(x+16,idx,this.isLike?"1":"0");
-        ds.setData(x+17,idx,this.isUnlike?"1":"0");
-        ds.setData(x+18,idx,this.forceTopSn);
+        let p = x;
+        ds.setData(p++, idx, this.id);
+        ds.setData(p++, idx, this.seconds);
+        ds.setData(p++, idx, this.status);
+        ds.setData(p++, idx, this.uplinkType);
+        ds.setData(p++, idx, this.uplinkId);
+        ds.setData(p++, idx, this.content);
+        ds.setData(p++, idx, this.photo1);
+        ds.setData(p++, idx, this.photo2);
+        ds.setData(p++, idx, this.photo3);
+        ds.setData(p++, idx, this.photo4);
+        ds.setData(p++, idx, this.clickCount);
+        ds.setData(p++, idx, this.reCount);
+        ds.setData(p++, idx, this.fwCount);
+        ds.setData(p++, idx, this.likeCount);
+        ds.setData(p++, idx, this.unlikeCount);
+        ds.setData(p++, idx, this.isForward ? "1" : "0");
+        ds.setData(p++, idx, this.isLike ? "1" : "0");
+        ds.setData(p++, idx, this.isUnlike ? "1" : "0");
+        ds.setData(p++, idx, this.forceTopSn);
     }
     this.clone = function() {
         var r = new g5.ContentInfo();
