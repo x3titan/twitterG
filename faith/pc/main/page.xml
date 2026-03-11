@@ -44842,7 +44842,7 @@ if (!eb.isEmpty(setBookMark.onComplete)) {
 </script3>
     </taskSetItem>
     <taskSetItem name="updateMain">
-      <script1><![CDATA[//cIds,voteCId,voteId,onComplete(dataset,voteResult) <cancel>
+      <script1><![CDATA[//cIds,voteCId,voteId,longContentId,onComplete(dataset,voteResult) <cancel>
 if (updateMain.cIds.length<=0) return;
 updateMain.busy = true;
 eio.appendString16(g5.token);
@@ -44852,6 +44852,8 @@ eio.appendByte(updateMain.voteCId.length);
 for (var i=0; i<updateMain.voteCId.length; i++) eio.appendString8(updateMain.voteCId[i]+"");
 eio.appendByte(updateMain.voteId.length);
 for (var i=0; i<updateMain.voteId.length; i++) eio.appendString8(updateMain.voteId[i]+"");
+eio.appendByte(updateMain.longContentId.length);
+for (var i=0; i<updateMain.longContentId.length; i++) eio.appendString8(updateMain.longContentId[i]+"");
 
 
 ]]></script1>
@@ -45469,6 +45471,7 @@ vote.busy = false;
     this.uplinkId = "0";
     this.content = "";
     this.longContent = false;
+    this.longContentText = "";
     this.photo1 = "";
     this.photo2 = "";
     this.photo3 = "";
@@ -49009,6 +49012,7 @@ let buffs = g5.contentGetCurrentBuffs();
 let cId = new Array();
 let voteCId = new Array();
 let voteId = new Array();
+let longContentId = new Array();
 let emergencyRefresh = false;
 var i,j;
 for (i=0; i<buffs.length; i++) {
@@ -49047,6 +49051,14 @@ for (i=0; i<buffs.length; i++) {
                 voteId.push(buffs[i][j].v_reContent.voteId);
             }
         }
+        if (buffs[i][j].v_content.longContent &amp;&amp; buffs[i][j].v_content.longContentText.length<=0) {
+            emergencyRefresh = true;
+            longContentId.push(buffs[i][j].v_content.id);
+        }
+        if (buffs[i][j].v_reContent.longContent &amp;&amp; buffs[i][j].v_reContent.longContentText.length<=0) {
+            emergencyRefresh = true;
+            longContentId.push(buffs[i][j].v_reContent.id);
+        }
     }
 }
 var diff = false;
@@ -49074,6 +49086,7 @@ g5.RC_LastTime = new Date();
 updateMain.cIds = cId;
 updateMain.voteCId = voteCId;
 updateMain.voteId = voteId;
+updateMain.longContentId = longContentId;
 updateMain.onComplete = function(dataset, voteResult) {
     if (g5.likeBusy|| g5.unlikeBusy) return;
     var changed = false;
