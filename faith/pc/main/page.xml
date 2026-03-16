@@ -44869,6 +44869,9 @@ for (i=0; i<len; i++) voteCId.push(parseInt(eio.readString8()));
 len = eio.readByte();
 let voteId = new Array();
 for (i=0; i<len; i++) voteId.push(parseInt(eio.readString8()));
+len = eio.readByte();
+let longContentId = new Array();
+for (i=0; i<len; i++) longContentId.push(parseInt(eio.readString8()));
 
 var sql,sqlResult;  
 
@@ -44919,6 +44922,15 @@ if (voteCId.length>0) {
 }
 sql += "exec [voteGetInfo] @vt," + myUserId + "; ";
 
+sql += 
+    "SELECT tContent.id, contentText.[text] " +
+    "FROM tContent " +
+    "    LEFT OUTER JOIN contentText ON contentText.contentId = tContent.id " +
+    "WHERE tContent.id = -1 ";
+for (i=0; i<longContentId.length; i++) {
+    sql += "OR tContent.id=" + longContentId[i] + " ";
+}    
+sql += "; ";
 
 sqlResult = db.executeQuery("DB", sql);
 if (sqlResult == null) {
@@ -44947,6 +44959,9 @@ db.nextResult(sqlResult);
 eio.appendDataSet(sqlResult,"voteIndex,voteCId,voteId,optionName,durationSec,remainingTimeSec,voteCount,myVote",
     0, 99999);
 
+db.nextResult(sqlResult);
+eio.appendDataSet(sqlResult,"id,text",
+    0, 99999);
 
 
 ]]></script2>
