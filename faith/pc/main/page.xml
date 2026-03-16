@@ -45004,8 +45004,10 @@ g5.chatAlertDB.showCount();
 
 updateMain.voteReult = eio.readDataSet();
 
+updateMain.longContent = eio.readDataSet();
+
 if (!eb.isEmpty(updateMain.onComplete)) {
-    updateMain.onComplete(updateMain.dataset, updateMain.voteReult);
+    updateMain.onComplete(updateMain.dataset, updateMain.voteReult, updateMain.longContent);
     updateMain.onComplete = null;
     updateMain.needRefresh = false;
     updateMain.cancel = false;
@@ -45146,7 +45148,7 @@ vote.busy = false;
     </taskSetItem>
   </taskSet>
   <gridLines count="0" />
-  <g5Items count="124">
+  <g5Items count="125">
     <item name="currentPageIndex" type="10">
       <varValue>-1;</varValue>
       <functionParam />
@@ -49102,7 +49104,7 @@ updateMain.cIds = cId;
 updateMain.voteCId = voteCId;
 updateMain.voteId = voteId;
 updateMain.longContentId = longContentId;
-updateMain.onComplete = function(dataset, voteResult) {
+updateMain.onComplete = function(dataset, voteResult, longContent) {
     if (g5.likeBusy|| g5.unlikeBusy) return;
     var changed = false;
     for (var i=0; i<dataset.rowCount; i++) {
@@ -49116,6 +49118,7 @@ updateMain.onComplete = function(dataset, voteResult) {
         changed = g5.refreshContentCount(v_content) || changed;
     }
     g5.refreshContentVote(voteResult);
+    g5.refreshContentLong(longContent);
     if (updateMain.needRefresh) {
         g5.RC_Interval = g5.RC_MIN;
     } else if (!changed) {
@@ -49451,6 +49454,42 @@ for (i=0; i<buffs.length; i++) {
     }
 }
 return result;
+]]></functionCode>
+    </item>
+    <item name="refreshContentLong" type="20">
+      <varValue />
+      <functionParam>longContent</functionParam>
+      <functionCode><![CDATA[if (longContent.rowCount<=0) return;
+let buffs = g5.contentGetCurrentBuffs();
+let CID,i,j1,j2;
+let root,rootItems,rootIndex,isRe;
+for (i=0; i<longContent.length; i++) {
+    for (j1=0; j1<buffs.length; j1++) {
+        for (j2=0; j2<buffs[j1].length; j2++) {
+            if (buffs[j1][j2].v_content &amp;&amp; buffs[j1][j2].v_content.id == longContent[i][0]) {
+                /*
+                buffs[j1][j2].v_content.voteData = longContent[i];
+                g5.refreshContentVoteRender(
+                    buffs[j1][j2],
+                    buffs[j1],
+                    j2,
+                    false);
+                */
+            }
+            if (buffs[j1][j2].v_reContent &amp;&amp; buffs[j1][j2].v_reContent.id == longContent[i][0]) {
+                /*
+                buffs[j1][j2].v_reContent.voteData = longContent[i];
+                g5.refreshContentVoteRender(
+                    buffs[j1][j2],
+                    buffs[j1],
+                    j2,
+                    true);
+                */
+            }
+        }
+    }
+}
+
 ]]></functionCode>
     </item>
     <item name="refreshScroll" type="20">
