@@ -49463,19 +49463,19 @@ return result;
 let buffs = g5.contentGetCurrentBuffs();
 let CID,i,j1,j2;
 let root,rootItems,rootIndex,isRe;
-for (i=0; i<longContent.length; i++) {
+for (i=0; i<longContent.rowCount; i++) {
     for (j1=0; j1<buffs.length; j1++) {
         for (j2=0; j2<buffs[j1].length; j2++) {
-            if (buffs[j1][j2].v_content &amp;&amp; buffs[j1][j2].v_content.id == longContent[i][0]) {
-                //buffs[j1][j2].v_content.voteData = longContent[i];
+            if (buffs[j1][j2].v_content &amp;&amp; buffs[j1][j2].v_content.id == longContent.getData(0,i)) {
+                buffs[j1][j2].v_content.longContentText = longContent.getData(1,i);
                 g5.refreshContentLongRender(
                     buffs[j1][j2],
                     buffs[j1],
                     j2,
                     false);
             }
-            if (buffs[j1][j2].v_reContent &amp;&amp; buffs[j1][j2].v_reContent.id == longContent[i][0]) {
-                //buffs[j1][j2].v_reContent.voteData = longContent[i];
+            if (buffs[j1][j2].v_reContent &amp;&amp; buffs[j1][j2].v_reContent.id == longContent.getData(0,i)) {
+                buffs[j1][j2].v_reContent.longContentText = longContent.getData(1,i);
                 g5.refreshContentLongRender(
                     buffs[j1][j2],
                     buffs[j1],
@@ -49508,11 +49508,25 @@ if (isRe) {
     r = eb.getDivRectSetting(root.c_content);
     if (!root.c_more) {
         root.c_more = createPanel(root, root.id+"_moreRoot", "", r.x, r.y+r.h, r.w, 20);
+        root.c_more.vInit = false;
         oldH = 0;
     } else {
         oldH = eb.getDivRectSetting(root.c_more).h;
     }
 }
+
+let initMoreBar = function(bar) {
+    r = eb.getDivRectSetting(bar);
+    bar.c_m = createPanel(bar, bar.id+"_m", "", 0, 0, r.w, 20);
+    addText(bar.c_m, "MORE", "right", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "");
+    
+}
+if (root.c_more) initMoreBar(root.c_more);
+if (root.c_reMore) initMoreBar(root.c_reMore);
+
+
+
+return;
 let myVote = false;
 let v_content;
 if (isRe) {
