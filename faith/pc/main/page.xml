@@ -46885,12 +46885,13 @@ if (root.v_mode.charAt(2) == "x") {
     c = createPanel(root, root.id+"_panel17", "", 78, cy-2, mainWidth, null);
 }
 root.c_content = c;
+cy += g5.renderTwitterSetContent(c, root.v_content.content, root.v_mode.charAt(2) == "x");
+cy += 6;
+/*
 c.style.overflow = "";
 c.style.whiteSpace = "pre-wrap";
-//c.style.whiteSpace = "normal";
 c.style.wordWrap = "break-word";
 c.style.wordBreak = "normal";
-//c.style.wordBreak = "break-all";
 c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
 c.style.color = "#000000";
 if (root.v_content.content.length>0) {
@@ -46910,15 +46911,11 @@ if (root.v_content.content.length>0) {
     ee.changeParent(c,g5.pLine1);
     var rect = eb.getDivRect(c);
     ee.changeParent(c,root);
-    //eb.setDivRect(c, null, null, null, rect.h);
     cy += rect.h + 6;
-    
-    //if (!g5.cntTemp) g5.cntTemp =0;
-    //g5.cntTemp++
-    //g5.writeLog(g5.cntTemp, true);
 } else {
     cy += 6;
 }
+*/
 
 //photos
 if (root.v_content.photos.length>0) {
@@ -47222,6 +47219,7 @@ if (!showRe) {
 
     //reContent
     c = createPanel(cRe, root.id+"_panel25", "", 120, 36, p1w-130, 100);
+    root.c_reRoot.c_content = c;
     c.style.whiteSpace = "pre-wrap";
     c.style.wordWrap = "break-word";
     c.style.wordBreak = "normal";
@@ -47229,7 +47227,6 @@ if (!showRe) {
     c.style.fontSize = "12pt";
     c.style.color = "#000000";
     c.innerHTML = g5.showCommonText(root.v_reContent.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>");
-    root.c_reRoot.c_content = c;
     
     //rePhotos                                                                                          
     if (root.v_reContent.photos.length>0) {
@@ -47391,13 +47388,22 @@ if (!showRe) {
     
     //reContent
     c = createPanel(cRe, root.id+"_panel25", "", 16, 36, p1w*0.927710843373494, null);
+    root.c_reRoot.c_content = c;
+    g5.renderTwitterSetContent(c, root.v_reContent.content, false);
+    var rect = eb.getDivRect(c);
+    let p1y;
+    if (root.v_reContent.content.length>0) {
+        p1y = rect.y + rect.h + p1h * 0.05;
+    } else {
+        p1y = 36 + p1h * 0.05;
+    }
+    /*
     c.style.whiteSpace = "pre-wrap";
     c.style.wordWrap = "break-word";
     c.style.wordBreak = "normal";
     c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     c.style.fontSize = "12pt";
     c.style.color = "#000000";
-    root.c_reRoot.c_content = c;
     var p1y;
     if (root.v_reContent.content.length>0) {
         c.innerHTML = g5.showCommonText(root.v_reContent.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>");
@@ -47409,7 +47415,7 @@ if (!showRe) {
     } else {
         p1y = 36 + p1h * 0.05;
     }
-    
+    */
     //rePhotos
     if (root.v_reContent.photos.length>0) {
         if (root.v_reContent.photos[0].substr(0,4) == "?VID") {
@@ -47787,10 +47793,11 @@ c.style.wordBreak = "normal";
 c.style.fontFamily = "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
 c.style.color = "#000000";
 if (text.length>0) {
+    ee.changeParent(c,g5.pLine1);
     if (isX) {
-        c.innerHTML = "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(root.v_content.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
+        c.innerHTML = "<font style='font-size:23px; line-height:1.31;'>" + g5.showCommonText(text).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
     } else {
-        c.innerHTML = "<font style='font-size:12pt; line-height:1.2;'>" + g5.showCommonText(root.v_content.content).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
+        c.innerHTML = "<font style='font-size:12pt; line-height:1.2;'>" + g5.showCommonText(text).replace(/\r\n/g,"\n").replace(/\n/g,"<br\>") + "</font>";
     }
     for (var i=0; i<c.childNodes[0].childNodes.length; i++) {
         if (c.childNodes[0].childNodes[i].nodeName=="SPAN") {
@@ -47800,7 +47807,6 @@ if (text.length>0) {
             });
         }
     }
-    ee.changeParent(c,g5.pLine1);
     var rect = eb.getDivRect(c);
     ee.changeParent(c,root);
     return rect.h;
