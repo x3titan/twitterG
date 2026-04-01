@@ -49558,16 +49558,29 @@ if (isRe) {
     }
 }
 
-let initMoreBar = function(bar) {
+let initMoreBar = function(root, isRe) {
+    let bar = isRe?root.c_reMore:root.c_more;
+    if (!bar) return;
     r = eb.getDivRectSetting(bar);
     bar.c_m = createPanel(bar, bar.id+"_m", "", 0, 0, r.w, 20);
     addText(bar.c_m, "↓↓↓ More", "right", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1FA2F2", "");
-    ee.setOnClick(bar.c_m, function(sender, event) {
-        
-    });
+    if (isRe) {
+        ee.setOnClick(bar.c_m, function(sender, event) {
+            ee.setVisible(sender, false);
+            g5.renderTwitterSetContent(root.c_reContent, root.v_reContent.longContentText, false);
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+        });
+    } else {
+        ee.setOnClick(bar.c_m, function(sender, event) {
+            ee.setVisible(sender, false);
+            g5.renderTwitterSetContent(root.c_content, root.v_content.longContentText, false);
+            window.event? window.event.cancelBubble = true : event.stopPropagation();
+        });
+    }
 }
-if (root.c_more) initMoreBar(root.c_more);
-if (root.c_reMore) initMoreBar(root.c_reMore);
+if (root.c_more) initMoreBar(root, false);
+if (root.c_reMore) initMoreBar(root, true);
+//root.c_reMore, root.v_reContent.longContentText);
 
 
 
