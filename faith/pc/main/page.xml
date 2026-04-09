@@ -49539,14 +49539,13 @@ for (i=0; i<longContent.rowCount; i++) {
 let i,r,r2,newH,oldH,voteRoot,c,cy;
 if (isRe) {
     r = eb.getDivRectSetting(root.c_reRoot.c_content);
-    if (!root.c_reVote) {
-        voteRoot = createPanel(root.c_reRoot, root.id+"_reVoteRoot", "", r.x, r.y+r.h, r.w, 10);
-        root.c_reVote = voteRoot;
+    if (!root.c_reMore) {
+        root.c_reMore = createPanel(root.c_reRoot, root.c_reRoot.id+"_rmoreRoot", "", r.x, r.y+r.h-20, r.w, 20);
+        root.c_reMore.style.background = "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1))";
+        root.c_reMore.vInit = false;
         oldH = 0;
-        voteRoot.v_items = new Array();
     } else {
-        voteRoot = root.c_reVote;
-        oldH = eb.getDivRectSetting(voteRoot).h;
+        oldH = eb.getDivRectSetting(root.c_reMore).h;
     }
 } else {
     r = eb.getDivRectSetting(root.c_content);
@@ -49568,10 +49567,10 @@ let initMoreBar = function(root, isRe) {
     addText(bar.c_m, "↓↓↓ More", "right", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "1FA2F2", "");
     if (isRe) {
         ee.setOnClick(bar.c_m, function(sender, event) {
-            ee.setVisible(sender, false);
-            r = eb.getDivRect(root.c_reContent);
+            ee.setVisible(sender.parentNode, false);
+            r = eb.getDivRect(root.c_reRoot.c_content);
             let oldH = r.h;
-            let newH = g5.renderTwitterSetContent(root.c_reContent, root.v_reContent.longContentText, false);
+            let newH = g5.renderTwitterSetContent(root.c_reRoot.c_content, root.v_reContent.longContentText, false);
             r = eb.getDivRectSetting(root);
             if (newH!=oldH) {
                 let dh = newH - oldH;
@@ -49603,7 +49602,7 @@ let initMoreBar = function(root, isRe) {
         });
     } else {
         ee.setOnClick(bar.c_m, function(sender, event) {
-            ee.setVisible(sender, false);
+            ee.setVisible(sender.parentNode, false);
             r = eb.getDivRect(root.c_content);
             let oldH = r.h;
             let newH = g5.renderTwitterSetContent(root.c_content, root.v_content.longContentText, false);
@@ -49639,7 +49638,6 @@ let initMoreBar = function(root, isRe) {
 }
 if (root.c_more) initMoreBar(root, false);
 if (root.c_reMore) initMoreBar(root, true);
-//root.c_reMore, root.v_reContent.longContentText);
 
 
 
