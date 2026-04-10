@@ -45458,6 +45458,7 @@ vote.busy = false;
         r.uplinkId = this.uplinkId;
         r.content = this.content;
         r.longContent = this.longContent;
+        r.longContentText = this.longContentText;
         r.photo1 = this.photo1;
         r.photo2 = this.photo2;
         r.photo3 = this.photo3;
@@ -46886,7 +46887,7 @@ if (root.v_mode.charAt(2) == "x") {
     c = createPanel(root, root.id+"_panel17", "", 78, cy-2, mainWidth, null);
 }
 root.c_content = c;
-cy += g5.renderTwitterSetContent(c, root.v_content.content, root.v_mode.charAt(2) == "x");
+cy += g5.renderTwitterSetContent(c, root.v_content.longContentText.length>0?root.v_content.longContentText:root.v_content.content, root.v_mode.charAt(2) == "x");
 cy += 6;
 /*
 c.style.overflow = "";
@@ -49535,7 +49536,7 @@ for (i=0; i<longContent.rowCount; i++) {
     <item name="refreshContentLongRender" type="20">
       <varValue />
       <functionParam>root,rootItems,rootIndex,isRe</functionParam>
-      <functionCode><![CDATA[let s1=10, s2=5, s3=10, ch=31;
+      <functionCode>let s1=10, s2=5, s3=10, ch=31;
 let i,r,r2,newH,oldH,voteRoot,c,cy;
 if (isRe) {
     r = eb.getDivRectSetting(root.c_reRoot.c_content);
@@ -49639,211 +49640,7 @@ let initMoreBar = function(root, isRe) {
 if (root.c_more) initMoreBar(root, false);
 if (root.c_reMore) initMoreBar(root, true);
 
-
-
-return;
-let myVote = false;
-let v_content;
-if (isRe) {
-    v_content = root.v_reContent;
-} else {
-    v_content = root.v_content;
-}
-for (i=0; i<v_content.voteData.length; i++) {
-    if (v_content.voteData[i].myVote>0) {
-        myVote = true;
-        break;
-    }
-}
-if (myVote != v_content.myVote) {
-    v_content.myVote = myVote;
-    while (voteRoot.v_items.length>0) {
-        ee.removeControl(voteRoot.v_items[voteRoot.v_items.length-1]);
-        voteRoot.v_items.splice(voteRoot.v_items.length-1);
-    }
-}
-
-let initVoteBars = function(bar, txt) {
-    Object.assign(bar.style, {
-        transition: 'width 2s ease-out'
-    });
-    
-    const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const bar = entry.target;
-                bar.style.width = bar.v_width + "px";
-                
-                let start = null;
-                const duration = 2000;
-                function animateNum(timestamp) {
-                    if (!start) start = timestamp;
-                    const progress = Math.min((timestamp - start) / duration, 1);
-                    const current = Math.floor(progress * txt.v_percent);
-                    ee.setText(txt, current + txt.v_text);
-                    if (progress < 1) {
-                        requestAnimationFrame(animateNum);
-                    } else {
-                        ee.setText(txt, txt.v_percent + txt.v_text);
-                    }
-                }
-                requestAnimationFrame(animateNum);
-                
-                obs.unobserve(bar);
-            }
-        });
-    }, {
-        threshold: 0.1
-    });
-
-    observer.observe(bar);
-}
-
-if (v_content.myVote || v_content.voteData[0].remainingTimeSec<=0) {
-    let voteCount = 0;
-    for (i=0; i<v_content.voteData.length; i++) {
-        voteCount += v_content.voteData[i].voteCount;
-    }
-    voteCount = Math.max(1,voteCount);
-    for (i=0; i<=v_content.voteData.length; i++) {
-        let isNew = i>=voteRoot.v_items.length;
-        if (isNew) {
-            c = createPanel(voteRoot, root.id+"_voteOp"+i, "", 0, s1+i*(ch+s2), r.w, ch);
-            c.v_c0 = createPanel(c, root.id+"_voteO1p"+i, "", 0, 0, 0, ch);
-            c.v_c0.style.borderRadius = "10px";
-            c.v_c0.style.backgroundColor = "#e0e0ff";
-            c.v_c1 = createPanel(c, root.id+"_voteO2p"+i, "", 0, 0, r.w, ch);
-            addText(c.v_c1, " ", "left", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "");
-            c.v_c2 = createPanel(c, root.id+"_voteO3p"+i, "", 0, 0, r.w, ch);
-            addText(c.v_c2, " ", "right", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "");
-            voteRoot.v_items.push(c);    
-        }
-        c = voteRoot.v_items[i];
-        if (i==v_content.voteData.length) {
-            voteRoot.v_voteLocalStartTime = new Date();
-            voteRoot.c_voteTimeLabel = c;
-        } else {
-            ee.setText(c.v_c1,(i+1) + ". " + v_content.voteData[i].optionName +
-                (v_content.voteData[i].myVote=="1"?"<span style='display: inline-block; width: 10px;'></span>✅":""));
-            ee.setText(c.v_c2,
-                parseInt(v_content.voteData[i].voteCount/voteCount*1000)/10 + "% (" +
-                v_content.voteData[i].voteCount + g5.lang.getByCn("票)"));
-            c.v_c2.v_percent = parseInt(v_content.voteData[i].voteCount/voteCount*1000)/10;
-            c.v_c2.v_text = "% (" + v_content.voteData[i].voteCount + g5.lang.getByCn("票)");
-            c.v_c0.v_width = v_content.voteData[i].voteCount/voteCount*(r.w-10)+10;
-            if (isNew) {
-                initVoteBars(c.v_c0, c.v_c2);
-            } else {
-                ee.setRect(c.v_c0,null,null,v_content.voteData[i].voteCount/voteCount*(r.w-10)+10,null);
-            }
-        }
-    }
-    while (voteRoot.v_items.length>v_content.voteData.length+1) {
-        ee.removeControl(voteRoot.v_items[voteRoot.v_items.length-1]);
-        voteRoot.v_items.splice(voteRoot.v_items.length-1);
-    }
-} else {
-    for (i=0; i<=v_content.voteData.length+1; i++) {
-        if (i>=voteRoot.v_items.length) {
-            c = createPanel(voteRoot, root.id+"_voteOp"+i, "", 0, s1+i*(ch+s2), r.w, ch);
-            addText(c, " ", "center", "middle", "'Segoe UI', Meiryo, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", 12, "000000", "");
-            voteRoot.v_items.push(c);    
-        }
-        c = voteRoot.v_items[i];
-        if (i==v_content.voteData.length) {
-            ee.setText(c,g5.lang.getByCn("投票后才可以看到投票结果"));
-        } else if (i==v_content.voteData.length+1) {
-            voteRoot.v_voteLocalStartTime = new Date();
-            voteRoot.c_voteTimeLabel = c;
-        } else {
-            ee.setText(c, g5.lang.getByCn("<span style='display: inline-block; width: 10px;'></span>" + (i+1) + ". " + v_content.voteData[i].optionName));
-            c.v_voteId = v_content.voteId;
-            c.v_optionName = v_content.voteData[i].optionName;
-            c.v_optionIndex = i+1;
-            g5.initButtonV3(c,[
-                new g5.BStyle("","#dfeffa","#cfdfea","","","","#000000","#000000","#000000","#C0C0C0")
-            ]);
-            c.style.borderRadius = "10px";
-            ee.setOnClick(c, function(senderBtn, event) {
-                g5.popBlack.a6.show(
-                    g5.lang.getByCn("投票确认"),
-                    g5.lang.getByCn("您的投票选择是：") + "<br/>" + 
-                    senderBtn.v_optionName + "<br/>" +
-                    g5.lang.getByCn("投票后选择不能更改，您是否确定投票？"),
-                    [new g5.BStyle("","#e8f5fe","#d2ecfc","取消","取消","取消","#1da1f2","#1da1f2","#1da1f2","#1da1f2")],
-                    [new g5.BStyle("#1da1f2","#1a91da","#1781c2","确定","确定","确定","#ffffff","#ffffff","#ffffff","")],
-                    function() {
-                        //voteId,optionIndex,onComplete
-                        if (vote.busy) return;
-                        vote.voteId = senderBtn.v_voteId;
-                        vote.optionIndex = senderBtn.v_optionIndex;
-                        vote.onComplete = function() {
-                            v_content.voteNeedRefresh = true;
-                            g5.alert1("提示", "投票成功");
-                        }
-                        vote();
-                    },
-                    function() {
-                    }
-                );
-                window.event? window.event.cancelBubble = true : event.stopPropagation();
-            });
-        }
-    }
-    while (voteRoot.v_items.length>v_content.voteData.length+2) {
-        ee.removeControl(voteRoot.v_items[voteRoot.v_items.length-1]);
-        voteRoot.v_items.splice(voteRoot.v_items.length-1);
-    }
-}
-if (voteRoot.v_items.length<=0) reutrn;
-newH = voteRoot.v_items.length;
-newH = s1 + s3 + newH*ch + (newH-1)*s2;
-ee.setRect(voteRoot,null,null,null,newH);
-r = eb.getDivRectSetting(root);
-if (newH!=oldH) {
-    let dh = newH - oldH;
-    if (isRe) {
-        r1 = eb.getDivRectSetting(root.c_reRoot);
-        ee.setRect(root, null, null, null, r.h + dh);
-        ee.setRect(root.c_reRoot, null, null, null, r1.h + dh);
-        ee.moveControl(root.c_button1,0,dh);
-        ee.moveControl(root.c_button2,0,dh);
-        ee.moveControl(root.c_button3,0,dh);
-        ee.moveControl(root.c_button4,0,dh);
-        ee.moveControl(root.c_button5,0,dh);
-        ee.moveControl(root.c_label1,0,dh);
-        ee.moveControl(root.c_label2,0,dh);
-        ee.moveControl(root.c_label3,0,dh);
-        ee.moveControl(root.c_label4,0,dh);
-        ee.moveControl(root.c_label5,0,dh);
-        if (root.c_bottom01) ee.moveControl(root.c_bottom01,0,dh);
-    } else {
-        ee.setRect(root, null, null, null, r.h + dh);
-        ee.moveControl(root.c_button1,0,dh);
-        ee.moveControl(root.c_button2,0,dh);
-        ee.moveControl(root.c_button3,0,dh);
-        ee.moveControl(root.c_button4,0,dh);
-        ee.moveControl(root.c_button5,0,dh);
-        ee.moveControl(root.c_label1,0,dh);
-        ee.moveControl(root.c_label2,0,dh);
-        ee.moveControl(root.c_label3,0,dh);
-        ee.moveControl(root.c_label4,0,dh);
-        ee.moveControl(root.c_label5,0,dh);
-        if (root.c_bottom01) ee.moveControl(root.c_bottom01,0,dh);
-        if (root.c_reRoot) ee.moveControl(root.c_reRoot,0,dh);
-    }
-    g5.batchMoveY(rootItems,rootIndex+1,dh);
-    if (g5.currentPageIndex==8) {
-        ee.moveControl(g5.p2.p9.c_tabRoot,0,dh);
-    }
-    if (g5.currentPageIndex == 0) {
-        g5.p2.p1.c_bottom.adjustP1();
-        eb.setDivRect(g5.p2.p1,null,null,null,eb.getDivRectSetting(g5.p2.p1).h + dh);
-        eb.setDivRect(g5.p2,null,null,null,eb.getDivRectSetting(g5.p2).h + dh);
-    }
-}
-
-]]></functionCode>
+</functionCode>
     </item>
     <item name="refreshScroll" type="20">
       <varValue />
