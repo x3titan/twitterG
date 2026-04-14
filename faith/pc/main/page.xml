@@ -330,7 +330,6 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -519,7 +518,6 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
-      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.251046025104603</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -8950,7 +8948,6 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>推文页</layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -9371,6 +9368,7 @@ sender.show = function(v_content, v_reContent, v_userInfo, v_reUserInfo, content
                 if (i==0) dType += "x";
                 item = createPanel(root, "page8_" + datasetFw.getData(0,i), "", 0, cy, itemWidth, 5);
                 g5.loadTwitterRecord(item, datasetFw, i);
+                if (i==0) item.v_content.longContentText = showTopic.contentLong;
                 if (i>0) item.v_notDisplayRe = true;
                 item.v_mode = uType + dType;
                 item.v_forceDisplay = sender.v_forceDisplay;
@@ -29806,6 +29804,7 @@ return false;</onClick>
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -30832,6 +30831,7 @@ sender.init(0);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName>发短文</layerName>
+      <layerVisible>false</layerVisible>
       <left>331</left>
       <leftRatio>0.276987447698745</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
@@ -40354,6 +40354,11 @@ eio.appendDataSet(sqlResult,
     "uId,uStatus,uRegDatetime,uLastAccessTime,uUserName,uMobile,uNickName,uNote,uPhoto,uTitleBg,uHomePage,uFollowCount,uFansCount,uPostCount,uIsFollow,uIsBlock1,uIsBlock2,uEmail,uIsHide," +  
     "rId,rStatus,rRegDatetime,rLastAccessTime,rUserName,rMobile,rNickName,rNote,rPhoto,rTitleBg,rHomePage,rFollowCount,rFansCount,rPostCount,rIsFollow,rIsBlock1,rIsBlock2,rEmail,rIsHide",
     0, 99999);
+
+db.nextResult(sqlResult);
+db.read(sqlResult);
+eio.appendString16(db.getString(sqlResult,"contentLong"));
+
 db.nextResult(sqlResult);
 eio.appendDataSet(sqlResult,
     "id,seconds,status,uplinkType,uplinkId,content,longContent,photo1,photo2,photo3,photo4,clickCount,reCount,fwCount,likeCount,unlikeCount,isForward,isLike,isUnlike,forceTopSn," +
@@ -40387,6 +40392,7 @@ eio.appendDataSet(sqlResult,
 }
 var tempData;
 showTopic.data = eio.readDataSet();
+showTopic.contentLong = eio.readString16();
 tempData = eio.readDataSet();
 showTopic.data.appendDataset(tempData);
 showTopic.backTrace = eio.readDataSet();
