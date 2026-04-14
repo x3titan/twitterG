@@ -9149,16 +9149,16 @@ sender.refreshSearchText = function() {
     if (sender.v_items.length>0) {
         var item = sender.v_items[sender.v_items.length-1];
         sender.setCanonical(window.location.href);
-        sender.setMeta(["name","description"], ["content", item.v_content.content]);
+        sender.setMeta(["name","description"], ["content", item.v_content.longContentText.length>0?item.v_content.longContentText:item.v_content.content]);
         document.title =
             item.v_userInfo.nickName + "@" +
             item.v_userInfo.userName + ": " +
-            item.v_content.content;
+            (item.v_content.longContentText.length>0?item.v_content.longContentText:item.v_content.content);
         sender.setMetaProperty("og:site_name", "Fistalk");
         sender.setMetaProperty("og:type", "website"); //article
         sender.setMetaProperty("og:url", window.location.href);
         sender.setMetaProperty("og:title", "登录FISTALK，关注" + item.v_userInfo.nickName);
-        sender.setMetaProperty("og:description", item.v_content.content);
+        sender.setMetaProperty("og:description", item.v_content.longContentText.length>0?item.v_content.longContentText:item.v_content.content);
         if (item.v_content.photo1.length>0) {
             if (item.v_content.photo1.substr(0,4) == "?YTB") {
                 sender.setMetaProperty("og:video", "https://www.youtube.com/watch?v=" + item.v_content.photo1.substr(4));
