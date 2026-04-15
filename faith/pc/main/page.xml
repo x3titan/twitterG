@@ -330,6 +330,7 @@ a.css_button1:hover{
       <fontColor>E0E0E0</fontColor>
       <height>796</height>
       <heightRatio>1</heightRatio>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <note>mainDiv</note>
       <onCreate><![CDATA[
@@ -518,6 +519,7 @@ sender.scrollAniProcess = function() {
       <height>780</height>
       <heightRatio>0.979899497487437</heightRatio>
       <layerName>===P2===</layerName>
+      <layerVisible>false</layerVisible>
       <left>300</left>
       <leftRatio>0.251046025104603</leftRatio>
       <onCreate>sender.v_fitInner = true;
@@ -8948,6 +8950,7 @@ setTimeout(function() { updateHomepage(); }, 500);</onClick>
       <height>780</height>
       <heightRatio>1</heightRatio>
       <layerName>推文页</layerName>
+      <layerVisible>false</layerVisible>
       <left>0</left>
       <onCreate><![CDATA[sender.v_fitInner = true;
 sender.v_items = new Array();
@@ -29804,7 +29807,6 @@ return false;</onClick>
       <height>796</height>
       <heightRatio>1</heightRatio>
       <layerName><![CDATA[popBlack->主界面弹窗黑色]]></layerName>
-      <layerVisible>false</layerVisible>
       <left>0</left>
       <onClick>if (!ee.isInternalNode(sender, event.target)) {
     return;
@@ -30831,7 +30833,6 @@ sender.init(0);
       <height>611</height>
       <heightRatio>0.767587939698492</heightRatio>
       <layerName>发短文</layerName>
-      <layerVisible>false</layerVisible>
       <left>331</left>
       <leftRatio>0.276987447698745</leftRatio>
       <onClick>window.event? window.event.cancelBubble = true : event.stopPropagation();</onClick>
@@ -31616,22 +31617,24 @@ sender.processUserName();
 
 var newText = newText.trim();
 var c = ee.getControl("panel50");
-if (newText.length<180) {
+let MAX_LEN = 3000;
+let DISPLAY_LEN = 200;
+if (newText.length<DISPLAY_LEN) {
     c.v_color = "#29a5f2";
     c.v_r = "9";
-    c.refresh(newText.length/200);
+    c.refresh(newText.length/DISPLAY_LEN);
     ee.setText(ee.getControl("panel45"), "");    
-} else if (newText.length<=200) {
+} else if (newText.length<=MAX_LEN) {
     c.v_color = "#ffad1f";
     c.v_r = "12";
-    c.refresh(newText.length/200);    
-    ee.setText(ee.getControl("panel45"), 200-newText.length);    
+    c.refresh(newText.length/MAX_LEN);    
+    ee.setText(ee.getControl("panel45"), MAX_LEN-newText.length);    
     ee.setTextColor(ee.getControl("panel45"), "#ffad1f");
 } else {
     c.v_color = "#e0245e";
     c.v_r = "14";
-    c.refresh((newText.length-200)/100);    
-    ee.setText(ee.getControl("panel45"), 200-newText.length);
+    c.refresh((newText.length-MAX_LEN)/100);    
+    ee.setText(ee.getControl("panel45"), MAX_LEN-newText.length);
     ee.setTextColor(ee.getControl("panel45"), "#e0245e");
 }
 sender.parentNode.check();
